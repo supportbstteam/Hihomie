@@ -14,8 +14,8 @@ export default async function LoweNav() {
         <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
             <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
 
-                {/* Title */}
-                <div className="flex flex-col">
+                {/* Title (hide on mobile) */}
+                <div className="hidden sm:flex flex-col">
                     <span className="text-[#071437] text-2xl font-semibold">
                         Panel de control
                     </span>
@@ -25,12 +25,12 @@ export default async function LoweNav() {
                 </div>
 
                 {/* Right Side - Date & Filter */}
-                <div>
-                    <ul className="flex items-center gap-3 sm:gap-5">
+                <div className="flex w-full sm:w-auto justify-end">
+                    <ul className="flex items-center gap-4 sm:gap-6 sm:flex sm:justify-between">
                         {/* Date */}
-                        <li className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1 text-lg font-medium text-[#99A1B7] cursor-pointer hover:bg-gray-50">
-                            15 dic 2024 - 8 jun 2025
-                            <SlCalender className="text-xl" />
+                        <li className="flex items-center gap-2 border border-gray-300 rounded-md px-3 py-1 text-sm sm:text-lg font-medium text-[#99A1B7] cursor-pointer hover:bg-gray-50">
+                            <span>15 dic 2024 - 8 jun 2025</span>
+                            <SlCalender className="text-lg sm:text-xl" />
                         </li>
 
                         {/* Filter Icon */}
@@ -39,8 +39,8 @@ export default async function LoweNav() {
                         </li>
                     </ul>
                 </div>
+
             </div>
         </aside>
     )
 }
-

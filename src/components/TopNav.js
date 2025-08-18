@@ -9,10 +9,10 @@ export default async function TopNav() {
   if (!session) redirect('/login')
 
   return (
-    <aside className="w-full shrink-0 border-b bg-white p-4 flex items-center justify-between">
+    <aside className="w-full shrink-0 border-b bg-white p-4 flex items-center justify-between relative">
       
       {/* Logo */}
-      <div className="flex items-center">
+      <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
         <img
           src="http://localhost:3000/logo.png"
           alt="Logo"
@@ -21,7 +21,7 @@ export default async function TopNav() {
       </div>
 
       {/* Notification + Profile */}
-      <div>
+      <div className="ml-auto">
         <ul className="flex items-center gap-3 sm:gap-5">
           <li>
             <LuBellDot className="text-xl sm:text-2xl text-gray-500 cursor-pointer hover:text-green-600 transition" />

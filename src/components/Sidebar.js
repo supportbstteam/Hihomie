@@ -1,14 +1,17 @@
 'use client'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
+import { useState } from 'react'
 import { FaAt } from "react-icons/fa";
 import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineDashboard, MdOutlineHandshake, MdOutlineHeadphones, MdOutlineLogout, MdOutlineRealEstateAgent } from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
+import { RxCross2 } from "react-icons/rx";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const MENU = {
   admin: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
+    { href: '/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
     { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
@@ -33,8 +36,8 @@ const MENU = {
 
 export default function Sidebar() {
   const { data: session, status } = useSession()
+  const [open, setOpen] = useState(false)
 
-  // Show nothing until session loads
   if (status === "loading") {
     return (
       <aside className="w-64 shrink-0 border-r bg-white p-4">
@@ -43,44 +46,71 @@ export default function Sidebar() {
     )
   }
 
-  // If no session (not logged in)
   if (!session) return null
 
   const role = session?.user?.role || 'user'
   const items = MENU[role] || MENU.user
 
   return (
-    <aside className="w-64 shrink-0 border-r bg-white p-4">
-      <div className="flex items-center gap-2 mb-4">
-        <FaAt size={20} className='text-[#F8C51B]' />
-        <h2 className="font-semibold">Cuenta Administrativa</h2>
-      </div>
-      <nav className="space-y-2">
-        {items.map((i, idx) => (
-          <div key={idx}>
-            <Link
-              href={i.href}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100"
-            >
-              <span className='text-[#84909A]'>{i.icon}</span>
-              <span className='text-[#071437]'>{i.label}</span>
-            </Link>
+    <>
+      {/* Mobile Toggle Button */}
+      <button 
+        onClick={() => setOpen(true)} 
+        className="p-2 md:hidden fixed top-4 left-4 z-50 bg-white rounded-lg shadow"
+      >
+        <GiHamburgerMenu size={24} />
+      </button>
 
-            {/* Add horizontal line after Agentes */}
-            {i.label === 'Agentes' && (
-              <hr className="my-4 border-gray-300" />
-            )}
-          </div>
-        ))}
+      {/* Sidebar */}
+     <aside
+  className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[9999] 
+  ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+>
 
-        {/* Logout Button */}
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
-        >
-          <MdOutlineLogout className='text-[#84909A]' /> Logout
-        </button>
-      </nav>
-    </aside>
+        {/* Close Button (Mobile Only) */}
+        <div className="flex justify-between items-center mb-4 md:hidden z-[999]">
+          <h2 className="font-semibold">Menú</h2>
+          <button onClick={() => setOpen(false)}>
+            <RxCross2 size={24} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 mb-4">
+          <FaAt size={20} className='text-[#F8C51B]' />
+          <h2 className="font-semibold">Cuenta Administrativa</h2>
+        </div>
+
+        <nav className="space-y-2">
+          {items.map((i, idx) => (
+            <div key={idx}>
+              <Link
+                href={i.href}
+                onClick={() => setOpen(false)} // ✅ Auto close sidebar on click
+                className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100"
+              >
+                <span className='text-[#84909A]'>{i.icon}</span>
+                <span className='text-[#071437]'>{i.label}</span>
+              </Link>
+
+              {i.label === 'Agentes' && (
+                <hr className="my-4 border-gray-300" />
+              )}
+            </div>
+          ))}
+
+          {/* Logout Button */}
+          <button
+            onClick={() => {
+              setOpen(false) // ✅ close sidebar on logout
+              signOut({ callbackUrl: "/login" })
+            }}
+            className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
+          >
+            <MdOutlineLogout className='text-[#84909A]' /> Logout
+          </button>
+        </nav>
+      </aside>
+    </>
   )
 }
+
