@@ -6,7 +6,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export default async function TopNav() {
   const session = await getServerSession(authOptions)
-  if (!session) redirect('/login')
+  if (!session) redirect('/')
 
   return (
     <aside className="w-full shrink-0 border-b bg-white p-4 flex items-center justify-between relative">

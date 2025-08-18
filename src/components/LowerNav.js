@@ -8,7 +8,7 @@ import { MdOutlineFilterList } from "react-icons/md";
 
 export default async function LoweNav() {
     const session = await getServerSession(authOptions)
-    if (!session) redirect('/login')
+    if (!session) redirect('/')
 
     return (
         <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">

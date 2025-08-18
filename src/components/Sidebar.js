@@ -8,10 +8,11 @@ import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
 
+
 const MENU = {
   admin: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
     { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
@@ -63,7 +64,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
      <aside
-  className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[9999] 
+  className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
   ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
 >
 
@@ -102,7 +103,7 @@ export default function Sidebar() {
           <button
             onClick={() => {
               setOpen(false) // ✅ close sidebar on logout
-              signOut({ callbackUrl: "/login" })
+              signOut({ callbackUrl: "/" })
             }}
             className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
           >
