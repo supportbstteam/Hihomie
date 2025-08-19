@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import connectDB from "@/lib/db"; // apna DB connection helper
-import User from "@/models/User"; // apna mongoose model
+import connectDB from "@/lib/db";
+import User from "@/models/User";
 
 export const authOptions = {
   providers: [
@@ -13,32 +13,37 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // DB connect karo
         await connectDB();
 
-        // Email se user find karo
         const user = await User.findOne({ email: credentials.email });
 
         if (!user) {
           throw new Error("Email not found");
         }
 
-        // Password match check karo (hashed password compare)
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }
 
-        // Success
         return {
           id: user._id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
         };
       }
     })
   ],
+  session: {
+    strategy: "jwt",     // jwt hi use karo (recommended with CredentialsProvider)
+    maxAge: 6 * 60 * 60, // 6 ghante me auto expire ho jayega (21600 sec)
+    updateAge: 60 * 60,  // optional: har 1 ghante pe token refresh hoga
+  },
   callbacks: {
     async session({ session, token }) {
       if (token?.role) {

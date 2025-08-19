@@ -60,10 +60,10 @@ export const customerReducer = createSlice({
          .addCase(customerAdd.fulfilled, (state, { payload }) => {
             state.loader = false;
             state.successMessage = payload.message;
-            // state.customer = [...state.customer, payload.customer]
+            state.customer = [...state.customer, payload.customer]
          })
          .addCase(get_customer.fulfilled, (state, { payload }) => {
-            state.customer = payload;
+            state.customer = payload.customer;
          })
    }
 })
