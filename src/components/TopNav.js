@@ -13,11 +13,12 @@ export default async function TopNav() {
       
       {/* Logo */}
       <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
-        <img
-          src="http://localhost:3000/logo.png"
-          alt="Logo"
-          className="w-20 sm:w-28 md:w-36 lg:w-40"
-        />
+         <img
+        src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
+        alt="Logo"
+       className="w-20 sm:w-28 md:w-36 lg:w-40"
+      />
+
       </div>
 
       {/* Notification + Profile */}
@@ -28,7 +29,7 @@ export default async function TopNav() {
           </li>
           <li>
             <img
-              src="http://localhost:3000/admin.png"
+              src={`${process.env.NEXT_PUBLIC_BASE_URL}/admin.png`}
               alt="Admin"
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-gray-300"
             />

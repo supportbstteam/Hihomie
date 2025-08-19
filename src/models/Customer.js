@@ -7,7 +7,8 @@ const CustomerSchema = new mongoose.Schema({
   phone: { type: String, unique: true },
   origin: { type: String },
   password: { type: String }, // hashed
-  automatic: { type: Boolean }, 
+  automatic: { type: Boolean },
+  flag: { type: Number, default: 1 },
 }, { timestamps: true })
 
 export default mongoose.models.Customer || mongoose.model('Customer', CustomerSchema)

@@ -1,30 +1,60 @@
 // src/lib/db.js
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 
-const MONGODB_URI = process.env.MONGODB_URI
+// const MONGODB_URI = process.env.MONGODB_URI
+
+// if (!MONGODB_URI) {
+//   throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+// }
+
+// // Global is used here to maintain a cached connection across hot reloads in development.
+// // This prevents connections growing exponentially during API route usage.
+// let cached = global.mongoose
+// if (!cached) {
+//   cached = global.mongoose = { conn: null, promise: null }
+// }
+
+// export default async function dbConnect() {
+//   if (cached.conn) return cached.conn
+
+//   if (!cached.promise) {
+//     cached.promise = mongoose
+//       .connect(MONGODB_URI, {
+//         bufferCommands: false,
+//       })
+//       .then((mongooseInstance) => mongooseInstance)
+//   }
+
+//   cached.conn = await cached.promise
+//   return cached.conn
+// }
+
+// lib/db.js
+import mongoose from "mongoose";
+
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+  throw new Error("⚠️ Please define MONGODB_URI in .env.local");
 }
 
-// Global is used here to maintain a cached connection across hot reloads in development.
-// This prevents connections growing exponentially during API route usage.
-let cached = global.mongoose
+let cached = global.mongoose;
+
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null }
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-export default async function dbConnect() {
-  if (cached.conn) return cached.conn
+async function dbConnect() {
+  if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    cached.promise = mongoose
-      .connect(MONGODB_URI, {
-        bufferCommands: false,
-      })
-      .then((mongooseInstance) => mongooseInstance)
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+    }).then((mongoose) => mongoose);
   }
 
-  cached.conn = await cached.promise
-  return cached.conn
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
+
+export default dbConnect;

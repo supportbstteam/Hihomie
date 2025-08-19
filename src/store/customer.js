@@ -17,6 +17,20 @@ export const customerAdd = createAsyncThunk(
 )
 
 
+
+export const get_customer = createAsyncThunk(
+  "customer/get_customer",
+  async (_, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const { data } = await api.get(`/customer`, { withCredentials: true });
+      return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
 export const customerReducer = createSlice({
 
    name: 'customer',
@@ -25,7 +39,6 @@ export const customerReducer = createSlice({
       errorMessage: '',
       loader: false,
       customer : [],
-      totalCategory : 0
    },
    reducers: {
 
@@ -47,12 +60,11 @@ export const customerReducer = createSlice({
          .addCase(customerAdd.fulfilled, (state, { payload }) => {
             state.loader = false;
             state.successMessage = payload.message;
-            state.customer = [...state.customer, payload.customer]
+            // state.customer = [...state.customer, payload.customer]
          })
-        //  .addCase(get_category.fulfilled, (state, { payload }) => {
-        //     state.totalCategory = payload.totalCategory;
-        //     state.categorys = payload.category;
-        //  })
+         .addCase(get_customer.fulfilled, (state, { payload }) => {
+            state.customer = payload;
+         })
    }
 })
 export const { messageClear } = customerReducer.actions

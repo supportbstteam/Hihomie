@@ -5,8 +5,8 @@ import { customerAdd, messageClear } from '@/store/customer';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
 
-const CustomerAdd = () => {
-
+const CustomerAdd = ({open, setOpen}) => {
+   
 
      const dispatch = useDispatch();
   
@@ -30,8 +30,6 @@ const CustomerAdd = () => {
               [name]: type === "checkbox" ? checked : value,
           }));
       };
-  
-      console.log(formData)
   
       // handle form submit
       const handleSubmit = (e) => {

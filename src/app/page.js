@@ -36,10 +36,11 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9F8F1] px-4">
       {/* Logo */}
       <img
-        src="http://localhost:3000/logo.png"
+        src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
         alt="Logo"
         className="mb-4 w-32 sm:w-40 md:w-48"
       />
+
 
       {/* Login Form */}
       <div className="w-full max-w-md rounded-2xl border bg-white p-8 shadow-lg">
