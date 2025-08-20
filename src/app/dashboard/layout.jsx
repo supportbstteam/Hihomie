@@ -10,9 +10,6 @@ export default function DashboardLayout({ children }) {
       <div className="flex min-h-screen">
         <Sidebar />
         <div className="flex-1 p-6">
-          {/* LowerNav content ke upar */}
-         
-
           {/* Main Content */}
           <div className="mt-4">
             {children}

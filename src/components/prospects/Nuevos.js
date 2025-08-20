@@ -17,7 +17,7 @@ const Nuevos = () => {
     }, [])
   return (
      <div
-            className="min-w-[400px] flex-1 rounded-xl shadow-md p-2 flex flex-col bg-[#f9f9f9]"
+            className="min-w-[400px] h-[75vh] flex-1 rounded-xl shadow-md p-2 flex flex-col bg-[#f9f9f9]"
         >
             {/* Column Header */}
             <div className="flex items-center justify-between mb-4">
@@ -34,12 +34,9 @@ const Nuevos = () => {
                     <CiCirclePlus />
                 </button>
             </div>
-            <section className="grid gap-4 h-[70vh] overflow-y-scroll scrollbar-hide">
+            <section className="grid gap-4 overflow-y-scroll scrollbar-hide">
                 <Card users={customer}/>
             </section>
-
-
-
              <CustomerAdd open={open} setOpen={setOpen} />
         </div>
 

@@ -10,9 +10,9 @@ const Contactado = () => {
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                             <span
-                                className={`w-3 h-3 rounded-full bg-blue-500`}
+                                className={`w-3 h-3 rounded-full bg-green-500`}
                             />
-                            NUEVOS CLIENTES POTENCIALES
+                            CONTACTADO
                         </h2>
                         <button
                             onClick={() => setOpen(true)}

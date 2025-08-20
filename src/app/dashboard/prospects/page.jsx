@@ -2,12 +2,8 @@
 import React from 'react'
 import { MdOutlineFilterList } from "react-icons/md";
 import { FaList, FaPlus } from "react-icons/fa";
-import { FiDownload } from "react-icons/fi";;
-import Nuevos from '@/components/prospects/Nuevos';
-import Contactado from '@/components/prospects/Contactado';
-import EnElBanco from '@/components/prospects/EnElBanco';
-import Aprobado from '@/components/prospects/Aprobado';
-import Rechazado from '@/components/prospects/Rechazado';
+import { FiDownload } from "react-icons/fi";
+import DragScrollX from '@/components/DragScrollX';
 
 const Page = () => {
     return (
@@ -44,12 +40,8 @@ const Page = () => {
             </aside>
             {/* Main Grid */}
             <div className="  p-4 rounded-xl   bg-[#f9f9f9]  overflow-hidden ">
-                <div className="flex  gap-4 p-4 rounded-xl  bg-white overflow-x-auto scrollbar-hide">
-                    <Nuevos />
-                    <Contactado />
-                    <EnElBanco />
-                    <Aprobado />
-                    <Rechazado />
+                <div className="flex  gap-4 p-4 rounded-xl  bg-white overflow-x-auto scrollbar-hide ">
+                   <DragScrollX />
                 </div>
             </div>
         </div>
