@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { CiCirclePlus } from 'react-icons/ci'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { get_customer } from '@/store/customer'
+import Card from './Card'
 const Contactado = () => {
+
+     const dispatch = useDispatch();
+        const { customer } = useSelector(state => state.customer);
+    
+        useEffect(() => {
+            dispatch(get_customer())
+        }, [])
+
     return (
          <div
                     className="min-w-[400px] flex-1 rounded-xl shadow-md p-2 flex flex-col bg-[#f9f9f9]"
@@ -22,7 +32,7 @@ const Contactado = () => {
                         </button>
                     </div>
             <section className="grid gap-4 scrollbar-hide">
-                {/* <Card users={users}/> */}
+                <Card users={customer}/>
             </section>
         </div>
     )

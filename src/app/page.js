@@ -1,6 +1,6 @@
 'use client'
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '@/store/uiSlice'
@@ -8,6 +8,8 @@ import toast from "react-hot-toast"
 import { CiMail, CiLock } from "react-icons/ci";
 import Spinner from '@/components/Spinner'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -17,6 +19,14 @@ export default function LoginPage() {
   const dispatch = useDispatch()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push('/dashboard')
+    }
+  }, [status, router])
 
   async function onSubmit(e) {
     e.preventDefault()
