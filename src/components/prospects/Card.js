@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaCalendarAlt, FaEnvelope, FaPhone } from "react-icons/fa";
+import EditCard from "./EditCard";
+import { format } from "date-fns";
 
-const Card = ({ users }) => {
+const Card = ({ users, onDragStart }) => {
+  const [selectedUser, setSelectedUser] = useState(null); // popup ke liye user store karne ke liye
+
+  const handleCardClick = (user) => {
+    setSelectedUser(user); // jis user pe click hua uska data popup me dikhayenge
+  };
+
+  const closePopup = () => {
+    setSelectedUser(null);
+  };
+
   return (
     <>
       {users.map((user, i) => (
         <div
           key={i}
           className="h-fit shadow rounded-lg p-4 hover:shadow transition bg-white cursor-pointer"
+          draggable
+          onDragStart={(e) => onDragStart(e, user, i)}
+          onClick={() => handleCardClick(user)} // card click event
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
@@ -29,7 +44,7 @@ const Card = ({ users }) => {
               <FaPhone className="text-gray-400" /> {user.phone}
             </div>
             <div className="flex items-center gap-2">
-              <FaCalendarAlt className="text-gray-400" /> {user.date}
+              <FaCalendarAlt className="text-gray-400" /> {format(new Date(user.createdAt), "MMM dd, yyyy")}
             </div>
           </div>
 
@@ -46,6 +61,15 @@ const Card = ({ users }) => {
           </div>
         </div>
       ))}
+
+      {/* Popup for editing */}
+      {selectedUser && (
+        <EditCard
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+          closePopup={closePopup}
+        />
+      )}
     </>
   );
 };

@@ -7,7 +7,6 @@ export const customerAdd = createAsyncThunk(
    async (object, { rejectWithValue, fulfillWithValue }) => {
       try {
          const { data } = await api.post('/customer', object, { withCredentials: true })
-         console.log(data)
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response.data)
@@ -19,16 +18,51 @@ export const customerAdd = createAsyncThunk(
 
 
 export const get_customer = createAsyncThunk(
-  "customer/get_customer",
-  async (_, { rejectWithValue, fulfillWithValue }) => {
-    try {
-      const { data } = await api.get(`/customer`, { withCredentials: true });
-      return fulfillWithValue(data);
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Something went wrong");
-    }
-  }
+   "customer/get_customer",
+   async (_, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/customer`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
 );
+
+export const customerUpdate = createAsyncThunk(
+   'customerUpdate',
+   async (object, { rejectWithValue, fulfillWithValue }) => {
+
+      console.log(object)
+
+      try {
+         const { data } = await api.put('/customer', object, { withCredentials: true })
+         console.log(data)
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+
+      }
+   }
+)
+
+export const cardUpdate = createAsyncThunk(
+   'cardUpdate',
+   async ({userId,to}, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post('/customer/card', {
+
+userId,to
+
+         }, { withCredentials: true })
+         console.log(data)
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+
+      }
+   }
+)
 
 
 export const customerReducer = createSlice({
@@ -38,12 +72,13 @@ export const customerReducer = createSlice({
       successMessage: '',
       errorMessage: '',
       loader: false,
-      customer : [],
+      customer: [],
    },
    reducers: {
 
       messageClear: (state, _) => {
          state.errorMessage = "";
+         state.successMessage = "";
       }
 
    },
@@ -65,6 +100,23 @@ export const customerReducer = createSlice({
          .addCase(get_customer.fulfilled, (state, { payload }) => {
             state.customer = payload.customer;
          })
+
+         // Update customer
+         .addCase(customerUpdate.pending, (state) => {
+            state.loader = true;
+         })
+         .addCase(customerUpdate.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+         .addCase(customerUpdate.fulfilled, (state, { payload }) => {
+            state.loader = false;
+            state.successMessage = payload.message;
+            // ✅ FIX: Update existing instead of duplicating
+            state.customer = state.customer.map((cust) =>
+               cust._id === payload.customer._id ? payload.customer : cust
+            );
+         });
    }
 })
 export const { messageClear } = customerReducer.actions

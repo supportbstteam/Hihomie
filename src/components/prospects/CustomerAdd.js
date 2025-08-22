@@ -5,61 +5,61 @@ import { customerAdd, messageClear } from '@/store/customer';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
 
-const CustomerAdd = ({open, setOpen}) => {
-   
+const CustomerAdd = ({ open, setOpen }) => {
 
-     const dispatch = useDispatch();
-  
-      const { loader, successMessage, errorMessage } = useSelector(state => state.customer);
-  
-      const [formData, setFormData] = useState({
-          first_name: "",
-          last_name: "",
-          email: "",
-          phone: "",
-          password: "",
-          origin: "",
-          automatic: false,
-      });
-  
-      // handle input change
-      const handleChange = (e) => {
-          const { name, value, type, checked } = e.target;
-          setFormData((prev) => ({
-              ...prev,
-              [name]: type === "checkbox" ? checked : value,
-          }));
-      };
-  
-      // handle form submit
-      const handleSubmit = (e) => {
-          e.preventDefault();
-          dispatch(customerAdd(formData))
-  
-      };
-  
-        useEffect(() => {
-  
-          if (successMessage) {
+
+    const dispatch = useDispatch();
+
+    const { loader, successMessage, errorMessage } = useSelector(state => state.customer);
+
+    const [formData, setFormData] = useState({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        password: "",
+        origin: "",
+        automatic: false,
+    });
+
+    // handle input change
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+
+    // handle form submit
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(customerAdd(formData))
+
+    };
+
+    useEffect(() => {
+
+        if (successMessage) {
             toast.success(successMessage)
             setOpen(false)
             dispatch(messageClear());
-          }
-      
-          if (errorMessage) {
+        }
+
+        if (errorMessage) {
             toast.error(errorMessage)
             dispatch(messageClear());
-          }
-      
-        }, [errorMessage, successMessage])
+        }
+
+    }, [errorMessage, successMessage])
 
 
 
-  return (
-    <div>
+    return (
+        <div>
 
-      
-        {open && (
+
+            {open && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
                     <div className="bg-white w-full max-w-5xl h-[75vh] rounded-2xl shadow-2xl p-10 relative overflow-y-auto">
 
@@ -141,58 +141,59 @@ const CustomerAdd = ({open, setOpen}) => {
                                     <option>Referido</option>
                                 </select>
                             </div>
-                        
-                        <div className="flex justify-between items-center mt-10">
 
-                            <span className='font-semibold text-2xl'>Automatico</span>
-                            <span><div className="flex items-center gap-3">
+                            <div className="flex justify-between items-center mt-10 col-span-2">
+                                <span className="font-semibold text-2xl">Automático</span>
+                                <div className="flex items-center gap-3">
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only peer"
+                                            name="automatic"
+                                            checked={formData.automatic}
+                                            onChange={handleChange}
+                                        />
+                                        <div className="w-14 h-8 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
+                                        <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                                    </label>
+                                </div>
+                            </div>
 
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" name="automatic" checked={formData.automatic}
-                                        onChange={handleChange} />
-                                    <div className="w-14 h-8 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
-                                    <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
-                                </label>
-
-                            </div></span>
-
-                        </div>
-
-                        {/* Footer */}
-                        {/* Footer */}
-                        <div className="col-span-2 flex gap-5 justify-between items-center mt-10">
-                            <button
-                                type="reset"
-                                className="px-6 py-3 border rounded-xl w-[95%] text-gray-700 hover:bg-gray-100 text-lg"
-                                onClick={() =>
-                                    setFormData({
-                                        first_name: "",
-                                        last_name: "",
-                                        email: "",
-                                        phone: "",
-                                        password: "",
-                                        origin: "",
-                                        automatic: false,
-                                    })
-                                }
-                            >
-                                Restablecer
-                            </button>
-                            <button
-                               disabled={loader}
-                                type="submit"
-                                className="px-8 py-3 w-[95%] bg-green-600 text-white rounded-xl hover:bg-green-700 text-lg font-semibold"
-                            >
-                                 {loader ? "Loading..." : "Aplicar"}
-                            </button>
-                        </div>
+                            {/* Footer */}
+                            {/* Footer */}
+                            <div className="col-span-2 flex gap-5 justify-between items-center mt-10">
+                                <button
+                                    type="reset"
+                                    className="px-6 py-3 border rounded-xl w-[95%] text-gray-700 hover:bg-gray-100 text-lg"
+                                    onClick={() =>
+                                        setFormData({
+                                            first_name: "",
+                                            last_name: "",
+                                            email: "",
+                                            phone: "",
+                                            password: "",
+                                            origin: "",
+                                            automatic: false,
+                                        })
+                                    }
+                                >
+                                    Restablecer
+                                </button>
+                                <button
+                                    disabled={loader}
+                                    type="submit"
+                                    className="px-8 py-3 w-[95%] bg-green-600 text-white rounded-xl hover:bg-green-700 text-lg font-semibold"
+                                >
+                                    {loader ? "Loading..." : "Aplicar"}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
             )}
 
-    </div>
-  )
+        </div>
+    )
 }
 
 export default CustomerAdd

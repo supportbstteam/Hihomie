@@ -48,25 +48,44 @@ export async function GET() {
   try {
     await dbConnect();
 
-    const users = await Customer.find({ flag: 1 }).lean();
-    const formatDate = (date) => {
-      return new Date(date).toLocaleDateString("en-US", {
-        month: "short",  // Aug
-        day: "2-digit",  // 30
-        year: "numeric"  // 2025
-      }).replace(",", ","); 
-      // 👆 ensure format "Aug,30 2025"
-    };
-
-    const userData = users.map(({ password, createdAt, ...rest }) => ({
+    const users = await Customer.find().lean();
+  
+    const userData = users.map(({ password, ...rest }) => ({
       ...rest,
-      date: formatDate(createdAt)
     }));
 
 
     return NextResponse.json({customer: userData,},{ status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+export async function PUT(req) {
+  try {
+    const { id, first_name, last_name, phone, origin, automatic } = await req.json();
+
+    await dbConnect();
+
+    const user = await Customer.findByIdAndUpdate(
+      id,
+      { first_name, last_name, phone, origin, automatic },
+      { new: true }
+    );
+
+    if (!user) {
+      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    }
+
+    const { password: _, ...userData } = user.toObject();
+
+    return NextResponse.json(
+      { message: "Customer updated successfully", customer: userData },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

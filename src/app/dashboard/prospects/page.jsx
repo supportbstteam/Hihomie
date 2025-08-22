@@ -12,10 +12,10 @@ const Page = () => {
             <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
                 <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
                     <div className="hidden sm:flex flex-col">
-                        <span className="text-[#071437] text-2xl font-semibold">
+                        <span className="text-[#071437] text-2xl">
                             Gestión de clientes potenciales
                         </span>
-                        <span className="text-[#99A1B7] text-sm">
+                        <span className="text-[#99A1B7] text-2xl">
                             Organiza los clientes potenciales y sigue su progreso de forma eficaz aquí
                         </span>
                     </div>

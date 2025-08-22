@@ -1,26 +1,36 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import { CiCirclePlus } from 'react-icons/ci'
-import Card from './Card'
-import { useDispatch, useSelector } from 'react-redux'
-import { get_customer } from '@/store/customer'
-import CustomerAdd from './CustomerAdd'
+import React, { useState } from "react";
+import Card from "./Card";
+import { CiCirclePlus } from "react-icons/ci";
+import CustomerAdd from "./CustomerAdd";
+import EditCard from "./EditCard";
 
-const Nuevos = () => {
+const Nuevos = ({ users, setUsers, columnKey, onDropCard }) => {
 
- const [open, setOpen] = useState(false)
-    const dispatch = useDispatch();
-    const { customer } = useSelector(state => state.customer);
 
-    useEffect(() => {
-        dispatch(get_customer())
-    }, [])
+    const [selectedUser, setSelectedUser] = useState(null); // <-- define state here
+
+   const [open, setOpen] = useState(false)
+  const handleDragStart = (e, user) => {
+    e.dataTransfer.setData("userId", user._id);
+    e.dataTransfer.setData("from", columnKey);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const userId = e.dataTransfer.getData("userId");
+    const from = e.dataTransfer.getData("from");
+    if (userId) {
+      onDropCard(userId, from, columnKey);
+    }
+  };
+
   return (
-     <div
-            className="min-w-[400px] h-[75vh] flex-1 rounded-xl shadow-md p-2 flex flex-col bg-[#f9f9f9]"
-        >
-            {/* Column Header */}
-            <div className="flex items-center justify-between mb-4">
+    <div
+      className="min-w-[400px] h-[75vh] flex-1 rounded-xl shadow-md p-2 flex flex-col bg-[#f9f9f9]"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleDrop}
+    >
+     <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                     <span
                         className={`w-3 h-3 rounded-full bg-blue-500`}
@@ -34,14 +44,18 @@ const Nuevos = () => {
                     <CiCirclePlus />
                 </button>
             </div>
-            <section className="grid gap-4 overflow-y-scroll scrollbar-hide">
-                <Card users={customer}/>
-            </section>
-             <CustomerAdd open={open} setOpen={setOpen} />
-        </div>
+      <section className="grid gap-4 overflow-y-scroll scrollbar-hide">
+        <Card users={users} onDragStart={handleDragStart} selectedUser={selectedUser} />
+      {selectedUser && (
+          <EditCard
+            selectedUser={selectedUser}
+            setSelectedUser={setSelectedUser}
+          />
+        )}
+        <CustomerAdd open={open} setOpen={setOpen} />
+      </section>
+    </div>
+  );
+};
 
-        
-  )
-}
-
-export default Nuevos
+export default Nuevos;
