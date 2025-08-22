@@ -48,13 +48,28 @@ export const customerUpdate = createAsyncThunk(
 
 export const cardUpdate = createAsyncThunk(
    'cardUpdate',
-   async ({userId,to}, { rejectWithValue, fulfillWithValue }) => {
+   async ({ userId, to }, { rejectWithValue, fulfillWithValue }) => {
       try {
          const { data } = await api.post('/customer/card', {
 
-userId,to
+            userId, to
 
          }, { withCredentials: true })
+         console.log(data)
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+
+      }
+   }
+)
+
+
+export const cardDelete = createAsyncThunk(
+   'cardDelete',
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/customer/${id}`, { withCredentials: true });
          console.log(data)
          return fulfillWithValue(data);
       } catch (error) {
@@ -97,8 +112,12 @@ export const customerReducer = createSlice({
             state.successMessage = payload.message;
             state.customer = [...state.customer, payload.customer]
          })
+         .addCase(get_customer.pending, (state, { payload }) => {
+            state.loader = true;
+         })
          .addCase(get_customer.fulfilled, (state, { payload }) => {
             state.customer = payload.customer;
+            state.loader = false;
          })
 
          // Update customer
@@ -116,7 +135,16 @@ export const customerReducer = createSlice({
             state.customer = state.customer.map((cust) =>
                cust._id === payload.customer._id ? payload.customer : cust
             );
-         });
+         })
+         .addCase(cardDelete.fulfilled, (state, { payload }) => {
+
+            console.log(payload);
+
+            state.successMessage = payload.message; // if backend sends a message
+            state.customer = state.customer.filter(
+               (cust) => cust._id !== payload._id  // remove deleted one
+            );
+         })
    }
 })
 export const { messageClear } = customerReducer.actions

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaCalendarAlt, FaEnvelope, FaPhone } from "react-icons/fa";
 import EditCard from "./EditCard";
 import { format } from "date-fns";
+import { FiMail, FiMessageSquare, FiPhoneCall } from "react-icons/fi";
 
 const Card = ({ users, onDragStart }) => {
   const [selectedUser, setSelectedUser] = useState(null); // popup ke liye user store karne ke liye
@@ -59,6 +60,37 @@ const Card = ({ users, onDragStart }) => {
               <p>280.000 €</p>
             </div>
           </div>
+
+          <div className="flex justify-center items-center mt-5 text-2xl text-gray-400 gap-x-10 font-semibold">
+            <a
+              href={`tel:${user.phone}`}
+              className="hover:text-green-500"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <FiPhoneCall />
+            </a>
+
+            {/* WhatsApp */}
+            <a
+              href={`https://wa.me/${user.phone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-green-500"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <FiMessageSquare />
+            </a>
+
+            {/* Email */}
+            <a
+              href={`mailto:${user.email}`}
+              className="hover:text-green-500"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <FiMail />
+            </a>
+          </div>
+
         </div>
       ))}
 

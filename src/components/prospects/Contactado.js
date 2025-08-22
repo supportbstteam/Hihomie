@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import Card from './Card'
+import { CiCirclePlus } from 'react-icons/ci';
 const Contactado = ({ users, setUsers, columnKey, onDropCard }) => {
 
   const handleDragStart = (e, user) => {
@@ -21,11 +22,20 @@ const Contactado = ({ users, setUsers, columnKey, onDropCard }) => {
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
         >
-             <h2 className="font-semibold text-gray-800 flex items-center gap-2">
-                      <span
-                          className={`w-3 h-3 rounded-full bg-green-500`}
-                      />
-                CONTACTADO</h2>
+           <div className="flex items-center justify-between mb-4">
+                           <h2 className="font-semibold text-gray-800 flex items-center gap-2">
+                               <span
+                                   className={`w-3 h-3 rounded-full bg-green-500`}
+                               />
+                              CONTACTADO
+                           </h2>
+                           <button
+                               onClick={() => setOpen(true)}
+                               className="text-[#67778880] text-3xl hover:text-gray-700"
+                           >
+                               <CiCirclePlus />
+                           </button>
+                       </div>
             <section className="grid gap-4 overflow-y-scroll scrollbar-hide">
                 <Card users={users} onDragStart={handleDragStart} />
             </section>

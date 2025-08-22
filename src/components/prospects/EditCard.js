@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { customerUpdate, messageClear } from "@/store/customer";
+import { cardDelete, customerUpdate, messageClear } from "@/store/customer";
 import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const EditCard = ({ selectedUser, setSelectedUser }) => {
   const dispatch = useDispatch();
@@ -48,6 +49,10 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
     dispatch(customerUpdate(formData));
   };
 
+  const handleDelete = (id) =>{
+     dispatch(cardDelete(id))
+  }
+
  useEffect(() => {
   if (successMessage) {
     toast.success(successMessage);
@@ -75,6 +80,8 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
       });
     }
   }, [selectedUser]);
+
+
 
   return (
     <>
@@ -182,6 +189,7 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
                     <div className="w-14 h-8 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
                     <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                   </label>
+                  <span className="text-3xl text-red-500 cursor-pointer hover:text-[#21B573]"><RiDeleteBin6Line  onClick={() => handleDelete(formData.id)} /></span>
                 </div>
               </div>
 

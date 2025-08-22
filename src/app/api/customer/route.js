@@ -64,19 +64,30 @@ export async function GET() {
 
 export async function PUT(req) {
   try {
-    const { id, first_name, last_name, phone, origin, automatic } = await req.json();
+    const { id, first_name, last_name, phone, origin, automatic, email } = await req.json();
 
     await dbConnect();
 
-    const user = await Customer.findByIdAndUpdate(
-      id,
-      { first_name, last_name, phone, origin, automatic },
-      { new: true }
-    );
-
-    if (!user) {
+    // 1. Pehle customer nikaalo
+    const existingCustomer = await Customer.findById(id);
+    if (!existingCustomer) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
+
+    // 2. Agar email change kar raha hai to check karo ki dusre customer ke paas to nahi hai
+    if (email && email !== existingCustomer.email) {
+      const emailExists = await Customer.findOne({ email });
+      if (emailExists) {
+        return NextResponse.json({ error: "Email already exists" }, { status: 400 });
+      }
+    }
+
+    // 3. Update karo
+    const user = await Customer.findByIdAndUpdate(
+      id,
+      { first_name, last_name, phone, origin, automatic, email },
+      { new: true }
+    );
 
     const { password: _, ...userData } = user.toObject();
 
@@ -89,3 +100,26 @@ export async function PUT(req) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+
+// ✅ GET - Fetch all customers
+
+export async function DELETE(req, { params }) {
+  try {
+    await dbConnect();
+
+    const { id } = params; // 👈 capture id from URL
+
+    const deletedUser = await Customer.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Customer deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("DELETE Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+

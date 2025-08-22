@@ -15,7 +15,7 @@ const Page = () => {
                         <span className="text-[#071437] text-2xl">
                             Gestión de clientes potenciales
                         </span>
-                        <span className="text-[#99A1B7] text-2xl">
+                        <span className="text-[#99A1B7] text-[22px]">
                             Organiza los clientes potenciales y sigue su progreso de forma eficaz aquí
                         </span>
                     </div>
