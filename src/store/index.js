@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import uiReducer from '@/store/uiSlice'
 import customerReducer from './customer'
+import settingReducer from './setting'
 
 export const store = configureStore({
-  reducer: { 
+  reducer: {
     ui: uiReducer,
-    customer: customerReducer, 
+    customer: customerReducer,
+    setting: settingReducer,
   },
 })

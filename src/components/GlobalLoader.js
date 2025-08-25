@@ -21,7 +21,7 @@ export default function GlobalLoader({ children }) {
           fadeOut ? "opacity-0" : "opacity-100"
         }`}
       >
-        <div className="w-14 h-14 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-14 h-14 border-4 border-[#21b573] border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }

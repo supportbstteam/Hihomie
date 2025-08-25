@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { customerAdd, messageClear } from '@/store/customer';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
+import { get_leadStatusData } from '@/store/setting';
 
-const CustomerAdd = ({ open, setOpen }) => {
+const CustomerAdd = ({ open, setOpen, selectedColId }) => {
 
 
     const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const CustomerAdd = ({ open, setOpen }) => {
         password: "",
         origin: "",
         automatic: false,
+        selectedColId: selectedColId,
     });
 
     // handle input change
@@ -31,11 +33,18 @@ const CustomerAdd = ({ open, setOpen }) => {
         }));
     };
 
+    // keep in sync with prop
+    useEffect(() => {
+        setFormData((prev) => ({
+            ...prev,
+            selectedColId: selectedColId || ""
+        }));
+    }, [selectedColId]);
+
     // handle form submit
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(customerAdd(formData))
-
     };
 
     useEffect(() => {
@@ -44,7 +53,9 @@ const CustomerAdd = ({ open, setOpen }) => {
             toast.success(successMessage)
             setOpen(false)
             dispatch(messageClear());
+            dispatch(get_leadStatusData());
         }
+
 
         if (errorMessage) {
             toast.error(errorMessage)
@@ -52,8 +63,6 @@ const CustomerAdd = ({ open, setOpen }) => {
         }
 
     }, [errorMessage, successMessage])
-
-
 
     return (
         <div>

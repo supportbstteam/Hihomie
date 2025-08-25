@@ -32,9 +32,6 @@ export const get_customer = createAsyncThunk(
 export const customerUpdate = createAsyncThunk(
    'customerUpdate',
    async (object, { rejectWithValue, fulfillWithValue }) => {
-
-      console.log(object)
-
       try {
          const { data } = await api.put('/customer', object, { withCredentials: true })
          console.log(data)
@@ -108,6 +105,9 @@ export const customerReducer = createSlice({
             state.errorMessage = payload.error;
          })
          .addCase(customerAdd.fulfilled, (state, { payload }) => {
+
+            console.log(payload); console.log("dasdasd")
+
             state.loader = false;
             state.successMessage = payload.message;
             state.customer = [...state.customer, payload.customer]

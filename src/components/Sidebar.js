@@ -7,6 +7,7 @@ import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineDashboard, MdOut
 import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { IoSettingsOutline } from "react-icons/io5";
 
 
 const MENU = {
@@ -20,6 +21,7 @@ const MENU = {
     { href: '#', label: 'Comisión', icon: <MdOutlineHandshake /> },
     { href: '#', label: 'Importar', icon: <SiConvertio /> },
     { href: '#', label: 'Ayuda y Soporte', icon: <MdOutlineHeadphones /> },
+    { href: '/dashboard/setting', label: 'Settings', icon: <IoSettingsOutline /> },
   ],
   manager: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
