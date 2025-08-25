@@ -38,7 +38,7 @@ export async function PUT(req) {
     const { sourceColId, destColId, cardId } = await req.json();
 
     if (!sourceColId || !destColId || !cardId) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json({ error: "Missing required fields ok" }, { status: 400 });
     }
 
     // 1️⃣ Find source column
