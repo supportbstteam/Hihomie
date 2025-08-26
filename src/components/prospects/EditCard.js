@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const EditCard = ({ selectedUser, setSelectedUser }) => {
+const EditCard = ({ selectedUser, setSelectedUser, colId }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage } = useSelector(
     (state) => state.customer
@@ -19,6 +19,7 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
     origin: "",
     automatic: false,
     id: "",
+    colId : ""
   });
 
   // 🔹 reusable function to reset form
@@ -32,6 +33,7 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
       origin: "",
       automatic: false,
       id: "",
+     colId: "",  // ✅ keep the current colId
     });
 
   // handle input change
@@ -76,12 +78,11 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
     if (selectedUser) {
       setFormData({
         ...selectedUser,
-        id: selectedUser._id || "",
+        id: selectedUser.id || "",
+        colId : colId || "",
       });
     }
   }, [selectedUser]);
-
-
 
   return (
     <>
@@ -189,7 +190,7 @@ const EditCard = ({ selectedUser, setSelectedUser }) => {
                     <div className="w-14 h-8 bg-gray-300 rounded-full peer peer-checked:bg-green-600 transition-colors"></div>
                     <div className="absolute left-1 top-1 w-6 h-6 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                   </label>
-                  <span className="text-3xl text-red-500 cursor-pointer hover:text-[#21B573]"><RiDeleteBin6Line  onClick={() => handleDelete(formData.id)} /></span>
+                  {/* <span className="text-3xl text-red-500 cursor-pointer hover:text-[#21B573]"><RiDeleteBin6Line  onClick={() => handleDelete(formData.id)} /></span> */}
                 </div>
               </div>
 

@@ -112,7 +112,7 @@ export default function LoginPage() {
             {loading ? (
               <>
                 Iniciar sesión...
-                <Spinner />
+                {/* <Spinner /> */}
               </>
             ) : (
               "Iniciar sesión"

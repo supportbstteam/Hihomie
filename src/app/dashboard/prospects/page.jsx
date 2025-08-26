@@ -1,5 +1,6 @@
 'use client'
 import CustomerAdd from '@/components/prospects/CustomerAdd';
+import EditCard from '@/components/prospects/EditCard';
 import { get_leadStatusCardUpdate, get_leadStatusData } from '@/store/setting';
 import React, { useEffect, useState } from 'react';
 import { CiCirclePlus } from "react-icons/ci";
@@ -15,7 +16,7 @@ export default function CustomDnD() {
     const [dragOverColId, setDragOverColId] = useState(null);   // 👈 new
     const [open, setOpen] = useState(false);
     const [selectedColId, setSelectedColId] = useState(null);
-
+    const [selectedUser, setSelectedUser] = useState(null); // 👈 नया state
     useEffect(() => {
         dispatch(get_leadStatusData());
     }, [dispatch]);
@@ -30,6 +31,8 @@ export default function CustomDnD() {
                     cards: item.cards.map((c, i) => ({
                         id: c._id || `${item._id}-${i}`,
                         title: `${c.first_name || ""} ${c.last_name || ""}`.trim() || `Card ${i + 1}`,
+                        first_name : c.first_name,
+                        last_name : c.last_name,
                         email: c.email,
                         phone: c.phone,
                         origin: c.origin,
@@ -59,9 +62,6 @@ export default function CustomDnD() {
     };
 
     const handleDragEnd = () => {
-
-
-
         setDraggedCard(null);
         setDraggingCardId(null); // 👈 remove highlight
         setDragOverColId(null);
@@ -138,6 +138,12 @@ export default function CustomDnD() {
         handleDragEnd();
     };
 
+
+    const handleCardClick = (colId, card) => {
+        setSelectedColId(colId);
+        setSelectedUser(card);
+    };
+
     return (
         <div className="flex gap-6 p-6">
             {Object.values(columns).map((col) => (
@@ -169,6 +175,7 @@ export default function CustomDnD() {
                             onDragEnd={handleDragEnd}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={() => handleDropBetween(col.id, index)}
+                            onClick={() => handleCardClick(col.id, card)}
                             className={`shadow-md rounded-xl p-4 mb-3 cursor-grab transition 
                                 ${draggingCardId === card.id ? "opacity-50 border-2 border-blue-500" : "bg-white"}`}
                         >
@@ -200,6 +207,15 @@ export default function CustomDnD() {
                 selectedColId={selectedColId}
                 onCardAdded={handleCardAdded}
             />
+
+            {selectedUser && (
+                <EditCard
+                    selectedUser={selectedUser}
+                    setSelectedUser={setSelectedUser}
+                    colId={selectedColId}
+                />
+            )}
+
         </div>
     );
 }

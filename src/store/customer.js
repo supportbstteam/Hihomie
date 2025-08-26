@@ -132,9 +132,9 @@ export const customerReducer = createSlice({
             state.loader = false;
             state.successMessage = payload.message;
             // ✅ FIX: Update existing instead of duplicating
-            state.customer = state.customer.map((cust) =>
-               cust._id === payload.customer._id ? payload.customer : cust
-            );
+            // state.customer = state.customer.map((cust) =>
+            //    cust._id === payload.customer._id ? payload.customer : cust
+            // );
          })
          .addCase(cardDelete.fulfilled, (state, { payload }) => {
 

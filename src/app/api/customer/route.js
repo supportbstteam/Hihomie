@@ -8,8 +8,6 @@ import LeadStatus from '@/models/LeadStatus'
 
 export async function POST(req) {
 
-
-
     try {
         const { first_name, last_name, email, phone, origin, automatic, password,selectedColId } = await req.json()
 
@@ -36,32 +34,6 @@ export async function POST(req) {
 
         return NextResponse.json({ message: 'Card added successfully', data: updatedColumn }, { status: 200 });
 
-
-        // if (!email || !password) {
-        //     return NextResponse.json({ error: 'Email & password required' }, { status: 400 })
-        // }
-
-        // await dbConnect() // Connect to DB
-
-
-        // const exists = await Customer.findOne({ email })
-        // if (exists) {
-        //     return NextResponse.json({ error: 'Email already exists' }, { status: 409 })
-        // }
-
-        // const exist = await Customer.findOne({ phone })
-        // if (exist) {
-        //     return NextResponse.json({ error: 'Phone Number already exists' }, { status: 409 })
-        // }
-
-        // const hashed = await bcrypt.hash(password, 10)
-        // const user = await Customer.create({ first_name, last_name, email, phone, origin, automatic, password: hashed })
-
-        // // ✅ password हटाकर response भेजना
-        // const { password: _, ...userData } = user.toObject()
-
-        // return NextResponse.json({message: "Customer created successfully",customer: userData,},{ status: 201 })
-
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
@@ -87,44 +59,98 @@ export async function GET() {
   }
 }
 
-export async function PUT(req) {
-  try {
-    const { id, first_name, last_name, phone, origin, automatic, email } = await req.json();
+// export async function PUT(req) {
+//   try {
+//     const { id, first_name, last_name, phone, origin, automatic, email,colId } = await req.json();
 
-    await dbConnect();
+//     await dbConnect();
+
+//     console.log(colId)
 
     // 1. Pehle customer nikaalo
-    const existingCustomer = await Customer.findById(id);
-    if (!existingCustomer) {
-      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    // const existingCustomer = await Customer.findById(id);
+    // if (!existingCustomer) {
+    //   return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    // }
+
+    // // 2. Agar email change kar raha hai to check karo ki dusre customer ke paas to nahi hai
+    // if (email && email !== existingCustomer.email) {
+    //   const emailExists = await Customer.findOne({ email });
+    //   if (emailExists) {
+    //     return NextResponse.json({ error: "Email already exists" }, { status: 400 });
+    //   }
+    // }
+
+    // // 3. Update karo
+    // const user = await Customer.findByIdAndUpdate(
+    //   id,
+    //   { first_name, last_name, phone, origin, automatic, email },
+    //   { new: true }
+    // );
+
+    // const { password: _, ...userData } = user.toObject();
+
+    // return NextResponse.json(
+    //   { message: "Customer updated successfully", customer: userData },
+    //   { status: 200 }
+    // );
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+//   }
+// }
+
+import mongoose from "mongoose";
+
+export async function PUT(req) {
+  try {
+    const { colId, id, first_name, last_name, phone, origin, automatic, email } = await req.json();
+
+
+    console.log(colId + " " + id)
+
+    await dbConnect(colId);
+
+    if (!colId || !id) {
+      return NextResponse.json({ error: "colId and id are required" }, { status: 400 });
     }
 
-    // 2. Agar email change kar raha hai to check karo ki dusre customer ke paas to nahi hai
-    if (email && email !== existingCustomer.email) {
-      const emailExists = await Customer.findOne({ email });
-      if (emailExists) {
-        return NextResponse.json({ error: "Email already exists" }, { status: 400 });
-      }
+    if (!mongoose.Types.ObjectId.isValid(colId)) {
+      return NextResponse.json({ error: "Invalid colId" }, { status: 400 });
     }
 
-    // 3. Update karo
-    const user = await Customer.findByIdAndUpdate(
-      id,
-      { first_name, last_name, phone, origin, automatic, email },
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid card id" }, { status: 400 });
+    }
+
+    const updatedColumn = await LeadStatus.findOneAndUpdate(
+      { _id: colId, "cards._id": id },
+      {
+        $set: {
+          "cards.$.first_name": first_name,
+          "cards.$.last_name": last_name,
+          "cards.$.phone": phone,
+          "cards.$.origin": origin,
+          "cards.$.automatic": automatic,
+          "cards.$.email": email,
+        },
+      },
       { new: true }
     );
 
-    const { password: _, ...userData } = user.toObject();
+    if (!updatedColumn) {
+      return NextResponse.json({ error: "Card not found" }, { status: 404 });
+    }
 
-    return NextResponse.json(
-      { message: "Customer updated successfully", customer: userData },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Card updated successfully", data: updatedColumn }, { status: 200 });
+
   } catch (error) {
-    console.error(error);
+    console.error("Update Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+
 
 
 // ✅ GET - Fetch all customers

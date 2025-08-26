@@ -98,14 +98,7 @@ export default function LoginPage() {
             disabled={loading}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#21b573] px-4 py-2 font-medium text-white disabled:opacity-60"
           >
-            {loading ? (
-              <>
-                Iniciar sesión...
-                <Spinner />
-              </>
-            ) : (
               "Iniciar sesión"
-            )}
           </button>
         </form>
       </div>

@@ -58,6 +58,21 @@ export const get_leadStatusCardUpdate = createAsyncThunk(
 );
 
 
+export const delete_leadStatusDelete = createAsyncThunk(
+   "customer/delete_leadStatusDelete",
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/setting/leadStatus`, {
+            data: { id }, // body goes here
+            withCredentials: true,
+         });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 
 export const settingReducer = createSlice({
 
@@ -102,6 +117,23 @@ export const settingReducer = createSlice({
          .addCase(get_leadStatusCardUpdate.fulfilled, (state, { payload }) => {
             state.leadStatus = payload.data;
             state.loader = false;
+         })
+
+         .addCase(delete_leadStatusDelete.pending, (state) => {
+            state.loader = true;
+         })
+         .addCase(delete_leadStatusDelete.fulfilled, (state, { payload }) => {
+            state.loader = false;
+            state.successMessage = payload.message;
+
+            // ✅ Delete ke baad table se row hata do
+            state.leadStatus = state.leadStatus.filter(
+               (item) => item._id !== payload.deleted._id   // payload me id return karna zaroori hai
+            );
+         })
+         .addCase(delete_leadStatusDelete.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
          })
    }
 })

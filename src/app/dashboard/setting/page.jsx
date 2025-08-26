@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react'
 import { FaPlus, FaRegEdit, FaRegEye, FaRegTrashAlt } from "react-icons/fa";
 import AddStatus from '@/components/setting/status/AddStatus';
-import { MdOutlineStar } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { get_leadStatusData } from '@/store/setting';
+import { delete_leadStatusDelete, get_leadStatusData } from '@/store/setting';
+import toast from 'react-hot-toast';
+import { messageClear } from '@/store/customer';
 
 
 const data = [
@@ -19,7 +20,7 @@ const data = [
 const page = () => {
 
       const dispatch = useDispatch();
-      const { loader,leadStatus } = useSelector((state) => state.setting);
+      const { loader,leadStatus, successMessage, errorMessage } = useSelector((state) => state.setting);
 
     const [open, setOpen] = useState(false)
 
@@ -40,6 +41,10 @@ const page = () => {
       }, [dispatch]);
     
 
+      const handleDelete = (id) => {
+         dispatch(delete_leadStatusDelete(id))
+      }
+      
 
     return (
         <div className='grid w-full'>
@@ -65,9 +70,9 @@ const page = () => {
                     <thead>
                         <tr className="border-b text-gray-600">
                             <th className="py-3 text-left">Name</th>
-                            <th className="py-3 text-center">Leads</th>
+                            {/* <th className="py-3 text-center">Leads</th> */}
                             <th className="py-3 text-center">Color</th>
-                            <th className="py-3 text-center">Created By</th>
+                            {/* <th className="py-3 text-center">Created By</th> */}
                             <th className="py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -80,7 +85,7 @@ const page = () => {
                                 </td>
 
                                 {/* Leads */}
-                                <td className="py-3 text-center">1</td>
+                                {/* <td className="py-3 text-center">1</td> */}
 
                                 {/* Color */}
                                 <td className="py-3 text-center">
@@ -91,7 +96,7 @@ const page = () => {
                                 </td>
 
                                 {/* Created By */}
-                                <td className="py-3 text-center">
+                                {/* <td className="py-3 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <img
                                             src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png"
@@ -100,14 +105,14 @@ const page = () => {
                                         />
                                         <span className="text-gray-700">System</span>
                                     </div>
-                                </td>
+                                </td> */}
 
                                 {/* Action */}
                                 <td className="py-3 text-center">
                                     <div className="flex justify-center gap-3 text-lg">
                                         <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" />
                                         <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition" />
-                                        <FaRegTrashAlt className="text-red-500 cursor-pointer hover:scale-110 transition" />
+                                        <FaRegTrashAlt onClick={()=>handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
                                     </div>
                                 </td>
                             </tr>
@@ -150,9 +155,9 @@ const page = () => {
                 </div>
             </div>
 
-
-
             <AddStatus open={open} setOpen={setOpen} />
+
+           
         </div>
     )
 }

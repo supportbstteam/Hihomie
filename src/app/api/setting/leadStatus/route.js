@@ -38,7 +38,7 @@ export async function PUT(req) {
     const { sourceColId, destColId, cardId } = await req.json();
 
     if (!sourceColId || !destColId || !cardId) {
-      return NextResponse.json({ error: "Missing required fields ok" }, { status: 400 });
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     // 1️⃣ Find source column
@@ -83,4 +83,28 @@ export async function PUT(req) {
 }
 
 
+export async function DELETE(req) {
+  try {
+    await dbConnect();
 
+    const { id } = await req.json()// comes from URL
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const deleted = await LeadStatus.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Record not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "Record deleted successfully", deleted },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("DELETE Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
