@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { delete_leadStatusDelete, get_leadStatusData } from '@/store/setting';
 import toast from 'react-hot-toast';
 import { messageClear } from '@/store/customer';
+import EditStatus from '@/components/setting/status/EditStatus';
 
 const page = () => {
 
@@ -13,6 +14,7 @@ const page = () => {
       const { loader,leadStatus, successMessage, errorMessage } = useSelector((state) => state.setting);
 
     const [open, setOpen] = useState(false)
+    const [statusData, setStatusData] = useState(false)
 
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 10;
@@ -35,6 +37,7 @@ const page = () => {
          dispatch(delete_leadStatusDelete(id))
       }
       
+      console.log(statusData);
 
     return (
         <div className='grid w-full'>
@@ -100,8 +103,8 @@ const page = () => {
                                 {/* Action */}
                                 <td className="py-3 text-center">
                                     <div className="flex justify-center gap-3 text-lg">
-                                        <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" />
-                                        <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition" />
+                                        {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
+                                        <FaRegEdit onClick={() => setStatusData(row)} className="text-orange-500 cursor-pointer hover:scale-110 transition" />
                                         <FaRegTrashAlt onClick={()=>handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
                                     </div>
                                 </td>
@@ -145,7 +148,15 @@ const page = () => {
                 </div>
             </div>
 
-            <AddStatus open={open} setOpen={setOpen} />
+            {open && <AddStatus open={open} setOpen={setOpen} />}
+
+            {statusData && 
+             
+                <EditStatus statusData = {statusData} setStatusData={setStatusData} />
+             
+            }
+
+            
 
            
         </div>

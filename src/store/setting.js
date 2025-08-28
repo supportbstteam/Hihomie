@@ -73,6 +73,22 @@ export const delete_leadStatusDelete = createAsyncThunk(
    }
 );
 
+export const update_statusData = createAsyncThunk(
+   "customer/update_statusData",
+   async (object, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.put(
+            `/setting/leadStatus/status`,
+            object,  // send object directly as body
+            { withCredentials: true } // config separately
+         );
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 
 export const settingReducer = createSlice({
 
@@ -124,6 +140,24 @@ export const settingReducer = createSlice({
             });
             state.loader = false;
          })
+
+
+         .addCase(update_statusData.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(update_statusData.rejected, (state, { payload }) => {
+
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+         .addCase(update_statusData.fulfilled, (state, { payload }) => {
+            state.loader = false;
+            state.successMessage = payload.message;
+            state.leadStatus = state.leadStatus.map(item =>
+               item._id === payload.data._id ? payload.data : item
+            );
+         })
+
 
          .addCase(delete_leadStatusDelete.pending, (state) => {
             state.loader = true;

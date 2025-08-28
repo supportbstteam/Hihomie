@@ -2,9 +2,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
-import { AddStatusData, messageClear } from '@/store/setting';
+import { messageClear, update_statusData } from '@/store/setting';
 
-const AddStatus = ({ open, setOpen }) => {
+const EditStatus = ({ open, setOpen, statusData, setStatusData}) => {
 
     const dispatch = useDispatch();
     const { loader, successMessage, errorMessage } = useSelector(state => state.setting);
@@ -12,7 +12,18 @@ const AddStatus = ({ open, setOpen }) => {
     const [formData, setFormData] = useState({
         status_name: "",
         color: "",
+        id : "",
     });
+
+    useEffect(() => {
+    if (statusData) {
+        setFormData({
+            status_name: statusData.status_name || "",
+            color: statusData.color || "",
+            id: statusData._id || "",
+        });
+    }
+}, [statusData]);
 
     // handle input change
     const handleChange = (e) => {
@@ -26,13 +37,13 @@ const AddStatus = ({ open, setOpen }) => {
     // handle form submit
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(AddStatusData(formData))
+        dispatch(update_statusData(formData))
     };
 
     useEffect(() => {
         if (successMessage) {
             toast.success(successMessage)
-            setOpen(false)
+            setStatusData(null)
             dispatch(messageClear());
         }
 
@@ -55,14 +66,13 @@ const AddStatus = ({ open, setOpen }) => {
 
     return (
         <div>
-            {open && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
                     <div className="bg-white w-full max-w-lg rounded-md shadow-lg p-6 relative">
 
                         {/* Header */}
                         <h2 className="text-xl font-semibold text-gray-800 mb-4">Agregar estado</h2>
                         <button
-                            onClick={() => setOpen(false)}
+                            onClick={() => setStatusData(null)}
                             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg"
                         >
                             ✕
@@ -141,9 +151,8 @@ const AddStatus = ({ open, setOpen }) => {
                         </form>
                     </div>
                 </div>
-            )}
         </div>
     )
 }
 
-export default AddStatus
+export default EditStatus
