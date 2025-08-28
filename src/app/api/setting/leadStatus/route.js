@@ -59,6 +59,8 @@ export async function PUT(req) {
     const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
     await sourceCol.save();
 
+     movedCard.status = destColId;
+
     // 4️⃣ Add card into destination column
     const destCol = await LeadStatus.findById(destColId);
     if (!destCol) {

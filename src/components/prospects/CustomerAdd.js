@@ -27,7 +27,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
         email: "",
         lead_value: "",
         assigned: "",
-        status: "New",
         type_of_opration: "First Home",
         customer_situation: "Want Information",
         purchase_status: "Still Looking",
@@ -35,16 +34,33 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
         manager_notes: "",
         detailsData: {},
         addressDetailsData: {},
-        selectedColId: selectedColId,
+        selectedColId: "",
     });
 
+    // const handleChange = (e) => {
+    //     const { name, value, type, checked } = e.target;
+    //     setFormData((prev) => ({
+    //         ...prev,
+    //         [name]: type === "checkbox" ? checked : value,
+    //     }));
+    // };
+
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value,
-        }));
+  const { name, value, type, checked } = e.target;
+  setFormData((prev) => {
+    let updated = {
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
     };
+
+    // अगर status बदला है → selectedColId भी update कर दो
+    if (name === "status") {
+      updated.selectedColId = value;
+    }
+
+    return updated;
+  });
+};
 
     const handleToggle = (e) => {
         setDetails(e.target.checked); // ON → true, OFF → false
@@ -78,6 +94,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         dispatch(customerAdd(formData))
     };
 
@@ -255,7 +272,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                                 >
 
                                     {leadStatus.map((item, i) =>
-                                        <option value={`${item.status_name}`} key={i}>{item.status_name}</option>
+                                        <option value={`${item._id}`} key={i}>{item.status_name}</option>
                                     )}
 
 
@@ -419,23 +436,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                             {/* Buttons */}
                             <div className="flex gap-3 justify-end">
                                 <button
+                                    onClick={() =>  setOpen(false)}
                                     type="reset"
-                                    className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100"
-                                    onClick={() =>
-                                        setFormData({
-                                            lead_title: "",
-                                            first_name: "",
-                                            last_name: "",
-                                            phone: "",
-                                            email: "",
-                                            lead_value: "",
-                                            assigned: "",
-                                            status: "New",
-                                            automatic: false,
-                                        })
-                                    }
-                                >
-                                    Reset
+                                    className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100">
+                                    Close
                                 </button>
                                 <button
                                     disabled={loader}

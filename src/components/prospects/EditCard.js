@@ -42,30 +42,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   });
 
   // 🔹 reusable function to reset form
-  const resetForm = () =>
-    setFormData({
-      lead_title: "",
-      surname: "",
-      first_name: "",
-      last_name: "",
-      company: "",
-      designation: "",
-      phone: "",
-      email: "",
-      lead_value: "",
-      assigned: "",
-      status: "New",
-      type_of_opration: "First Home",
-      customer_situation: "Want Information",
-      purchase_status: "Still Looking",
-      commercial_notes: "",
-      manager_notes: "",
-      detailsData: {},
-      addressDetailsData: {},
-      id: "",
-      colId: "",  // ✅ keep the current colId
-    });
 
+  
   // handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -95,8 +73,31 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (successMessage) {
-      resetForm();
       setSelectedUser(null);
+      setFormData({
+      lead_title: "",
+      surname: "",
+      first_name: "",
+      last_name: "",
+      company: "",
+      designation: "",
+      phone: "",
+      email: "",
+      lead_value: "",
+      assigned: "",
+      status: "New",
+      type_of_opration: "First Home",
+      customer_situation: "Want Information",
+      purchase_status: "Still Looking",
+      commercial_notes: "",
+      manager_notes: "",
+      detailsData: {},
+      addressDetailsData: {},
+      id: "",
+      colId: "",  // ✅ keep the current colId
+    });
+
+
     }
   }, [successMessage, errorMessage]);
 
@@ -289,7 +290,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   >
 
                     {leadStatus.map((item, i) =>
-                      <option value={`${item.status_name}`} key={i}>{item.status_name}</option>
+                      <option value={`${item._id}`} key={i}>{item.status_name}</option>
                     )}
 
 
@@ -462,23 +463,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 {/* Buttons */}
                 <div className="flex gap-3 justify-end">
                   <button
+                    onClick={() =>  setSelectedUser(null)}
                     type="reset"
-                    className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() =>
-                      setFormData({
-                        lead_title: "",
-                        first_name: "",
-                        last_name: "",
-                        phone: "",
-                        email: "",
-                        lead_value: "",
-                        assigned: "",
-                        status: "New",
-                        automatic: false,
-                      })
-                    }
-                  >
-                    Reset
+                    className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100">
+                    Close
                   </button>
                   <button
                     disabled={loader}
