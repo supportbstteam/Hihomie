@@ -8,36 +8,47 @@ import LeadStatus from '@/models/LeadStatus'
 
 export async function POST(req) {
 
-    try {
-        const { first_name, last_name, email, phone, origin, automatic, password,selectedColId } = await req.json()
+  try {
+    const {lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status ,commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId } = await req.json()
 
-         const newCard = {
-            first_name,
-            last_name,
-            email,
-            phone,
-            origin,
-            automatic,
-            password
-        };
+    const newCard = {
+      lead_title,
+        surname,
+        first_name,
+        last_name,
+        company,
+        designation,
+        phone,
+        email,
+        lead_value,
+        assigned,
+        status,
+        type_of_opration,
+        customer_situation,
+        purchase_status,
+        commercial_notes,
+        manager_notes,
+        detailsData,
+        addressDetailsData,
+    };
 
-        // Find the LeadStatus by ID and push the new card
-        const updatedColumn = await LeadStatus.findByIdAndUpdate(
-            selectedColId,
-            { $push: { cards: newCard } },
-            { new: true } // return the updated document
-        );
+    // Find the LeadStatus by ID and push the new card
+    const updatedColumn = await LeadStatus.findByIdAndUpdate(
+      selectedColId,
+      { $push: { cards: newCard } },
+      { new: true } // return the updated document
+    );
 
-        if (!updatedColumn) {
-            return NextResponse.json({ error: 'Column not found' }, { status: 404 });
-        }
-
-        return NextResponse.json({ message: 'Card added successfully', data: updatedColumn }, { status: 200 });
-
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    if (!updatedColumn) {
+      return NextResponse.json({ error: 'Column not found' }, { status: 404 });
     }
+
+    return NextResponse.json({ message: 'Card added successfully', data: updatedColumn }, { status: 200 });
+
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
 }
 
 // ✅ GET - Fetch all customers
@@ -46,68 +57,25 @@ export async function GET() {
     await dbConnect();
 
     const users = await Customer.find().lean();
-  
+
     const userData = users.map(({ password, ...rest }) => ({
       ...rest,
     }));
 
 
-    return NextResponse.json({customer: userData,},{ status: 201 })
+    return NextResponse.json({ customer: userData, }, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// export async function PUT(req) {
-//   try {
-//     const { id, first_name, last_name, phone, origin, automatic, email,colId } = await req.json();
-
-//     await dbConnect();
-
-//     console.log(colId)
-
-    // 1. Pehle customer nikaalo
-    // const existingCustomer = await Customer.findById(id);
-    // if (!existingCustomer) {
-    //   return NextResponse.json({ error: "Customer not found" }, { status: 404 });
-    // }
-
-    // // 2. Agar email change kar raha hai to check karo ki dusre customer ke paas to nahi hai
-    // if (email && email !== existingCustomer.email) {
-    //   const emailExists = await Customer.findOne({ email });
-    //   if (emailExists) {
-    //     return NextResponse.json({ error: "Email already exists" }, { status: 400 });
-    //   }
-    // }
-
-    // // 3. Update karo
-    // const user = await Customer.findByIdAndUpdate(
-    //   id,
-    //   { first_name, last_name, phone, origin, automatic, email },
-    //   { new: true }
-    // );
-
-    // const { password: _, ...userData } = user.toObject();
-
-    // return NextResponse.json(
-    //   { message: "Customer updated successfully", customer: userData },
-    //   { status: 200 }
-    // );
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
-
 import mongoose from "mongoose";
 
 export async function PUT(req) {
   try {
-    const { colId, id, first_name, last_name, phone, origin, automatic, email } = await req.json();
 
-
-    console.log(colId + " " + id)
+    const {colId, id,lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status ,commercial_notes, manager_notes, detailsData, addressDetailsData } = await req.json()
 
     await dbConnect(colId);
 
@@ -127,19 +95,36 @@ export async function PUT(req) {
       { _id: colId, "cards._id": id },
       {
         $set: {
+          "cards.$.lead_title": lead_title,
+          "cards.$.surname": surname,
           "cards.$.first_name": first_name,
           "cards.$.last_name": last_name,
+          "cards.$.company": company,
+          "cards.$.designation": designation,
           "cards.$.phone": phone,
-          "cards.$.origin": origin,
-          "cards.$.automatic": automatic,
           "cards.$.email": email,
+          "cards.$.lead_value": lead_value,
+          "cards.$.assigned": assigned,
+          "cards.$.status": status,
+          "cards.$.type_of_opration": type_of_opration,
+          "cards.$.customer_situation": customer_situation,
+          "cards.$.purchase_status": purchase_status,
+          "cards.$.commercial_notes": commercial_notes,
+          "cards.$.manager_notes": manager_notes,
+          "cards.$.detailsData": detailsData,
+          "cards.$.addressDetailsData": addressDetailsData,
         },
       },
       { new: true }
     );
 
+    const { password: _, ...userData } = updatedColumn.cards.toObject();
+
+
+    console.log(updatedColumn)
+
     if (!updatedColumn) {
-      return NextResponse.json({ error: "Card not found" }, { status: 404 });
+      return NextResponse.json({ error: "Card not found", customer: userData }, { status: 404 });
     }
 
     return NextResponse.json({ message: "Card updated successfully", data: updatedColumn }, { status: 200 });

@@ -34,7 +34,6 @@ export const customerUpdate = createAsyncThunk(
    async (object, { rejectWithValue, fulfillWithValue }) => {
       try {
          const { data } = await api.put('/customer', object, { withCredentials: true })
-         console.log(data)
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response.data)
@@ -52,7 +51,6 @@ export const cardUpdate = createAsyncThunk(
             userId, to
 
          }, { withCredentials: true })
-         console.log(data)
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response.data)
@@ -67,11 +65,9 @@ export const cardDelete = createAsyncThunk(
    async (id, { rejectWithValue, fulfillWithValue }) => {
       try {
          const { data } = await api.delete(`/customer/${id}`, { withCredentials: true });
-         console.log(data)
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response.data)
-
       }
    }
 )
@@ -105,9 +101,6 @@ export const customerReducer = createSlice({
             state.errorMessage = payload.error;
          })
          .addCase(customerAdd.fulfilled, (state, { payload }) => {
-
-            console.log(payload); console.log("dasdasd")
-
             state.loader = false;
             state.successMessage = payload.message;
             state.customer = [...state.customer, payload.customer]
@@ -131,15 +124,8 @@ export const customerReducer = createSlice({
          .addCase(customerUpdate.fulfilled, (state, { payload }) => {
             state.loader = false;
             state.successMessage = payload.message;
-            // ✅ FIX: Update existing instead of duplicating
-            // state.customer = state.customer.map((cust) =>
-            //    cust._id === payload.customer._id ? payload.customer : cust
-            // );
          })
          .addCase(cardDelete.fulfilled, (state, { payload }) => {
-
-            console.log(payload);
-
             state.successMessage = payload.message; // if backend sends a message
             state.customer = state.customer.filter(
                (cust) => cust._id !== payload._id  // remove deleted one

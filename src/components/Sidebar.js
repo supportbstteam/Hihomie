@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { FaAt } from "react-icons/fa";
-import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineDashboard, MdOutlineHandshake, MdOutlineHeadphones, MdOutlineLogout, MdOutlineRealEstateAgent } from "react-icons/md";
+import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineCategory, MdOutlineDashboard, MdOutlineHandshake, MdOutlineHeadphones, MdOutlineLogout, MdOutlineRealEstateAgent } from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -13,6 +13,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 const MENU = {
   admin: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
+    { href: '/dashboard/category', label: 'Categoría', icon: <MdOutlineCategory /> },
     { href: '/dashboard/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
     { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },

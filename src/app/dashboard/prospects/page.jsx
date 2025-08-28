@@ -3,8 +3,11 @@ import CustomerAdd from '@/components/prospects/CustomerAdd';
 import EditCard from '@/components/prospects/EditCard';
 import { get_leadStatusCardUpdate, get_leadStatusData } from '@/store/setting';
 import React, { useEffect, useState } from 'react';
-import { CiCirclePlus } from "react-icons/ci";
+import { CiCirclePlus, CiMail } from "react-icons/ci";
 import { useSelector, useDispatch } from 'react-redux';
+import { SlCalender } from "react-icons/sl";
+import { LuPhone, LuPhoneCall } from "react-icons/lu";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function CustomDnD() {
     const dispatch = useDispatch();
@@ -28,16 +31,7 @@ export default function CustomDnD() {
                     id: item._id,
                     title: item.status_name,
                     color: item.color,
-                    cards: item.cards.map((c, i) => ({
-                        id: c._id || `${item._id}-${i}`,
-                        title: `${c.first_name || ""} ${c.last_name || ""}`.trim() || `Card ${i + 1}`,
-                        first_name : c.first_name,
-                        last_name : c.last_name,
-                        email: c.email,
-                        phone: c.phone,
-                        origin: c.origin,
-                        automatic: c.automatic,
-                    })),
+                    cards: item.cards,
                 };
                 return acc;
             }, {});
@@ -144,12 +138,14 @@ export default function CustomDnD() {
         setSelectedUser(card);
     };
 
+ 
+
     return (
         <div className="flex gap-6 p-6">
             {Object.values(columns).map((col) => (
                 <div
                     key={col.id}
-                    className={`rounded-lg p-4 w-72 transition-colors duration-200 
+                    className={`rounded-lg p-4 w-[380px] transition-colors duration-200 
                         ${dragOverColId === col.id ? "bg-blue-100" : "bg-gray-100"}`}
                     onDragOver={(e) => handleDragOver(e, col.id)}
                     onDrop={() => handleDropColumn(col.id)}
@@ -169,9 +165,9 @@ export default function CustomDnD() {
 
                     {col.cards.map((card, index) => (
                         <div
-                            key={card.id}
+                            key={card._id}
                             draggable
-                            onDragStart={() => handleDragStart(card.id, col.id, index)}
+                            onDragStart={() => handleDragStart(card._id, col.id, index)}
                             onDragEnd={handleDragEnd}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={() => handleDropBetween(col.id, index)}
@@ -181,21 +177,41 @@ export default function CustomDnD() {
                         >
                             {/* Header */}
                             <div className="flex items-center gap-3 mb-3">
-                                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                                    {card.title?.[0] || "?"}
+                                <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                    {card.first_name?.[0] || "?"}
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-800">
-                                        {card.title}
+                                        {card.first_name} {card.last_name}
                                     </h3>
                                 </div>
                             </div>
 
                             {/* Contact Info */}
-                            <div className="text-sm text-gray-600 space-y-1 mb-3">
-                                <p>📞 {card.phone}</p>
-                                <p>📅 {new Date().toLocaleDateString()}</p>
+                            <div className="text-sm text-[#99A1B7] space-y-1 mb-3 text-[14px] leading-6 font-semibold">
+                                <p className='flex items-center gap-2'><CiMail /> {card.email}</p>
+                                <p className='flex items-center gap-2'><LuPhone /> {card.phone}</p>
+                                <p className='flex items-center gap-2'><SlCalender /> {new Date().toLocaleDateString()}</p>
                             </div>
+
+                            {/* <div className="mt-4 border rounded-lg p-7 flex justify-between text-sm border-green-500 bg-green-500 bg-opacity-5">
+                                <div>
+                                    <p className="text-green-600 font-medium">📈 Ingresos</p>
+                                    <p className="font-semibold">4.500 € / mes</p>
+                                </div>
+                                <div>
+                                    <p className="text-yellow-600 font-medium">💰 %Hipoteca</p>
+                                    <p className="font-semibold">280.000 €</p>
+                                </div>
+                            </div> */}
+
+                            <div className='flex justify-center items-center gap-10 text-[22px] text-[#99A1B7] mt-2'>
+                                <a href={`tel:${card.phone}`} onClick={(e) => e.stopPropagation()}><LuPhoneCall /></a>
+                                <a href={`https://wa.me/${card.phone}`} onClick={(e) => e.stopPropagation()}><FaWhatsapp /></a>
+                                <a href={`mailto:${card.email}`} onClick={(e) => e.stopPropagation()}><CiMail /></a>
+                            </div>
+
+
                         </div>
                     ))}
                 </div>
@@ -206,6 +222,8 @@ export default function CustomDnD() {
                 setOpen={setOpen}
                 selectedColId={selectedColId}
                 onCardAdded={handleCardAdded}
+                leadStatus = {leadStatus}
+                
             />
 
             {selectedUser && (
@@ -213,6 +231,7 @@ export default function CustomDnD() {
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
                     colId={selectedColId}
+                    leadStatus = {leadStatus}
                 />
             )}
 
