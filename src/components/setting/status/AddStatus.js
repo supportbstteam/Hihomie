@@ -68,14 +68,13 @@ const AddStatus = ({ open, setOpen }) => {
                             ✕
                         </button>
 
-                        <h2 className="text-3xl font-bold mb-4">Setting</h2>
-                        <p className="text-gray-500 text-lg">Status</p>
+                        <p className="text-gray-500 text-lg">Estado</p>
                         <hr className='mb-8' />
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                             <div className="w-full">
-                                <label className="text-base text-gray-700">Status Name</label>
+                                <label className="text-base text-gray-700">Nombre del estado</label>
                                 <input
                                     type="text"
                                     className="w-full border rounded-xl px-4 py-3 mt-2 text-lg focus:ring focus:ring-green-200"
@@ -128,10 +127,10 @@ const AddStatus = ({ open, setOpen }) => {
                                 </button>
                                 <button
                                     disabled={loader}
-                                    type="submit"
+                                    type="entregar"
                                     className="px-8 py-3 w-1/2 bg-green-600 text-white rounded-xl hover:bg-green-700 text-lg font-semibold"
                                 >
-                                    {loader ? "Loading..." : "Aplicar"}
+                                    {loader ? "Cargando..." : "Aplicar"}
                                 </button>
                             </div>
                         </form>

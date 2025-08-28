@@ -5,9 +5,9 @@ import TextEditor from '../TextEditor'
 const Form1 = ({ setDetailsData, selectedUser }) => {
 
     const [detailsData, setLocalDetailsData] = useState({
-        source: "Yellow & Pages",
-        category: "Default",
-        tag: "High",
+        source: "Amarillo y páginas",
+        category: "Por defecto",
+        tag: "Alta",
         last_connected: "",
         notes: "",
     });
@@ -16,18 +16,18 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
     useEffect(() => {
         if (selectedUser) {
             setLocalDetailsData({
-                source: selectedUser.source || "Yellow & Pages",
-                category: selectedUser.category || "Default",
-                tag: selectedUser.tag || "High",
+                source: selectedUser.source || "Amarillo y páginas",
+                category: selectedUser.category || "Por defecto",
+                tag: selectedUser.tag || "Alta",
                 last_connected: selectedUser.last_connected || "",
                 notes: selectedUser.notes || "",
             });
 
             // Parent me bhi update bhej do
             setDetailsData({
-                source: selectedUser.source || "Yellow & Pages",
-                category: selectedUser.category || "Default",
-                tag: selectedUser.tag || "High",
+                source: selectedUser.source || "Amarillo y páginas",
+                category: selectedUser.category || "Por defecto",
+                tag: selectedUser.tag || "Alta",
                 last_connected: selectedUser.last_connected || "",
                 notes: selectedUser.notes || "",
             });
@@ -49,7 +49,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
     return (
         <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-1 w-full mb-5">
-                <label className="text-gray-700 font-medium text-sm">Notes</label>
+                <label className="text-gray-700 font-medium text-sm">Notas</label>
                 <div className="w-full">
                     <TextEditor
                         className="min-h-[150px]"
@@ -61,7 +61,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Source</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Fuente</label>
                 <select
                     name="source"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -69,15 +69,15 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
                     onChange={handleChange}
                     required
                 >
-                    <option value="Yellow & Pages">Yellow & Pages</option>
-                    <option value="Yahoo">Yahoo</option>
-                    <option value="Google Places">Google Places</option>
-                    <option value="Facebook Ads">Facebook Ads</option>
+                    <option value="Amarillo y páginas">Amarillo y páginas</option>
+                    <option value="yahoo">yahoo</option>
+                    <option value="Lugares de Google">Lugares de Google</option>
+                    <option value="Anuncios de Facebook">Anuncios de Facebook</option>
                 </select>
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Category</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Categoría</label>
                 <select
                     name="category"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -85,14 +85,14 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
                     onChange={handleChange}
                     required
                 >
-                    <option value="Default">Default</option>
-                    <option value="Application Development">Application Development</option>
-                    <option value="Graphic Design">Graphic Design</option>
+                    <option value="Por defecto">Por defecto</option>
+                    <option value="Desarrollo de aplicaciones">Desarrollo de aplicaciones</option>
+                    <option value="Diseño Gráfico">Diseño Gráfico</option>
                 </select>
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Tags</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Etiquetas</label>
                 <select
                     name="tag"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -100,16 +100,16 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
                     onChange={handleChange}
                     required
                 >
-                    <option value="High">High</option>
+                    <option value="Alta">Alta</option>
                     <option value="Joomla">Joomla</option>
-                    <option value="Logo Design">Logo Design</option>
-                    <option value="Web Design">Web Design</option>
-                    <option value="wordpress">wordpress</option>
+                    <option value="Diseño de logotipo">Logo Design</option>
+                    <option value="Diseño Web">Diseño Web</option>
+                    <option value="Wordpress">Wordpress</option>
                 </select>
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Last Contacted</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Último contacto</label>
                 <input
                     type="Date"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"

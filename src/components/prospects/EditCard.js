@@ -29,10 +29,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     email: "",
     lead_value: "",
     assigned: "",
-    status: "New",
-    type_of_opration: "First Home",
-    customer_situation: "Want Information",
-    purchase_status: "Still Looking",
+    status: "Nueva",
+    type_of_opration: "Primera casa",
+    customer_situation: "Quiere información",
+    purchase_status: "Todavía buscando",
     commercial_notes: "",
     manager_notes: "",
     detailsData: {},
@@ -43,7 +43,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   // 🔹 reusable function to reset form
 
-  
+
   // handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -75,27 +75,27 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (successMessage) {
       setSelectedUser(null);
       setFormData({
-      lead_title: "",
-      surname: "",
-      first_name: "",
-      last_name: "",
-      company: "",
-      designation: "",
-      phone: "",
-      email: "",
-      lead_value: "",
-      assigned: "",
-      status: "New",
-      type_of_opration: "First Home",
-      customer_situation: "Want Information",
-      purchase_status: "Still Looking",
-      commercial_notes: "",
-      manager_notes: "",
-      detailsData: {},
-      addressDetailsData: {},
-      id: "",
-      colId: "",  // ✅ keep the current colId
-    });
+        lead_title: "",
+        surname: "",
+        first_name: "",
+        last_name: "",
+        company: "",
+        designation: "",
+        phone: "",
+        email: "",
+        lead_value: "",
+        assigned: "",
+        status: "New",
+        type_of_opration: "First Home",
+        customer_situation: "Want Information",
+        purchase_status: "Still Looking",
+        commercial_notes: "",
+        manager_notes: "",
+        detailsData: {},
+        addressDetailsData: {},
+        id: "",
+        colId: "",  // ✅ keep the current colId
+      });
 
 
     }
@@ -114,21 +114,21 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }
   }, [selectedUser]);
 
-   // 🔑 sync detailsData and addressDetailsData into formData
-      useEffect(() => {
-          setFormData((prev) => ({
-              ...prev,
-              detailsData: detailsData,
-          }));
-      }, [detailsData]);
-  
-      useEffect(() => {
-          setFormData((prev) => ({
-              ...prev,
-              addressDetailsData: addressDetailsData,
-          }));
-      }, [addressDetailsData]);
-  
+  // 🔑 sync detailsData and addressDetailsData into formData
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      detailsData: detailsData,
+    }));
+  }, [detailsData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      addressDetailsData: addressDetailsData,
+    }));
+  }, [addressDetailsData]);
+
 
   return (
     <>
@@ -146,14 +146,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 ✕
               </button>
 
-              <p className="text-gray-700 text-[20px] mb-6">Edit Lead</p>
+              <p className="text-gray-700 text-[20px] mb-6">Editar cliente potencial</p>
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[77vh]">
 
                 {/* Lead Title */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Lead Title*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Título principal*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -166,7 +166,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Surname</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Apellido</label>
                   <select
                     name="surname"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -174,15 +174,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">--Select Surname--</option>
-                    <option value="Mr.">Mr.</option>
-                    <option value="Mrs.">Mrs.</option>
+                    <option value="">--Seleccione Apellido--</option>
+                    <option value="Señor.">Señor.</option>
+                    <option value="Señora.">Señora.</option>
                   </select>
                 </div>
 
                 {/* First Name */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">First Name*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Nombre de pila*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -195,7 +195,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Last Name */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Last Name*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Apellido*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -207,7 +207,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Company</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Compañía</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -219,7 +219,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Designation</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Designación</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -232,7 +232,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Telephone */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Telephone</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Teléfono</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -244,7 +244,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Email */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Email Address</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Dirección de correo electrónico</label>
                   <input
                     type="email"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -256,7 +256,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Lead Value */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Lead Value ($)</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Valor principal ($)</label>
                   <input
                     type="number"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -268,7 +268,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Assigned */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Assigned</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Asignado</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -280,7 +280,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Status*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Estado*</label>
                   <select
                     name="status"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -298,7 +298,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Type of Operation</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Tipo de operación</label>
                   <select
                     name="type_of_opration"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -307,18 +307,18 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     required
                   >
 
-                    <option value="First Home">First Home</option>
-                    <option value="Second Home">Second Home</option>
-                    <option value="Investment">Investment</option>
-                    <option value="Surrogacy">Surrogacy</option>
-                    <option value="Refinancing">Refinancing</option>
+                    <option value="Primera casa">Primera casa</option>
+                    <option value="Segunda casa">Segunda casa</option>
+                    <option value="Inversión">Inversión</option>
+                    <option value="Subrogación">Surrogacy</option>
+                    <option value="Refinanciación">Refinanciación</option>
 
 
                   </select>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Customer Situation</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Situación del cliente</label>
                   <select
                     name="customer_situation"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -327,18 +327,18 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     required
                   >
 
-                    <option value="Want Information">Want Information</option>
-                    <option value="It will take time">It will take time</option>
-                    <option value="Urgent">Urgent</option>
-                    <option value="Evaluating">Evaluating</option>
-                    <option value="Decided">Decided</option>
+                    <option value="Quiere información">Quiere información</option>
+                    <option value="Tomará tiempo">Tomará tiempo</option>
+                    <option value="Urgente">Urgente</option>
+                    <option value="Evaluando">Evaluando</option>
+                    <option value="Decidida">Decidida</option>
 
 
                   </select>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Purchase Status</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">Estado de compra</label>
                   <select
                     name="purchase_status"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -347,9 +347,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     required
                   >
 
-                    <option value="Want Information">Still Looking</option>
-                    <option value="Selected Housing">Selected Housing</option>
-                    <option value="Proprietary">Proprietary</option>
+
+                    <option value="Todavía buscando">Todavía buscando</option>
+                    <option value="Vivienda Seleccionada">Vivienda Seleccionada</option>
+                    <option value="Propiedad">Propiedad</option>
 
 
                   </select>
@@ -357,7 +358,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 <section className="bg-gray-50 p-4 rounded-md border">
                   <h3 className="text-base font-semibold text-gray-800 mb-4">
-                    Notes and Observations
+                    Notas y observaciones
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -366,7 +367,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="commercial_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                        Commercial Notes
+                       Notas Comerciales
                       </label>
                       <textarea
                         id="commercial_notes"
@@ -384,7 +385,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="manager_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                        Manager&apos;s Notes
+                       Notas del gerente
                       </label>
                       <textarea
                         id="manager_notes"
@@ -402,7 +403,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
-                  <span className="w-32 font-medium text-gray-700 text-sm">Details</span>
+                  <span className="w-32 font-medium text-gray-700 text-sm">Detalles</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -422,11 +423,11 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {details &&
 
-                  <Form1 
+                  <Form1
 
-                  setDetailsData={setDetailsData} 
-                  selectedUser = {selectedUser.detailsData}
-                  
+                    setDetailsData={setDetailsData}
+                    selectedUser={selectedUser.detailsData}
+
                   />
 
                 }
@@ -434,7 +435,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
-                  <span className="font-medium text-gray-700 text-sm">Address & Organisation Details</span>
+                  <span className="font-medium text-gray-700 text-sm">Detalles de dirección y organización</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -453,27 +454,27 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 {address_details &&
 
                   <Form2
-                   setAddressDetailsData={setAddressDetailsData} 
-                    selectedUser = {selectedUser.addressDetailsData}
-                   
-                   />
+                    setAddressDetailsData={setAddressDetailsData}
+                    selectedUser={selectedUser.addressDetailsData}
+
+                  />
 
                 }
 
                 {/* Buttons */}
                 <div className="flex gap-3 justify-end">
                   <button
-                    onClick={() =>  setSelectedUser(null)}
+                    onClick={() => setSelectedUser(null)}
                     type="reset"
                     className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100">
-                    Close
+                    Cerca
                   </button>
                   <button
                     disabled={loader}
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
                   >
-                    {loader ? "Loading..." : "Submit"}
+                    {loader ? "Cargando..." : "Entregar"}
                   </button>
                 </div>
 

@@ -66,14 +66,14 @@ const AddCategory = ({setOpen}) => {
                             ✕
                         </button>
 
-                        <p className="text-gray-700 text-[20px] mb-6">Add A New Category</p>
+                        <p className="text-gray-700 text-[20px] mb-6">Agregar una nueva categoría</p>
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[77vh]">
 
                             {/* Lead Title */}
                             <div className="flex items-center gap-3">
-                                <label className="w-32 text-gray-700 font-medium text-sm">Category*</label>
+                                <label className="w-32 text-gray-700 font-medium text-sm">Categoría*</label>
                                 <input
                                     type="text"
                                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -86,7 +86,7 @@ const AddCategory = ({setOpen}) => {
 
                             {/* Status */}
                             <div className="flex items-center gap-3">
-                                <label className="w-32 text-gray-700 font-medium text-sm">Status</label>
+                                <label className="w-32 text-gray-700 font-medium text-sm">Estado</label>
                                 <select
                                     name="status"
                                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -94,9 +94,9 @@ const AddCategory = ({setOpen}) => {
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="">--Select Status--</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
+                                    <option value="">--Seleccionar estado--</option>
+                                    <option value="Activa">Activa</option>
+                                    <option value="Inactiva">Inactiva</option>
                                 </select>
                             </div>
 
@@ -114,14 +114,14 @@ const AddCategory = ({setOpen}) => {
                                         })
                                     }
                                 >
-                                    Reset
+                                    Reiniciar
                                 </button>
                                 <button
                                     disabled={loader}
                                     type="submit"
                                     className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
                                 >
-                                    {loader ? "Loading..." : "Submit"}
+                                    {loader ? "Cargando..." : "Entregar"}
                                 </button>
                             </div>
 

@@ -54,7 +54,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
         <div className="flex flex-col gap-4 w-full">
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Company_name</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">nombre de empresa</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -65,7 +65,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Strret</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Calle</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -76,7 +76,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">City</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Ciudad</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -87,7 +87,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">State</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Estado</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -98,7 +98,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Zip Code</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Código postal</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -109,7 +109,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Country</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">País</label>
                 <select
                     name="country"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -118,14 +118,14 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
                     required
                 >
                     <option value="India">India</option>
-                    <option value="America">America</option>
+                    <option value="América">América</option>
                     <option value="Austria">Austria</option>
-                    <option value="Canada">Canada</option>
+                    <option value="Canadá">Canadá</option>
                 </select>
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Website</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">Sitio web</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"

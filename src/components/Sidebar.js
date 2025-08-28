@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'   // ✅ Add this
 import { FaAt } from "react-icons/fa";
 import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineCategory, MdOutlineDashboard, MdOutlineHandshake, MdOutlineHeadphones, MdOutlineLogout, MdOutlineRealEstateAgent } from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
@@ -41,6 +42,7 @@ const MENU = {
 export default function Sidebar() {
   const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()   // ✅ current path
 
   if (status === "loading") {
     return (
@@ -58,18 +60,18 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Toggle Button */}
-      <button 
-        onClick={() => setOpen(true)} 
+      <button
+        onClick={() => setOpen(true)}
         className="p-2 md:hidden fixed top-4 left-4 z-50 bg-white rounded-lg shadow"
       >
         <GiHamburgerMenu size={24} />
       </button>
 
       {/* Sidebar */}
-     <aside
-  className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
-  ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
->
+      <aside
+        className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
+        ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
 
         {/* Close Button (Mobile Only) */}
         <div className="flex justify-between items-center mb-4 md:hidden z-[999]">
@@ -85,27 +87,37 @@ export default function Sidebar() {
         </div>
 
         <nav className="space-y-2">
-          {items.map((i, idx) => (
-            <div key={idx}>
-              <Link
-                href={i.href}
-                onClick={() => setOpen(false)} // ✅ Auto close sidebar on click
-                className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100"
-              >
-                <span className='text-[#84909A]'>{i.icon}</span>
-                <span className='text-[#071437]'>{i.label}</span>
-              </Link>
+          {items.map((i, idx) => {
+            const isActive = pathname === i.href  // ✅ Check active
 
-              {i.label === 'Agentes' && (
-                <hr className="my-4 border-gray-300" />
-              )}
-            </div>
-          ))}
+            return (
+              <div key={idx}>
+                <Link
+                  href={i.href}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 
+                    hover:bg-gray-100 transition-colors
+                    ${isActive ? "bg-[#21B57340]" : ""} `}
+                >
+                  <span className={`${isActive ? "text-[#21B573]" : "text-[#84909A]"}`}>
+                    {i.icon}
+                  </span>
+                  <span className={`${isActive ? "text-[#21B573]" : "text-[#071437]"}`}>
+                    {i.label}
+                  </span>
+                </Link>
+
+                {i.label === 'Agentes' && (
+                  <hr className="my-4 border-gray-300" />
+                )}
+              </div>
+            )
+          })}
 
           {/* Logout Button */}
           <button
             onClick={() => {
-              setOpen(false) // ✅ close sidebar on logout
+              setOpen(false)
               signOut({ callbackUrl: "/" })
             }}
             className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
@@ -117,4 +129,3 @@ export default function Sidebar() {
     </>
   )
 }
-

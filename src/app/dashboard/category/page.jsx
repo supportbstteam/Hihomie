@@ -74,9 +74,9 @@ const Category = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b text-gray-600">
-                            <th className="py-3 text-left">Category</th>
-                            <th className="py-3 text-center">Status</th>
-                            <th className="py-3 text-center">Action</th>
+                            <th className="py-3 text-left">Categoría</th>
+                            <th className="py-3 text-center">Estado</th>
+                            <th className="py-3 text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,7 +106,7 @@ const Category = () => {
                         onClick={() => setCurrentPage((prev) => prev - 1)}
                         disabled={currentPage === 1}
                     >
-                        Previous
+                        Previa
                     </button>
 
                     <div className="flex gap-2">
@@ -129,7 +129,7 @@ const Category = () => {
                         onClick={() => setCurrentPage((prev) => prev + 1)}
                         disabled={currentPage === totalPages}
                     >
-                        Next
+                        Próxima
                     </button>
                 </div>
             </div>

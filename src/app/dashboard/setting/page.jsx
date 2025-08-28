@@ -7,16 +7,6 @@ import { delete_leadStatusDelete, get_leadStatusData } from '@/store/setting';
 import toast from 'react-hot-toast';
 import { messageClear } from '@/store/customer';
 
-
-const data = [
-    { name: "New", leads: 1, color: "#cccccc", createdBy: "System", initial: true },
-    { name: "Disqualified", leads: 1, color: "#ff4d4d", createdBy: "System" },
-    { name: "Qualified", leads: 2, color: "#00bfff", createdBy: "System" },
-    { name: "Contacted", leads: 1, color: "#ff9933", createdBy: "System" },
-    { name: "Proposal Sent", leads: 1, color: "#cccc33", createdBy: "System" },
-    { name: "Converted", leads: 4, color: "#00cc99", createdBy: "System", final: true },
-];
-
 const page = () => {
 
       const dispatch = useDispatch();
@@ -30,8 +20,8 @@ const page = () => {
     // Pagination logic
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
-    const totalPages = Math.ceil(data.length / recordsPerPage);
+    const currentRecords = leadStatus.slice(indexOfFirstRecord, indexOfLastRecord);
+    const totalPages = Math.ceil(leadStatus.length / recordsPerPage);
 
    
 
@@ -69,11 +59,11 @@ const page = () => {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b text-gray-600">
-                            <th className="py-3 text-left">Name</th>
+                            <th className="py-3 text-left">Nombre</th>
                             {/* <th className="py-3 text-center">Leads</th> */}
                             <th className="py-3 text-center">Color</th>
                             {/* <th className="py-3 text-center">Created By</th> */}
-                            <th className="py-3 text-center">Action</th>
+                            <th className="py-3 text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,7 +117,7 @@ const page = () => {
                         onClick={() => setCurrentPage((prev) => prev - 1)}
                         disabled={currentPage === 1}
                     >
-                        Previous
+                        Previa
                     </button>
 
                     <div className="flex gap-2">
@@ -150,7 +140,7 @@ const page = () => {
                         onClick={() => setCurrentPage((prev) => prev + 1)}
                         disabled={currentPage === totalPages}
                     >
-                        Next
+                        Próxima
                     </button>
                 </div>
             </div>
