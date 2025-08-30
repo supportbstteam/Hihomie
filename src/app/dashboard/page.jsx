@@ -5,7 +5,8 @@ import Head from "next/head";
 import LowerNav from "@/components/LowerNav";
 import List from "@/components/List";
 import Stats from "@/components/Stats";
-import List from "@/components/List";
+import FilterComponent from "@/components/ui/FilterComponent";
+// import List from "@/components/List";
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
@@ -20,10 +21,11 @@ export default async function DashboardPage() {
           You are signed in as{" "}
           <span className="font-medium">{session.user.role}</span>.
         </p>
+        <FilterComponent/>
         <br></br>
         <Stats />
         <br></br>
-        <List />
+        <List />  
       </div>
     </>
   );

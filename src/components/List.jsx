@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, Minus, Percent, Plus, Square } from "lucide-react";
+import { ArrowDown, ArrowUp, EllipsisVertical, Mail, MessageSquareText, Minus, Percent, Phone, Plus, Square } from "lucide-react";
 import React from "react";
 
 const data = [
@@ -13,6 +13,7 @@ const data = [
       color: "blue",
     },
   },
+
   {
     fullName: "Brooklyn Simmons",
     date: "2025-08-30",
@@ -102,5 +103,4 @@ const List = () => {
     </div>
   );
 };
-
 export default List;
