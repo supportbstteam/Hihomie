@@ -30,7 +30,7 @@ const Button = ({
 
   const sizeStyles = {
     xs: "px-3 py-1 text-xs",
-    sm: "px-7 py-2 text-sm min-w-[110px]",
+    sm: "px-7 py-2 text-sm min-w-[110px] font-medium",
     md: "px-6 py-[6px] text-[17px] min-w-[110px]",
     lg: "px-6 py-2 md:px-12 md:py-4 text-lg font-bold",
     xl: "px-6 py-2 md:px-14 md:py-3 text-lg md:text-[22px] font-bold",
@@ -51,9 +51,9 @@ const Button = ({
 
   const variantStyles = {
     primary:
-      "rounded-full min-w-[90px] bg-primary text-white border-2 border-transparent hover:bg-white hover:text-black hover:border-black transition",
+      "rounded-radius min-w-[90px] bg-primary text-white border-1 border-transparent hover:bg-white hover:text-black hover:border-black transition",
     secondary:
-      "rounded-full min-w-[90px] bg-white border-2 border-white hover:border-black hover:bg-primary hover:text-white hover:border-primary",
+      "rounded-radius min-w-[90px] bg-[#F9F9F9] text-light border-2 border-stock hover:border-black hover:bg-primary hover:text-white hover:border-primary",
     outline:
       "rounded-radius min-w-[90px] border-1 border-stock text-black bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
     outlineWhite:

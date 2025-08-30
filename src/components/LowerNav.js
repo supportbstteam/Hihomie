@@ -10,36 +10,39 @@ import Icon from './icon/Icon';
 import { Download, List, Plus } from 'lucide-react';
 
 export default async function LoweNav() {
-    const session = await getServerSession(authOptions)
-    if (!session) redirect('/')
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/");
 
-    return (
-        <aside className="w-full bg-white sticky top-0 z-50">
-            <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4">
+  return (
+    <aside className="w-full bg-white sticky top-0 z-50">
+      <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4">
+        {/* Title (hide on mobile) */}
+        <div className="hidden sm:flex flex-col">
+          <p className="h5 text-dark">Panel de control</p>
+          <span className="p text-light">
+            Vista completa del rendimiento empresarial
+          </span>
+        </div>
 
-                {/* Title (hide on mobile) */}
-                <div className="hidden sm:flex flex-col">
-                    <p className="h5 text-dark">
-                        Panel de control
-                    </p>
-                    <span className="p text-light">
-                        Vista completa del rendimiento empresarial
-                    </span>
-                </div>
-                {/* Right Side - Date & Filter */}
-                <div className="flex w-full sm:w-auto justify-end">
-                    <ul className="flex items-center gap-3 sm:flex sm:justify-between text-stock">
-                        {/* Date */}
-                        <Date/>
-                        {/* Filter Icon */}
-                        <Icon icon={List} size={16} color='#99A1B7' />
-                        <Icon icon={Download} size={16} color='#99A1B7' href="/" />
-                        <Icon icon={MdOutlineFilterList} size={16} color='#99A1B7' href="/" />
-                        <Icon icon={Plus} size={16} color='#99A1B7' href="/" />
-            
-                    </ul>
-                </div>
-            </div>
-        </aside>
-    )
+        {/* Right Side - Date & Filter */}
+        <div className="flex w-full sm:w-auto justify-end">
+          <ul className="flex items-center gap-3 sm:flex sm:justify-between text-stock">
+            {/* Date */}
+            <Date />
+
+            {/* Filter Icon */}
+            <Icon icon={List} size={16} color="#99A1B7" />
+            <Icon icon={Download} size={16} color="#99A1B7" href="/" />
+            <Icon
+              icon={MdOutlineFilterList}
+              size={16}
+              color="#99A1B7"
+              href="/"
+            />
+            <Icon icon={Plus} size={16} color="#99A1B7" href="/" />
+          </ul>
+        </div>
+      </div>
+    </aside>
+  );
 }
