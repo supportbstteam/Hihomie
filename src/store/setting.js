@@ -89,6 +89,18 @@ export const update_statusData = createAsyncThunk(
    }
 );
 
+export const get_leadStatusDataForList = createAsyncThunk(
+   "customer/get_leadStatusDataForList",
+   async (_, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/setting/leadListStatus`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 
 export const settingReducer = createSlice({
 
@@ -98,6 +110,7 @@ export const settingReducer = createSlice({
       errorMessage: '',
       loader: false,
       leadStatus: [],
+      leadStatusList : [],
    },
    reducers: {
 
@@ -174,6 +187,14 @@ export const settingReducer = createSlice({
          .addCase(delete_leadStatusDelete.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload?.message || "Something went wrong";
+         })
+
+         .addCase(get_leadStatusDataForList.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(get_leadStatusDataForList.fulfilled, (state, { payload }) => {
+            state.leadStatusList = payload.cards;
+            state.loader = false;
          })
    }
 })

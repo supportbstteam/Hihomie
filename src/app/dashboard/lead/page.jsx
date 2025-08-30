@@ -1,19 +1,21 @@
 'use client'
 import CustomerAdd from '@/components/prospects/CustomerAdd';
 import EditCard from '@/components/prospects/EditCard';
-import { get_leadStatusCardUpdate, get_leadStatusData } from '@/store/setting';
+import { get_leadStatusCardUpdate, get_leadStatusData, get_leadStatusDataForList } from '@/store/setting';
 import React, { useEffect, useState } from 'react';
 import { CiCirclePlus, CiMail } from "react-icons/ci";
 import { useSelector, useDispatch } from 'react-redux';
 import { SlCalender } from "react-icons/sl";
 import { LuPhone, LuPhoneCall } from "react-icons/lu";
-import { FaPlus, FaWhatsapp } from "react-icons/fa";
+import { FaListUl, FaPlus, FaWhatsapp } from "react-icons/fa";
 import { MdFilterList } from "react-icons/md";
 import Filter from '@/components/prospects/Filter';
+import List from '@/components/List';
+import Stats from '@/components/Stats';
 
 export default function CustomDnD() {
     const dispatch = useDispatch();
-    const { leadStatus } = useSelector((state) => state.setting);
+    const { leadStatus, leadStatusList } = useSelector((state) => state.setting);
 
     const [columns, setColumns] = useState({});
     const [draggedCard, setDraggedCard] = useState(null);
@@ -23,10 +25,17 @@ export default function CustomDnD() {
     const [selectedColId, setSelectedColId] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null); // 👈 नया state
     const [filterOpen, setFilterOpen] = useState(false)
+    const [listComponent, setListComponent] = useState(false)
+    const [selecteFilterData, setSelecteFilterData] = useState()
 
     useEffect(() => {
-        dispatch(get_leadStatusData());
-    }, [dispatch]);
+        if (!listComponent) {
+            dispatch(get_leadStatusData());
+        }else{
+             dispatch(get_leadStatusDataForList());
+        }
+
+    }, [dispatch,listComponent]);
 
     useEffect(() => {
         if (leadStatus && leadStatus.length > 0) {
@@ -143,7 +152,6 @@ export default function CustomDnD() {
     };
 
 
-
     return (
         <>
 
@@ -158,7 +166,9 @@ export default function CustomDnD() {
                         <ul className="flex items-center gap-3 sm:gap-4">
                             <li className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
                                 <FaPlus className="text-lg sm:text-xl" />
-
+                            </li>
+                            <li onClick={() => setListComponent((prev) => !prev)} className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
+                                <FaListUl className="text-lg sm:text-xl" />
                             </li>
                             <li onClick={() => setFilterOpen(true)} className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
                                 <MdFilterList className="text-lg sm:text-xl" />
@@ -168,61 +178,62 @@ export default function CustomDnD() {
                 </div>
             </aside>
 
+            {!listComponent ?
 
-            <div className="flex gap-6 p-6">
-                {Object.values(columns).map((col) => (
-                    <div
-                        key={col.id}
-                        className={`rounded-lg p-4 w-[380px] transition-colors duration-200 
+                <div className="flex gap-6 p-6">
+                    {Object.values(columns).map((col) => (
+                        <div
+                            key={col.id}
+                            className={`rounded-lg p-4 w-[380px] transition-colors duration-200 
                         ${dragOverColId === col.id ? "bg-blue-100" : "bg-gray-100"}`}
-                        onDragOver={(e) => handleDragOver(e, col.id)}
-                        onDrop={() => handleDropColumn(col.id)}
-                    >
-                        <div className='flex justify-between gap-2'>
-                            <h2 className="font-bold mb-3">{col.title}</h2>
-                            <button
-                                onClick={() => {
-                                    setSelectedColId(col.id);
-                                    setOpen(true);
-                                }}
-                                className='text-[#67778880] text-3xl hover:text-gray-700'
-                            >
-                                <CiCirclePlus />
-                            </button>
-                        </div>
+                            onDragOver={(e) => handleDragOver(e, col.id)}
+                            onDrop={() => handleDropColumn(col.id)}
+                        >
+                            <div className='flex justify-between gap-2'>
+                                <h2 className="font-bold mb-3">{col.title}</h2>
+                                <button
+                                    onClick={() => {
+                                        setSelectedColId(col.id);
+                                        setOpen(true);
+                                    }}
+                                    className='text-[#67778880] text-3xl hover:text-gray-700'
+                                >
+                                    <CiCirclePlus />
+                                </button>
+                            </div>
 
-                        {col.cards.map((card, index) => (
-                            <div
-                                key={card._id}
-                                draggable
-                                onDragStart={() => handleDragStart(card._id, col.id, index)}
-                                onDragEnd={handleDragEnd}
-                                onDragOver={(e) => e.preventDefault()}
-                                onDrop={() => handleDropBetween(col.id, index)}
-                                onClick={() => handleCardClick(col.id, card)}
-                                className={`shadow-md rounded-xl p-4 mb-3 cursor-grab transition 
+                            {col.cards.map((card, index) => (
+                                <div
+                                    key={card._id}
+                                    draggable
+                                    onDragStart={() => handleDragStart(card._id, col.id, index)}
+                                    onDragEnd={handleDragEnd}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onDrop={() => handleDropBetween(col.id, index)}
+                                    onClick={() => handleCardClick(col.id, card)}
+                                    className={`shadow-md rounded-xl p-4 mb-3 cursor-grab transition 
                                 ${draggingCardId === card.id ? "opacity-50 border-2 border-blue-500" : "bg-white"}`}
-                            >
-                                {/* Header */}
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                                        {card.first_name?.[0] || "?"}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                            {card.first_name?.[0] || "?"}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-800">
+                                                {card.first_name} {card.last_name}
+                                            </h3>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-gray-800">
-                                            {card.first_name} {card.last_name}
-                                        </h3>
+
+                                    {/* Contact Info */}
+                                    <div className="text-sm text-[#99A1B7] space-y-1 mb-3 text-[14px] leading-6 font-semibold">
+                                        <p className='flex items-center gap-2'><CiMail /> {card.email}</p>
+                                        <p className='flex items-center gap-2'><LuPhone /> {card.phone}</p>
+                                        <p className='flex items-center gap-2'><SlCalender /> {new Date().toLocaleDateString()}</p>
                                     </div>
-                                </div>
 
-                                {/* Contact Info */}
-                                <div className="text-sm text-[#99A1B7] space-y-1 mb-3 text-[14px] leading-6 font-semibold">
-                                    <p className='flex items-center gap-2'><CiMail /> {card.email}</p>
-                                    <p className='flex items-center gap-2'><LuPhone /> {card.phone}</p>
-                                    <p className='flex items-center gap-2'><SlCalender /> {new Date().toLocaleDateString()}</p>
-                                </div>
-
-                                {/* <div className="mt-4 border rounded-lg p-7 flex justify-between text-sm border-green-500 bg-green-500 bg-opacity-5">
+                                    {/* <div className="mt-4 border rounded-lg p-7 flex justify-between text-sm border-green-500 bg-green-500 bg-opacity-5">
                                 <div>
                                     <p className="text-green-600 font-medium">📈 Ingresos</p>
                                     <p className="font-semibold">4.500 € / mes</p>
@@ -233,40 +244,51 @@ export default function CustomDnD() {
                                 </div>
                             </div> */}
 
-                                <div className='flex justify-center items-center gap-10 text-[22px] text-[#99A1B7] mt-2'>
-                                    <a href={`tel:${card.phone}`} onClick={(e) => e.stopPropagation()}><LuPhoneCall /></a>
-                                    <a href={`https://wa.me/${card.phone}`} onClick={(e) => e.stopPropagation()}><FaWhatsapp /></a>
-                                    <a href={`mailto:${card.email}`} onClick={(e) => e.stopPropagation()}><CiMail /></a>
+                                    <div className='flex justify-center items-center gap-10 text-[22px] text-[#99A1B7] mt-2'>
+                                        <a href={`tel:${card.phone}`} onClick={(e) => e.stopPropagation()}><LuPhoneCall /></a>
+                                        <a href={`https://wa.me/${card.phone}`} onClick={(e) => e.stopPropagation()}><FaWhatsapp /></a>
+                                        <a href={`mailto:${card.email}`} onClick={(e) => e.stopPropagation()}><CiMail /></a>
+                                    </div>
+
+
                                 </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+
+                : <div className='p-5'>
+                    <Filter leadStatusList = {leadStatusList} filterOpen={filterOpen} setFilterOpen={setFilterOpen} setSelecteFilterData={setSelecteFilterData} />
+                    <br></br>
+                    <Stats />
+                    <br></br>
+                    <List leadStatusList = {leadStatusList}  selecteFilterData={selecteFilterData}/>
+
+                </div>
+
+            }
 
 
-                            </div>
-                        ))}
-                    </div>
-                ))}
 
-                <CustomerAdd
-                    open={open}
-                    setOpen={setOpen}
-                    selectedColId={selectedColId}
-                    onCardAdded={handleCardAdded}
+            <CustomerAdd
+                open={open}
+                setOpen={setOpen}
+                selectedColId={selectedColId}
+                onCardAdded={handleCardAdded}
+                leadStatus={leadStatus}
+
+            />
+
+            {selectedUser && (
+                <EditCard
+                    selectedUser={selectedUser}
+                    setSelectedUser={setSelectedUser}
+                    colId={selectedColId}
                     leadStatus={leadStatus}
-
                 />
+            )}
 
-                {selectedUser && (
-                    <EditCard
-                        selectedUser={selectedUser}
-                        setSelectedUser={setSelectedUser}
-                        colId={selectedColId}
-                        leadStatus={leadStatus}
-                    />
-                )}
-
-                <Filter filterOpen = {filterOpen} setFilterOpen = {setFilterOpen} />
-
-
-            </div>
+            
         </>
     );
 }

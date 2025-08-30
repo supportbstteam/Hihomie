@@ -47,7 +47,7 @@ export default function Sidebar() {
 
   if (status === "loading") {
     return (
-      <aside className="w-64 shrink-0 border-r bg-white p-4">
+      <aside className="w-64 shrink-0 border-r border-stock bg-white p-4">
         <div className="text-gray-500">Loading menu...</div>
       </aside>
     )
@@ -70,7 +70,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
+        className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r border-stock bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
         ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
 
