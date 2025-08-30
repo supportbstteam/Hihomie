@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { customerAdd, messageClear } from '@/store/customer';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
-import { get_leadStatusData } from '@/store/setting';
+import { get_leadStatusData, get_leadStatusDataForList } from '@/store/setting';
 import Form1 from './Form1';
 import Form2 from './Form2';
 import { motion, AnimatePresence } from "framer-motion";
@@ -105,6 +105,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
             setOpen(false)
             dispatch(messageClear());
             dispatch(get_leadStatusData());
+            dispatch(get_leadStatusDataForList());
         }
         if (errorMessage) {
             toast.error(errorMessage)

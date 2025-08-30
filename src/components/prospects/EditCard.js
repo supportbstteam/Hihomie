@@ -14,6 +14,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const { loader, successMessage, errorMessage } = useSelector(
     (state) => state.customer
   );
+  
 
   const [details, setDetails] = useState(false);
   const [address_details, setAddressDetails] = useState(false);
@@ -99,23 +100,21 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         id: "",
         colId: "",  // ✅ keep the current colId
       });
-
-
     }
   }, [successMessage, errorMessage]);
 
 
 
   // load selectedUser into form
-  useEffect(() => {
-    if (selectedUser) {
-      setFormData({
-        ...selectedUser,
-        id: selectedUser._id || "",
-        colId: colId || "",
-      });
-    }
-  }, [selectedUser]);
+ useEffect(() => {
+  if (selectedUser) {
+    setFormData({
+      ...selectedUser,
+      id: selectedUser._id || "",
+      colId: selectedUser.colId ? selectedUser.colId : colId || "",
+    });
+  }
+}, [selectedUser]);
 
   // 🔑 sync detailsData and addressDetailsData into formData
   useEffect(() => {
@@ -440,7 +439,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   />
 
                 }
-
 
                 {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">

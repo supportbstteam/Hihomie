@@ -76,6 +76,7 @@ export async function PUT(req) {
   try {
 
     const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData } = await req.json()
+      
 
     await dbConnect();
 

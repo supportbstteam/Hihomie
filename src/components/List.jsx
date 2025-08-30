@@ -1,43 +1,55 @@
+'use client'
 import {
-  ArrowDown,
-  ArrowUp,
   EllipsisVertical,
-  Link,
   Mail,
   MessageSquareText,
-  Minus,
-  Percent,
   Phone,
-  Plus,
-  Square,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react"; // ✅ Missing useState import
+import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 
-const List = ({ leadStatusList, selecteFilterData }) => {
-  console.log(selecteFilterData);
+const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
+  const [onEdit, setOnEdit] = useState({
+    lead_title: "",
+    surname: "",
+    first_name: "",
+    last_name: "",
+    company: "",
+    designation: "",
+    phone: "",
+    email: "",
+    lead_value: "",
+    assigned: "",
+    status: "",
+    type_of_opration: "",
+    customer_situation: "",
+    purchase_status: "",
+    commercial_notes: "",
+    manager_notes: "",
+    detailsData: {},
+    addressDetailsData: {},
+    id: "",
+    colId: ""
+  });
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
   // ✅ Filtering Logic
   const filteredList = leadStatusList.filter((item) => {
-    // Match Gestor
     const matchGestor = gestor
       ? item?.users?.some((user) => user._id === gestor)
       : true;
 
-    // Match Estado
     const matchEstado = estado
       ? item?.leadStatusId === estado
       : true;
 
-    // Match Full Name (case insensitive search)
     const matchName = full_name
       ? `${item.first_name || ""} ${item.last_name || ""}`
           .toLowerCase()
           .includes(full_name.toLowerCase())
       : true;
 
-    // Match Phone (partial match allowed)
     const matchPhone = phone
       ? item?.phone?.toString().includes(phone)
       : true;
@@ -45,6 +57,19 @@ const List = ({ leadStatusList, selecteFilterData }) => {
     return matchGestor && matchEstado && matchName && matchPhone;
   });
 
+  // ✅ Handle Edit Click
+  const handleEditClick = (item) => {
+  const updatedUser = {
+    ...item,
+    colId: item.leadStatusId, // assign leadStatusId to colId
+    id: item._id,             // assign card _id to id
+  };
+
+  setSelectedUser(updatedUser); // update local state
+  if (onEdit) setSelectedUser(updatedUser); // send to parent
+};
+  
+ console.log()
 
   return (
     <div className="overflow-x-auto bg-white rounded-md shadow-md">
@@ -89,9 +114,20 @@ const List = ({ leadStatusList, selecteFilterData }) => {
                 <td className="px-4 py-4 text-gray-500">{item.phone}</td>
                 <td className="px-4 py-4 text-gray-500">{item.leadStatusname}</td>
                 <td className="px-4 py-4 flex space-x-3 text-gray-400">
-                  <a target="_blank" href={`tel:${item.phone}`}><Phone size={20} /></a>
-                  <a target="_blank" href={`https://wa.me/${item.phone}`}><MessageSquareText size={20} /></a>
-                  <a target="_blank" href={`mailto:${item.email}`}> <Mail size={20} /></a>
+                  <FaRegTrashAlt className="text-red-500 text-xl cursor-pointer hover:scale-110 transition" />
+                  <FaRegEdit
+                    onClick={() => handleEditClick(item)}
+                    className="text-orange-500 text-xl cursor-pointer hover:scale-110 transition"
+                  />
+                  <a target="_blank" href={`tel:${item.phone}`}>
+                    <Phone size={20} />
+                  </a>
+                  <a target="_blank" href={`https://wa.me/${item.phone}`}>
+                    <MessageSquareText size={20} />
+                  </a>
+                  <a target="_blank" href={`mailto:${item.email}`}>
+                    <Mail size={20} />
+                  </a>
                   <EllipsisVertical size={20} />
                 </td>
               </tr>

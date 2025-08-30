@@ -15,7 +15,7 @@ import Stats from '@/components/Stats';
 
 export default function CustomDnD() {
     const dispatch = useDispatch();
-    const { leadStatus, leadStatusList } = useSelector((state) => state.setting);
+    const { leadStatus, leadStatusList, errorMessage, successMessage } = useSelector((state) => state.setting);
 
     const [columns, setColumns] = useState({});
     const [draggedCard, setDraggedCard] = useState(null);
@@ -151,7 +151,6 @@ export default function CustomDnD() {
         setSelectedUser(card);
     };
 
-
     return (
         <>
 
@@ -258,11 +257,11 @@ export default function CustomDnD() {
                 </div>
 
                 : <div className='p-5'>
-                    <Filter leadStatusList = {leadStatusList} filterOpen={filterOpen} setFilterOpen={setFilterOpen} setSelecteFilterData={setSelecteFilterData} />
+                    <Filter  leadStatusList = {leadStatusList} filterOpen={filterOpen} setFilterOpen={setFilterOpen} setSelecteFilterData={setSelecteFilterData} />
                     <br></br>
                     <Stats />
                     <br></br>
-                    <List leadStatusList = {leadStatusList}  selecteFilterData={selecteFilterData}/>
+                    <List leadStatusList = {leadStatusList}  selecteFilterData={selecteFilterData} setSelectedUser = {setSelectedUser} />
 
                 </div>
 
