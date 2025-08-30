@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { get_leadStatusData } from '@/store/setting';
 import Form1 from './Form1';
 import Form2 from './Form2';
+import { motion, AnimatePresence } from "framer-motion";
 
 const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     const dispatch = useDispatch();
@@ -115,11 +116,16 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
 
     return (
-        <div>
+       <AnimatePresence>
             {open && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4">
-                    <div className="bg-white w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto ">
-
+                    <motion.div
+                                        initial={{ y: -100, opacity: 0 }}
+                                        animate={{ y: 20, opacity: 1 }}
+                                        exit={{ y: -100, opacity: 0 }}
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        className="bg-white w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                                    >
                         {/* Close Button */}
                         <button
                             onClick={() => setOpen(false)}
@@ -451,10 +457,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                             </div>
 
                         </form>
-                    </div>
+                    </motion.div>
                 </div>
             )}
-        </div>
+       </AnimatePresence>
     )
 }
 

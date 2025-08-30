@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
 import { AddStatusData, messageClear } from '@/store/setting';
+import { motion, AnimatePresence } from "framer-motion";
 
 const AddStatus = ({ open, setOpen }) => {
 
@@ -54,10 +55,18 @@ const AddStatus = ({ open, setOpen }) => {
     ]
 
     return (
+          <AnimatePresence>
         <div>
             {open && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
-                    <div className="bg-white w-full max-w-lg rounded-md shadow-lg p-6 relative">
+                <div className="fixed inset-0 bg-black/40 flex justify-center z-[100]">
+                     <motion.div
+                                        initial={{ y: -100, opacity: 0 }}
+                                        animate={{ y: 30, opacity: 1 }}
+                                        exit={{ y: -100, opacity: 0 }}
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        className="bg-white w-full h-[35vh] max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                                    >
+                   
 
                         {/* Header */}
                         <h2 className="text-xl font-semibold text-gray-800 mb-4">Agregar estado</h2>
@@ -139,10 +148,12 @@ const AddStatus = ({ open, setOpen }) => {
                                 </button>
                             </div>
                         </form>
-                    </div>
+                   
+                    </motion.div>
                 </div>
             )}
         </div>
+        </AnimatePresence>
     )
 }
 

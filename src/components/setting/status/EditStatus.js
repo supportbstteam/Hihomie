@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
 import { messageClear, update_statusData } from '@/store/setting';
+import { motion, AnimatePresence } from "framer-motion";
 
-const EditStatus = ({ open, setOpen, statusData, setStatusData}) => {
+const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
 
     const dispatch = useDispatch();
     const { loader, successMessage, errorMessage } = useSelector(state => state.setting);
@@ -12,18 +13,18 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData}) => {
     const [formData, setFormData] = useState({
         status_name: "",
         color: "",
-        id : "",
+        id: "",
     });
 
     useEffect(() => {
-    if (statusData) {
-        setFormData({
-            status_name: statusData.status_name || "",
-            color: statusData.color || "",
-            id: statusData._id || "",
-        });
-    }
-}, [statusData]);
+        if (statusData) {
+            setFormData({
+                status_name: statusData.status_name || "",
+                color: statusData.color || "",
+                id: statusData._id || "",
+            });
+        }
+    }, [statusData]);
 
     // handle input change
     const handleChange = (e) => {
@@ -65,9 +66,16 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData}) => {
     ]
 
     return (
-        <div>
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
-                    <div className="bg-white w-full max-w-lg rounded-md shadow-lg p-6 relative">
+        <AnimatePresence>
+            <div>
+                <div className="fixed inset-0 bg-black/40 flex  justify-center z-[100]">
+                    <motion.div
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 30, opacity: 1 }}
+                        exit={{ y: -100, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="bg-white w-full h-[35vh] max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                    >
 
                         {/* Header */}
                         <h2 className="text-xl font-semibold text-gray-800 mb-4">Agregar estado</h2>
@@ -149,9 +157,12 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData}) => {
                                 </button>
                             </div>
                         </form>
-                    </div>
+
+                    </motion.div>
                 </div>
-        </div>
+
+            </div>
+        </AnimatePresence>
     )
 }
 

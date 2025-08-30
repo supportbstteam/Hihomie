@@ -3,6 +3,7 @@ import uiReducer from '@/store/uiSlice'
 import customerReducer from './customer'
 import settingReducer from './setting'
 import  categoryReducer  from './category'
+import userTeamReducer from './userTema'
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     customer: customerReducer,
     setting: settingReducer,
     category : categoryReducer,
+    team : userTeamReducer,
   },
 })

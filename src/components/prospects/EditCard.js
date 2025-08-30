@@ -5,6 +5,9 @@ import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Form2 from "./Form2";
 import Form1 from "./Form1";
+import { BsPlusCircleDotted } from "react-icons/bs";
+import AssignUser from "./AssignUser";
+import { motion, AnimatePresence } from "framer-motion";
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
@@ -128,28 +131,34 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       addressDetailsData: addressDetailsData,
     }));
   }, [addressDetailsData]);
-
+   
 
   return (
-    <>
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4">
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 20, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="bg-white w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+          >
 
-      <div>
-        {open && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4">
-            <div className="bg-white w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto ">
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
+            >
+              ✕
+            </button>
 
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
-              >
-                ✕
-              </button>
+            <p className="text-gray-700 text-[20px] mb-6">Editar cliente potencial</p>
 
-              <p className="text-gray-700 text-[20px] mb-6">Editar cliente potencial</p>
+            {/* Form */}
+            <div className="overflow-y-auto flex justify-between gap-1">
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[77vh]">
+              <form onSubmit={handleSubmit} className="space-y-4 mb-5 max-h-[77vh]  w-8/12">
 
                 {/* Lead Title */}
                 <div className="flex items-center gap-3">
@@ -367,7 +376,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="commercial_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                       Notas Comerciales
+                        Notas Comerciales
                       </label>
                       <textarea
                         id="commercial_notes"
@@ -385,7 +394,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="manager_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                       Notas del gerente
+                        Notas del gerente
                       </label>
                       <textarea
                         id="manager_notes"
@@ -479,13 +488,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
               </form>
+              <div className="w-4/12 bg-[#ebf2f5] p-2">
+                <AssignUser colId = {colId} cardid = {selectedUser._id} />
+              </div>
             </div>
+ </motion.div>
           </div>
-        )}
-      </div>
-
-
-    </>
+  )
+}
+     </AnimatePresence >
   );
 };
 

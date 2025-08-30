@@ -15,7 +15,8 @@ const MENU = {
   admin: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
     { href: '/dashboard/category', label: 'Categoría', icon: <MdOutlineCategory /> },
-    { href: '/dashboard/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/lead', label: 'Prospectos', icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/team', label: 'Usuaria', icon: <MdOutlineCalculate /> },
     { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
