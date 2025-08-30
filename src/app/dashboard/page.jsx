@@ -19,10 +19,6 @@ export default async function DashboardPage() {
           You are signed in as{" "}
           <span className="font-medium">{session.user.role}</span>.
         </p>
-        <br></br>
-        <Stats />
-        <br></br>
-        <List />
       </div>
     </>
   );

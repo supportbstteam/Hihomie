@@ -60,7 +60,7 @@ const AssignUser = ({ colId, cardid }) => {
         }
     },[dispatch, cardid, colId, successMessage])
 
-    console.log(assignTeam)
+    console.log(team)
 
     return (
 

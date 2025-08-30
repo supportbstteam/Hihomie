@@ -45,6 +45,7 @@ const List = ({ leadStatusList, selecteFilterData }) => {
     return matchGestor && matchEstado && matchName && matchPhone;
   });
 
+
   return (
     <div className="overflow-x-auto bg-white rounded-md shadow-md">
       <table className="min-w-full divide-y divide-gray-200">
