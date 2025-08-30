@@ -1,7 +1,42 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
+@import 'tailwindcss';
+@theme{
+  --color-primary: #21B573;
+  --color-secondary: #C7ECDC;
+  --color-dark: #071437;
+  --color-light: #99A1B7;
+  --color-stock: #E7EAF3;
+  --radius-radius: 4px;
+  --font-heading: var(--font-inter),ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .h1{
+    @apply text-4xl md:text-5xl;
+  }
+  .h2{
+    @apply text-2xl md:text-4xl;
+  }
+  .h4{
+    @apply text-[22px]  leading-[32px] tracking-[0];
+  }
+  .h5{
+    @apply text-lg font-heading font-medium text-dark leading-[100%] tracking-[0%];
+  }
+  .plg{
+    @apply text-lg md:text-lg font-heading;
+  }
+  p{
+    @apply text-base font-heading leading-[100%] tracking-[0%];
+  }
+  .psm{
+    @apply text-sm leading-6 font-heading font-medium
+  }
+  .pxs{
+    @apply text-xs font-heading font-normal leading-[18px] tracking-[1px] /* list  */
+  }
+  
+}
 
 .scrollbar-hide::-webkit-scrollbar{
   display: none;
