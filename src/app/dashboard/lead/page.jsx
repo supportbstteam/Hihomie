@@ -2,7 +2,7 @@
 import CustomerAdd from '@/components/prospects/CustomerAdd';
 import EditCard from '@/components/prospects/EditCard';
 import { get_leadStatusCardUpdate, get_leadStatusData, get_leadStatusDataForList } from '@/store/setting';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CiCirclePlus, CiMail } from "react-icons/ci";
 import { useSelector, useDispatch } from 'react-redux';
 import { SlCalender } from "react-icons/sl";
@@ -15,27 +15,28 @@ import Stats from '@/components/Stats';
 
 export default function CustomDnD() {
     const dispatch = useDispatch();
-    const { leadStatus, leadStatusList, errorMessage, successMessage } = useSelector((state) => state.setting);
+    const { leadStatus, leadStatusList } = useSelector((state) => state.setting);
 
     const [columns, setColumns] = useState({});
     const [draggedCard, setDraggedCard] = useState(null);
-    const [draggingCardId, setDraggingCardId] = useState(null); // 👈 new
-    const [dragOverColId, setDragOverColId] = useState(null);   // 👈 new
+    const [draggingCardId, setDraggingCardId] = useState(null);
+    const [dragOverColId, setDragOverColId] = useState(null);
     const [open, setOpen] = useState(false);
     const [selectedColId, setSelectedColId] = useState(null);
-    const [selectedUser, setSelectedUser] = useState(null); // 👈 नया state
-    const [filterOpen, setFilterOpen] = useState(false)
-    const [listComponent, setListComponent] = useState(false)
-    const [selecteFilterData, setSelecteFilterData] = useState()
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [listComponent, setListComponent] = useState(false);
+    const [selecteFilterData, setSelecteFilterData] = useState();
+
+    const touchPosition = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         if (!listComponent) {
             dispatch(get_leadStatusData());
-        }else{
-             dispatch(get_leadStatusDataForList());
+        } else {
+            dispatch(get_leadStatusDataForList());
         }
-
-    }, [dispatch,listComponent]);
+    }, [dispatch, listComponent]);
 
     useEffect(() => {
         if (leadStatus && leadStatus.length > 0) {
@@ -62,26 +63,24 @@ export default function CustomDnD() {
         }));
     };
 
-    // start dragging
     const handleDragStart = (cardId, sourceColId, index) => {
         setDraggedCard({ cardId, sourceColId, index });
-        setDraggingCardId(cardId); // 👈 highlight this card
+        setDraggingCardId(cardId);
     };
 
     const handleDragEnd = () => {
         setDraggedCard(null);
-        setDraggingCardId(null); // 👈 remove highlight
+        setDraggingCardId(null);
         setDragOverColId(null);
     };
 
     const handleDragOver = (e, colId) => {
         e.preventDefault();
-        setDragOverColId(colId); // 👈 highlight this column
+        setDragOverColId(colId);
     };
 
     const handleDropColumn = (destColId) => {
         if (!draggedCard) return;
-
         const sourceCol = columns[draggedCard.sourceColId];
         const destCol = columns[destColId];
         const draggedObj = sourceCol.cards[draggedCard.index];
@@ -102,14 +101,11 @@ export default function CustomDnD() {
         });
 
         handleDragEnd();
-
         dispatch(get_leadStatusCardUpdate({
             sourceColId: draggedCard.sourceColId,
             destColId: destColId,
             cardId: draggedObj._id || draggedObj.id
         }));
-
-
     };
 
     const handleDropBetween = (destColId, destIndex) => {
@@ -141,10 +137,31 @@ export default function CustomDnD() {
                 [destColId]: { ...destCol, cards: newDestCards },
             });
         }
-
         handleDragEnd();
     };
 
+    const handleTouchStart = (e, cardId, sourceColId, index) => {
+        const touch = e.touches[0];
+        touchPosition.current = { x: touch.clientX, y: touch.clientY };
+        handleDragStart(cardId, sourceColId, index);
+    };
+
+    const handleTouchMove = (e) => {
+        if (!draggedCard) return;
+        const touch = e.touches[0];
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const colElement = element?.closest("[data-col-id]");
+        if (colElement) {
+            setDragOverColId(colElement.dataset.colId);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        if (dragOverColId) {
+            handleDropColumn(dragOverColId);
+        }
+        handleDragEnd();
+    };
 
     const handleCardClick = (colId, card) => {
         setSelectedColId(colId);
@@ -153,23 +170,19 @@ export default function CustomDnD() {
 
     return (
         <>
-
-
+            {/* HEADER */}
             <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
                 <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
-                    <div className="hidden sm:flex flex-col">
-
-                    </div>
-
+                    <div className="hidden sm:flex flex-col"></div>
                     <div className="flex w-full sm:w-auto justify-end">
-                        <ul className="flex items-center gap-3 sm:gap-4">
-                            <li className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
+                        <ul className="flex items-center gap-2 sm:gap-4">
+                            <li className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer">
                                 <FaPlus className="text-lg sm:text-xl" />
                             </li>
-                            <li onClick={() => setListComponent((prev) => !prev)} className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
+                            <li onClick={() => setListComponent((prev) => !prev)} className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer">
                                 <FaListUl className="text-lg sm:text-xl" />
                             </li>
-                            <li onClick={() => setFilterOpen(true)} className="flex items-center gap-2 rounded-1xl border border-gray-200 bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
+                            <li onClick={() => setFilterOpen(true)} className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer">
                                 <MdFilterList className="text-lg sm:text-xl" />
                             </li>
                         </ul>
@@ -177,25 +190,26 @@ export default function CustomDnD() {
                 </div>
             </aside>
 
-            {!listComponent ?
-
-                <div className="flex gap-6 p-6">
+            {/* BOARD */}
+            {!listComponent ? (
+                <div className="flex gap-4 sm:gap-6 p-3 sm:p-6 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
                     {Object.values(columns).map((col) => (
                         <div
                             key={col.id}
-                            className={`rounded-lg p-4 w-[380px] transition-colors duration-200 
-                        ${dragOverColId === col.id ? "bg-blue-100" : "bg-gray-100"}`}
+                            data-col-id={col.id}
+                            className={`rounded-lg p-4 w-[50%] sm:w-[300px] md:w-[360px] flex-shrink-0 transition-colors duration-300 ease-in-out
+                                ${dragOverColId === col.id ? "bg-blue-100" : "bg-gray-100"}`}
                             onDragOver={(e) => handleDragOver(e, col.id)}
                             onDrop={() => handleDropColumn(col.id)}
                         >
                             <div className='flex justify-between gap-2'>
-                                <h2 className="font-bold mb-3">{col.title}</h2>
+                                <h2 className="font-bold mb-3 text-sm sm:text-base">{col.title}</h2>
                                 <button
                                     onClick={() => {
                                         setSelectedColId(col.id);
                                         setOpen(true);
                                     }}
-                                    className='text-[#67778880] text-3xl hover:text-gray-700'
+                                    className='text-[#67778880] text-2xl hover:text-gray-700'
                                 >
                                     <CiCirclePlus />
                                 </button>
@@ -210,64 +224,46 @@ export default function CustomDnD() {
                                     onDragOver={(e) => e.preventDefault()}
                                     onDrop={() => handleDropBetween(col.id, index)}
                                     onClick={() => handleCardClick(col.id, card)}
-                                    className={`shadow-md rounded-xl p-4 mb-3 cursor-grab transition 
-                                ${draggingCardId === card.id ? "opacity-50 border-2 border-blue-500" : "bg-white"}`}
+                                    onTouchStart={(e) => handleTouchStart(e, card._id, col.id, index)}
+                                    onTouchMove={handleTouchMove}
+                                    onTouchEnd={handleTouchEnd}
+                                    className={`shadow-md rounded-xl p-3 sm:p-4 mb-3 cursor-grab transition-all duration-300 ease-in-out
+                                        ${draggingCardId === card.id
+                                            ? "opacity-60 border-2 border-blue-500 scale-105"
+                                            : "bg-white hover:shadow-lg"}`}
                                 >
-                                    {/* Header */}
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                        <div className="h-14 w-14 sm:h-20 sm:w-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                                             {card.first_name?.[0] || "?"}
                                         </div>
                                         <div>
-                                            <h3 className="font-semibold text-gray-800">
+                                            <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
                                                 {card.first_name} {card.last_name}
                                             </h3>
                                         </div>
                                     </div>
-
-                                    {/* Contact Info */}
-                                    <div className="text-sm text-[#99A1B7] space-y-1 mb-3 text-[14px] leading-6 font-semibold">
+                                    <div className="text-xs sm:text-sm text-[#99A1B7] space-y-1 mb-3 leading-5 font-semibold">
                                         <p className='flex items-center gap-2'><CiMail /> {card.email}</p>
                                         <p className='flex items-center gap-2'><LuPhone /> {card.phone}</p>
                                         <p className='flex items-center gap-2'><SlCalender /> {new Date().toLocaleDateString()}</p>
                                     </div>
-
-                                    {/* <div className="mt-4 border rounded-lg p-7 flex justify-between text-sm border-green-500 bg-green-500 bg-opacity-5">
-                                <div>
-                                    <p className="text-green-600 font-medium">📈 Ingresos</p>
-                                    <p className="font-semibold">4.500 € / mes</p>
-                                </div>
-                                <div>
-                                    <p className="text-yellow-600 font-medium">💰 %Hipoteca</p>
-                                    <p className="font-semibold">280.000 €</p>
-                                </div>
-                            </div> */}
-
-                                    <div className='flex justify-center items-center gap-10 text-[22px] text-[#99A1B7] mt-2'>
+                                    <div className='flex justify-center items-center gap-6 sm:gap-10 text-lg sm:text-[22px] text-[#99A1B7] mt-2'>
                                         <a href={`tel:${card.phone}`} onClick={(e) => e.stopPropagation()}><LuPhoneCall /></a>
                                         <a href={`https://wa.me/${card.phone}`} onClick={(e) => e.stopPropagation()}><FaWhatsapp /></a>
                                         <a href={`mailto:${card.email}`} onClick={(e) => e.stopPropagation()}><CiMail /></a>
                                     </div>
-
-
                                 </div>
                             ))}
                         </div>
                     ))}
                 </div>
-
-                : <div className='p-5'>
-                    <Filter  leadStatusList = {leadStatusList} filterOpen={filterOpen} setFilterOpen={setFilterOpen} setSelecteFilterData={setSelecteFilterData} />
-                    <br></br>
-                    <Stats />
-                    <br></br>
-                    <List leadStatusList = {leadStatusList}  selecteFilterData={selecteFilterData} setSelectedUser = {setSelectedUser} />
-
+            ) : (
+                <div className='p-3 sm:p-5'>
+                    <Filter leadStatusList={leadStatusList} filterOpen={filterOpen} setFilterOpen={setFilterOpen} setSelecteFilterData={setSelecteFilterData} />
+                    <div className="my-4"><Stats /></div>
+                    <List leadStatusList={leadStatusList} selecteFilterData={selecteFilterData} setSelectedUser={setSelectedUser} />
                 </div>
-
-            }
-
-
+            )}
 
             <CustomerAdd
                 open={open}
@@ -275,7 +271,6 @@ export default function CustomDnD() {
                 selectedColId={selectedColId}
                 onCardAdded={handleCardAdded}
                 leadStatus={leadStatus}
-
             />
 
             {selectedUser && (
@@ -286,8 +281,6 @@ export default function CustomDnD() {
                     leadStatus={leadStatus}
                 />
             )}
-
-            
         </>
     );
 }

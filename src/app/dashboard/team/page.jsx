@@ -13,7 +13,7 @@ const Team = () => {
     const { loader, team, errorMessage, successMessage } = useSelector((state) => state.team);
     const [open, setOpen] = useState(false)
     const [user, setUser] = useState()
-  
+
 
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 10;
@@ -36,11 +36,11 @@ const Team = () => {
         dispatch(delete_teamData(id))
     }
 
-     useEffect(() => {
+    useEffect(() => {
         if (successMessage) {
             toast.success(successMessage)
-             setOpen(false)
-             setUser(null)
+            setOpen(false)
+            setUser(null)
             dispatch(messageClear());
         }
         if (errorMessage) {
@@ -69,90 +69,92 @@ const Team = () => {
                 </div>
             </aside>
 
-            <div className="p-6 bg-white rounded-xl shadow-md">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="border-b text-gray-600">
-                            <th className="py-3 text-left">Nombre De Pila</th>
-                            <th className="py-3 text-center">Posición</th>
-                            <th className="py-3 text-center">Role</th>
-                            <th className="py-3 text-center">Correo Electrónico</th>
-                            <th className="py-3 text-center">Teléfono</th>
-                            <th className='py-3 text-center'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {team.map((row, i) => (
-                            <tr key={i} className="border-b hover:bg-gray-50">
-
-                                <td className="py-3 flex items-center gap-2">
-                                  <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image}`} className='w-8 h-8 rounded-full border object-cover' /> {row.name} {row.lname}
-                                </td>
-
-
-
-                                <td className="py-3 text-center">
-                                    {row.jobTitle}
-                                </td>
-
-                                <td className="py-3 text-center">
-                                 {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
-                                </td>
-
-                                <td className="py-3 text-center">
-                                    {row.email}
-                                </td>
-
-
-                                <td className="py-3 text-center">
-                                    {row.phone}
-                                </td>
-
-
-                                <td className="py-3 text-center">
-                                    <div className="flex justify-center gap-3 text-lg">
-                                        {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
-                                        <FaRegEdit onClick={() => setUser(row)} className="text-orange-500 cursor-pointer hover:scale-110 transition" />
-                                        <FaRegTrashAlt onClick={() => handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
-                                    </div>
-                                </td>
+            <div className='p-5'>
+                <div className="p-6 bg-white rounded-xl shadow-md">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b text-gray-600">
+                                <th className="py-3 text-left">Nombre De Pila</th>
+                                <th className="py-3 text-center">Posición</th>
+                                <th className="py-3 text-center">Role</th>
+                                <th className="py-3 text-center">Correo Electrónico</th>
+                                <th className="py-3 text-center">Teléfono</th>
+                                <th className='py-3 text-center'>Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {team.map((row, i) => (
+                                <tr key={i} className="border-b hover:bg-gray-50">
 
-                {/* Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                    <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((prev) => prev - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Previa
-                    </button>
+                                    <td className="py-3 flex items-center gap-2">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image}`} className='w-8 h-8 rounded-full border object-cover' /> {row.name} {row.lname}
+                                    </td>
 
-                    <div className="flex gap-2">
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentPage(index + 1)}
-                                className={`px-3 py-1 rounded ${currentPage === index + 1
-                                    ? "bg-sky-500 text-white"
-                                    : "bg-gray-200"
-                                    }`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
+
+
+                                    <td className="py-3 text-center">
+                                        {row.jobTitle}
+                                    </td>
+
+                                    <td className="py-3 text-center">
+                                        {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
+                                    </td>
+
+                                    <td className="py-3 text-center">
+                                        {row.email}
+                                    </td>
+
+
+                                    <td className="py-3 text-center">
+                                        {row.phone}
+                                    </td>
+
+
+                                    <td className="py-3 text-center">
+                                        <div className="flex justify-center gap-3 text-lg">
+                                            {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
+                                            <FaRegEdit onClick={() => setUser(row)} className="text-orange-500 cursor-pointer hover:scale-110 transition" />
+                                            <FaRegTrashAlt onClick={() => handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* Pagination */}
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previa
+                        </button>
+
+                        <div className="flex gap-2">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                    className={`px-3 py-1 rounded ${currentPage === index + 1
+                                        ? "bg-sky-500 text-white"
+                                        : "bg-gray-200"
+                                        }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Próxima
+                        </button>
                     </div>
-
-                    <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Próxima
-                    </button>
                 </div>
             </div>
 
@@ -163,7 +165,7 @@ const Team = () => {
             }
 
             {
-                user && <EditTeam user = {user} setUser = {setUser}/>
+                user && <EditTeam user={user} setUser={setUser} />
             }
 
 

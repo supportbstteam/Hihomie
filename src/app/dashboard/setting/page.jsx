@@ -10,8 +10,8 @@ import EditStatus from '@/components/setting/status/EditStatus';
 
 const page = () => {
 
-      const dispatch = useDispatch();
-      const { loader,leadStatus, successMessage, errorMessage } = useSelector((state) => state.setting);
+    const dispatch = useDispatch();
+    const { loader, leadStatus, successMessage, errorMessage } = useSelector((state) => state.setting);
 
     const [open, setOpen] = useState(false)
     const [statusData, setStatusData] = useState(false)
@@ -25,19 +25,19 @@ const page = () => {
     const currentRecords = leadStatus.slice(indexOfFirstRecord, indexOfLastRecord);
     const totalPages = Math.ceil(leadStatus.length / recordsPerPage);
 
-   
 
-      // fetch customers from API
-      useEffect(() => {
+
+    // fetch customers from API
+    useEffect(() => {
         dispatch(get_leadStatusData());
-      }, [dispatch]);
-    
+    }, [dispatch]);
 
-      const handleDelete = (id) => {
-         dispatch(delete_leadStatusDelete(id))
-      }
-      
-      console.log(statusData);
+
+    const handleDelete = (id) => {
+        dispatch(delete_leadStatusDelete(id))
+    }
+
+    console.log(statusData);
 
     return (
         <div className='grid w-full'>
@@ -58,38 +58,39 @@ const page = () => {
                 </div>
             </aside>
 
-            <div className="p-6 bg-white rounded-xl shadow-md">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="border-b text-gray-600">
-                            <th className="py-3 text-left">Nombre</th>
-                            {/* <th className="py-3 text-center">Leads</th> */}
-                            <th className="py-3 text-center">Color</th>
-                            {/* <th className="py-3 text-center">Created By</th> */}
-                            <th className="py-3 text-center">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {leadStatus.map((row, i) => (
-                            <tr key={i} className="border-b hover:bg-gray-50">
-                                {/* Name */}
-                                <td className="py-3 flex items-center gap-2">
-                                    {row.status_name}
-                                </td>
+            <div className='p-5'>
+                <div className="p-6 bg-white rounded-xl shadow-md">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b text-gray-600">
+                                <th className="py-3 text-left">Nombre</th>
+                                {/* <th className="py-3 text-center">Leads</th> */}
+                                <th className="py-3 text-center">Color</th>
+                                {/* <th className="py-3 text-center">Created By</th> */}
+                                <th className="py-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leadStatus.map((row, i) => (
+                                <tr key={i} className="border-b hover:bg-gray-50">
+                                    {/* Name */}
+                                    <td className="py-3 flex items-center gap-2">
+                                        {row.status_name}
+                                    </td>
 
-                                {/* Leads */}
-                                {/* <td className="py-3 text-center">1</td> */}
+                                    {/* Leads */}
+                                    {/* <td className="py-3 text-center">1</td> */}
 
-                                {/* Color */}
-                                <td className="py-3 text-center">
-                                    <span
-                                        className="inline-block w-5 h-3 rounded-full"
-                                        style={{ backgroundColor: row.color }}
-                                    ></span>
-                                </td>
+                                    {/* Color */}
+                                    <td className="py-3 text-center">
+                                        <span
+                                            className="inline-block w-5 h-3 rounded-full"
+                                            style={{ backgroundColor: row.color }}
+                                        ></span>
+                                    </td>
 
-                                {/* Created By */}
-                                {/* <td className="py-3 text-center">
+                                    {/* Created By */}
+                                    {/* <td className="py-3 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <img
                                             src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png"
@@ -100,65 +101,66 @@ const page = () => {
                                     </div>
                                 </td> */}
 
-                                {/* Action */}
-                                <td className="py-3 text-center">
-                                    <div className="flex justify-center gap-3 text-lg">
-                                        {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
-                                        <FaRegEdit onClick={() => setStatusData(row)} className="text-orange-500 cursor-pointer hover:scale-110 transition" />
-                                        <FaRegTrashAlt onClick={()=>handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    {/* Action */}
+                                    <td className="py-3 text-center">
+                                        <div className="flex justify-center gap-3 text-lg">
+                                            {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
+                                            <FaRegEdit onClick={() => setStatusData(row)} className="text-orange-500 cursor-pointer hover:scale-110 transition" />
+                                            <FaRegTrashAlt onClick={() => handleDelete(row._id)} className="text-red-500 cursor-pointer hover:scale-110 transition" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                {/* Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                    <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((prev) => prev - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Previa
-                    </button>
+                    {/* Pagination */}
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previa
+                        </button>
 
-                    <div className="flex gap-2">
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentPage(index + 1)}
-                                className={`px-3 py-1 rounded ${currentPage === index + 1
+                        <div className="flex gap-2">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                    className={`px-3 py-1 rounded ${currentPage === index + 1
                                         ? "bg-sky-500 text-white"
                                         : "bg-gray-200"
-                                    }`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
+                                        }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
 
-                    <button
-                        className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Próxima
-                    </button>
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Próxima
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {open && <AddStatus open={open} setOpen={setOpen} />}
 
-            {statusData && 
-             
-                <EditStatus statusData = {statusData} setStatusData={setStatusData} />
-             
+            {statusData &&
+
+                <EditStatus statusData={statusData} setStatusData={setStatusData} />
+
             }
 
-            
 
-           
+
+
         </div>
     )
 }

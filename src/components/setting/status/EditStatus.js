@@ -74,7 +74,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                         animate={{ y: 30, opacity: 1 }}
                         exit={{ y: -100, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="bg-white w-full h-[35vh] max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                        className="bg-white md:w-full h-[35vh] sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
                     >
 
                         {/* Header */}

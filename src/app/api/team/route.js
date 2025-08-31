@@ -22,6 +22,12 @@ export async function POST(req) {
     const role = formData.get("role");
     const status = formData.get("status") === "true";
 
+    const check_email = await User.findOne({ email });
+    if (check_email) {
+       return NextResponse.json({ error: "User already exist" }, { status: 400 });
+      return true;
+    }
+
     // file
     const file = formData.get("image");
     if (!file) {

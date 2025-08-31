@@ -1,15 +1,15 @@
 'use client'
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { add_team, messageClear, update_team } from '@/store/userTema';
+import { update_team } from '@/store/userTema';
 
 const EditTeam = ({ user, setUser }) => {
     const dispatch = useDispatch();
-    const { loader, errorMessage, successMessage } = useSelector(state => state.team);
+    const { loader } = useSelector(state => state.team);
 
-    // ✅ सारी fields state में रखीं
+    // ✅ State
     const [formData, setFormData] = useState({
         name: "",
         lname: "",
@@ -21,7 +21,7 @@ const EditTeam = ({ user, setUser }) => {
         id: "",
     });
 
-    // ✅ common change handler
+    // ✅ Change Handler
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -30,6 +30,7 @@ const EditTeam = ({ user, setUser }) => {
         }));
     };
 
+    // ✅ Set Data from props
     useEffect(() => {
         if (user) {
             setFormData({
@@ -39,17 +40,15 @@ const EditTeam = ({ user, setUser }) => {
                 phone: user.phone || "",
                 jobTitle: user.jobTitle || "",
                 role: user.role || "",
-                status: user.status || "",
+                status: user.status || false,
                 id: user._id || "",
             });
         }
     }, [user]);
 
+    // ✅ Submit Handler
     const handleSubmit = (e) => {
         e.preventDefault();
-
-          console.log(formData);
-
         dispatch(update_team(formData));
     };
 
@@ -61,7 +60,7 @@ const EditTeam = ({ user, setUser }) => {
                     animate={{ y: 20, opacity: 1 }}
                     exit={{ y: -100, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="bg-white w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                    className="bg-white w-full sm:w-[50%] md:max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative mt-5 max-h-[90vh] flex flex-col"
                 >
                     {/* Close Button */}
                     <button
@@ -71,85 +70,85 @@ const EditTeam = ({ user, setUser }) => {
                         ✕
                     </button>
 
-                    <p className="text-gray-700 text-[20px] mb-6">Editar Usuario</p>
+                    <p className="text-gray-700 text-[20px] mb-6 font-semibold">Editar Usuario</p>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[77vh]">
+                    <form onSubmit={handleSubmit} className="space-y-4 mb-5 max-h-[77vh] overflow-y-auto">
 
                         {/* First Name */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium">Nombre De Pila*</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Nombre De Pila*</label>
                             <input
                                 type="text"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />
                         </div>
 
                         {/* Last Name */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium">Apellido*</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Apellido*</label>
                             <input
                                 type="text"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="lname"
                                 value={formData.lname}
                                 onChange={handleChange}
                                 required
+                                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />
                         </div>
 
                         {/* Email */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium">Correo Electrónico*</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Correo Electrónico*</label>
                             <input
                                 type="email"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />
                         </div>
 
                         {/* Phone */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium">Teléfono*</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Teléfono*</label>
                             <input
                                 type="text"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
                                 required
+                                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />
                         </div>
 
                         {/* Job Title */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium">Título Profesional*</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Título Profesional*</label>
                             <input
                                 type="text"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="jobTitle"
                                 value={formData.jobTitle}
                                 onChange={handleChange}
                                 required
+                                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />
                         </div>
 
                         {/* Role */}
-                        <div className="flex items-center gap-5">
-                            <label className="w-32 text-gray-700 font-medium text-sm">Role</label>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium mb-1">Role</label>
                             <select
                                 name="role"
-                                className="flex-1 p-2 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 value={formData.role}
                                 onChange={handleChange}
                                 required
+                                className="p-2 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
                             >
                                 <option value="">--Seleccionar Rol--</option>
                                 <option value="admin">Administradora</option>
@@ -160,44 +159,36 @@ const EditTeam = ({ user, setUser }) => {
                         </div>
 
                         {/* Status Toggle */}
-                        <div className="flex items-center justify-between mt-2">
-                            <span className="w-32 font-medium text-gray-700 text-sm">Estado</span>
+                        <div className="flex flex-col">
+                            <span className="font-medium text-gray-700 mb-1">Estado</span>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    className="sr-only peer"
                                     name="status"
                                     checked={formData.status}
                                     onChange={handleChange}
+                                    className="sr-only peer"
                                 />
-                                {/* Outer background */}
                                 <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                                {/* Inner circle */}
                                 <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                             </label>
                         </div>
 
                         {/* Buttons */}
-                        <div className="flex gap-3 justify-end">
+                        <div className="flex gap-3 justify-end pt-4">
                             <button
                                 type="reset"
-                                className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100"
                                 onClick={() => setFormData({
-                                    firstName: "",
-                                    lastName: "",
-                                    email: "",
-                                    phone: "",
-                                    jobTitle: "",
-                                    role: "",
-                                    status: false,
+                                    name: "", lname: "", email: "", phone: "", jobTitle: "", role: "", status: false,
                                 })}
+                                className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
                             >
                                 Reiniciar
                             </button>
                             <button
                                 disabled={loader}
                                 type="submit"
-                                className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
+                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
                                 {loader ? "Cargando..." : "Entregar"}
                             </button>
@@ -206,7 +197,7 @@ const EditTeam = ({ user, setUser }) => {
                 </motion.div>
             </div>
         </AnimatePresence>
-    )
-}
+    );
+};
 
 export default EditTeam;

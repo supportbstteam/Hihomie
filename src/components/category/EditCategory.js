@@ -1,12 +1,11 @@
 'use client'
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { category_update, messageClear } from '@/store/category';
 import { motion, AnimatePresence } from "framer-motion";
 
 const EditCategory = ({ setEditOpen, categorys }) => {
-
     const dispatch = useDispatch();
     const { loader, errorMessage, successMessage } = useSelector(state => state.category);
 
@@ -34,38 +33,41 @@ const EditCategory = ({ setEditOpen, categorys }) => {
         }
     }, [categorys]);
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(category_update(formData))
+        dispatch(category_update(formData));
     };
 
     useEffect(() => {
-
         if (successMessage) {
-            toast.success(successMessage)
-            setEditOpen(false)
+            toast.success(successMessage);
+            setEditOpen(false);
             dispatch(messageClear());
         }
         if (errorMessage) {
-            toast.error(errorMessage)
+            toast.error(errorMessage);
             dispatch(messageClear());
         }
-    }, [errorMessage, successMessage])
+    }, [errorMessage, successMessage]);
 
+    // 🔥 Prevent background scrolling when modal is open
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, []);
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 bg-black/40 flex justify-center z-[100] px-4">
+            <div className="fixed inset-0 bg-black/40 flex justify-center items-start z-[100] px-4">
                 <motion.div
                     initial={{ y: -100, opacity: 0 }}
                     animate={{ y: 20, opacity: 1 }}
                     exit={{ y: -100, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="bg-white h-[28vh] w-full max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                    className="bg-white w-full sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative mt-5 max-h-[90vh] flex flex-col"
                 >
-
-
                     {/* Close Button */}
                     <button
                         onClick={() => setEditOpen(false)}
@@ -77,14 +79,14 @@ const EditCategory = ({ setEditOpen, categorys }) => {
                     <p className="text-gray-700 text-[20px] mb-6">Editar categoría</p>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[77vh]">
-
-                        {/* Lead Title */}
-                        <div className="flex items-center gap-3">
-                            <label className="w-32 text-gray-700 font-medium text-sm">Categoría*</label>
+                    <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]">
+                        
+                        {/* Category */}
+                        <div className="flex flex-col gap-1">
+                            <label className="text-gray-700 font-medium text-sm">Categoría*</label>
                             <input
                                 type="text"
-                                className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
+                                className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
@@ -93,11 +95,11 @@ const EditCategory = ({ setEditOpen, categorys }) => {
                         </div>
 
                         {/* Status */}
-                        <div className="flex items-center gap-3">
-                            <label className="w-32 text-gray-700 font-medium text-sm">Estado</label>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-gray-700 font-medium text-sm">Estado</label>
                             <select
                                 name="status"
-                                className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
+                                className="p-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 value={formData.status}
                                 onChange={handleChange}
                                 required
@@ -108,17 +110,16 @@ const EditCategory = ({ setEditOpen, categorys }) => {
                             </select>
                         </div>
 
-
-
                         {/* Buttons */}
                         <div className="flex gap-3 justify-end">
                             <button
                                 type="reset"
-                                className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100"
+                                className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
                                 onClick={() =>
                                     setFormData({
                                         category: "",
                                         status: "",
+                                        id: formData.id,
                                     })
                                 }
                             >
@@ -126,19 +127,17 @@ const EditCategory = ({ setEditOpen, categorys }) => {
                             </button>
                             <button
                                 disabled={loader}
-                                type="entregar"
-                                className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
+                                type="submit"
+                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
                                 {loader ? "Cargando..." : "Entregar"}
                             </button>
                         </div>
-
                     </form>
                 </motion.div>
-
             </div>
         </AnimatePresence>
-    )
-}
+    );
+};
 
-export default EditCategory
+export default EditCategory;

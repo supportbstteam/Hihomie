@@ -53,7 +53,7 @@ const Category = () => {
 
   
     return (
-        <div>
+        <div className=''>
             <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
                 <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
                     <div className="hidden sm:flex flex-col">
@@ -70,8 +70,10 @@ const Category = () => {
                 </div>
             </aside>
 
-            <div className="p-6 bg-white rounded-xl shadow-md mt-5">
-                <table className="w-full text-left border-collapse">
+              <div className='p-5'>
+
+                <div className="bg-white rounded-xl shadow-md mt-5 p-5">
+                <table className="w-full text-left border-collapse overflow-auto">
                     <thead>
                         <tr className="border-b text-gray-600">
                             <th className="py-3 text-left">Categoría</th>
@@ -133,6 +135,7 @@ const Category = () => {
                     </button>
                 </div>
             </div>
+              </div>
 
             {editOpen && 
              
