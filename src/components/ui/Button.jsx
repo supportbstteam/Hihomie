@@ -15,6 +15,7 @@ const Button = ({
   color,
   disabled = false,
   weight = "semibold",
+  type ,
   ...props
 }) => {
   const baseStyles =
@@ -93,6 +94,7 @@ const Button = ({
         href={href}
         className={classes}
         aria-disabled={disabled}
+        type={type}
         onClick={disabled ? (e) => e.preventDefault() : undefined}
         {...props}
       >
@@ -105,6 +107,7 @@ const Button = ({
     <button
       className={classes}
       disabled={disabled}
+      type={type}
       {...props}
     >
       {content}

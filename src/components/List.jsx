@@ -55,24 +55,28 @@ const List = () => {
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-[#F8FAFD]">
           <tr>
-            <th class="psm text-dark px-4 py-3 text-left flex items-center gap-2">
+            <th class="px-4 py-3 ">
               <Square strokeWidth={0.25} />
+            </th>
+
+            <th class="psm text-dark px-4 py-3 text-left flex items-center gap-2">
               Full Name
             </th>
             <th class="psm text-dark px-4 py-3 text-left ">Manager Name</th>
-            <th class="psm text-dark px-4 py-3 text-left ">Email ID</th>
+            <th class="psm text-dark px-4 py-3 text-left w-2/12">Email ID</th>
             <th class="psm text-dark px-4 py-3 text-left ">Contact No</th>
             <th class="psm text-dark px-4 py-3 text-left ">Appraisal</th>
             <th class="psm text-dark px-4 py-3 text-left "></th>
-            <th class="px-4 py-3 "></th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 text-sm">
           {/* <!-- Row 1 --> */}
           {data.map((item, i) => (
             <tr>
-              <td class="px-4 py-4 flex items-center space-x-3">
+              <td class="px-4 py-4 w-[50px] space-x-3">
                 <Square strokeWidth={0.25} />
+              </td>
+              <td class="px-4 py-4 flex space-x-3">
                 <div class="w-8 h-8 bg-blue-100 text-blue-600 flex items-center justify-center rounded-full font-semibold">
                   A
                 </div>
@@ -84,17 +88,15 @@ const List = () => {
               <td class="px-4 py-4 text-gray-700">{item.managerName}</td>
               <td class="px-4 py-4 text-gray-700">{item.email}</td>
               <td class="px-4 py-4 text-gray-500">{item.contactNo}</td>
-              <td class="px-4 py-4 flex gap-2 ">
-                <div
-                  class={`w-2 h-2 bg-${item.appraisal.color} rounded-full font-medium`}
-                ></div>
-                {item.appraisal.status}
-              </td>
-              <td class="px-4 py-4 flex space-x-3 text-gray-400">
+              <td class="px-4 py-4 h-full gap-2 ">{item.appraisal.status}</td>
+              <td class="px-4 py-4 text-gray-400">
+                <div className="flex gap-2 justify-between">
+
                 <Phone size={20}/>
                 <MessageSquareText size={20}/>
                 <Mail size={20}/>
                 <EllipsisVertical size={20} />
+                </div>
               </td>
             </tr>
           ))}
