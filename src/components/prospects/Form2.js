@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { t } from '@/components/translations';
 
 const Form2 = ({ setAddressDetailsData, selectedUser }) => {
 
@@ -54,7 +55,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
         <div className="flex flex-col gap-4 w-full">
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">nombre de empresa</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('company_name')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -65,7 +66,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Calle</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('street')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -76,7 +77,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Ciudad</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('city')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -87,7 +88,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Estado</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('state')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -98,7 +99,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Código postal</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('pin_code')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -109,7 +110,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">País</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('country')}</label>
                 <select
                     name="country"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -125,7 +126,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Sitio web</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('website')}</label>
                 <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"

@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { add_team, messageClear } from '@/store/userTema';
+import { t } from '@/components/translations';
 
 const AddTeam = ({ setOpen }) => {
     const dispatch = useDispatch();
@@ -86,14 +87,14 @@ const AddTeam = ({ setOpen }) => {
                         ✕
                     </button>
 
-                    <p className="text-gray-700 text-[20px] mb-6">Agregar Nuevo Usuario</p>
+                    <p className="text-gray-700 text-[20px] mb-6">{t('add_user_label')}</p>
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]">
 
                         {/* Name */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Nombre De Pila*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('first_name')}*</label>
                             <input
                                 type="text"
                                 name="name"
@@ -106,7 +107,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Last Name */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Apellido*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('last_name')}*</label>
                             <input
                                 type="text"
                                 name="lname"
@@ -119,7 +120,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Email */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Correo Electrónico*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('email')}*</label>
                             <input
                                 type="email"
                                 name="email"
@@ -132,7 +133,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Phone */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Teléfono*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('phone')}*</label>
                             <input
                                 type="text"
                                 name="phone"
@@ -145,7 +146,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Job Title */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Título Profesional*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('position')}*</label>
                             <input
                                 type="text"
                                 name="jobTitle"
@@ -158,7 +159,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Role */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Role</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('role')}</label>
                             <select
                                 name="role"
                                 value={formData.role}
@@ -176,7 +177,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Image */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Imagen*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('image')}*</label>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -188,7 +189,7 @@ const AddTeam = ({ setOpen }) => {
 
                         {/* Status Toggle */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Estado</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('status')}</label>
                             <label className="relative inline-flex items-center cursor-pointer w-fit">
                                 <input
                                     type="checkbox"
@@ -218,14 +219,14 @@ const AddTeam = ({ setOpen }) => {
                                     image: null,
                                 })}
                             >
-                                Reiniciar
+                                {t('cancel')}
                             </button>
                             <button
                                 disabled={loader}
                                 type="submit"
                                 className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
-                                {loader ? "Cargando..." : "Entregar"}
+                                {loader ? t('loading') : t('submit')}
                             </button>
                         </div>
                     </form>

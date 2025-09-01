@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import AddTeam from '@/components/team/AddTeam';
 import { delete_teamData, get_teamData, messageClear } from '@/store/userTema';
 import EditTeam from '@/components/team/EditTeam';
+import { t } from '@/components/translations';
 
 const Team = () => {
 
@@ -16,7 +17,7 @@ const Team = () => {
 
 
     const [currentPage, setCurrentPage] = useState(1);
-    const recordsPerPage = 10;
+    const recordsPerPage = 5;
 
     // Pagination logic
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -74,16 +75,16 @@ const Team = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b text-gray-600">
-                                <th className="py-3 text-left">Nombre De Pila</th>
-                                <th className="py-3 text-center">Posición</th>
-                                <th className="py-3 text-center">Role</th>
-                                <th className="py-3 text-center">Correo Electrónico</th>
-                                <th className="py-3 text-center">Teléfono</th>
-                                <th className='py-3 text-center'>Action</th>
+                                <th className="py-3 text-left">{t('full_name')}</th>
+                                <th className="py-3 text-center">{t('position')}</th>
+                                <th className="py-3 text-center">{t('role')}</th>
+                                <th className="py-3 text-center">{t('email')}</th>
+                                <th className="py-3 text-center">{t('phone')}</th>
+                                <th className='py-3 text-center'>{t('action')}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {team.map((row, i) => (
+                            {currentRecords.map((row, i) => (
                                 <tr key={i} className="border-b hover:bg-gray-50">
 
                                     <td className="py-3 flex items-center gap-2">

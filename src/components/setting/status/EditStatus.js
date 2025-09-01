@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react'
 import { messageClear, update_statusData } from '@/store/setting';
 import { motion, AnimatePresence } from "framer-motion";
-
+import { t } from '@/components/translations';
 const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
 
     const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                     >
 
                         {/* Header */}
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Agregar estado</h2>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4">{t('edit_status')}</h2>
                         <button
                             onClick={() => setStatusData(null)}
                             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg"
@@ -91,7 +91,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                             {/* Estado name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
-                                    Nombre del estado*
+                                   {t('status')} {t('name')}*
                                 </label>
                                 <input
                                     type="text"
@@ -107,7 +107,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                             {/* Color select */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
-                                    Color
+                                    {t('color')}
                                 </label>
                                 <div className="flex flex-wrap gap-3 mt-2">
                                     {menu.map((item, i) => (
@@ -146,14 +146,14 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                                         })
                                     }
                                 >
-                                    Reiniciar
+                                    {t('cancel')}
                                 </button>
                                 <button
                                     disabled={loader}
                                     type="submit"
                                     className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700 text-sm font-medium"
                                 >
-                                    {loader ? "Cargando..." : "Entregar"}
+                                    {loader ? t('loading') : t('submit')}
                                 </button>
                             </div>
                         </form>

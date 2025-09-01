@@ -7,6 +7,7 @@ import { delete_leadStatusDelete, get_leadStatusData } from '@/store/setting';
 import toast from 'react-hot-toast';
 import { messageClear } from '@/store/customer';
 import EditStatus from '@/components/setting/status/EditStatus';
+import { t } from '@/components/translations';
 
 const page = () => {
 
@@ -63,11 +64,11 @@ const page = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b text-gray-600">
-                                <th className="py-3 text-left">Nombre</th>
+                                <th className="py-3 text-left">{t('name')}</th>
                                 {/* <th className="py-3 text-center">Leads</th> */}
-                                <th className="py-3 text-center">Color</th>
+                                <th className="py-3 text-center">{t('color')}</th>
                                 {/* <th className="py-3 text-center">Created By</th> */}
-                                <th className="py-3 text-center">Acción</th>
+                                <th className="py-3 text-center">{t('action')}</th>
                             </tr>
                         </thead>
                         <tbody>

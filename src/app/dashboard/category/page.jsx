@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { FaPlus, FaRegEdit, FaRegEye, FaRegTrashAlt } from "react-icons/fa";
 import toast from 'react-hot-toast'
 import EditCategory from '@/components/category/EditCategory'
+import { t } from '@/components/translations';
+
+
 const Category = () => {
     const [open, setOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
@@ -76,9 +79,9 @@ const Category = () => {
                 <table className="w-full text-left border-collapse overflow-auto">
                     <thead>
                         <tr className="border-b text-gray-600">
-                            <th className="py-3 text-left">Categoría</th>
-                            <th className="py-3 text-center">Estado</th>
-                            <th className="py-3 text-center">Acción</th>
+                            <th className="py-3 text-left">{t('category')}</th>
+                            <th className="py-3 text-center">{t('status')}</th>
+                            <th className="py-3 text-center">{t('action')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,7 +111,7 @@ const Category = () => {
                         onClick={() => setCurrentPage((prev) => prev - 1)}
                         disabled={currentPage === 1}
                     >
-                        Previa
+                        {t('previous')}
                     </button>
 
                     <div className="flex gap-2">
@@ -131,7 +134,7 @@ const Category = () => {
                         onClick={() => setCurrentPage((prev) => prev + 1)}
                         disabled={currentPage === totalPages}
                     >
-                        Próxima
+                       {t('next')}
                     </button>
                 </div>
             </div>

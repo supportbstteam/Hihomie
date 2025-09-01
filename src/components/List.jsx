@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react"; // ✅ Missing useState import
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import { t } from '@/components/translations';
 
 const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
   const [onEdit, setOnEdit] = useState({
@@ -76,14 +77,14 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-[#F8FAFD]">
           <tr>
-            <th className="psm text-dark px-4 py-3 text-left">Full Name</th>
-            <th className="psm text-dark px-4 py-3 text-left">Title</th>
-            <th className="psm text-dark px-4 py-3 text-left">Created</th>
-            <th className="psm text-dark px-4 py-3 text-left">Value</th>
-            <th className="psm text-dark px-4 py-3 text-left">Assigned</th>
-            <th className="psm text-dark px-4 py-3 text-left">Phone</th>
-            <th className="psm text-dark px-4 py-3 text-left">Status</th>
-            <th className="psm text-dark px-4 py-3 text-left">Action</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('full_name')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('title')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('created_at')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('value')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('assigned')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('phone')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('status')}</th>
+            <th className="psm text-dark px-4 py-3 text-left">{t('action')}</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 text-sm">

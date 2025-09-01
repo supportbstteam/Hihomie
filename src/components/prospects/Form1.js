@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import TextEditor from '../TextEditor'
+import { t } from '@/components/translations';
 
 const Form1 = ({ setDetailsData, selectedUser }) => {
 
@@ -49,7 +50,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
     return (
         <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-1 w-full mb-5">
-                <label className="text-gray-700 font-medium text-sm">Notas</label>
+                <label className="text-gray-700 font-medium text-sm">{t('notes')}</label>
                 <div className="w-full">
                     <TextEditor
                         className="min-h-[150px]"
@@ -61,7 +62,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Fuente</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('fountain')}</label>
                 <select
                     name="source"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -77,7 +78,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Categoría</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('Category')}</label>
                 <select
                     name="category"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -92,7 +93,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Etiquetas</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('tag')}</label>
                 <select
                     name="tag"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -109,7 +110,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <label className="w-32 text-gray-700 font-medium text-sm">Último contacto</label>
+                <label className="w-32 text-gray-700 font-medium text-sm">{t('date')}</label>
                 <input
                     type="Date"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"

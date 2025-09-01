@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react';
 import { AddCategorys, messageClear } from '@/store/category';
 import { motion, AnimatePresence } from "framer-motion";
+import { t } from '@/components/translations';
 
 const AddCategory = ({ setOpen }) => {
     const dispatch = useDispatch();
@@ -65,14 +66,14 @@ const AddCategory = ({ setOpen }) => {
                         ✕
                     </button>
 
-                    <p className="text-gray-700 text-[20px] mb-6">Agregar una nueva categoría</p>
+                    <p className="text-gray-700 text-[20px] mb-6">{t('add_category_label')}</p>
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]">
                         
                         {/* Category */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Categoría*</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('category')}*</label>
                             <input
                                 type="text"
                                 className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -85,7 +86,7 @@ const AddCategory = ({ setOpen }) => {
 
                         {/* Status */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">Estado</label>
+                            <label className="text-gray-700 font-medium text-sm">{t('status')}</label>
                             <select
                                 name="status"
                                 className="p-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -93,7 +94,7 @@ const AddCategory = ({ setOpen }) => {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="">--Seleccionar estado--</option>
+                                <option value="">--{t('select')} {t('status')}--</option>
                                 <option value="Activa">Activa</option>
                                 <option value="Inactiva">Inactiva</option>
                             </select>
@@ -106,14 +107,14 @@ const AddCategory = ({ setOpen }) => {
                                 className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
                                 onClick={() => setFormData({ category: "", status: "" })}
                             >
-                                Reiniciar
+                                {t('cancel')}
                             </button>
                             <button
                                 disabled={loader}
                                 type="submit"
                                 className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
-                                {loader ? "Cargando..." : "Entregar"}
+                                {loader ? t('loading') : t('submit')}
                             </button>
                         </div>
                     </form>

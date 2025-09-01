@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { update_team } from '@/store/userTema';
+import { t } from '@/components/translations';
 
 const EditTeam = ({ user, setUser }) => {
     const dispatch = useDispatch();
@@ -70,14 +71,14 @@ const EditTeam = ({ user, setUser }) => {
                         ✕
                     </button>
 
-                    <p className="text-gray-700 text-[20px] mb-6 font-semibold">Editar Usuario</p>
+                    <p className="text-gray-700 text-[20px] mb-6 font-semibold">{t('edit_user')}</p>
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4 mb-5 max-h-[77vh] overflow-y-auto">
 
                         {/* First Name */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Nombre De Pila*</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('first_name')}*</label>
                             <input
                                 type="text"
                                 name="name"
@@ -90,7 +91,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Last Name */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Apellido*</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('last_name')}*</label>
                             <input
                                 type="text"
                                 name="lname"
@@ -103,7 +104,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Email */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Correo Electrónico*</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('email')}*</label>
                             <input
                                 type="email"
                                 name="email"
@@ -116,7 +117,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Phone */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Teléfono*</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('phone')}*</label>
                             <input
                                 type="text"
                                 name="phone"
@@ -129,7 +130,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Job Title */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Título Profesional*</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('position')}*</label>
                             <input
                                 type="text"
                                 name="jobTitle"
@@ -142,7 +143,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Role */}
                         <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium mb-1">Role</label>
+                            <label className="text-gray-700 font-medium mb-1">{t('role')}</label>
                             <select
                                 name="role"
                                 value={formData.role}
@@ -160,7 +161,7 @@ const EditTeam = ({ user, setUser }) => {
 
                         {/* Status Toggle */}
                         <div className="flex flex-col">
-                            <span className="font-medium text-gray-700 mb-1">Estado</span>
+                            <span className="font-medium text-gray-700 mb-1">{t('status')}</span>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -183,14 +184,14 @@ const EditTeam = ({ user, setUser }) => {
                                 })}
                                 className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
                             >
-                                Reiniciar
+                                {t('cancel')}
                             </button>
                             <button
                                 disabled={loader}
                                 type="submit"
                                 className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
-                                {loader ? "Cargando..." : "Entregar"}
+                                {loader ? t('loading') : t('submit')}
                             </button>
                         </div>
                     </form>

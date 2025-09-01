@@ -8,7 +8,7 @@ import Form1 from "./Form1";
 import { BsPlusCircleDotted } from "react-icons/bs";
 import AssignUser from "./AssignUser";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { t } from '@/components/translations';
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage } = useSelector(
@@ -152,7 +152,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
               ✕
             </button>
 
-            <p className="text-gray-700 text-[20px] mb-6">Editar cliente potencial</p>
+            <p className="text-gray-700 text-[20px] mb-6">{t('edit_lead')}</p>
 
             {/* Form */}
             <div className="overflow-y-auto flex justify-between gap-1">
@@ -161,7 +161,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Lead Title */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Título principal*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('lead_title')}*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -174,7 +174,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Apellido</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('surname')}</label>
                   <select
                     name="surname"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -190,7 +190,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* First Name */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Nombre de pila*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('first_name')}*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -203,7 +203,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Last Name */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Apellido*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('last_name')}*</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -215,7 +215,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Compañía</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('company')}</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -227,7 +227,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Designación</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('designation')}</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -240,7 +240,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Telephone */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Teléfono</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('phone')}</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -252,7 +252,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Email */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Dirección de correo electrónico</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('email')}</label>
                   <input
                     type="email"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -264,7 +264,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Lead Value */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Valor principal ($)</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('lead_amout')}($)</label>
                   <input
                     type="number"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -276,7 +276,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Assigned */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Asignado</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('assigned')}</label>
                   <input
                     type="text"
                     className="flex-1 p-1 border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -288,7 +288,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Status */}
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Estado*</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('status')}*</label>
                   <select
                     name="status"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -306,7 +306,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Tipo de operación</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('type_of_opration')}</label>
                   <select
                     name="type_of_opration"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -326,7 +326,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Situación del cliente</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('custome_setiuation')}</label>
                   <select
                     name="customer_situation"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -346,7 +346,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <label className="w-32 text-gray-700 font-medium text-sm">Estado de compra</label>
+                  <label className="w-32 text-gray-700 font-medium text-sm">{t('purchase_status')}</label>
                   <select
                     name="purchase_status"
                     className="flex-1 p-1 bg-white border border-gray-300 rounded-sm text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
@@ -366,7 +366,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 <section className="bg-gray-50 p-4 rounded-md border">
                   <h3 className="text-base font-semibold text-gray-800 mb-4">
-                    Notas y observaciones
+                   {t('note')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -375,7 +375,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="commercial_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                        Notas Comerciales
+                        {t('commerical_note')}
                       </label>
                       <textarea
                         id="commercial_notes"
@@ -393,7 +393,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         htmlFor="manager_notes"
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
-                        Notas del gerente
+                       {t('Managers_notes')}
                       </label>
                       <textarea
                         id="manager_notes"
@@ -411,7 +411,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
-                  <span className="w-32 font-medium text-gray-700 text-sm">Detalles</span>
+                  <span className="w-32 font-medium text-gray-700 text-sm">{t('details')}</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -442,7 +442,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
                 {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
-                  <span className="font-medium text-gray-700 text-sm">Detalles de dirección y organización</span>
+                  <span className="font-medium text-gray-700 text-sm">{t('address_organization')}</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -474,14 +474,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onClick={() => setSelectedUser(null)}
                     type="reset"
                     className="px-6 py-2 border rounded-sm text-gray-700 hover:bg-gray-100">
-                    Cerca
+                    {t('cancel')}
                   </button>
                   <button
                     disabled={loader}
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
                   >
-                    {loader ? "Cargando..." : "Entregar"}
+                    {loader ? t('loading') : t('submit') }
                   </button>
                 </div>
 

@@ -2,6 +2,7 @@
 import { get_teamData } from '@/store/userTema';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { t } from '@/components/translations';
 
 const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterData }) => {
     const dispatch = useDispatch();
@@ -59,8 +60,8 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                 {/* Header */}
                 <div className="p-4 border-b flex items-center justify-between">
                     <div>
-                        <h2 className="text-lg font-semibold">Filters</h2>
-                        <p className="text-[#99A1B7]">Encuentra exactamente lo que necesitas</p>
+                        <h2 className="text-lg font-semibold">{t('filter')}</h2>
+                        <p className="text-[#99A1B7]">{t('find_exact')}</p>
                     </div>
                     <button
                         onClick={() => setFilterOpen(false)}
@@ -74,7 +75,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                 <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-60px)]">
                     {/* Gestor */}
                     <div>
-                        <label className="font-medium">Gestor</label>
+                        <label className="font-medium">{t('manager')}</label>
                         <select
                             value={selectedGestor}
                             onChange={(e) => setSelectedGestor(e.target.value)}
@@ -91,7 +92,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
 
                     {/* Estado */}
                     <div>
-                        <label className="font-medium">Estado</label>
+                        <label className="font-medium">{t('status')}</label>
                         <select
                             value={selectedEstado}
                             onChange={(e) => setSelectedEstado(e.target.value)}
@@ -108,7 +109,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
 
                     {/* Usuario */}
                     <div>
-                        <label className="font-medium">Nombre completo</label>
+                        <label className="font-medium">{t('full_name')}</label>
                         <input
                             type="text"
                             name="full_name"
@@ -121,7 +122,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
 
                     {/* Contacto */}
                     <div>
-                        <label className="font-medium">Contacto</label>
+                        <label className="font-medium">{t('phone')}</label>
                         <input
                             type="number"
                             name="phone"
@@ -138,13 +139,13 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                             onClick={handleCancel}
                             className="flex-1 rounded-lg border py-2"
                         >
-                            Cancel
+                            {t('cancel')}
                         </button>
                         <button
                             onClick={handleApply}
                             className="flex-1 rounded-lg bg-[#21B573] text-white py-2"
                         >
-                            Apply
+                           {t('apply')}
                         </button>
                     </div>
                 </div>

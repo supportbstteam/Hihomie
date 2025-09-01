@@ -9,22 +9,23 @@ import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { t } from '@/components/translations';
 
 
 const MENU = {
   admin: [
-    { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/category', label: 'Categoría', icon: <MdOutlineCategory /> },
-    { href: '/dashboard/lead', label: 'Prospectos', icon: <MdOutlineCalculate /> },
-    { href: '/dashboard/team', label: 'Usuaria', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
-    { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
-    { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
-    { href: '#', label: 'Calculadora', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Comisión', icon: <MdOutlineHandshake /> },
-    { href: '#', label: 'Importar', icon: <SiConvertio /> },
-    { href: '#', label: 'Ayuda y Soporte', icon: <MdOutlineHeadphones /> },
-    { href: '/dashboard/setting', label: 'Settings', icon: <IoSettingsOutline /> },
+    { href: '/dashboard', label: t('dashboard'), icon: <MdOutlineDashboard /> },
+    { href: '/dashboard/category', label: t('category'), icon: <MdOutlineCategory /> },
+    { href: '/dashboard/lead', label: t('lead'), icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/team', label: t('team'), icon: <MdOutlineCalculate /> },
+    { href: '#', label: t('manager'), icon: <MdOutlineHandshake /> },
+    { href: '#', label: t('agent'), icon: <MdOutlineRealEstateAgent /> },
+    { href: '#', label: t('bank'), icon: <MdOutlineAssuredWorkload /> },
+    { href: '#', label: t('calculator'), icon: <MdOutlineCalculate /> },
+    { href: '#', label: t('commission'), icon: <MdOutlineHandshake /> },
+    { href: '#', label: t('metter'), icon: <SiConvertio /> },
+    { href: '#', label: t('help_support'), icon: <MdOutlineHeadphones /> },
+    { href: '/dashboard/setting', label: t('setting'), icon: <IoSettingsOutline /> },
   ],
   manager: [
     { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
@@ -84,7 +85,7 @@ export default function Sidebar() {
 
         <div className="flex items-center gap-2 mb-4">
           <FaAt size={20} className='text-[#F8C51B]' />
-          <h2 className="font-semibold">Cuenta Administrativa</h2>
+          <h2 className="font-semibold">{t('account')}</h2>
         </div>
 
         <nav className="space-y-2">
