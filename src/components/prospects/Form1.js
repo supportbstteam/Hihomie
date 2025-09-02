@@ -121,7 +121,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
                 />
             </div>
 
-            <hr />
+            <hr className='border border-stroke' />
         </div>
     )
 }
