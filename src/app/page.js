@@ -60,16 +60,16 @@ export default function LoginPage() {
 
 
       {/* Login Form */}
-      <div className="w-full max-w-md rounded-2xl border bg-white p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-2xl border border-stroke bg-white p-8 shadow-lg">
         <h1 className="text-2xl font-bold text-center">{t('welcome_back')}</h1>
         <p className="mb-6 text-center text-[#666]">{t('login_quick')}</p>
 
         <form className="space-y-5" onSubmit={onSubmit}>
           {/* Email */}
           <div className="relative flex flex-col">
-            <label className="mb-1 font-medium text-gray-700">{t('email')}*</label>
+            <label className="mb-1 font-medium text-dark">{t('email')}*</label>
             <input
-              className="w-full rounded-lg border px-10 py-2 focus:border-[#21b573] focus:ring focus:ring-[#21b573]/20"
+              className="w-full rounded-lg border border-stroke px-10 py-2 focus:border-primary focus:ring-2 focus:ring-primary"
               placeholder={t('email')}
               type="email"
               value={email}
@@ -81,9 +81,9 @@ export default function LoginPage() {
 
           {/* Password */}
           <div className="relative flex flex-col">
-            <label className="mb-1 font-medium text-gray-700">{t('password')}*</label>
+            <label className="mb-1 font-medium text-dark">{t('password')}*</label>
             <input
-              className="w-full rounded-lg border px-10 py-2 focus:border-[#21b573] focus:ring focus:ring-[#21b573]/20"
+              className="w-full rounded-lg border border-stroke  px-10 py-2 focus:border-primary focus:ring-2 focus:ring-primary"
               placeholder={t('password')}
               type={showPassword ? "text" : "password"}
               value={password}
@@ -98,9 +98,7 @@ export default function LoginPage() {
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </span>
           </div>
-
           {error && <p className="text-sm text-red-600">{error}</p>}
-
           <div className="flex justify-between text-sm">
             <div>
               <input type="checkbox" name="remember" className="mr-1" />

@@ -8,6 +8,7 @@ const Icon = ({
   color = 'currentColor',
   className = '',
   href,
+  onClick,
   ...props
 }) => {
   if (!IconComponent) {
@@ -25,18 +26,19 @@ const Icon = ({
       height={size}
       color={color}
       fill={color}
+      // onClick={onClick}
       className={combinedClassName}
       {...props}
     />
   );
 
   const wrapper = (
-    <div className="flex items-center justify-center border border-stock w-10 h-10 rounded-radius">
+    <div onClick={onClick} className={`flex items-center justify-center border border-stock w-10 h-10 rounded-radius ${onClick ? "cursor-pointer":""} `}>
       {iconElement}
     </div>
   );
 
-  return href ? <Link href={href}>{wrapper}</Link> : wrapper;
+  return href ? <Link href={href} onClick={onClick}>{wrapper}</Link> : wrapper;
 };
 
 export default Icon;

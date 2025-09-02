@@ -58,7 +58,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                     }`}
             >
                 {/* Header */}
-                <div className="p-4 border-b flex items-center justify-between">
+                <div className="p-4 border-b border-stroke flex items-center justify-between">
                     <div>
                         <h2 className="text-lg font-semibold">{t('filter')}</h2>
                         <p className="text-[#99A1B7]">{t('find_exact')}</p>
@@ -79,7 +79,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                         <select
                             value={selectedGestor}
                             onChange={(e) => setSelectedGestor(e.target.value)}
-                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border px-3 py-2"
+                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border border-stroke px-3 py-2"
                         >
                             <option value="">Todos los gestores</option>
                             {team.map((g) => (
@@ -96,7 +96,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                         <select
                             value={selectedEstado}
                             onChange={(e) => setSelectedEstado(e.target.value)}
-                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border px-3 py-2"
+                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border border-stroke px-3 py-2"
                         >
                             <option value="">Todas las hipotecas</option>
                             {leadStatusList.map((item, i) => (
@@ -115,7 +115,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                             name="full_name"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border px-3 py-2"
+                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border border-stroke px-3 py-2"
                             placeholder="Buscar por nombre"
                         />
                     </div>
@@ -128,7 +128,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                             name="phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border px-3 py-2"
+                            className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border border-stroke px-3 py-2"
                             placeholder="Buscar por contacto"
                         />
                     </div>
@@ -137,7 +137,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                     <div className="flex gap-3 h-[7vh] pt-4">
                         <button
                             onClick={handleCancel}
-                            className="flex-1 rounded-lg border py-2"
+                            className="flex-1 rounded-lg border border-stroke py-2"
                         >
                             {t('cancel')}
                         </button>

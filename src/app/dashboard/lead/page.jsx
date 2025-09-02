@@ -23,7 +23,9 @@ import {
   Percent,
   Phone,
   PiggyBank,
+  Plus,
 } from "lucide-react";
+import Icon from "@/components/ui/Icon";
 
 export default function CustomDnD() {
   const dispatch = useDispatch();
@@ -186,26 +188,28 @@ export default function CustomDnD() {
   return (
     <>
       {/* HEADER */}
-      <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
+      <aside className="w-full bg-white  border-b border-stroke sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
           <div className="hidden sm:flex flex-col"></div>
           <div className="flex w-full sm:w-auto justify-end">
             <ul className="flex items-center gap-2 sm:gap-4">
-              <li className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer">
-                <FaPlus className="text-lg sm:text-xl" />
-              </li>
-              <li
+
+
+              <Icon icon={Plus} size={16} color="#99A1B7" />
+              <Icon
+                icon={FaListUl}
+                size={16}
+                color="#99A1B7"
                 onClick={() => setListComponent((prev) => !prev)}
-                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer"
-              >
-                <FaListUl className="text-lg sm:text-xl" />
-              </li>
-              <li
+              />
+
+              <Icon
+                icon={MdFilterList}
+                size={16}
+                color="#99A1B7"
                 onClick={() => setFilterOpen(true)}
-                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white shadow-sm px-2 py-1 sm:px-3 sm:py-2 cursor-pointer"
-              >
-                <MdFilterList className="text-lg sm:text-xl" />
-              </li>
+              />
+
             </ul>
           </div>
         </div>
@@ -243,95 +247,95 @@ export default function CustomDnD() {
                 </button>
               </div>
               <div className="overflow-y-scroll scrollbar-hide h-full">
-              {col.cards.map((card, index) => (
-                <div
-                  key={card._id}
-                  draggable
-                  onDragStart={() => handleDragStart(card._id, col.id, index)}
-                  onDragEnd={handleDragEnd}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropBetween(col.id, index)}
-                  onClick={() => handleCardClick(col.id, card)}
-                  onTouchStart={(e) =>
-                    handleTouchStart(e, card._id, col.id, index)
-                  }
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                  className={`shadow-md rounded-radius p-4 mb-3 cursor-grab transition 
+                {col.cards.map((card, index) => (
+                  <div
+                    key={card._id}
+                    draggable
+                    onDragStart={() => handleDragStart(card._id, col.id, index)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => handleDropBetween(col.id, index)}
+                    onClick={() => handleCardClick(col.id, card)}
+                    onTouchStart={(e) =>
+                      handleTouchStart(e, card._id, col.id, index)
+                    }
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    className={`shadow-md rounded-radius p-4 mb-3 cursor-grab transition 
                                         ${
                                           draggingCardId === card.id
                                             ? "opacity-60 border-2 border-blue-500"
                                             : "bg-white "
                                         }`}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                      {card.first_name?.[0] || "?"}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                        {card.first_name?.[0] || "?"}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
+                          {card.first_name} {card.last_name}
+                        </h3>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                        {card.first_name} {card.last_name}
-                      </h3>
-                    </div>
-                  </div>
 
-                  <div className=" grid gap-2 mb-4 text-light">
-                    <span className="flex gap-2">
-                      <Mail size={16} />
+                    <div className=" grid gap-2 mb-4 text-light">
+                      <span className="flex gap-2">
+                        <Mail size={16} />
 
-                      <p className="text-light pxs">{card.email}</p>
-                    </span>
-                    <span className="flex gap-2">
-                      <Phone size={16} />
-                      <p className="text-light pxs">{card.phone}</p>
-                    </span>
-                    <span className="flex gap-2">
-                      <Calendar size={16} />
-                      <p className="text-light pxs">
-                        {new Date().toLocaleDateString()}
-                      </p>
-                    </span>
-                  </div>
-
-                  <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
-                    <div className="grid gap-2">
-                      <span className="flex gap-1 justify-center items-center">
-                        <ChartSpline size={16} color="#21B573" />
-                        <p className="text-primary pxs">Income</p>
+                        <p className="text-light pxs">{card.email}</p>
                       </span>
-                      <p className="text-light pxs">4.500 € / mes</p>
-                    </div>
-                    <div className="grid gap-2">
-                      <span className="flex gap-1 justify-center items-center">
-                        <PiggyBank size={16} color="#21B573" />
-                        <Percent size={14} color="#21B573" />
-                        <p className="text-primary pxs">Income</p>
+                      <span className="flex gap-2">
+                        <Phone size={16} />
+                        <p className="text-light pxs">{card.phone}</p>
                       </span>
-                      <p className="text-light pxs">4.500 € / mes</p>
+                      <span className="flex gap-2">
+                        <Calendar size={16} />
+                        <p className="text-light pxs">
+                          {new Date().toLocaleDateString()}
+                        </p>
+                      </span>
+                    </div>
+
+                    <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
+                      <div className="grid gap-2">
+                        <span className="flex gap-1 justify-center items-center">
+                          <ChartSpline size={16} color="#21B573" />
+                          <p className="text-primary pxs">Income</p>
+                        </span>
+                        <p className="text-light pxs">4.500 € / mes</p>
+                      </div>
+                      <div className="grid gap-2">
+                        <span className="flex gap-1 justify-center items-center">
+                          <PiggyBank size={16} color="#21B573" />
+                          <Percent size={14} color="#21B573" />
+                          <p className="text-primary pxs">Income</p>
+                        </span>
+                        <p className="text-light pxs">4.500 € / mes</p>
+                      </div>
+                    </div>
+                    <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
+                      <a
+                        href={`tel:${card.phone}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <LuPhoneCall />
+                      </a>
+                      <a
+                        href={`https://wa.me/${card.phone}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FaWhatsapp />
+                      </a>
+                      <a
+                        href={`mailto:${card.email}`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <CiMail />
+                      </a>
                     </div>
                   </div>
-                  <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
-                    <a
-                      href={`tel:${card.phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <LuPhoneCall />
-                    </a>
-                    <a
-                      href={`https://wa.me/${card.phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FaWhatsapp />
-                    </a>
-                    <a
-                      href={`mailto:${card.email}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <CiMail />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                ))}
               </div>
             </div>
           ))}
