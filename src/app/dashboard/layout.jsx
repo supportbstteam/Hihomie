@@ -7,11 +7,11 @@ export default function DashboardLayout({ children }) {
     <>
       <TopNav />
 
-      <div className="flex min-h-screen">
+      <div className="flex h-[90vh]">
         <Sidebar />
         <div className="flex-1">
           {/* Main Content */}
-          <div className="">
+          <div className=" h-full">
             {children}
           </div>
         </div>

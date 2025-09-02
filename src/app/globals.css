@@ -7,6 +7,8 @@
   --color-light: #99A1B7;
   --color-stock: #E7EAF3;
   --radius-radius: 4px;
+  --radius-radius-base: 16px;
+
   --font-heading: var(--font-inter),ui-sans-serif, system-ui, sans-serif;
 }
 

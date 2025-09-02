@@ -1,75 +1,89 @@
-'use client'
-import Link from 'next/link'
-import { useSession, signOut } from 'next-auth/react'
-import { useState } from 'react'
+"use client";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import { FaAt } from "react-icons/fa";
-import { MdOutlineAssuredWorkload, MdOutlineCalculate, MdOutlineDashboard, MdOutlineHandshake, MdOutlineHeadphones, MdOutlineLogout, MdOutlineRealEstateAgent } from "react-icons/md";
+import {
+  MdOutlineAssuredWorkload,
+  MdOutlineCalculate,
+  MdOutlineDashboard,
+  MdOutlineHandshake,
+  MdOutlineHeadphones,
+  MdOutlineLogout,
+  MdOutlineRealEstateAgent,
+} from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 
-
 const MENU = {
   admin: [
-    { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/prospects', label: 'Prospectos', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
-    { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
-    { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
-    { href: '#', label: 'Calculadora', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Comisión', icon: <MdOutlineHandshake /> },
-    { href: '#', label: 'Importar', icon: <SiConvertio /> },
-    { href: '#', label: 'Ayuda y Soporte', icon: <MdOutlineHeadphones /> },
-    { href: '/dashboard/setting', label: 'Settings', icon: <IoSettingsOutline /> },
+    { href: "/dashboard", label: "Tablero", icon: <MdOutlineDashboard /> },
+    {
+      href: "/dashboard/prospects",
+      label: "Prospectos",
+      icon: <MdOutlineCalculate />,
+    },
+    { href: "#", label: "Gerente", icon: <MdOutlineHandshake /> },
+    { href: "#", label: "Agentes", icon: <MdOutlineRealEstateAgent /> },
+    { href: "#", label: "Banco", icon: <MdOutlineAssuredWorkload /> },
+    { href: "#", label: "Calculadora", icon: <MdOutlineCalculate /> },
+    { href: "#", label: "Comisión", icon: <MdOutlineHandshake /> },
+    { href: "#", label: "Importar", icon: <SiConvertio /> },
+    { href: "#", label: "Ayuda y Soporte", icon: <MdOutlineHeadphones /> },
+    {
+      href: "/dashboard/setting",
+      label: "Settings",
+      icon: <IoSettingsOutline />,
+    },
   ],
   manager: [
-    { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
-    { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
-    { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
+    { href: "/dashboard", label: "Tablero", icon: <MdOutlineDashboard /> },
+    { href: "#", label: "Prospectos", icon: <MdOutlineCalculate /> },
+    { href: "#", label: "Gerente", icon: <MdOutlineHandshake /> },
+    { href: "#", label: "Agentes", icon: <MdOutlineRealEstateAgent /> },
+    { href: "#", label: "Banco", icon: <MdOutlineAssuredWorkload /> },
   ],
   user: [
-    { href: '/dashboard', label: 'Tablero', icon: <MdOutlineDashboard /> },
-    { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
-    { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
+    { href: "/dashboard", label: "Tablero", icon: <MdOutlineDashboard /> },
+    { href: "#", label: "Prospectos", icon: <MdOutlineCalculate /> },
+    { href: "#", label: "Gerente", icon: <MdOutlineHandshake /> },
   ],
-}
+};
 
 export default function Sidebar() {
-  const { data: session, status } = useSession()
-  const [open, setOpen] = useState(false)
+  const { data: session, status } = useSession();
+  const [open, setOpen] = useState(false);
 
   if (status === "loading") {
     return (
       <aside className="w-64 shrink-0 border-r border-stock bg-white p-4">
         <div className="text-gray-500">Loading menu...</div>
       </aside>
-    )
+    );
   }
 
-  if (!session) return null
+  if (!session) return null;
 
-  const role = session?.user?.role || 'user'
-  const items = MENU[role] || MENU.user
+  const role = session?.user?.role || "user";
+  const items = MENU[role] || MENU.user;
 
   return (
     <>
       {/* Mobile Toggle Button */}
-      <button 
-        onClick={() => setOpen(true)} 
+      <button
+        onClick={() => setOpen(true)}
         className="p-2 md:hidden fixed top-4 left-4 z-50 bg-white rounded-lg shadow"
       >
         <GiHamburgerMenu size={24} />
       </button>
 
       {/* Sidebar */}
-     <aside
-  className={`fixed md:static top-0 left-0 h-screen md:h-screen w-64 shrink-0 border-r border-stock bg-white p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
-  ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
->
-
+      <aside
+        className={` fixed md:static top-0 left-0 w-64  shrink-0 border-r border-stock p-4 overflow-y-auto transform transition-transform duration-300 z-[99] 
+        ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
         {/* Close Button (Mobile Only) */}
         <div className="flex justify-between items-center mb-4 md:hidden z-[999]">
           <h2 className="font-semibold">Menú</h2>
@@ -79,11 +93,11 @@ export default function Sidebar() {
         </div>
 
         <div className="flex items-center gap-2 mb-4">
-          <FaAt size={20} className='text-[#F8C51B]' />
+          <FaAt size={20} className="text-[#F8C51B]" />
           <h2 className="font-semibold">Cuenta Administrativa</h2>
         </div>
 
-        <nav className="space-y-2">
+        <nav className="space-y-2 ">
           {items.map((i, idx) => (
             <div key={idx}>
               <Link
@@ -91,29 +105,25 @@ export default function Sidebar() {
                 onClick={() => setOpen(false)} // ✅ Auto close sidebar on click
                 className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100"
               >
-                <span className='text-[#84909A]'>{i.icon}</span>
-                <span className='text-[#071437]'>{i.label}</span>
+                <span className="text-[#84909A]">{i.icon}</span>
+                <span className="text-[#071437]">{i.label}</span>
               </Link>
-
-              {i.label === 'Agentes' && (
-                <hr className="my-4 border-gray-300" />
-              )}
+              {i.label === "Agentes" && <hr className="my-4 border-gray-300" />}
             </div>
           ))}
 
           {/* Logout Button */}
           <button
             onClick={() => {
-              setOpen(false) // ✅ close sidebar on logout
-              signOut({ callbackUrl: "/" })
+              setOpen(false); // ✅ close sidebar on logout
+              signOut({ callbackUrl: "/" });
             }}
             className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
           >
-            <MdOutlineLogout className='text-[#84909A]' /> Logout
+            <MdOutlineLogout className="text-[#84909A]" /> Logout
           </button>
         </nav>
       </aside>
     </>
-  )
+  );
 }
-

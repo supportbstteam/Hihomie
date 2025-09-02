@@ -63,11 +63,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId }) => {
         }
 
     }, [errorMessage, successMessage])
-
     return (
         <div>
-
-
             {open && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
                     <div className="bg-white w-full max-w-5xl h-[75vh] rounded-2xl shadow-2xl p-10 relative overflow-y-auto">

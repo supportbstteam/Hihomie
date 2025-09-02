@@ -139,14 +139,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId }) => {
                   onChange={handleChange}
                 />
               </div> */}
-            <Input
+            {/* <Input
               label="Apellido"
               type="text"
               placeholder="Apellido"
               name="last_name"
               value={formData.last_name}
               onChange={handleChange}
-            />
+            /> */}
             {/* <div>
                 <label className="text-base text-gray-700">Apellido</label>
                 <input
