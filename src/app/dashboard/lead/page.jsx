@@ -305,23 +305,7 @@ export default function CustomDnD() {
                       </span>
                     </div>
 
-                    <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
-                      <div className="grid gap-2">
-                        <span className="flex gap-1 justify-center items-center">
-                          <ChartSpline size={16} color="#21B573" />
-                          <p className="text-primary pxs">Income</p>
-                        </span>
-                        <p className="text-light pxs">4.500 € / mes</p>
-                      </div>
-                      <div className="grid gap-2">
-                        <span className="flex gap-1 justify-center items-center">
-                          <PiggyBank size={16} color="#21B573" />
-                          <Percent size={14} color="#21B573" />
-                          <p className="text-primary pxs">Income</p>
-                        </span>
-                        <p className="text-light pxs">4.500 € / mes</p>
-                      </div>
-                    </div>
+                   
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
                         href={`tel:${card.phone}`}
