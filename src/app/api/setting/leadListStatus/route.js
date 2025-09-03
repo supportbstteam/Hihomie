@@ -90,3 +90,27 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
+
+
+export async function DELETE(req) {
+  try {
+    await dbConnect();
+
+    const { cardId, columId } = await req.json()// comes from URL
+
+    const updatedStatus = await LeadStatus.findByIdAndUpdate(
+      columId,
+      { $pull: { cards: { _id: cardId } } },
+      { new: true }
+    );
+
+    if (!updatedStatus) {
+      return NextResponse.json({ success: false, message: "Column not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: "Card deleted successfully", data: updatedStatus });
+  } catch (error) {
+    console.error("DELETE Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

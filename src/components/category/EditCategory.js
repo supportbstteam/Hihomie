@@ -12,7 +12,7 @@ const EditCategory = ({ setEditOpen, categorys }) => {
 
     const [formData, setFormData] = useState({
         category: "",
-        status: "",
+         status: false,
         id: "",
     });
 
@@ -81,7 +81,7 @@ const EditCategory = ({ setEditOpen, categorys }) => {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]">
-                        
+
                         {/* Category */}
                         <div className="flex flex-col gap-1">
                             <label className="text-gray-700 font-medium text-sm">{t('category')}*</label>
@@ -98,17 +98,17 @@ const EditCategory = ({ setEditOpen, categorys }) => {
                         {/* Status */}
                         <div className="flex flex-col gap-1">
                             <label className="text-gray-700 font-medium text-sm">{t('status')}</label>
-                            <select
-                                name="status"
-                                className="p-2 bg-white border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
-                                value={formData.status}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">--{t('select')} {t('status')}--</option>
-                                <option value="Activa">Activa</option>
-                                <option value="Inactiva">Inactiva</option>
-                            </select>
+                            <label className="relative inline-flex items-center cursor-pointer w-fit">
+                                <input
+                                    type="checkbox"
+                                    name="status"
+                                    checked={formData.status}
+                                    onChange={handleChange}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                            </label>
                         </div>
 
                         {/* Buttons */}

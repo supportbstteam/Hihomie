@@ -118,6 +118,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
                     onChange={handleChange}
                     required
                 >
+                     <option value="Spain">Spain</option>
                     <option value="India">India</option>
                     <option value="América">América</option>
                     <option value="Austria">Austria</option>

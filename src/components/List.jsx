@@ -5,11 +5,18 @@ import {
   MessageSquareText,
   Phone,
 } from "lucide-react";
-import React, { useState } from "react"; // ✅ Missing useState import
+import React, { useEffect, useState } from "react"; // ✅ Missing useState import
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { t } from '@/components/translations';
+import { useDispatch } from "react-redux";
+import { card_delete_list, get_leadStatusDataForList } from "@/store/setting";
+import toast from "react-hot-toast";
+import { messageClear } from "@/store/customer";
 
-const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
+const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessage }) => {
+
+  const dispatch = useDispatch();
+
   const [onEdit, setOnEdit] = useState({
     lead_title: "",
     surname: "",
@@ -47,8 +54,8 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
 
     const matchName = full_name
       ? `${item.first_name || ""} ${item.last_name || ""}`
-          .toLowerCase()
-          .includes(full_name.toLowerCase())
+        .toLowerCase()
+        .includes(full_name.toLowerCase())
       : true;
 
     const matchPhone = phone
@@ -60,17 +67,34 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
 
   // ✅ Handle Edit Click
   const handleEditClick = (item) => {
-  const updatedUser = {
-    ...item,
-    colId: item.leadStatusId, // assign leadStatusId to colId
-    id: item._id,             // assign card _id to id
+    const updatedUser = {
+      ...item,
+      colId: item.leadStatusId, // assign leadStatusId to colId
+      id: item._id,             // assign card _id to id
+    };
+
+    setSelectedUser(updatedUser); // update local state
+    if (onEdit) setSelectedUser(updatedUser); // send to parent
   };
 
-  setSelectedUser(updatedUser); // update local state
-  if (onEdit) setSelectedUser(updatedUser); // send to parent
-};
-  
- console.log()
+  const handleDeleteClick = (cardId, columId) => {
+
+    if (confirm('Do you want to delete ?')) {
+      dispatch(card_delete_list({ cardId, columId }))
+    }
+  }
+
+
+  useEffect(() => {
+
+    if (successMessage) {
+      toast.success(successMessage)
+      dispatch(messageClear());
+      dispatch(get_leadStatusDataForList())
+    }
+
+  }, [successMessage, dispatch]);
+
 
   return (
     <div className="overflow-x-auto bg-white rounded-md shadow-md">
@@ -115,7 +139,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser }) => {
                 <td className="px-4 py-4 text-gray-500">{item.phone}</td>
                 <td className="px-4 py-4 text-gray-500">{item.leadStatusname}</td>
                 <td className="px-4 py-4 flex space-x-3 text-gray-400">
-                  <FaRegTrashAlt className="text-red-500 text-xl cursor-pointer hover:scale-110 transition" />
+                  <FaRegTrashAlt onClick={() => handleDeleteClick(item._id, item.leadStatusId)} className="text-red-500 text-xl cursor-pointer hover:scale-110 transition" />
                   <FaRegEdit
                     onClick={() => handleEditClick(item)}
                     className="text-orange-500 text-xl cursor-pointer hover:scale-110 transition"

@@ -35,7 +35,7 @@ const es = {
   title: "Título",
   created_at: "Creado en",
   value: "Value",
-  assigned: "Valor",
+  assigned: "asignado",
   phone: "Teléfono",
   position: "Posición",
   role: "Role",

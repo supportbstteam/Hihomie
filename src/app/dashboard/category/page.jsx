@@ -35,7 +35,12 @@ const Category = () => {
   const totalPages = Math.ceil(category.length / recordsPerPage);
 
   const handleDelete = (id) => {
-    dispatch(delete_category(id));
+
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      dispatch(delete_category(id));
+    }
+
+
   };
 
   const handleEdit = (category, flag) => {
@@ -92,7 +97,7 @@ const Category = () => {
                   className="border-b border-stroke hover:bg-gray-50"
                 >
                   <td className="py-3">{item.category}</td>
-                  <td className="py-3 text-center">{item.status}</td>
+                  <td className="py-3 text-center">{item.status == 1 ? 'Active' : "Inactive"}</td>
                   <td className="py-3 text-center">
                     <div className="flex justify-center gap-3 text-lg">
                       <FaRegEdit
@@ -125,11 +130,10 @@ const Category = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`px-3 py-1 rounded ${
-                    currentPage === index + 1
-                      ? "bg-sky-500 text-white"
-                      : "bg-gray-200"
-                  }`}
+                  className={`px-3 py-1 rounded ${currentPage === index + 1
+                    ? "bg-sky-500 text-white"
+                    : "bg-gray-200"
+                    }`}
                 >
                   {index + 1}
                 </button>

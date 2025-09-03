@@ -10,20 +10,29 @@ import Spinner from '@/components/Spinner'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { t } from '@/components/translations';
 
-
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false) // ✅ Add this
   const [error, setError] = useState('')
   const loading = useSelector(s => s.ui.loading)
   const dispatch = useDispatch()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
 
-
   useEffect(() => {
     localStorage.setItem("hi_home_trans", "en");
-  }, []);
+
+    // ✅ Load saved credentials if remember me was checked
+    const savedEmail = localStorage.getItem("rememberEmail")
+    const savedPassword = localStorage.getItem("rememberPassword")
+
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail)
+      setPassword(savedPassword)
+      setRememberMe(true)
+    }
+  }, [])
 
   const { data: session, status } = useSession()
 
@@ -39,27 +48,33 @@ export default function LoginPage() {
     dispatch(setLoading(true))
     const res = await signIn('credentials', { redirect: false, email, password })
     dispatch(setLoading(false))
+
     if (res?.ok) {
       toast.success("Login success")
+
+      // ✅ Save or clear credentials
+      if (rememberMe) {
+        localStorage.setItem("rememberEmail", email)
+        localStorage.setItem("rememberPassword", password)
+      } else {
+        localStorage.removeItem("rememberEmail")
+        localStorage.removeItem("rememberPassword")
+      }
+
       router.push('/dashboard')
     } else {
       toast.error("Invalid credentials")
     }
   }
 
-  console.log(t)
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9F8F1] px-4">
-      {/* Logo */}
       <img
         src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
         alt="Logo"
         className="mb-4 w-32 sm:w-40 md:w-48"
       />
 
-
-      {/* Login Form */}
       <div className="w-full max-w-md rounded-2xl border border-stroke bg-white p-8 shadow-lg">
         <h1 className="text-2xl font-bold text-center">{t('welcome_back')}</h1>
         <p className="mb-6 text-center text-[#666]">{t('login_quick')}</p>
@@ -98,14 +113,23 @@ export default function LoginPage() {
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </span>
           </div>
+
           {error && <p className="text-sm text-red-600">{error}</p>}
+
+          {/* Remember Me */}
           <div className="flex justify-between text-sm">
             <div>
-              <input type="checkbox" name="remember" className="mr-1" />
+              <input
+                type="checkbox"
+                name="remember"
+                className="mr-1"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
               <label className="text-[#99A1B7]">{t('remember')}</label>
             </div>
             <div>
-              <a href="#" className="text-[#99A1B7]">{t('forget_password')}?</a>
+              <a href="/forgot-password" className="text-[#99A1B7]">{t('forget_password')}?</a>
             </div>
           </div>
 
@@ -114,19 +138,11 @@ export default function LoginPage() {
             disabled={loading}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#21b573] px-4 py-2 font-medium text-white disabled:opacity-60"
           >
-            {loading ? (
-              <>
-                {t('loading')}
-                {/* <Spinner /> */}
-              </>
-            ) : (
-              t('login')
-            )}
+            {loading ? t('loading') : t('login')}
           </button>
         </form>
       </div>
     </div>
-
   )
 }
 

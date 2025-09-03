@@ -19,12 +19,16 @@ export async function POST(req) {
     const email = formData.get("email");
     const phone = formData.get("phone");
     const jobTitle = formData.get("jobTitle");
+    const password = formData.get("password");
     const role = formData.get("role");
     const status = formData.get("status") === "true";
 
+
+    console.log(password)
+
     const check_email = await User.findOne({ email });
     if (check_email) {
-       return NextResponse.json({ error: "User already exist" }, { status: 400 });
+      return NextResponse.json({ error: "User already exist" }, { status: 400 });
       return true;
     }
 
@@ -52,10 +56,9 @@ export async function POST(req) {
       .resize(80, 80, { fit: "cover" })
       .jpeg({ quality: 80 })
       .toFile(outputPath);
-
-    const defaultPassword = "123456";            // change to env var later if needed
+    // change to env var later if needed
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(defaultPassword, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // save user
     const newUser = await User.create({
@@ -99,7 +102,9 @@ export async function GET() {
 
 export async function PUT(req) {
   try {
-    const { id, name, lname, email, phone, jobTitle, status, role } = await req.json();
+    const { id, name, lname, email, phone, jobTitle, status, password, role } = await req.json();
+
+
 
     if (!id) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
@@ -108,6 +113,12 @@ export async function PUT(req) {
     await dbConnect(); // Connect to DB
 
     let updateData = { name, lname, email, phone, jobTitle, status, role };
+
+    if (password) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      updateData.password = hashedPassword;
+    }
 
 
     const user = await User.findByIdAndUpdate(id, updateData, { new: true }).lean();

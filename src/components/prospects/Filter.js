@@ -3,10 +3,12 @@ import { get_teamData } from '@/store/userTema';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { t } from '@/components/translations';
+import { get_leadStatusData } from '@/store/setting';
 
 const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterData }) => {
     const dispatch = useDispatch();
     const { loader, team } = useSelector((state) => state.team);
+     const { leadStatus } = useSelector((state) => state.setting);
 
     const [open, setOpen] = useState(false);
 
@@ -18,6 +20,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
 
     useEffect(() => {
         dispatch(get_teamData());
+         dispatch(get_leadStatusData());
     }, [dispatch]);
 
     const handleApply = () => {
@@ -99,9 +102,9 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                             className="mt-1 w-full h-[5vh] text-[#99A1B7] outline-none bg-transparent rounded-lg border border-stroke px-3 py-2"
                         >
                             <option value="">Todas las hipotecas</option>
-                            {leadStatusList.map((item, i) => (
-                                <option key={i} value={item.leadStatusId}>
-                                    {item.leadStatusname}
+                            {leadStatus.map((item, i) => (
+                                <option key={i} value={item._id}>
+                                    {item.status_name}
                                 </option>
                             ))}
                         </select>
@@ -136,7 +139,7 @@ const Filter = ({ leadStatusList, filterOpen, setFilterOpen, setSelecteFilterDat
                     {/* Action Buttons */}
                     <div className="flex gap-3 h-[7vh] pt-4">
                         <button
-                            onClick={handleCancel}
+                            onClick={() => setFilterOpen(false)}
                             className="flex-1 rounded-lg border border-stroke py-2"
                         >
                             {t('cancel')}

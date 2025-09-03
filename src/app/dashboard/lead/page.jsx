@@ -16,6 +16,7 @@ import { MdFilterList } from "react-icons/md";
 import Filter from "@/components/prospects/Filter";
 import List from "@/components/List";
 import Stats from "@/components/Stats";
+import { CiImport } from "react-icons/ci";
 import {
   Calendar,
   ChartSpline,
@@ -29,7 +30,7 @@ import Icon from "@/components/ui/Icon";
 
 export default function CustomDnD() {
   const dispatch = useDispatch();
-  const { leadStatus, leadStatusList } = useSelector((state) => state.setting);
+  const { leadStatus, leadStatusList, successMessage } = useSelector((state) => state.setting);
 
   const [columns, setColumns] = useState({});
   const [draggedCard, setDraggedCard] = useState(null);
@@ -195,13 +196,20 @@ export default function CustomDnD() {
             <ul className="flex items-center gap-2 sm:gap-4">
 
 
-              <Icon icon={Plus} size={16} color="#99A1B7" />
+              <Icon  onClick={() => {setOpen(true)}} icon={Plus} size={16} color="#99A1B7" />
               <Icon
                 icon={FaListUl}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setListComponent((prev) => !prev)}
               />
+
+               <Icon
+                icon={CiImport}
+                size={16}
+                color="#99A1B7"
+              />
+
 
               <Icon
                 icon={MdFilterList}
@@ -270,11 +278,11 @@ export default function CustomDnD() {
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        {card.first_name?.[0] || "?"}
+                       {(card.first_name?.[0]?.toUpperCase()) || "?"}
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                          {card.first_name} {card.last_name}
+                          {`${card.first_name?.charAt(0).toUpperCase() || ''}${card.first_name?.slice(1) || ''} ${card.last_name?.charAt(0).toUpperCase() || ''}${card.last_name?.slice(1) || ''}`}
                         </h3>
                       </div>
                     </div>
@@ -355,6 +363,7 @@ export default function CustomDnD() {
             leadStatusList={leadStatusList}
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}
+            successMessage = {successMessage}
           />
         </div>
       )}

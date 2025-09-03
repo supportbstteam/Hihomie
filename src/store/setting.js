@@ -101,6 +101,21 @@ export const get_leadStatusDataForList = createAsyncThunk(
    }
 );
 
+export const card_delete_list = createAsyncThunk(
+   "customer/card_delete_list",
+   async ({ cardId, columId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/setting/leadListStatus`, {
+            data: { cardId, columId },
+            withCredentials: true,
+         });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 
 export const settingReducer = createSlice({
 
@@ -110,7 +125,7 @@ export const settingReducer = createSlice({
       errorMessage: '',
       loader: false,
       leadStatus: [],
-      leadStatusList : [],
+      leadStatusList: [],
    },
    reducers: {
 
@@ -196,6 +211,22 @@ export const settingReducer = createSlice({
             state.leadStatusList = payload.cards;
             state.loader = false;
          })
+
+         .addCase(card_delete_list.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
+         })
+
+         .addCase(card_delete_list.fulfilled, (state, { payload }) => {
+            if (Array.isArray(state.leadStatusList)) {
+               // Update only that column's cards
+               state.leadStatusList = state.leadStatusList.map((status) =>
+                  status._id === payload.data._id ? payload.data : status
+               );
+            }
+            state.loader = false;
+            state.successMessage = payload?.message;
+         });
    }
 })
 export const { messageClear } = settingReducer.actions

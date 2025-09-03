@@ -17,6 +17,7 @@ const AddTeam = ({ setOpen }) => {
         phone: "",
         jobTitle: "",
         role: "",
+        password : "",
         status: false,
         image: null,
     });
@@ -182,6 +183,18 @@ const AddTeam = ({ setOpen }) => {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleFileChange}
+                                required
+                                className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label className="text-gray-700 font-medium text-sm">{t('password')}*</label>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 required
                                 className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                             />

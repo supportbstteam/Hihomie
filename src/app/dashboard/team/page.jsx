@@ -80,6 +80,7 @@ const Team = () => {
                                 <th className="py-3 text-center">{t('role')}</th>
                                 <th className="py-3 text-center">{t('email')}</th>
                                 <th className="py-3 text-center">{t('phone')}</th>
+                                <th className="py-3 text-center">{t('status')}</th>
                                 <th className='py-3 text-center'>{t('action')}</th>
                             </tr>
                         </thead>
@@ -90,8 +91,6 @@ const Team = () => {
                                     <td className="py-3 flex items-center gap-2">
                                         <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image}`} className='w-8 h-8 rounded-full border object-cover' /> {row.name} {row.lname}
                                     </td>
-
-
 
                                     <td className="py-3 text-center">
                                         {row.jobTitle}
@@ -108,6 +107,10 @@ const Team = () => {
 
                                     <td className="py-3 text-center">
                                         {row.phone}
+                                    </td>
+
+                                    <td className="py-3 text-center">
+                                        {row.status ? 'Active' : "Inactive"}
                                     </td>
 
 

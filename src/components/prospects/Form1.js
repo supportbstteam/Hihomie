@@ -47,6 +47,8 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
         }));
     };
 
+    console.log(detailsData)
+
     return (
         <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col gap-1 w-full mb-5">
@@ -56,7 +58,10 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
                         className="min-h-[150px]"
                         name="notes"
                         value={detailsData.notes}
-                        onChange={handleChange}
+                        onChange={(val) => {
+                            setLocalDetailsData((prev) => ({ ...prev, notes: val }));
+                            setDetailsData((prev) => ({ ...prev, notes: val }));
+                        }}
                     />
                 </div>
             </div>
