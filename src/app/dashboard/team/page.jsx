@@ -9,17 +9,23 @@ import EditTeam from "@/components/team/EditTeam";
 import { t } from "@/components/translations";
 import Icon from "@/components/ui/Icon";
 import { Plus } from "lucide-react";
+import { capitalizeFirstLetter } from '@/components/ui/string';
+import { Plus } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
+import ConfirmDeleteModal from '@/components/ConfirmAlert';
 
 const Team = () => {
-  const dispatch = useDispatch();
-  const { loader, team, errorMessage, successMessage } = useSelector(
-    (state) => state.team
-  );
-  const [open, setOpen] = useState(false);
-  const [user, setUser] = useState();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5;
+    const dispatch = useDispatch();
+    const { loader, team, errorMessage, successMessage } = useSelector((state) => state.team);
+    const [open, setOpen] = useState(false)
+    const [user, setUser] = useState()
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 5;
+
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [teamToDelete, setTeamToDelete] = useState(null);
 
   // Pagination logic
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -27,27 +33,35 @@ const Team = () => {
   const currentRecords = team.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(team.length / recordsPerPage);
 
-  // fetch customers from API
-  useEffect(() => {
-    dispatch(get_teamData());
-  }, [dispatch]);
+    // fetch customers from API
+    useEffect(() => {
+        dispatch(get_teamData());
+    }, [dispatch]);
+
+    const openDeleteModal = (catId) => {
+    setTeamToDelete(catId);
+    setIsModalOpen(true);
+  };
+
 
   const handleDelete = (id) => {
     dispatch(delete_teamData(id));
   };
 
-  useEffect(() => {
-    if (successMessage) {
-      toast.success(successMessage);
-      setOpen(false);
-      setUser(null);
-      dispatch(messageClear());
-    }
-    if (errorMessage) {
-      toast.error(errorMessage);
-      dispatch(messageClear());
-    }
-  }, [errorMessage, successMessage]);
+    useEffect(() => {
+        if (successMessage) {
+            toast.success(successMessage)
+            setOpen(false)
+            setUser(null)
+            setIsModalOpen(false)
+            dispatch(messageClear());
+        }
+        if (errorMessage) {
+            toast.error(errorMessage)
+            dispatch(messageClear());
+        }
+    }, [errorMessage, successMessage])
+
 
   return (
     <div className="grid w-full">
@@ -68,100 +82,117 @@ const Team = () => {
         </div>
       </aside>
 
-      <div className="p-5">
-        <div className="p-6 bg-white rounded-xl shadow-md">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-stroke text-gray-600">
-                <th className="py-3 text-left">{t("full_name")}</th>
-                <th className="py-3 text-center">{t("position")}</th>
-                <th className="py-3 text-center">{t("role")}</th>
-                <th className="py-3 text-center">{t("email")}</th>
-                <th className="py-3 text-center">{t("phone")}</th>
-                <th className="py-3 text-center">{t("action")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentRecords.map((row, i) => (
-                <tr key={i} className="border-b border-stroke hover:bg-gray-50">
-                  <td className="py-3 flex items-center gap-2">
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image}`}
-                      className="w-8 h-8 rounded-full border border-stroke object-cover"
-                    />{" "}
-                    {row.name} {row.lname}
-                  </td>
+            <div className='p-5'>
+                <div className="p-6 bg-white rounded-xl shadow-md">
+                    <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('full_name')}</th>
+                                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('position')}</th>
+                                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('role')}</th>
+                                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('email')}</th>
+                                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('phone')}</th>
+                                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">{t('status')}</th>
+                                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">{t('action')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {currentRecords.map((row, i) => (
+                                <tr
+                                    key={i}
+                                    className={`hover:bg-gray-50 transition-colors duration-200 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                                >
+                                    <td className="py-3 px-4 flex items-center gap-3">
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image ? row.image : 'default.jpg'}`}
+                                            className="w-7 h-7 rounded-full border object-cover"
+                                        />
+                                        <span className="text-gray-800 text-sm font-medium">{capitalizeFirstLetter(row.name)} {capitalizeFirstLetter(row.lname)}</span>
+                                    </td>
+                                    <td className="py-3 text-sm px-4 text-gray-700">{capitalizeFirstLetter(row.jobTitle)}</td>
+                                    <td className="py-3 text-sm px-4 text-gray-700">
+                                        {capitalizeFirstLetter(row.role)}
+                                    </td>
+                                    <td className="py-3 text-sm px-4  text-gray-700">{row.email}</td>
+                                    <td className="py-3 text-sm px-4  text-gray-700">{row.phone}</td>
+                                    <td className="py-3 text-sm px-4 text-center">
+                                        <span
+                                            className={`px-3 py-1 text-sm font-semibold rounded-full ${row.status ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                                                }`}
+                                        >
+                                            {row.status ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </td>
+                                    <td className="py-3 px-4 text-center">
+                                        <div className="flex justify-center gap-3 text-lg">
+                                            <FaRegEdit
+                                                onClick={() => setUser(row)}
+                                                className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
+                                            />
+                                            <FaRegTrashAlt
+                                                onClick={() => openDeleteModal(row._id)}
+                                                className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                  <td className="py-3 text-center">{row.jobTitle}</td>
+                    {/* Pagination */}
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Prev
+                        </button>
 
-                  <td className="py-3 text-center">
-                    {row.role.charAt(0).toUpperCase() + row.role.slice(1)}
-                  </td>
+                        <div className="flex gap-2">
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                    className={`px-3 py-1 rounded-md transition ${currentPage === index + 1
+                                        ? 'bg-sky-500 text-white'
+                                        : 'bg-gray-200 hover:bg-gray-300'
+                                        }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
 
-                  <td className="py-3 text-center">{row.email}</td>
-
-                  <td className="py-3 text-center">{row.phone}</td>
-
-                  <td className="py-3 text-center">
-                    <div className="flex justify-center gap-3 text-lg">
-                      {/* <FaRegEye className="text-green-500 cursor-pointer hover:scale-110 transition" /> */}
-                      <FaRegEdit
-                        onClick={() => setUser(row)}
-                        className="text-orange-500 cursor-pointer hover:scale-110 transition"
-                      />
-                      <FaRegTrashAlt
-                        onClick={() => handleDelete(row._id)}
-                        className="text-red-500 cursor-pointer hover:scale-110 transition"
-                      />
+                        <button
+                            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <button
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              disabled={currentPage === 1}
-            >
-              Previa
-            </button>
-
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`px-3 py-1 rounded ${
-                    currentPage === index + 1
-                      ? "bg-sky-500 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+                </div>
             </div>
-
-            <button
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Próxima
-            </button>
-          </div>
-        </div>
-      </div>
 
       {open && <AddTeam setOpen={setOpen} />}
 
-      {user && <EditTeam user={user} setUser={setUser} />}
-    </div>
-  );
-};
+            {
+                user && <EditTeam user={user} setUser={setUser} />
+            }
+
+            {isModalOpen && (
+                <ConfirmDeleteModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={() => handleDelete(teamToDelete)}
+                />
+            )}
+
+
+        </div>
+    )
+}
 
 export default Team;

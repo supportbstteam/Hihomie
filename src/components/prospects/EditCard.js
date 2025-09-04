@@ -1,11 +1,14 @@
+'use client'
+
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, messageClear } from "@/store/customer";
-import toast from "react-hot-toast";
+import { cardDelete, customerUpdate } from "@/store/customer";
 import React, { useEffect, useState } from "react";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import Form2 from "./Form2";
+import { motion, AnimatePresence } from "framer-motion";
+import { t } from "@/components/translations";
+import Input from "../ui/Input";
+import Dropdown from "../ui/DropDown";
 import Form1 from "./Form1";
-import { BsPlusCircleDotted } from "react-icons/bs";
+import Form2 from "./Form2";
 import AssignUser from "./AssignUser";
 import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
@@ -19,10 +22,19 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const [details, setDetails] = useState(false);
   const [address_details, setAddressDetails] = useState(false);
-
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
-    const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    surname: '',
+    lead_title: '',
+    first_name: '',
+    last_name: '',
+    company: '',
+    designation: '',
+    email: '',
+    phone: '',
+    status: ''
+  });
 
   const [formData, setFormData] = useState({
     lead_title: "",
@@ -45,6 +57,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     addressDetailsData: {},
     id: "",
     colId: "",
+    colId: "",
   });
 
   // 🔹 reusable function to reset form
@@ -58,79 +71,78 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }));
   };
 
-  const handleToggle = (e) => {
-    setDetails(e.target.checked); // ON → true, OFF → false
+  const handleToggle = (e) => setDetails(e.target.checked);
+  const handleToggleAddress = (e) => setAddressDetails(e.target.checked);
+
+  // 🔹 validation
+  const validateForm = () => {
+    let newErrors = {
+      surname: '',
+      lead_title: '',
+      first_name: '',
+      last_name: '',
+      company: '',
+      designation: '',
+      email: '',
+      phone: '',
+      status: ''
+    };
+    let valid = true;
+
+    if (!formData.lead_title.trim()) {
+      newErrors.lead_title = "Lead title is required";
+      valid = false;
+    }
+    if (!formData.surname) {
+      newErrors.surname = "Surname is required";
+      valid = false;
+    }
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
+      valid = false;
+    }
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+      valid = false;
+    }
+    if (!formData.company.trim()) {
+      newErrors.company = "Company is required";
+      valid = false;
+    }
+    if (!formData.designation.trim()) {
+      newErrors.designation = "Designation is required";
+      valid = false;
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+      valid = false;
+    }
+    if (formData.phone && !/^[0-9]{7,15}$/.test(formData.phone)) {
+      newErrors.phone = "Phone must be digits (7–15 numbers)";
+      valid = false;
+    }
+    if (!formData.status) {
+      newErrors.status = "Status is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
-  const handleToggleAddress = (e) => {
-    setAddressDetails(e.target.checked); // ON → true, OFF → false
-  };
-
-  // handle form submit (update only)
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   dispatch(customerUpdate(formData));
-  // };
-
+  // 🔹 submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate(formData);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length === 0) {
-      dispatch(customerUpdate(formData));
-    } else {
-      toast.error("Please fix validation errors before submitting");
-    }
-  };
-
-    const validate = (values) => {
-    const newErrors = {};
-
-    if (!values.lead_title.trim()) {
-      newErrors.lead_title = "Lead title is required";
-    }
-
-    if (!values.surname) {
-      newErrors.surname = "Surname is required";
-    }
-
-    if (!values.first_name.trim()) {
-      newErrors.first_name = "First name is required";
-    }
-
-    if (!values.last_name.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-
-    if (!values.company.trim()) {
-      newErrors.company = "Company is required";
-    }
-
-    if (!values.designation.trim()) {
-      newErrors.designation = "Designation is required";
-    }
-
-    if (!values.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (values.phone && !/^[0-9]{7,15}$/.test(values.phone)) {
-      newErrors.phone = "Phone must be digits (7–15 numbers)";
-    }
-
-    if (!values.status) {
-      newErrors.status = "Status is required";
-    }
-
-    return newErrors;
+    if (!validateForm()) return;
+    dispatch(customerUpdate(formData));
   };
 
   const handleDelete = (id) => {
-    dispatch(cardDelete(id));
-  };
+    dispatch(cardDelete(id));;
+  };;
 
   useEffect(() => {
     if (successMessage) {
@@ -160,9 +172,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }
   }, [successMessage, errorMessage]);
 
-
-
-  // load selectedUser into form
   useEffect(() => {
     if (selectedUser) {
       setFormData({
@@ -173,7 +182,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }
   }, [selectedUser]);
 
-  // 🔑 sync detailsData and addressDetailsData into formData
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -190,13 +198,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   return (
     <AnimatePresence>
-      {open && (
+      {selectedUser && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4">
           <motion.div
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 20, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
+            className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
             className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
           >
             {/* Close Button */}
@@ -207,6 +216,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
               ✕
             </button>
 
+            <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
             <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
 
             {/* Form */}
@@ -219,8 +229,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   <Input
                     label={t("lead_title")}
+                <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <Input
+                    label={t("lead_title")}
                     value={formData.lead_title}
                     onChange={handleChange}
+                    name="lead_title"
                     name="lead_title"
                     required
                     error={errors.lead_title}
@@ -246,6 +260,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.first_name}
                     onChange={handleChange}
                     name="first_name"
+                    name="first_name"
                     required
                     error={errors.first_name}
                   />
@@ -258,7 +273,9 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.last_name}
                     onChange={handleChange}
                     name="last_name"
+                    name="last_name"
                     required
+                    error={errors.last_name}
                     error={errors.last_name}
                   />
 
@@ -268,37 +285,32 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.company}
                     onChange={handleChange}
                     name="company"
+                    error={errors.company}
                   />
-
                   <Input
                     label={t("designation")}
                     type="text"
                     value={formData.designation}
                     onChange={handleChange}
                     name="designation"
+                    error={errors.designation}
                   />
-
-                  {/* Telephone */}
-
                   <Input
                     label={t("phone")}
                     type="text"
                     value={formData.phone}
                     onChange={handleChange}
                     name="phone"
+                    error={errors.phone}
                   />
-                  {/* Email */}
-
                   <Input
                     label={t("email")}
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
                     name="email"
+                    error={errors.email}
                   />
-
-                  {/* Lead Value */}
-
                   <Input
                     label={t("lead_amout") + " ($)"}
                     type="number"
@@ -306,9 +318,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="lead_value"
                   />
-
-                  {/* Assigned */}
-
                   <Input
                     label={t("assigned")}
                     type="text"
@@ -316,9 +325,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="assigned"
                   />
-
-                  {/* Status */}
-
                   <Dropdown
                     label={t("status")}
                     type="text"
@@ -329,8 +335,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       value: item._id,
                       label: item.status_name,
                     }))}
+                    error={errors.status}
                   />
-
                   <Dropdown
                     label={t("type_of_opration")}
                     type="text"
@@ -345,7 +351,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       { value: "Refinanciación", label: "Refinanciación" },
                     ]}
                   />
-
                   <Dropdown
                     label={t("custome_setiuation")}
                     type="text"
@@ -353,17 +358,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="customer_situation"
                     options={[
-                      {
-                        value: "Quiere información",
-                        label: "Quiere información",
-                      },
+                      { value: "Quiere información", label: "Quiere información" },
                       { value: "Tomará tiempo", label: "Tomará tiempo" },
                       { value: "Urgente", label: "Urgente" },
                       { value: "Evaluando", label: "Evaluando" },
                       { value: "Decidida", label: "Decidida" },
                     ]}
                   />
-
                   <Dropdown
                     label={t("purchase_status")}
                     type="text"
@@ -372,10 +373,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     name="purchase_status"
                     options={[
                       { value: "Todavía buscando", label: "Todavía buscando" },
-                      {
-                        value: "Vivienda Seleccionada",
-                        label: "Vivienda Seleccionada",
-                      },
+                      { value: "Vivienda Seleccionada", label: "Vivienda Seleccionada" },
                       { value: "Propiedad", label: "Propiedad" },
                     ]}
                   />
@@ -386,13 +384,9 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     <h3 className="text-base font-semibold text-gray-800 mb-4">
                       {t("note")}
                     </h3>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label
-                          htmlFor="commercial_notes"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
+                        <label htmlFor="commercial_notes" className="block text-sm font-medium text-gray-700 mb-1">
                           {t("commerical_note")}
                         </label>
                         <textarea
@@ -405,12 +399,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                           onChange={handleChange}
                         />
                       </div>
-
                       <div>
-                        <label
-                          htmlFor="manager_notes"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
+                        <label htmlFor="manager_notes" className="block text-sm font-medium text-gray-700 mb-1">
                           {t("Managers_notes")}
                         </label>
                         <textarea
@@ -426,7 +416,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     </div>
                   </section>
 
-                  {/* Automatic Toggle */}
                   <div className="flex items-center justify-between mt-2 ">
                     <span className="w-32 font-medium text-gray-700 text-sm">
                       {t("details")}
@@ -439,14 +428,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         checked={details}
                         onChange={handleToggle}
                       />
-                      {/* Outer background */}
                       <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                      {/* Inner circle */}
                       <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                     </label>
                   </div>
-
-                  {/* detaisl section start */}
 
                   {details && (
                     <Form1
@@ -455,7 +440,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     />
                   )}
 
-                  {/* Automatic Toggle */}
                   <div className="flex items-center justify-between mt-2">
                     <span className="font-medium text-gray-700 text-sm">
                       {t("address_organization")}
@@ -468,9 +452,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         checked={address_details}
                         onChange={handleToggleAddress}
                       />
-                      {/* Outer background */}
                       <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                      {/* Inner circle */}
                       <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                     </label>
                   </div>
@@ -482,19 +464,18 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     />
                   )}
 
-                  {/* Buttons */}
                   <div className="flex gap-3 justify-end">
                     <button
                       onClick={() => setSelectedUser(null)}
                       type="reset"
-                      className="px-6 py-2 border border-stroke rounded-sm text-gray-700 hover:bg-gray-100"
+                      className="px-6 cursor-pointer py-2 border border-stroke rounded-sm text-gray-700 hover:bg-gray-100"
                     >
                       {t("cancel")}
                     </button>
                     <button
                       disabled={loader}
                       type="submit"
-                      className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
+                      className="px-6 py-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700"
                     >
                       {loader ? t("loading") : t("submit")}
                     </button>

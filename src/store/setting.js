@@ -101,6 +101,44 @@ export const get_leadStatusDataForList = createAsyncThunk(
    }
 );
 
+export const card_delete_list = createAsyncThunk(
+   "customer/card_delete_list",
+   async ({ cardId, columId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/setting/leadListStatus`, {
+            data: { cardId, columId },
+            withCredentials: true,
+         });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
+export const upload_file = createAsyncThunk(
+   "customer/upload_file",
+   async (file, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const formData = new FormData();
+         formData.append("file", file);
+
+         const { data } = await api.post("/setting/upload", formData, {
+            headers: {
+               "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+         });
+
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
+
+
 
 export const settingReducer = createSlice({
 
@@ -110,7 +148,7 @@ export const settingReducer = createSlice({
       errorMessage: '',
       loader: false,
       leadStatus: [],
-      leadStatusList : [],
+      leadStatusList: [],
    },
    reducers: {
 
@@ -196,6 +234,38 @@ export const settingReducer = createSlice({
             state.leadStatusList = payload.cards;
             state.loader = false;
          })
+
+         .addCase(card_delete_list.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
+         })
+
+         .addCase(card_delete_list.fulfilled, (state, { payload }) => {
+            if (Array.isArray(state.leadStatusList)) {
+               // Update only that column's cards
+               state.leadStatusList = state.leadStatusList.map((status) =>
+                  status._id === payload.data._id ? payload.data : status
+               );
+            }
+            state.loader = false;
+            // state.successMessage = payload?.message;
+         })
+         .addCase(upload_file.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(upload_file.fulfilled, (state, { payload }) => {
+            // state.leadStatus = [...state.leadStatus, ...payload.cards];
+            state.successMessage = payload?.message;
+            state.loader = false;
+         })
+
+         .addCase(upload_file.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
+         })
+
+
+
    }
 })
 export const { messageClear } = settingReducer.actions

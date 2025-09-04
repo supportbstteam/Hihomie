@@ -72,6 +72,31 @@ export const cardDelete = createAsyncThunk(
    }
 )
 
+export const forgot_password = createAsyncThunk(
+   'forgot_password',
+   async (email, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post(`/customer/forgotPassword/${email}`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+)
+
+export const reset_password = createAsyncThunk(
+   'reset_password',
+   async ({password, token}, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         console.log(token)
+         const { data } = await api.put(`/customer/forgotPassword`,{password, token } ,{ withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+)
+
 
 
 
@@ -132,6 +157,30 @@ export const customerReducer = createSlice({
             state.customer = state.customer.filter(
                (cust) => cust._id !== payload._id  // remove deleted one
             );
+         })
+
+         .addCase(forgot_password.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(forgot_password.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+         .addCase(forgot_password.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+
+         .addCase(reset_password.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(reset_password.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+         .addCase(reset_password.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
          })
    }
 })

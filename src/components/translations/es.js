@@ -35,7 +35,7 @@ const es = {
   title: "Título",
   created_at: "Creado en",
   value: "Value",
-  assigned: "Valor",
+  assigned: "asignado",
   phone: "Teléfono",
   position: "Posición",
   role: "Role",
@@ -76,7 +76,8 @@ const es = {
   edit_lead : "Editar cliente potencial", 
    filter : "Filtrar",
   find_exact : "Encuentra exactamente lo que necesitas",
-  apply :"Aplicar"
+  apply :"Aplicar",
+  serial : "De seriel",
 
 };
 

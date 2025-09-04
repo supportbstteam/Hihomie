@@ -99,7 +99,9 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
         name="country"
         value={addressDetailsData.country}
         onChange={handleChange}
+        required
         options={[
+          { value: "Spain", label: "Spain" },
           { value: "India", label: "India" },
           { value: "América", label: "América" },
           { value: "Austria", label: "Austria" },

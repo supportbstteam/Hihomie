@@ -1,20 +1,22 @@
 "use client";
 import AddCategory from "@/components/category/AddCategory";
 import { delete_category, get_category, messageClear } from "@/store/category";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaPlus, FaRegEdit, FaRegEye, FaRegTrashAlt } from "react-icons/fa";
+import { FaPlus, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import EditCategory from "@/components/category/EditCategory";
 import { t } from "@/components/translations";
+import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
 import { Plus } from "lucide-react";
 
 const Category = () => {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [categorys, setCategorys] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [categorys, setCategorys] = useState(null);
 
   const dispatch = useDispatch();
   const { loader, category, errorMessage, successMessage } = useSelector(
@@ -23,7 +25,7 @@ const Category = () => {
 
   useEffect(() => {
     dispatch(get_category());
-  }, []);
+  }, [dispatch]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
@@ -31,78 +33,97 @@ const Category = () => {
   // Pagination logic
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  // const currentRecords = category.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentRecords = category.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(category.length / recordsPerPage);
 
   const handleDelete = (id) => {
     dispatch(delete_category(id));
+    setIsModalOpen(false);
   };
 
-  const handleEdit = (category, flag) => {
+  const handleEdit = (cat, flag) => {
     setEditOpen(flag);
-    setCategorys(category);
+    setCategorys(cat);
+  };
+
+  const openDeleteModal = (catId) => {
+    setCategoryToDelete(catId);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
+      setIsModalOpen(false)
       dispatch(messageClear());
     }
     if (errorMessage) {
       toast.error(errorMessage);
       dispatch(messageClear());
     }
-  }, [errorMessage, successMessage]);
+  }, [errorMessage, successMessage, dispatch]);
 
   return (
     <div className="">
-      <aside className="w-full bg-white  border-b border-stroke sticky top-0 z-50">
-        <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
-          <div className="hidden sm:flex flex-col"></div>
-
-          <div className="flex w-full sm:w-auto justify-end">
-            {/* <ul className="flex items-center gap-3 sm:gap-4">
-                            <li className="flex items-center gap-2 rounded-1xl border border-stroke bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
-                                <FaPlus className="text-lg sm:text-xl" onClick={() => setOpen(true)} />
-                            </li>
-                        </ul> */}
+      {/* Header */}
+      <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div></div>
+          <div className="flex justify-end">
             <Icon
               variant="outline"
               icon={Plus}
-              size={16}
+              size={20}
               color="#99A1B7"
               onClick={() => setOpen(true)}
             />
           </div>
         </div>
       </aside>
+
+      {/* Table */}
       <div className="p-5">
-        <div className="bg-white rounded-xl shadow-md mt-5 p-5">
-          <table className="w-full text-left border-collapse overflow-auto">
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <table className="w-full table-auto border-collapse">
             <thead>
-              <tr className="border-b border-stroke text-gray-600">
-                <th className="py-3 text-left">{t("category")}</th>
-                <th className="py-3 text-center">{t("status")}</th>
-                <th className="py-3 text-center">{t("action")}</th>
+              <tr className="bg-gray-100 text-gray-700">
+                <th className="py-3 px-4 text-left text-sm font-semibold">{t("serial")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold">{t("category")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold">{t("status")}</th>
+                <th className="py-3 px-4 text-center text-sm font-semibold">{t("action")}</th>
               </tr>
             </thead>
-            <tbody>
-              {category.map((item) => (
+            <tbody className="divide-y divide-gray-200">
+              {currentRecords.map((item, i) => (
                 <tr
                   key={item._id}
-                  className="border-b border-stroke hover:bg-gray-50"
+                  className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="py-3">{item.category}</td>
-                  <td className="py-3 text-center">{item.status}</td>
-                  <td className="py-3 text-center">
-                    <div className="flex justify-center gap-3 text-lg">
+                  <td className="py-3 px-4 text-sm font-medium text-gray-700">
+                    {indexOfFirstRecord + i + 1}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                  </td>
+                  <td className="py-3 px-4 text-sm">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.status
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                        }`}
+                    >
+                      {item.status ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex justify-center gap-4 text-lg">
                       <FaRegEdit
                         onClick={() => handleEdit(item, true)}
-                        className="text-orange-500 cursor-pointer hover:scale-110 transition"
+                        className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
                       />
                       <FaRegTrashAlt
-                        onClick={() => handleDelete(item._id)}
-                        className="text-red-500 cursor-pointer hover:scale-110 transition"
+                        onClick={() => openDeleteModal(item._id)}
+                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
                       />
                     </div>
                   </td>
@@ -126,11 +147,10 @@ const Category = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`px-3 py-1 rounded ${
-                    currentPage === index + 1
+                  className={`px-3 py-1 rounded ${currentPage === index + 1
                       ? "bg-sky-500 text-white"
                       : "bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {index + 1}
                 </button>
@@ -148,11 +168,18 @@ const Category = () => {
         </div>
       </div>
 
+      {/* Modals */}
       {editOpen && (
         <EditCategory categorys={categorys} setEditOpen={setEditOpen} />
       )}
-
       {open && <AddCategory setOpen={setOpen} />}
+      {isModalOpen && (
+        <ConfirmDeleteModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={() => handleDelete(categoryToDelete)}
+        />
+      )}
     </div>
   );
 };

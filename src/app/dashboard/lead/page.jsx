@@ -16,6 +16,7 @@ import { MdFilterList } from "react-icons/md";
 import Filter from "@/components/prospects/Filter";
 import List from "@/components/List";
 import Stats from "@/components/Stats";
+import { CiImport } from "react-icons/ci";
 import {
   Calendar,
   ChartSpline,
@@ -28,10 +29,13 @@ import {
   ListFilter,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
+import ImportModal from "@/components/prospects/Impode";
+import toast from "react-hot-toast";
+import { messageClear } from "@/store/customer";
 
 export default function CustomDnD() {
   const dispatch = useDispatch();
-  const { leadStatus, leadStatusList } = useSelector((state) => state.setting);
+  const { leadStatus, leadStatusList, successMessage } = useSelector((state) => state.setting);
 
   const [columns, setColumns] = useState({});
   const [draggedCard, setDraggedCard] = useState(null);
@@ -43,6 +47,7 @@ export default function CustomDnD() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [listComponent, setListComponent] = useState(false);
   const [selecteFilterData, setSelecteFilterData] = useState();
+  const [impodeOpen, setImpodeOpen] = useState(false);
 
   const touchPosition = useRef({ x: 0, y: 0 });
 
@@ -187,6 +192,19 @@ export default function CustomDnD() {
     setSelectedUser(card);
   };
 
+   useEffect(() => {
+
+     console.log('card')
+
+    if (successMessage) {
+      dispatch(messageClear());
+      dispatch(get_leadStatusDataForList())
+      dispatch(get_leadStatusData())
+    }
+
+  }, [successMessage, dispatch]);
+
+
   return (
     <>
       {/* HEADER */}
@@ -197,16 +215,29 @@ export default function CustomDnD() {
             <div className="flex items-center gap-2 sm:gap-4">
 
 
-              <Icon variant="outline" icon={Plus} size={16} color="#99A1B7" />
+
+              <Icon onClick={() => { setOpen(true) }} variant="outline" icon={Plus} size={16} color="#99A1B7" />
               <Icon variant="outline"
                 icon={ListIcon}
+
                 size={16}
                 color="#99A1B7"
                 onClick={() => setListComponent((prev) => !prev)}
               />
-            
-              <Icon variant="outline"
-                icon={ListFilter}
+
+
+              <Icon
+                variant="outline"
+                icon={CiImport}
+                size={16}
+                color="#99A1B7"
+                onClick={() => setImpodeOpen(true)}
+              />
+
+
+              <Icon
+                icon={MdFilterList}
+
                 size={16}
                 color="#99A1B7"
                 onClick={() => setFilterOpen(true)}
@@ -217,28 +248,37 @@ export default function CustomDnD() {
         </div>
       </aside>
 
+
+      <div className=" bg-white">
+        <Stats leadStatus={leadStatus} />
+      </div>
+
+
+
       {/* BOARD */}
       {!listComponent ? (
+
         <div className="flex p-2 h-full overflow-clip bg-background"> 
 
         <div className="bg-white p-2 rounded-radius-base w-full flex gap-6">
+
 
           {Object.values(columns).map((col) => (
             <div
               key={col.id}
               data-col-id={col.id}
-              className={`p-2 w-72 h-full transition-colors duration-200 overflow-hidden border-t-5 rounded-radius-base border-amber-500
-                                ${
-                                  dragOverColId === col.id
-                                    ? "bg-blue-100"
-                                    : "bg-[#F9F9F9]"
-                                }`}
+              className={`p-2 w-72 h-full transition-colors duration-200 overflow-hidden border-t-5 rounded-radius-base
+                                ${dragOverColId === col.id
+                  ? "bg-blue-100"
+                  : "bg-[#F9F9F9]"
+                }`}
+              style={{ borderTopColor: col.color }}
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDrop={() => handleDropColumn(col.id)}
             >
               <div className="flex justify-between items-center gap-2 mb-2">
                 <div className="flex gap-2 items-center">
-                  <div className="bg-primary w-2 h-2 rounded-full"></div>
+                  <div style={{ backgroundColor: col.color }} className={`bg-[${col.color}] w-2 h-2 rounded-full`}></div>
                   <h2 className="font-semibold">{col.title}</h2>
                 </div>
                 <button
@@ -246,7 +286,7 @@ export default function CustomDnD() {
                     setSelectedColId(col.id);
                     setOpen(true);
                   }}
-                  className="text-[#67778880] text-3xl hover:text-gray-700"
+                  className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
                 >
                   <CiCirclePlus />
                 </button>
@@ -267,19 +307,18 @@ export default function CustomDnD() {
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                     className={`shadow-md rounded-radius p-4 mb-3 cursor-grab transition 
-                                        ${
-                                          draggingCardId === card.id
-                                            ? "opacity-60 border-2 border-blue-500"
-                                            : "bg-white "
-                                        }`}
+                                        ${draggingCardId === card.id
+                        ? "opacity-60 border-2 border-blue-500"
+                        : "bg-white "
+                      }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        {card.first_name?.[0] || "?"}
+                        {(card.first_name?.[0]?.toUpperCase()) || "?"}
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                          {card.first_name} {card.last_name}
+                          {`${card.first_name?.charAt(0).toUpperCase() || ''}${card.first_name?.slice(1) || ''} ${card.last_name?.charAt(0).toUpperCase() || ''}${card.last_name?.slice(1) || ''}`}
                         </h3>
                       </div>
                     </div>
@@ -302,23 +341,9 @@ export default function CustomDnD() {
                       </span>
                     </div>
 
-                    {/* <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
-                      <div className="grid gap-2">
-                        <span className="flex gap-1 justify-center items-center">
-                          <ChartSpline size={16} color="#21B573" />
-                          <p className="text-primary pxs">Income</p>
-                        </span>
-                        <p className="text-light pxs">4.500 € / mes</p>
-                      </div>
-                      <div className="grid gap-2">
-                        <span className="flex gap-1 justify-center items-center">
-                          <PiggyBank size={16} color="#21B573" />
-                          <Percent size={14} color="#21B573" />
-                          <p className="text-primary pxs">Income</p>
-                        </span>
-                        <p className="text-light pxs">4.500 € / mes</p>
-                      </div>
-                    </div> */}
+
+
+
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
                         href={`tel:${card.phone}`}
@@ -355,13 +380,11 @@ export default function CustomDnD() {
             setFilterOpen={setFilterOpen}
             setSelecteFilterData={setSelecteFilterData}
           />
-          <div className="my-4">
-            <Stats />
-          </div>
           <List
             leadStatusList={leadStatusList}
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}
+            successMessage={successMessage}
           />
         </div>
       )}
@@ -382,6 +405,9 @@ export default function CustomDnD() {
           leadStatus={leadStatus}
         />
       )}
+
+      {impodeOpen && (<ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />)}
+
     </>
   );
 }

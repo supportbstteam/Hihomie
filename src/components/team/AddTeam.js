@@ -9,10 +9,8 @@ import Dropdown from "../ui/DropDown";
 
 const AddTeam = ({ setOpen }) => {
   const dispatch = useDispatch();
-  const { loader, errorMessage, successMessage } = useSelector((state) => state.team);
+  const { loader, errorMessage, successMessage } = useSelector(state => state.team);
 
-  const [errors, setErrors] = useState({});
-  const [details, setDetails] = useState(false); // Toggle for details section
   const [formData, setFormData] = useState({
     name: "",
     lname: "",
@@ -20,32 +18,22 @@ const AddTeam = ({ setOpen }) => {
     phone: "",
     jobTitle: "",
     role: "",
-    status: false,
-    image: null,
     password: "",
+    status: true,
+    image: null,
   });
 
-  const requiredFields = ["name", "lname", "email", "phone", "jobTitle", "role", "password", "image"];
+  const [errors, setErrors] = useState({
+    name: '',
+    lname: '',
+    email: '',
+    phone: '',
+    jobTitle: '',
+    role: '',
+    password: '',
+  });
 
-  const validate = (values) => {
-    const newErrors = {};
-    requiredFields.forEach((field) => {
-      if (!values[field] || (typeof values[field] === "string" && values[field].trim() === "")) {
-        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-      }
-    });
-
-    if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (values.password && values.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    return newErrors;
-  };
-
+  // Handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -54,6 +42,7 @@ const AddTeam = ({ setOpen }) => {
     }));
   };
 
+  // Handle file change
   const handleFileChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -61,25 +50,79 @@ const AddTeam = ({ setOpen }) => {
     }));
   };
 
-  const handleToggle = (e) => {
-    setDetails(e.target.checked);
+  // Validation
+  const validateForm = () => {
+    let newErrors = { name: '', lname: '', email: '', phone: '', jobTitle: '', role: '', password: '' };
+    let valid = true;
+
+    if (!formData.name) {
+      newErrors.name = "First Name is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.name)) {
+      newErrors.name = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.lname) {
+      newErrors.lname = "Last Name is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.lname)) {
+      newErrors.lname = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email";
+      valid = false;
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required";
+      valid = false;
+    } else if (!/^\d+$/.test(formData.phone)) {
+      newErrors.phone = "Only numeric values are allowed";
+      valid = false;
+    }
+
+    if (!formData.jobTitle) {
+      newErrors.jobTitle = "Job Title is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.jobTitle)) {
+      newErrors.jobTitle = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.role) {
+      newErrors.role = "Role is required";
+      valid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
+  // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate(formData);
-    setErrors(validationErrors);
+    if (!validateForm()) return;
 
-    if (Object.keys(validationErrors).length === 0) {
-      dispatch(add_team(formData));
-    } else {
-      toast.error("Please fix validation errors before submitting");
+    const data = new FormData();
+    for (let key in formData) {
+      data.append(key, formData[key]);
     }
+    dispatch(add_team(data));
   };
 
   useEffect(() => {
     if (successMessage) {
-      toast.success(successMessage);
       setOpen(false);
       dispatch(messageClear());
     }
@@ -87,7 +130,7 @@ const AddTeam = ({ setOpen }) => {
       toast.error(errorMessage);
       dispatch(messageClear());
     }
-  }, [successMessage, errorMessage]);
+  }, [successMessage, errorMessage, dispatch, setOpen]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -96,6 +139,22 @@ const AddTeam = ({ setOpen }) => {
     };
   }, []);
 
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 bg-black/40 flex justify-center items-start z-[100] px-4">
+        <motion.div
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 20, opacity: 1 }}
+          exit={{ y: -100, opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="bg-white w-full sm:w-[50%] md:max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative mt-5 max-h-[90vh] flex flex-col"
+        >
+          <button
+            onClick={() => setOpen(false)}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
+          >
+            ✕
+          </button>
   return (
     <AnimatePresence>
       <div className="fixed inset-0 bg-black/40 flex justify-center items-start z-[100] px-4">

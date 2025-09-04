@@ -48,21 +48,24 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
     }));
   };
 
-  return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-col gap-1 w-full mb-5">
-        <label className="text-gray-700 font-medium text-sm">
-          {t("notes")}
-        </label>
-        <div className="w-full">
-          <TextEditor
-            className="min-h-[150px]"
-            name="notes"
-            value={detailsData.notes}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
+    console.log(detailsData)
+
+    return (
+        <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-1 w-full mb-5">
+                <label className="text-gray-700 font-medium text-sm">{t('notes')}</label>
+                <div className="w-full">
+                    <TextEditor
+                        className="min-h-[150px]"
+                        name="notes"
+                        value={detailsData.notes}
+                        onChange={(val) => {
+                            setLocalDetailsData((prev) => ({ ...prev, notes: val }));
+                            setDetailsData((prev) => ({ ...prev, notes: val }));
+                        }}
+                    />
+                </div>
+            </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
 

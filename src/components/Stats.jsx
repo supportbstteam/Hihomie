@@ -1,56 +1,35 @@
-import { ArrowDown, ArrowUp, Minus, Percent, Plus } from "lucide-react";
 import React from "react";
 
-const Stat = [
-  {
-    title: "Nuevos clientes ",
-    number: "33,493",
-    trend: "up",
-  },
-  {
-    title: "Contactados",
-    number: "33,493",
-    trend: "down",
-  },
-  {
-    title: "En el banco",
-    number: "33,493",
-    trend: "up",
-  },
-  {
-    title: "Aprobados",
-    number: "33,493",
-    trend: "down",
-  },
-];
+const Stats = ({ leadStatus }) => {
+  // Aggregate lead_value and count per status_name
+  const aggregatedStats = leadStatus.map(status => {
+    const totalLeadAmount = status.cards.reduce(
+      (sum, card) => sum + Number(card.lead_value || 0),
+      0
+    );
 
-const Stats = () => {
+    return {
+      status_name: status.status_name,
+      total: totalLeadAmount,
+      count: status.cards.length,
+      color: status.color || "#cccccc",
+    };
+  });
+
   return (
-    <section className="p-6 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-10 border border-stock bg-white">
-      {Stat.map((item, i) => (
-        <div key={i} className="flex flex-col gap-0 rounded-radius">
-          <p className="pxs text-light uppercase">{item.title}</p>
-          <div className="flex items-center justify-between">
-            <p className="h4 font-medium my-4">{item.number}</p>
-            <div
-              className={`flex items-center gap-[2px] ${
-                item.trend === "up" ? "text-primary" : "text-red-700"
-              }`}
-            >
-              {item.trend === "up" ? (
-                <Plus size={12} strokeWidth={3} />
-              ) : (
-                <Minus size={12} strokeWidth={3} />
-              )}
-              <p className="psm">36</p>
-              <Percent size={14} />
-              {item.trend === "up" ? (
-                <ArrowUp size={16} strokeWidth={3} />
-              ) : (
-                <ArrowDown size={16} strokeWidth={3} />
-              )}
-            </div>
+    <section className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+      {aggregatedStats.map((item, i) => (
+        <div
+          key={i}
+          className="p-4 bg-white rounded-lg shadow flex flex-col justify-between"
+        >
+          <div>
+            <p className="text-2xl font-bold">${item.total.toLocaleString()}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {item.status_name} - {item.count}
+            </p>
           </div>
+          <div className="mt-4 h-1 w-full rounded-full" style={{ backgroundColor: item.color }} />
         </div>
       ))}
     </section>

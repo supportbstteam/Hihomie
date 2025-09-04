@@ -17,6 +17,7 @@ const Filter = ({
 }) => {
   const dispatch = useDispatch();
   const { loader, team } = useSelector((state) => state.team);
+  const { leadStatus } = useSelector((state) => state.setting);
 
   const [open, setOpen] = useState(false);
 
@@ -24,11 +25,12 @@ const Filter = ({
   const [selectedGestor, setSelectedGestor] = useState("");
   const [selectedEstado, setSelectedEstado] = useState("");
   const [fullName, setFullName] = useState(""); // 🔥 New
-  const [phone, setPhone] = useState(""); // 🔥 New
+  const [phone, setPhone] = useState("");       // 🔥 New
 
-  useEffect(() => {
-    dispatch(get_teamData());
-  }, [dispatch]);
+    useEffect(() => {
+        dispatch(get_teamData());
+           dispatch(get_leadStatusData());
+    }, [dispatch]);
 
   const handleApply = () => {
     // ✅ Send all values to parent
@@ -106,10 +108,10 @@ const Filter = ({
             value={selectedEstado}
             onChange={(e) => setSelectedEstado(e.target.value)}
             placeholder="Buscar por contacto"
-            options={leadStatusList.map((item, i) => ({
+            options={leadStatus.map((item, i) => ({
               //  key: i,
-              value: item.leadStatusId,
-              label: item.leadStatusname,
+              value: item.status_Id,
+              label: item.status_name,
             }))}
           />
 
@@ -121,7 +123,7 @@ const Filter = ({
             name="full_name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            placeholder="Buscar por contacto"
+            placeholder="Buscar por nombre"
           />
 
           {/* Contacto */}
@@ -154,7 +156,7 @@ const Filter = ({
          
         </div>
          <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
-            <Button onClick={handleCancel} variant="outline" size="full">
+            <Button onClick={() => setFilterOpen(false)} variant="outline" size="full">
               {t("cancel")}
             </Button>
             <Button onClick={handleApply} size="full">

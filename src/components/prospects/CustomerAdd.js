@@ -44,7 +44,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     selectedColId: selectedColId || "",
     status: "",
   });
-
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -84,6 +83,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     }));
   }, [addressDetailsData]);
 
+
   const validate = (values) => {
     const newErrors = {};
 
@@ -111,9 +111,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
       newErrors.designation = "Designation is required";
     }
 
-    if (!values.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+    if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       newErrors.email = "Invalid email format";
     }
 
@@ -128,17 +126,20 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     return newErrors;
   };
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate(formData);
     setErrors(validationErrors);
 
+    const validationErrors = validate(formData);
+    setErrors(validationErrors);
+
     if (Object.keys(validationErrors).length === 0) {
       dispatch(customerAdd(formData));
-    } else {
-      toast.error("Please fix validation errors before submitting");
-    }
+    } 
   };
+
 
   useEffect(() => {
     if (successMessage) {
@@ -180,7 +181,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
               onSubmit={handleSubmit}
               className="mb-5 overflow-y-auto max-h-[90vh] md:max-h-[70vh]"
             >
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-2" >
+
+                {/* Lead Title */}
+
                 <Input
                   label={t("lead_title")}
                   type="text"
@@ -243,7 +247,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                 />
 
                 <Input
-                  label={t("phone")}
+                  label={t("phonr")}
                   type="text"
                   name="phone"
                   value={formData.phone}
@@ -312,6 +316,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   value={formData.customer_situation}
                   onChange={handleChange}
                   error={errors.customer_situation}
+                  required
                   options={[
                     { value: "Tomará tiempo", label: "Tomará tiempo" },
                     { value: "Urgente", label: "Urgente" },
@@ -326,6 +331,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   value={formData.purchase_status}
                   onChange={handleChange}
                   error={errors.purchase_status}
+                  required
                   options={[
                     { value: "Todavía buscando", label: "Todavía buscando" },
                     {
@@ -352,7 +358,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                         name="commercial_notes"
                         rows="4"
                         className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
-                        value={formData.commercial_notes}
+                        defaultValue={formData.commercial_notes}
                         onChange={handleChange}
                       />
                     </div>
@@ -368,7 +374,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                         name="manager_notes"
                         rows="4"
                         className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
-                        value={formData.manager_notes}
+                        defaultValue={formData.manager_notes}
                         onChange={handleChange}
                       ></textarea>
                     </div>
@@ -393,6 +399,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
                 {details && <Form1 setDetailsData={setDetailsData} />}
 
+                {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
                   <span className="font-medium text-dark psm">
                     {t("address_organization")}
@@ -405,7 +412,9 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                       checked={address_details}
                       onChange={handleToggleAddress}
                     />
+                    {/* Outer background */}
                     <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                    {/* Inner circle */}
                     <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                   </label>
                 </div>
@@ -414,6 +423,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   <Form2 setAddressDetailsData={setAddressDetailsData} />
                 )}
 
+                {/* Buttons */}
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => setOpen(false)}
@@ -430,6 +440,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     {loader ? t("loading") : t("submit")}
                   </button>
                 </div>
+
               </div>
             </form>
           </motion.div>
