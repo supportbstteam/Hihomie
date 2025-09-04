@@ -30,7 +30,6 @@ const AddTeam = ({ setOpen }) => {
     jobTitle: '',
     role: '',
     password: '',
-    image: ''
   });
 
   // Handle input change
@@ -52,7 +51,7 @@ const AddTeam = ({ setOpen }) => {
 
   // Validation
   const validateForm = () => {
-    let newErrors = { name: '', lname: '', email: '', phone: '', jobTitle: '', role: '', password: '', image: '' };
+    let newErrors = { name: '', lname: '', email: '', phone: '', jobTitle: '', role: '', password: '' };
     let valid = true;
 
     if (!formData.name) {
@@ -102,11 +101,6 @@ const AddTeam = ({ setOpen }) => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-      valid = false;
-    }
-
-    if (!formData.image) {
-      newErrors.image = "Image is required";
       valid = false;
     }
 
@@ -261,10 +255,8 @@ const AddTeam = ({ setOpen }) => {
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className={`p-2 border rounded-md text-sm focus:outline-none focus:ring-2 
-                  ${errors.image ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"}`}
+                className={`p-2 border rounded-md text-sm focus:outline-none focus:ring-2`}
               />
-              {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
             </div>
 
             {/* Password */}

@@ -50,8 +50,8 @@ const Dropdown = ({
               {title}
             </option>
           )}
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="text-gray-900">
+          {options.map((opt,i) => (
+            <option key={i} value={opt.value} className="text-gray-900">
               {opt.label}
             </option>
           ))}

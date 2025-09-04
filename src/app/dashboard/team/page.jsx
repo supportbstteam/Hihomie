@@ -110,7 +110,7 @@ const Team = () => {
                                 >
                                     <td className="py-3 px-4 flex items-center gap-3">
                                         <img
-                                            src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image}`}
+                                            src={`${process.env.NEXT_PUBLIC_BASE_URL}/${row.image ? row.image : 'default.jpg'}`}
                                             className="w-7 h-7 rounded-full border object-cover"
                                         />
                                         <span className="text-gray-800 text-sm font-medium">{capitalizeFirstLetter(row.name)} {capitalizeFirstLetter(row.lname)}</span>

@@ -27,6 +27,9 @@ import {
   Plus,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
+import ImportModal from "@/components/prospects/Impode";
+import toast from "react-hot-toast";
+import { messageClear } from "@/store/customer";
 
 export default function CustomDnD() {
   const dispatch = useDispatch();
@@ -42,6 +45,7 @@ export default function CustomDnD() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [listComponent, setListComponent] = useState(false);
   const [selecteFilterData, setSelecteFilterData] = useState();
+  const [impodeOpen, setImpodeOpen] = useState(false);
 
   const touchPosition = useRef({ x: 0, y: 0 });
 
@@ -186,8 +190,18 @@ export default function CustomDnD() {
     setSelectedUser(card);
   };
 
+   useEffect(() => {
 
-  console.log(columns);
+     console.log('card')
+
+    if (successMessage) {
+      dispatch(messageClear());
+      dispatch(get_leadStatusDataForList())
+      dispatch(get_leadStatusData())
+    }
+
+  }, [successMessage, dispatch]);
+
 
   return (
     <>
@@ -211,6 +225,7 @@ export default function CustomDnD() {
                 icon={CiImport}
                 size={16}
                 color="#99A1B7"
+                onClick={() => setImpodeOpen(true)}
               />
 
 
@@ -227,10 +242,19 @@ export default function CustomDnD() {
       </aside>
 
 
+      <div className=" bg-white">
+        <Stats leadStatus={leadStatus} />
+      </div>
+
+
 
       {/* BOARD */}
       {!listComponent ? (
         <div className="flex gap-6 p-6 h-full overflow-clip bg-white">
+
+
+
+
           {Object.values(columns).map((col) => (
             <div
               key={col.id}
@@ -344,9 +368,6 @@ export default function CustomDnD() {
             setFilterOpen={setFilterOpen}
             setSelecteFilterData={setSelecteFilterData}
           />
-          <div className="my-4">
-            <Stats />
-          </div>
           <List
             leadStatusList={leadStatusList}
             selecteFilterData={selecteFilterData}
@@ -372,6 +393,9 @@ export default function CustomDnD() {
           leadStatus={leadStatus}
         />
       )}
+
+      {impodeOpen && (<ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />)}
+
     </>
   );
 }

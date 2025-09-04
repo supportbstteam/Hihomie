@@ -23,44 +23,36 @@ export async function POST(req) {
     const role = formData.get("role");
     const status = formData.get("status") === "true";
 
-
-    console.log(password)
-
     const check_email = await User.findOne({ email });
     if (check_email) {
-      return NextResponse.json({ error: "User already exist" }, { status: 400 });
-      return true;
+      return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    // file
+    let imagePath = null;
+
     const file = formData.get("image");
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const uploadDir = path.join(process.cwd(), "public/uploads/team");
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const filename = `resized-${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
+      const outputPath = path.join(uploadDir, filename);
+
+      await sharp(buffer)
+        .resize(80, 80, { fit: "cover" })
+        .jpeg({ quality: 80 })
+        .toFile(outputPath);
+
+      imagePath = `/uploads/team/${filename}`;
     }
 
-    // Buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    // upload dir
-    const uploadDir = path.join(process.cwd(), "public/uploads/team");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    // filename
-    const filename = `resized-${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
-    const outputPath = path.join(uploadDir, filename);
-
-    // resize & optimize
-    await sharp(buffer)
-      .resize(80, 80, { fit: "cover" })
-      .jpeg({ quality: 80 })
-      .toFile(outputPath);
-    // change to env var later if needed
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // save user
     const newUser = await User.create({
       name,
       lname,
@@ -70,10 +62,10 @@ export async function POST(req) {
       role,
       status,
       password: hashedPassword,
-      image: `/uploads/team/${filename}`, // public path
+      ...(imagePath && { image: imagePath }) // only add image if exists
     });
 
-    return NextResponse.json({ message: 'User Created Sucesfull', data: newUser }, { status: 201 });
+    return NextResponse.json({ message: 'User created successfully', data: newUser }, { status: 201 });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

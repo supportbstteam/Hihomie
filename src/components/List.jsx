@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react"; // ✅ Missing useState impo
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { t } from '@/components/translations';
 import { useDispatch } from "react-redux";
-import { card_delete_list, get_leadStatusDataForList } from "@/store/setting";
+import { card_delete_list, get_leadStatusData, get_leadStatusDataForList } from "@/store/setting";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
 import ConfirmDeleteModal from "./ConfirmAlert";
@@ -44,7 +44,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
-   const [columToDelete, setColumToDelete] = useState(null);
+  const [columToDelete, setColumToDelete] = useState(null);
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
@@ -83,12 +83,27 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
     if (onEdit) setSelectedUser(updatedUser); // send to parent
   };
 
-  const handleDeleteClick = (cardId, columId) => {
+  const handleDeleteClick = async (cardId, columId) => {
+    try {
+      // Dispatch deletion and wait for success
+      await dispatch(card_delete_list({ cardId, columId })).unwrap();
 
-    if (confirm('Do you want to delete ?')) {
-      dispatch(card_delete_list({ cardId, columId }))
+      // Close modal
+      setIsModalOpen(false);
+      setCardToDelete(null);
+      setColumToDelete(null);
+
+      // Refresh list
+      dispatch(get_leadStatusDataForList());
+
+      // Show success toast directly
+      toast.success("Card deleted successfully");
+
+    } catch (error) {
+      toast.error("Failed to delete card");
     }
-  }
+  };
+
 
   const openDeleteModal = (catId, columId) => {
     setCardToDelete(catId);
@@ -100,15 +115,13 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
   useEffect(() => {
 
     if (successMessage) {
-      toast.success(successMessage)
       dispatch(messageClear());
       setIsModalOpen(false)
       dispatch(get_leadStatusDataForList())
+      dispatch(get_leadStatusData())
     }
 
   }, [successMessage, dispatch]);
-
-  console.log(filteredList)
 
 
   return (
