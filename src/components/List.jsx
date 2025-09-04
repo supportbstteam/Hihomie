@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { card_delete_list, get_leadStatusDataForList } from "@/store/setting";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
+import ConfirmDeleteModal from "./ConfirmAlert";
 
 const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessage }) => {
 
@@ -39,6 +40,11 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
     id: "",
     colId: ""
   });
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
+   const [columToDelete, setColumToDelete] = useState(null);
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
@@ -84,12 +90,19 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
     }
   }
 
+  const openDeleteModal = (catId, columId) => {
+    setCardToDelete(catId);
+    setColumToDelete(columId);
+    setIsModalOpen(true);
+  };
+
 
   useEffect(() => {
 
     if (successMessage) {
       toast.success(successMessage)
       dispatch(messageClear());
+      setIsModalOpen(false)
       dispatch(get_leadStatusDataForList())
     }
 
@@ -172,7 +185,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
                 {/* Actions */}
                 <td className="px-4 py-4 flex items-center space-x-2 text-gray-400">
                   <FaRegTrashAlt
-                    onClick={() => handleDeleteClick(item._id, item.leadStatusId)}
+                    onClick={() => openDeleteModal(item._id, item.leadStatusId)}
                     className="text-red-500 text-xl cursor-pointer hover:scale-110 transition-transform"
                   />
                   <FaRegEdit
@@ -195,6 +208,16 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
           )}
         </tbody>
       </table>
+
+
+      {isModalOpen && (
+        <ConfirmDeleteModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={() => handleDeleteClick(cardToDelete, columToDelete)}
+        />
+      )}
+
 
     </div>
   );

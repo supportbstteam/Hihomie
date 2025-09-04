@@ -8,8 +8,9 @@ import { delete_teamData, get_teamData, messageClear } from '@/store/userTema';
 import EditTeam from '@/components/team/EditTeam';
 import { t } from '@/components/translations';
 import { capitalizeFirstLetter } from '@/components/ui/string';
-import {  Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Icon from '@/components/ui/Icon';
+import ConfirmDeleteModal from '@/components/ConfirmAlert';
 
 const Team = () => {
 
@@ -18,9 +19,11 @@ const Team = () => {
     const [open, setOpen] = useState(false)
     const [user, setUser] = useState()
 
-
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 5;
+
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [teamToDelete, setTeamToDelete] = useState(null);
 
     // Pagination logic
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -35,6 +38,11 @@ const Team = () => {
         dispatch(get_teamData());
     }, [dispatch]);
 
+    const openDeleteModal = (catId) => {
+    setTeamToDelete(catId);
+    setIsModalOpen(true);
+  };
+
 
     const handleDelete = (id) => {
         dispatch(delete_teamData(id))
@@ -45,6 +53,7 @@ const Team = () => {
             toast.success(successMessage)
             setOpen(false)
             setUser(null)
+            setIsModalOpen(false)
             dispatch(messageClear());
         }
         if (errorMessage) {
@@ -127,7 +136,7 @@ const Team = () => {
                                                 className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
                                             />
                                             <FaRegTrashAlt
-                                                onClick={() => handleDelete(row._id)}
+                                                onClick={() => openDeleteModal(row._id)}
                                                 className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
                                             />
                                         </div>
@@ -182,6 +191,14 @@ const Team = () => {
             {
                 user && <EditTeam user={user} setUser={setUser} />
             }
+
+            {isModalOpen && (
+                <ConfirmDeleteModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={() => handleDelete(teamToDelete)}
+                />
+            )}
 
 
         </div>

@@ -128,7 +128,6 @@ const AddTeam = ({ setOpen }) => {
 
   useEffect(() => {
     if (successMessage) {
-      toast.success(successMessage);
       setOpen(false);
       dispatch(messageClear());
     }

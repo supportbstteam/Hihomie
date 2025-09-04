@@ -10,16 +10,21 @@ import { capitalizeFirstLetter } from '@/components/ui/string';
 import Icon from '@/components/ui/Icon';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmDeleteModal from '@/components/ConfirmAlert';
 
 const Page = () => {
     const dispatch = useDispatch();
-    const { leadStatus,  successMessage,  errorMessage} = useSelector((state) => state.setting);
+    const { leadStatus, successMessage, errorMessage } = useSelector((state) => state.setting);
 
     const [open, setOpen] = useState(false);
     const [statusData, setStatusData] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 10;
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [statusToDelete, setStatusToDelete] = useState(null);
+
 
     // Pagination logic
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -35,9 +40,16 @@ const Page = () => {
         dispatch(delete_leadStatusDelete(id));
     };
 
+     const openDeleteModal = (Id) => {
+    setStatusToDelete(Id);
+    setIsModalOpen(true);
+  };
+
+
     useEffect(() => {
         if (successMessage) {
             toast.success(successMessage);
+            setIsModalOpen(false)
             dispatch(messageClear());
         }
 
@@ -99,7 +111,7 @@ const Page = () => {
                                                     className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
                                                 />
                                                 <FaRegTrashAlt
-                                                    onClick={() => handleDelete(row._id)}
+                                                    onClick={() => openDeleteModal(row._id)}
                                                     className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
                                                 />
                                             </div>
@@ -146,6 +158,16 @@ const Page = () => {
 
             {open && <AddStatus open={open} setOpen={setOpen} />}
             {statusData && <EditStatus statusData={statusData} setStatusData={setStatusData} />}
+
+
+            {isModalOpen && (
+                <ConfirmDeleteModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={() => handleDelete(statusToDelete)}
+                />
+            )}
+
         </div>
     );
 };
