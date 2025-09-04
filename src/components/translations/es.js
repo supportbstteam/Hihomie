@@ -76,7 +76,8 @@ const es = {
   edit_lead : "Editar cliente potencial", 
    filter : "Filtrar",
   find_exact : "Encuentra exactamente lo que necesitas",
-  apply :"Aplicar"
+  apply :"Aplicar",
+  serial : "De seriel",
 
 };
 

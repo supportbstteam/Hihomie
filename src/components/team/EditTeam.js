@@ -22,10 +22,10 @@ const EditTeam = ({ user, setUser }) => {
     id: "",
   };
 
-  // ✅ State
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(defaultForm);
 
-  // ✅ Change Handler
+  // ✅ Handle change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -34,7 +34,7 @@ const EditTeam = ({ user, setUser }) => {
     }));
   };
 
-  // ✅ Set Data from props
+  // ✅ Load data from props
   useEffect(() => {
     if (user) {
       setFormData({
@@ -53,11 +53,74 @@ const EditTeam = ({ user, setUser }) => {
     }
   }, [user]);
 
-  // ✅ Submit Handler
+  // ✅ Validation
+  const validateForm = () => {
+    const newErrors = {};
+    let valid = true;
+
+    if (!formData.name) {
+      newErrors.name = "First Name is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.name)) {
+      newErrors.name = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.lname) {
+      newErrors.lname = "Last Name is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.lname)) {
+      newErrors.lname = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email";
+      valid = false;
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required";
+      valid = false;
+    } else if (!/^\d+$/.test(formData.phone)) {
+      newErrors.phone = "Only numeric values are allowed";
+      valid = false;
+    }
+
+    if (!formData.jobTitle) {
+      newErrors.jobTitle = "Job Title is required";
+      valid = false;
+    } else if (!/^[A-Za-z\s]+$/.test(formData.jobTitle)) {
+      newErrors.jobTitle = "Only alphabets are allowed";
+      valid = false;
+    }
+
+    if (!formData.role) {
+      newErrors.role = "Role is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  // ✅ Submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     dispatch(update_team(formData));
   };
+
+  // ✅ Helper for red border
+  const inputClass = (field) =>
+    `p-2 rounded-md focus:ring-1 focus:outline-none ${
+      errors[field]
+        ? "border-red-500 focus:ring-red-400"
+        : "border-gray-300 focus:ring-green-400"
+    } border`;
 
   return (
     <AnimatePresence>
@@ -69,7 +132,6 @@ const EditTeam = ({ user, setUser }) => {
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="bg-white w-full sm:w-[50%] md:max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative mt-5 max-h-[90vh] flex flex-col"
         >
-          {/* Close Button */}
           <button
             onClick={() => setUser(null)}
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
@@ -79,7 +141,6 @@ const EditTeam = ({ user, setUser }) => {
 
           <p className="text-gray-700 text-[20px] mb-6 font-semibold">{t('edit_user')}</p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 mb-5 max-h-[77vh] overflow-y-auto">
             {/* First Name */}
             <div className="flex flex-col">
@@ -89,9 +150,9 @@ const EditTeam = ({ user, setUser }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("name")}
               />
+              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
             </div>
 
             {/* Last Name */}
@@ -102,9 +163,9 @@ const EditTeam = ({ user, setUser }) => {
                 name="lname"
                 value={formData.lname}
                 onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("lname")}
               />
+              {errors.lname && <p className="text-red-500 text-xs mt-1">{errors.lname}</p>}
             </div>
 
             {/* Email */}
@@ -115,9 +176,9 @@ const EditTeam = ({ user, setUser }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("email")}
               />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
             {/* Phone */}
@@ -128,9 +189,9 @@ const EditTeam = ({ user, setUser }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("phone")}
               />
+              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
             </div>
 
             {/* Job Title */}
@@ -141,9 +202,9 @@ const EditTeam = ({ user, setUser }) => {
                 name="jobTitle"
                 value={formData.jobTitle}
                 onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("jobTitle")}
               />
+              {errors.jobTitle && <p className="text-red-500 text-xs mt-1">{errors.jobTitle}</p>}
             </div>
 
             {/* Role */}
@@ -153,8 +214,7 @@ const EditTeam = ({ user, setUser }) => {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                required
-                className="p-2 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-green-400 focus:outline-none"
+                className={inputClass("role")}
               >
                 <option value="">--Seleccionar Rol--</option>
                 <option value="admin">Administradora</option>
@@ -162,6 +222,7 @@ const EditTeam = ({ user, setUser }) => {
                 <option value="accounting">Contabilidad</option>
                 <option value="management">Gestión</option>
               </select>
+              {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
             </div>
 
             {/* Password */}
@@ -177,7 +238,7 @@ const EditTeam = ({ user, setUser }) => {
               />
             </div>
 
-            {/* Status Toggle */}
+            {/* Status */}
             <div className="flex flex-col">
               <span className="font-medium text-gray-700 mb-1">{t('status')}</span>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -198,14 +259,14 @@ const EditTeam = ({ user, setUser }) => {
               <button
                 type="reset"
                 onClick={() => setFormData(defaultForm)}
-                className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                className="px-6 cursor-pointer py-2 border rounded-md text-gray-700 hover:bg-gray-100"
               >
                 {t('cancel')}
               </button>
               <button
                 disabled={loader}
                 type="submit"
-                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                className="px-6 cursor-pointer py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
               >
                 {loader ? t('loading') : t('submit')}
               </button>

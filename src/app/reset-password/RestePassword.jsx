@@ -2,35 +2,63 @@
 
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouter, useSearchParams } from 'next/navigation' // ✅ correct import
+import { useRouter, useSearchParams } from 'next/navigation'
 import toast from "react-hot-toast"
 import { CiLock } from "react-icons/ci";
 import { reset_password } from '@/store/customer';
+import { t } from '@/components/translations';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const { loading, successMessage, errorMessage } = useSelector(state => state.customer);
+  const [errors, setErrors] = useState({ password: '', confirmPassword: '' });
+
+  const { loader, successMessage, errorMessage } = useSelector(state => state.customer);
   const dispatch = useDispatch();
-  const router = useRouter(); // ✅ Works in Client Component
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  async function onSubmit(e) {
+  const validateForm = () => {
+    let newErrors = { password: '', confirmPassword: '' };
+    let valid = true;
+
+    if (!password) {
+      newErrors.password = "Password is required";
+      valid = false;
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      valid = false;
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Confirm Password is required";
+      valid = false;
+    } else if (confirmPassword.length < 6) {
+      newErrors.confirmPassword = "Password must be at least 6 characters";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const onSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     if (password !== confirmPassword) {
       return toast.error('Passwords do not match');
     }
+
     dispatch(reset_password({ password, token }));
-  }
+  };
 
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      setTimeout(() => {
-        router.push('/'); // ✅ Redirect
-      }, 2000);
+      setTimeout(() => router.push('/'), 2000);
     }
     if (errorMessage) {
       toast.error(errorMessage);
@@ -44,44 +72,65 @@ const ResetPassword = () => {
         alt="Logo"
         className="mb-4 w-32 sm:w-40 md:w-48"
       />
-      <div className="w-full max-w-md rounded-2xl border bg-white p-8 shadow-lg">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <h1 className="text-2xl font-bold text-center">Restablecer contraseña</h1>
         <p className="mb-6 text-center text-[#666]">Ingresa tu nueva contraseña.</p>
+
         <form className="space-y-5" onSubmit={onSubmit}>
-          <div className="relative flex flex-col">
-            <label className="mb-1 font-medium text-gray-700">Nueva contraseña*</label>
-            <input
-              className="w-full rounded-lg border px-10 py-2 focus:border-[#21b573] focus:ring focus:ring-[#21b573]/20"
-              placeholder="Nueva contraseña"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <CiLock className="absolute left-3 top-[70%] -translate-y-1/2 text-gray-400 text-lg" />
+          {/* Password Field */}
+          <div>
+            <label className="mb-1 block font-medium text-gray-700">Nueva contraseña*</label>
+            <div
+              className={`flex items-center border rounded-lg px-3 h-12 ${
+                errors.password ? 'border-red-500' : 'border-gray-300'
+              }`}
+            >
+              <CiLock className="text-gray-400 text-lg mr-2" />
+              <input
+                className="flex-1 outline-none"
+                placeholder="Nueva contraseña"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
-          <div className="relative flex flex-col">
-            <label className="mb-1 font-medium text-gray-700">Confirmar contraseña*</label>
-            <input
-              className="w-full rounded-lg border px-10 py-2 focus:border-[#21b573] focus:ring focus:ring-[#21b573]/20"
-              placeholder="Confirmar contraseña"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <CiLock className="absolute left-3 top-[70%] -translate-y-1/2 text-gray-400 text-lg" />
+
+          {/* Confirm Password Field */}
+          <div>
+            <label className="mb-1 block font-medium text-gray-700">Confirmar contraseña*</label>
+            <div
+              className={`flex items-center border rounded-lg px-3 h-12 ${
+                errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+              }`}
+            >
+              <CiLock className="text-gray-400 text-lg mr-2" />
+              <input
+                className="flex-1 outline-none"
+                placeholder="Confirmar contraseña"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+            )}
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+
           <button
             type="submit"
-            disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#21b573] px-4 py-2 font-medium text-white disabled:opacity-60"
+            disabled={loader}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#21b573] px-4 py-2 font-medium text-white disabled:opacity-60"
           >
-            Restablecer contraseña
+            {loader ? t('loading') : 'Restablecer contraseña'}
           </button>
-          <div className='text-center text-[#99A1B7]'>
-            <a href='/'>Volver a iniciar sesión</a>
+
+          <div className="text-center text-[#99A1B7]">
+            <a href="/">Volver a iniciar sesión</a>
           </div>
         </form>
       </div>

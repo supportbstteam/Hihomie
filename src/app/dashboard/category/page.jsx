@@ -10,6 +10,7 @@ import EditCategory from "@/components/category/EditCategory";
 import { t } from "@/components/translations";
 import Icon from "@/components/ui/Icon";
 import { Plus } from "lucide-react";
+import { capitalizeFirstLetter, capitalizeWords } from "@/components/ui/string";
 
 const Category = () => {
   const [open, setOpen] = useState(false);
@@ -66,14 +67,9 @@ const Category = () => {
           <div className="hidden sm:flex flex-col"></div>
 
           <div className="flex w-full sm:w-auto justify-end">
-            {/* <ul className="flex items-center gap-3 sm:gap-4">
-                            <li className="flex items-center gap-2 rounded-1xl border border-stroke bg-white shadow-sm px-3 py-2 font-medium cursor-pointer">
-                                <FaPlus className="text-lg sm:text-xl" onClick={() => setOpen(true)} />
-                            </li>
-                        </ul> */}
             <Icon
               icon={Plus}
-              size={16}
+              size={20}
               color="#99A1B7"
               onClick={() => setOpen(true)}
             />
@@ -82,31 +78,42 @@ const Category = () => {
       </aside>
       <div className="p-5">
         <div className="bg-white rounded-xl shadow-md mt-5 p-5">
-          <table className="w-full text-left border-collapse overflow-auto">
-            <thead>
-              <tr className="border-b border-stroke text-gray-600">
-                <th className="py-3 text-left">{t("category")}</th>
-                <th className="py-3 text-center">{t("status")}</th>
-                <th className="py-3 text-center">{t("action")}</th>
+          <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t("serial")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t("category")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t("status")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t("action")}</th>
               </tr>
             </thead>
-            <tbody>
-              {category.map((item) => (
+            <tbody className="divide-y divide-gray-200">
+              {category.map((item, i) => (
                 <tr
                   key={item._id}
-                  className="border-b border-stroke hover:bg-gray-50"
+                  className={`hover:bg-gray-50 transition-colors duration-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
                 >
-                  <td className="py-3">{item.category}</td>
-                  <td className="py-3 text-center">{item.status == 1 ? 'Active' : "Inactive"}</td>
-                  <td className="py-3 text-center">
-                    <div className="flex justify-center gap-3 text-lg">
+                  <td className="py-3 px-4 text-sm text-gray-700 font-medium">{i + 1}</td>
+                  <td className="py-3 px-4 text-sm text-gray-700">{capitalizeFirstLetter(item.category)}</td>
+                  <td className="py-3 px-4 text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${item.status === true
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                        }`}
+                    >
+                      {item.status === true ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-3 text-lg">
                       <FaRegEdit
                         onClick={() => handleEdit(item, true)}
-                        className="text-orange-500 cursor-pointer hover:scale-110 transition"
+                        className="text-orange-500 cursor-pointer hover:scale-110 transition-transform duration-200"
                       />
                       <FaRegTrashAlt
                         onClick={() => handleDelete(item._id)}
-                        className="text-red-500 cursor-pointer hover:scale-110 transition"
+                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform duration-200"
                       />
                     </div>
                   </td>
@@ -114,6 +121,7 @@ const Category = () => {
               ))}
             </tbody>
           </table>
+
 
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">

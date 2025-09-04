@@ -186,6 +186,9 @@ export default function CustomDnD() {
     setSelectedUser(card);
   };
 
+
+  console.log(columns);
+
   return (
     <>
       {/* HEADER */}
@@ -196,7 +199,7 @@ export default function CustomDnD() {
             <ul className="flex items-center gap-2 sm:gap-4">
 
 
-              <Icon  onClick={() => {setOpen(true)}} icon={Plus} size={16} color="#99A1B7" />
+              <Icon onClick={() => { setOpen(true) }} icon={Plus} size={16} color="#99A1B7" />
               <Icon
                 icon={FaListUl}
                 size={16}
@@ -204,7 +207,7 @@ export default function CustomDnD() {
                 onClick={() => setListComponent((prev) => !prev)}
               />
 
-               <Icon
+              <Icon
                 icon={CiImport}
                 size={16}
                 color="#99A1B7"
@@ -223,6 +226,8 @@ export default function CustomDnD() {
         </div>
       </aside>
 
+
+
       {/* BOARD */}
       {!listComponent ? (
         <div className="flex gap-6 p-6 h-full overflow-clip bg-white">
@@ -230,18 +235,18 @@ export default function CustomDnD() {
             <div
               key={col.id}
               data-col-id={col.id}
-              className={`p-2 w-72 h-full transition-colors duration-200 overflow-hidden border-t-5 rounded-radius-base border-amber-500
-                                ${
-                                  dragOverColId === col.id
-                                    ? "bg-blue-100"
-                                    : "bg-[#F9F9F9]"
-                                }`}
+              className={`p-2 w-72 h-full transition-colors duration-200 overflow-hidden border-t-5 rounded-radius-base
+                                ${dragOverColId === col.id
+                  ? "bg-blue-100"
+                  : "bg-[#F9F9F9]"
+                }`}
+              style={{ borderTopColor: col.color }}
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDrop={() => handleDropColumn(col.id)}
             >
               <div className="flex justify-between items-center gap-2 mb-2">
                 <div className="flex gap-2 items-center">
-                  <div className="bg-primary w-2 h-2 rounded-full"></div>
+                  <div style={{ backgroundColor: col.color }} className={`bg-[${col.color}] w-2 h-2 rounded-full`}></div>
                   <h2 className="font-semibold">{col.title}</h2>
                 </div>
                 <button
@@ -249,7 +254,7 @@ export default function CustomDnD() {
                     setSelectedColId(col.id);
                     setOpen(true);
                   }}
-                  className="text-[#67778880] text-3xl hover:text-gray-700"
+                  className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
                 >
                   <CiCirclePlus />
                 </button>
@@ -270,15 +275,14 @@ export default function CustomDnD() {
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                     className={`shadow-md rounded-radius p-4 mb-3 cursor-grab transition 
-                                        ${
-                                          draggingCardId === card.id
-                                            ? "opacity-60 border-2 border-blue-500"
-                                            : "bg-white "
-                                        }`}
+                                        ${draggingCardId === card.id
+                        ? "opacity-60 border-2 border-blue-500"
+                        : "bg-white "
+                      }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                       {(card.first_name?.[0]?.toUpperCase()) || "?"}
+                        {(card.first_name?.[0]?.toUpperCase()) || "?"}
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
@@ -305,7 +309,7 @@ export default function CustomDnD() {
                       </span>
                     </div>
 
-                   
+
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
                         href={`tel:${card.phone}`}
@@ -347,7 +351,7 @@ export default function CustomDnD() {
             leadStatusList={leadStatusList}
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}
-            successMessage = {successMessage}
+            successMessage={successMessage}
           />
         </div>
       )}

@@ -95,80 +95,107 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
 
   }, [successMessage, dispatch]);
 
+  console.log(filteredList)
+
 
   return (
     <div className="overflow-x-auto bg-white rounded-md shadow-md">
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow-md overflow-hidden">
         <thead className="bg-[#F8FAFD]">
           <tr>
-            <th className="psm text-dark px-4 py-3 text-left">{t('full_name')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('title')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('created_at')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('value')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('assigned')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('phone')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('status')}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t('action')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('S.N')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('full_name')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('title')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('created_at')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('value')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('assigned')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('phone')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('status')}</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{t('action')}</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 text-sm">
           {filteredList.length > 0 ? (
             filteredList.map((item, i) => (
-              <tr key={i}>
-                <td className="px-4 py-4 text-gray-700">
-                  {item.first_name} {item.last_name}
-                </td>
-                <td className="px-4 py-4 text-gray-700">{item.lead_title}</td>
+              <tr
+                key={i}
+                className={`hover:bg-gray-50 transition-colors duration-200 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+              >
+                {/* Serial Number */}
+                <td className="px-4 py-4 text-gray-700 font-medium">{i + 1}</td>
+
+                {/* Full Name */}
+                <td className="px-4 py-4 text-gray-500 font-medium">{item.first_name} {item.last_name}</td>
+
+                {/* Lead Title */}
+                <td className="px-4 py-4 text-gray-500">{item.lead_title}</td>
+
+                {/* Created At */}
                 <td className="px-4 py-4 text-gray-500">{item.createdAt}</td>
+
+                {/* Lead Value */}
                 <td className="px-4 py-4 text-gray-500">{item.lead_value}</td>
-                <td className="px-4 py-4 text-gray-500">
+
+                {/* Assigned Users */}
+                <td className="px-4 py-4">
                   {item?.users?.slice(0, 3).map((user, p) => (
                     <img
                       key={p}
                       src={`${process.env.NEXT_PUBLIC_BASE_URL}/${user.image}`}
                       alt={user.name || "User"}
-                      className="w-8 h-8 rounded-full inline-block"
+                      className="w-8 h-8 rounded-full inline-block -ml-2 border-2 border-white"
                     />
                   ))}
                   {item?.users?.length > 3 && (
-                    <span className="w-8 h-8 rounded-full inline-flex items-center justify-center bg-gray-300 text-sm font-bold">
-                      :
+                    <span className="w-8 h-8 rounded-full inline-flex items-center justify-center bg-gray-300 text-sm font-bold -ml-2 border-2 border-white">
+                      +{item?.users?.length - 3}
                     </span>
                   )}
                 </td>
+
+                {/* Phone */}
                 <td className="px-4 py-4 text-gray-500">{item.phone}</td>
-                <td className="px-4 py-4 text-gray-500">{item.leadStatusname}</td>
-                <td className="px-4 py-4 flex space-x-3 text-gray-400">
-                  <FaRegTrashAlt onClick={() => handleDeleteClick(item._id, item.leadStatusId)} className="text-red-500 text-xl cursor-pointer hover:scale-110 transition" />
+
+                {/* Status */}
+                <td className="px-4 py-4">
+                  <span
+                    className="px-2 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      color: item.color, // text color
+                      backgroundColor: `${item.color}33` // light background with 20% opacity
+                    }}
+                  >
+                    {item.leadStatusname}
+                  </span>
+                </td>
+
+                {/* Actions */}
+                <td className="px-4 py-4 flex items-center space-x-2 text-gray-400">
+                  <FaRegTrashAlt
+                    onClick={() => handleDeleteClick(item._id, item.leadStatusId)}
+                    className="text-red-500 text-xl cursor-pointer hover:scale-110 transition-transform"
+                  />
                   <FaRegEdit
                     onClick={() => handleEditClick(item)}
-                    className="text-orange-500 text-xl cursor-pointer hover:scale-110 transition"
+                    className="text-orange-500 text-xl cursor-pointer hover:scale-110 transition-transform"
                   />
-                  <a target="_blank" href={`tel:${item.phone}`}>
-                    <Phone size={20} />
-                  </a>
-                  <a target="_blank" href={`https://wa.me/${item.phone}`}>
-                    <MessageSquareText size={20} />
-                  </a>
-                  <a target="_blank" href={`mailto:${item.email}`}>
-                    <Mail size={20} />
-                  </a>
+                  <a target="_blank" href={`tel:${item.phone}`}><Phone size={20} /></a>
+                  <a target="_blank" href={`https://wa.me/${item.phone}`}><MessageSquareText size={20} /></a>
+                  <a target="_blank" href={`mailto:${item.email}`}><Mail size={20} /></a>
                   <EllipsisVertical size={20} />
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td
-                colSpan="8"
-                className="text-center py-6 text-gray-500"
-              >
+              <td colSpan="9" className="text-center py-6 text-gray-500">
                 No data found
               </td>
             </tr>
           )}
         </tbody>
       </table>
+
     </div>
   );
 };

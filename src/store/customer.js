@@ -168,7 +168,7 @@ export const customerReducer = createSlice({
          })
          .addCase(forgot_password.fulfilled, (state, { payload }) => {
             state.successMessage = payload.message; // if backend sends a message
-            state.loader = true;
+            state.loader = false;
          })
 
          .addCase(reset_password.pending, (state, { payload }) => {

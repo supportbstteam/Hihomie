@@ -34,16 +34,43 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
             [name]: type === "checkbox" ? checked : value,
         }));
     };
+    const [errors, setErrors] = useState({
+        status_name: "",
+        color: "",
+    });
+
+    // ✅ Validate function
+
+    const validateForm = () => {
+        const newErrors = { status_name: "", color: "" };
+        let valid = true;
+
+        if (!formData.status_name) {
+            newErrors.status_name = "Status name is required";
+            valid = false;
+        } else if (!/^[A-Za-z\s]+$/.test(formData.status_name)) {
+            newErrors.status_name = "Only alphabets and spaces allowed";
+            valid = false;
+        }
+
+        if (!formData.color) {
+            newErrors.color = "Please select a color";
+            valid = false;
+        }
+
+        setErrors(newErrors);
+        return valid;
+    };
 
     // handle form submit
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
         dispatch(update_statusData(formData))
     };
 
     useEffect(() => {
         if (successMessage) {
-            toast.success(successMessage)
             setStatusData(null)
             dispatch(messageClear());
         }
@@ -91,23 +118,26 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                             {/* Estado name */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
-                                   {t('status')} {t('name')}*
+                                    {t('status')} {t('name')}*
                                 </label>
                                 <input
                                     type="text"
-                                    className="w-full border border-gray-300 rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
+                                    className={`w-full border rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:outline-none ${errors.status_name ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"
+                                        }`}
                                     placeholder='Escribir estado'
                                     name="status_name"
                                     value={formData.status_name}
                                     onChange={handleChange}
-                                    required
                                 />
+                                {errors.status_name && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.status_name}</p>
+                                )}
                             </div>
 
                             {/* Color select */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
-                                    {t('color')}
+                                    {t('color')}*
                                 </label>
                                 <div className="flex flex-wrap gap-3 mt-2">
                                     {menu.map((item, i) => (
@@ -121,8 +151,8 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                                                 className="hidden"
                                             />
                                             <span
-                                                className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition 
-                                                ${formData.color === item.color ? "border-black scale-110" : "border-gray-300"}`}
+                                                className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition ${formData.color === item.color ? "border-black scale-110" : "border-gray-300"
+                                                    }`}
                                                 style={{ backgroundColor: item.color }}
                                             >
                                                 {formData.color === item.color && (
@@ -132,13 +162,16 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                                         </label>
                                     ))}
                                 </div>
+                                {errors.color && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.color}</p>
+                                )}
                             </div>
 
                             {/* Footer buttons */}
                             <div className="flex justify-end gap-3 mt-4">
                                 <button
                                     type="reset"
-                                    className="px-5 py-2 border rounded-sm text-gray-700 hover:bg-gray-100 text-sm"
+                                    className="px-5 cursor-pointer py-2 border rounded-sm text-gray-700 hover:bg-gray-100 text-sm"
                                     onClick={() =>
                                         setFormData({
                                             status_name: "",
@@ -151,7 +184,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                                 <button
                                     disabled={loader}
                                     type="submit"
-                                    className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700 text-sm font-medium"
+                                    className="px-6 cursor-pointer py-2 bg-green-600 text-white rounded-sm hover:bg-green-700 text-sm font-medium"
                                 >
                                     {loader ? t('loading') : t('submit')}
                                 </button>

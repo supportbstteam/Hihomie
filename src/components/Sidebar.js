@@ -122,7 +122,7 @@ export default function Sidebar() {
               setOpen(false)
               signOut({ callbackUrl: "/" })
             }}
-            className="flex items-center gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
+            className="flex items-center cursor-pointer gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
           >
             <MdOutlineLogout className='text-[#84909A]' /> Logout
           </button>

@@ -12,8 +12,9 @@ const AddCategory = ({ setOpen }) => {
 
     const [formData, setFormData] = useState({
         category: "",
-        status: false,
+        status: true,
     });
+    const [errors, setErrors] = useState({ category: '' })
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -23,16 +24,33 @@ const AddCategory = ({ setOpen }) => {
         }));
     };
 
+    const validateForm = () => {
+        let newErrors = { category: '' }
+        let valid = true
+
+        // ✅ Alphabet-only Validation for Category
+        if (!formData.category) {
+            newErrors.category = "Category is required"
+            valid = false
+        } else if (!/^[A-Za-z\s]+$/.test(formData.category)) {
+            newErrors.category = "Only alphabets are allowed"
+            valid = false
+        }
+
+        setErrors(newErrors)
+        return valid
+    }
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!validateForm()) return
         dispatch(AddCategorys(formData));
     };
 
     useEffect(() => {
         if (successMessage) {
-            toast.success(successMessage);
             setOpen(false);
-            dispatch(messageClear());
         }
         if (errorMessage) {
             toast.error(errorMessage);
@@ -73,16 +91,24 @@ const AddCategory = ({ setOpen }) => {
 
                         {/* Category */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-gray-700 font-medium text-sm">{t('category')}*</label>
+                            <label className="text-gray-700 font-medium text-sm">
+                                {t('category')}*
+                            </label>
+
                             <input
                                 type="text"
-                                className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                required
+                                className={`p-2 w-full text-sm rounded-lg border focus:ring-1 focus:ring-green-400 focus:outline-none ${errors.category ? "border-red-500" : "border-gray-300"
+                                    }`}
                             />
+
+                            {errors.category && (
+                                <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+                            )}
                         </div>
+
 
                         {/* Status */}
                         {/* Status Toggle */}
@@ -106,7 +132,7 @@ const AddCategory = ({ setOpen }) => {
                         <div className="flex gap-3 justify-end">
                             <button
                                 type="reset"
-                                className="px-6 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
+                                className="px-6 cursor-pointer  py-2 border rounded-md text-gray-700 hover:bg-gray-100"
                                 onClick={() => setFormData({ category: "", status: "" })}
                             >
                                 {t('cancel')}
@@ -114,7 +140,7 @@ const AddCategory = ({ setOpen }) => {
                             <button
                                 disabled={loader}
                                 type="submit"
-                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                                className="px-6 cursor-pointer py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >
                                 {loader ? t('loading') : t('submit')}
                             </button>
