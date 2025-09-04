@@ -15,7 +15,7 @@ const Dropdown = ({
   size = "md",
 }) => {
   const sizeStyles = {
-    md: "text-sm py-2",
+    md: "text-sm px-2 py-[6px]",
     xl: "text-base py-3",
     xxl: "text-base md:text-[22px] py-2 md:py-4 font-medium",
   };
@@ -37,10 +37,18 @@ const Dropdown = ({
           id={selectId}
           name={name}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            // Pass a simulated event object with name and value
+            onChange({
+              target: {
+                name: e.target.name,
+                value: e.target.value,
+              },
+            });
+          }}
           className={clsx(
             "text-gray-900 appearance-none font-heading w-full px-4 border pr-10 rounded-radius focus:outline-none focus:ring-2 focus:ring-primary overflow-hidden",
-            error ? "border-red-500" : "border-gray-300",
+            error ? "border-red-500" : "border-stroke",
             sizeStyles[size],
             className
           )}
@@ -70,7 +78,7 @@ const Dropdown = ({
           </svg>
         </div>
       </div>
-      {error && <p className="text-base text-red-500">{error}</p>}
+      {error && <p className="text-xs  text-red-500">{error}</p>}
     </div>
   );
 };

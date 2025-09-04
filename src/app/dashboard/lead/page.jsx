@@ -188,7 +188,7 @@ export default function CustomDnD() {
   return (
     <>
       {/* HEADER */}
-      <aside className="w-full bg-white  border-b border-stroke sticky top-0 z-50">
+      <aside className="w-full bg-white sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
           <div className="hidden sm:flex flex-col"></div>
           <div className="flex w-full sm:w-auto justify-end">
@@ -217,7 +217,10 @@ export default function CustomDnD() {
 
       {/* BOARD */}
       {!listComponent ? (
-        <div className="flex gap-6 p-6 h-full overflow-clip bg-white">
+        <div className="flex p-2 h-full overflow-clip bg-background"> 
+
+        <div className="bg-white p-2 rounded-radius-base w-full flex gap-6">
+
           {Object.values(columns).map((col) => (
             <div
               key={col.id}
@@ -297,7 +300,7 @@ export default function CustomDnD() {
                       </span>
                     </div>
 
-                    <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
+                    {/* <div className=" border border-primary mb-4 p-4 flex justify-between bg-primary/10 rounded-radius">
                       <div className="grid gap-2">
                         <span className="flex gap-1 justify-center items-center">
                           <ChartSpline size={16} color="#21B573" />
@@ -313,7 +316,7 @@ export default function CustomDnD() {
                         </span>
                         <p className="text-light pxs">4.500 € / mes</p>
                       </div>
-                    </div>
+                    </div> */}
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
                         href={`tel:${card.phone}`}
@@ -340,6 +343,8 @@ export default function CustomDnD() {
             </div>
           ))}
         </div>
+        </div>
+
       ) : (
         <div className="p-3 sm:p-5">
           <Filter
