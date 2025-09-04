@@ -144,9 +144,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
     if (Object.keys(validationErrors).length === 0) {
       dispatch(customerAdd(formData));
-    } else {
-      toast.error("Please fix validation errors before submitting");
-    }
+    } 
   };
 
 
