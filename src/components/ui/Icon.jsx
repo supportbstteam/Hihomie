@@ -4,9 +4,10 @@ import clsx from 'clsx';
 
 const Icon = ({
   icon: IconComponent,
+  variant = "primary",
   size = 24,
-  color = 'currentColor',
-  className = '',
+  color = "#99A1B7",
+  className ,
   href,
   onClick,
   ...props
@@ -16,6 +17,13 @@ const Icon = ({
     return null;
   }
 
+    const variantStyles = {
+    primary:
+      `flex items-center justify-center   w-5 h-7  ${onClick ? "cursor-pointer":""} `,
+    outline:
+      `flex items-center justify-center border border-stock w-10 h-10 rounded-radius ${onClick ? "cursor-pointer":""} `,
+  };
+
   const defaultClasses = '';
   const combinedClassName = clsx(defaultClasses, className);
 
@@ -24,16 +32,21 @@ const Icon = ({
       size={size}
       width={size}
       height={size}
-      color={color}
-      fill={color}
+      stroke={color}
+      fill="none"  
       // onClick={onClick}
       className={combinedClassName}
       {...props}
     />
   );
+  const classes = clsx(
+    variantStyles[variant],
+    onClick ? "cursor-pointer": "",
+    className
+  );
 
   const wrapper = (
-    <div onClick={onClick} className={`flex items-center justify-center border border-stock w-10 h-10 rounded-radius ${onClick ? "cursor-pointer":""} `}>
+    <div onClick={onClick} className={classes}>
       {iconElement}
     </div>
   );

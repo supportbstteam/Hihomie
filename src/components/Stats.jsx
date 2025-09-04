@@ -26,7 +26,7 @@ const Stat = [
 
 const Stats = () => {
   return (
-    <section className="p-6 rounded-lg grid grid-cols-4 gap-10 border border-stock bg-white">
+    <section className="p-6 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-10 border border-stock bg-white">
       {Stat.map((item, i) => (
         <div key={i} className="flex flex-col gap-0 rounded-radius">
           <p className="pxs text-light uppercase">{item.title}</p>

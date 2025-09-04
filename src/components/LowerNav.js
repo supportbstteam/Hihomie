@@ -8,7 +8,7 @@ import { MdOutlineFilterList, MdOutlineFilterListOff } from "react-icons/md";
 import Date from "./ui/Date";
 import Icon from "./ui/Icon";
 import { Download, List, Plus } from "lucide-react";
-import { t } from '@/components/translations';
+import { t } from "@/components/translations";
 
 export default async function LoweNav() {
   const session = await getServerSession(authOptions);
@@ -19,10 +19,8 @@ export default async function LoweNav() {
       <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4">
         {/* Title (hide on mobile) */}
         <div className="hidden sm:flex flex-col">
-          <p className="h5 text-dark">{t('control_panel')}</p>
-          <span className="p text-light">
-            {t('complete_view')}
-          </span>
+          <p className="h5 text-dark">{t("control_panel")}</p>
+          <span className="p text-light">{t("complete_view")}</span>
         </div>
 
         {/* Right Side - Date & Filter */}
@@ -32,15 +30,28 @@ export default async function LoweNav() {
             <Date />
 
             {/* Filter Icon */}
-            <Icon icon={List} size={16} color="#99A1B7" />
-            <Icon icon={Download} size={16} color="#99A1B7" href="/" />
+            <Icon variant="outline" icon={List} size={16} color="#99A1B7" />
             <Icon
+              variant="outline"
+              icon={Download}
+              size={16}
+              color="#99A1B7"
+              href="/"
+            />
+            <Icon
+              variant="outline"
               icon={MdOutlineFilterList}
               size={16}
               color="#99A1B7"
               href="/"
             />
-            <Icon icon={Plus} size={16} color="#99A1B7" href="/" />
+            <Icon
+              variant="outline"
+              icon={Plus}
+              size={16}
+              color="#99A1B7"
+              href="/"
+            />
           </ul>
         </div>
       </div>

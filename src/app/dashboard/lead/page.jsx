@@ -24,6 +24,8 @@ import {
   Phone,
   PiggyBank,
   Plus,
+  List as ListIcon,
+  ListFilter,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
 
@@ -192,25 +194,25 @@ export default function CustomDnD() {
         <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
           <div className="hidden sm:flex flex-col"></div>
           <div className="flex w-full sm:w-auto justify-end">
-            <ul className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
 
 
-              <Icon icon={Plus} size={16} color="#99A1B7" />
-              <Icon
-                icon={FaListUl}
+              <Icon variant="outline" icon={Plus} size={16} color="#99A1B7" />
+              <Icon variant="outline"
+                icon={ListIcon}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setListComponent((prev) => !prev)}
               />
-
-              <Icon
-                icon={MdFilterList}
+            
+              <Icon variant="outline"
+                icon={ListFilter}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setFilterOpen(true)}
               />
 
-            </ul>
+            </div>
           </div>
         </div>
       </aside>

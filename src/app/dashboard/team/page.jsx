@@ -59,6 +59,7 @@ const Team = () => {
           <div className="flex w-full sm:w-auto justify-end">
             <Icon
               icon={Plus}
+              variant="outline"
               size={16}
               color="#99A1B7"
               onClick={() => setOpen(true)}

@@ -67,6 +67,7 @@ const Category = () => {
                             </li>
                         </ul> */}
             <Icon
+              variant="outline"
               icon={Plus}
               size={16}
               color="#99A1B7"

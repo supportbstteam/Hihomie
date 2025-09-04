@@ -14,7 +14,7 @@ const Button = ({
   size = "md",
   color,
   disabled = false,
-  weight = "semibold",
+  weight = "regular",
   ...props
 }) => {
   const baseStyles =
@@ -31,13 +31,12 @@ const Button = ({
   const sizeStyles = {
     xs: "px-3 py-1 text-xs",
     sm: "px-7 py-2 text-sm min-w-[110px]",
-    md: "px-6 py-[6px] text-[17px] min-w-[110px]",
-    lg: "px-6 py-2 md:px-12 md:py-4 text-lg font-bold",
-    xl: "px-6 py-2 md:px-14 md:py-3 text-lg md:text-[22px] font-bold",
-    xxl: "px-6 py-3 md:px-[44px] md:py-[16px] text-lg md:text-[26px] font-bold",
-    full: "w-full px-4 py-2 text-base",
+    md: "px-6 py-2 text-based min-w-[110px]",
+    lg: "px-6 py-2 md:px-12 md:py-4 text-lg font-normal",
+    xl: "px-6 py-2 md:px-14 md:py-3 text-lg md:text-2xl font-normal",
+    full: "w-full px-4 py-2 text-base font-normal",
     none: "p-0",
-    icon: "text-lg  font-regular",
+    icon: "text-lg  font-normal",
     iconxxl: "text-xl md:text-[25px]",
   };
 
@@ -51,14 +50,14 @@ const Button = ({
 
   const variantStyles = {
     primary:
-      "rounded-full min-w-[90px] bg-primary text-white border-2 border-transparent hover:bg-white hover:text-black hover:border-black transition",
+      "rounded-radius min-w-[90px] bg-primary text-white border border-transparent hover:bg-primary/80 hover:text-white hover:border-primary/80 transition",
     secondary:
-      "rounded-full min-w-[90px] bg-white border-2 border-white hover:border-black hover:bg-primary hover:text-white hover:border-primary",
+      "rounded-radius min-w-[90px] bg-white border-2 border-white hover:border-black hover:bg-primary hover:text-white hover:border-primary",
     outline:
       "rounded-radius min-w-[90px] border-1 border-stock text-black bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
     outlineWhite:
-      "rounded-full min-w-[90px] border border-white text-white bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
-    icon: "w-fit bg-transparent font-thin",
+      "rounded-radius min-w-[90px] border border-white text-white bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
+    icon: "w-fit bg-transparent ",
   };
 
   const renderedIcon =

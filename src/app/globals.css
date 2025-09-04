@@ -32,7 +32,7 @@
     @apply text-base font-heading leading-[100%] tracking-[0%];
   }
   .psm{
-    @apply text-sm leading-6 font-heading font-medium
+    @apply text-sm leading-6 font-heading font-normal
   }
   .pxs{
     @apply text-xs font-heading font-normal leading-[18px] tracking-[1px] /* list  */
