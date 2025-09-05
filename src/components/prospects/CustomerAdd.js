@@ -103,13 +103,13 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
       newErrors.last_name = "Last name is required";
     }
 
-    if (!values.company.trim()) {
-      newErrors.company = "Company is required";
-    }
+    // if (!values.company.trim()) {
+    //   newErrors.company = "Company is required";
+    // }
 
-    if (!values.designation.trim()) {
-      newErrors.designation = "Designation is required";
-    }
+    // if (!values.designation.trim()) {
+    //   newErrors.designation = "Designation is required";
+    // }
 
     if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       newErrors.email = "Invalid email format";
@@ -230,7 +230,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
-                  required
                   error={errors.company}
                 />
 
@@ -240,12 +239,11 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   name="designation"
                   value={formData.designation}
                   onChange={handleChange}
-                  required
                   error={errors.designation}
                 />
 
                 <Input
-                  label={t("phonr")}
+                  label={t("phone")}
                   type="text"
                   name="phone"
                   value={formData.phone}
@@ -273,7 +271,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                 />
 
                 <Input
-                  label={t("assigned")}
+                  label={t("assigned_to")}
                   type="text"
                   name="assigned"
                   value={formData.assigned}

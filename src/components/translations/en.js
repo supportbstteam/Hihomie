@@ -55,7 +55,7 @@ const en = {
   designation : "Designation",
   lead_amout : "Lead Amount",
   type_of_operation : "Type Of Operation",
-  custome_setiuation : "Customer Situation",
+  customer_situation : "Customer Situation",
   purchase_status : "Purchase Status",
   note : "Notes And Observations",
   commerical_note : "Commercial Notes",
@@ -78,6 +78,7 @@ const en = {
   find_exact : "Find exactly what you need",  
   apply : "Apply",
   serial: "Serial",
+  assigned_to : "Assigned To",
 };
 
 export default en;

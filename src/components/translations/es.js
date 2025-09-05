@@ -55,7 +55,7 @@ const es = {
   designation : "Designación",
   lead_amout : "Cantidad De Plomo",
   type_of_operation : "Tipo De Operación",
-  custome_setiuation : "Situación Del Cliente",
+  customer_situation : "Situación Del Cliente",
   purchase_status : "Estado De Compra",
   note : "Notas y Observaciones",
   commerical_note : "Notas Comerciales",
@@ -78,6 +78,7 @@ const es = {
   find_exact : "Encuentra exactamente lo que necesitas",
   apply :"Aplicar",
   serial: "De seriel",
+  assigned_to : "Asignado A",
 };
 
 export default es;
