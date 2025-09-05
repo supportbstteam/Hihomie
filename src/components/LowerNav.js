@@ -7,7 +7,7 @@ import { SlCalender } from "react-icons/sl";
 import { MdOutlineFilterList, MdOutlineFilterListOff } from "react-icons/md";
 import Date from "./ui/Date";
 import Icon from "./ui/Icon";
-import { Download, List, Plus } from "lucide-react";
+import { Download, List, ListFilter, Plus } from "lucide-react";
 import { t } from "@/components/translations";
 
 export default async function LoweNav() {
@@ -40,7 +40,7 @@ export default async function LoweNav() {
             />
             <Icon
               variant="outline"
-              icon={MdOutlineFilterList}
+              icon={ListFilter}
               size={16}
               color="#99A1B7"
               href="/"

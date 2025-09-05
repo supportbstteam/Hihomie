@@ -10,10 +10,6 @@ import Dropdown from "../ui/DropDown";
 import Form1 from "./Form1";
 import Form2 from "./Form2";
 import AssignUser from "./AssignUser";
-import { motion, AnimatePresence } from "framer-motion";
-import { t } from "@/components/translations";
-import Input from "../ui/Input";
-import Dropdown from "../ui/DropDown";
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage } = useSelector(
@@ -206,7 +202,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
-            className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
           >
             {/* Close Button */}
             <button
@@ -229,12 +224,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   <Input
                     label={t("lead_title")}
-                <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  <Input
-                    label={t("lead_title")}
                     value={formData.lead_title}
                     onChange={handleChange}
-                    name="lead_title"
                     name="lead_title"
                     required
                     error={errors.lead_title}
@@ -260,7 +251,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.first_name}
                     onChange={handleChange}
                     name="first_name"
-                    name="first_name"
                     required
                     error={errors.first_name}
                   />
@@ -273,9 +263,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.last_name}
                     onChange={handleChange}
                     name="last_name"
-                    name="last_name"
                     required
-                    error={errors.last_name}
                     error={errors.last_name}
                   />
 

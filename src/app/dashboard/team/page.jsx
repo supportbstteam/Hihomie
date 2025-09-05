@@ -10,8 +10,6 @@ import { t } from "@/components/translations";
 import Icon from "@/components/ui/Icon";
 import { Plus } from "lucide-react";
 import { capitalizeFirstLetter } from '@/components/ui/string';
-import { Plus } from 'lucide-react';
-import Icon from '@/components/ui/Icon';
 import ConfirmDeleteModal from '@/components/ConfirmAlert';
 
 const Team = () => {

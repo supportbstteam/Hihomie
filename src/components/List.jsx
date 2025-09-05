@@ -50,6 +50,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [columToDelete, setColumToDelete] = useState(null);
+  const [iconOpen, setIconOpen] = useState(null);
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
@@ -206,7 +207,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
                     href={`https://wa.me/${item.phone}`}
                   />
                   <Icon icon={Mail} size={20} href={`mailto:${item.email}`} />
-                  <div
+                                    <div
                     className="relative inline-block"
                     onMouseEnter={() => setIconOpen(item._id)}
                     onMouseLeave={() => setIconOpen(null)}
@@ -216,7 +217,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
 
                     {/* Actions visible on hover */}
                     {iconOpen === item._id && (
-                      <div className="absolute w-20 right-5 top-[-10] mt-1 flex justify-evenly gap-2 bg-background shadow-md p-2 rounded-lg z-10">
+                      <div className="absolute w-20 right-5 top-[-100] mt-1 flex justify-evenly gap-2 bg-background shadow-md p-2 rounded-lg z-10">
                         <Icon
                           icon={Trash}
                           size={20}

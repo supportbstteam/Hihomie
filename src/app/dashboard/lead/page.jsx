@@ -27,6 +27,7 @@ import {
   Plus,
   List as ListIcon,
   ListFilter,
+  Download,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
@@ -228,7 +229,7 @@ export default function CustomDnD() {
 
               <Icon
                 variant="outline"
-                icon={CiImport}
+                icon={Download}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setImpodeOpen(true)}
@@ -236,7 +237,8 @@ export default function CustomDnD() {
 
 
               <Icon
-                icon={MdFilterList}
+                icon={ListFilter}
+                variant="outline"
 
                 size={16}
                 color="#99A1B7"

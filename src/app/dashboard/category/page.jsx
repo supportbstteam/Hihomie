@@ -66,7 +66,7 @@ const Category = () => {
   return (
     <div className="">
       {/* Header */}
-      <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
+      <aside className="w-full bg-white sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-3">
           <div></div>
           <div className="flex justify-end">

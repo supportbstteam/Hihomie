@@ -9,7 +9,9 @@ import Dropdown from "../ui/DropDown";
 
 const AddTeam = ({ setOpen }) => {
   const dispatch = useDispatch();
-  const { loader, errorMessage, successMessage } = useSelector(state => state.team);
+  const { loader, errorMessage, successMessage } = useSelector(
+    (state) => state.team
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -24,13 +26,13 @@ const AddTeam = ({ setOpen }) => {
   });
 
   const [errors, setErrors] = useState({
-    name: '',
-    lname: '',
-    email: '',
-    phone: '',
-    jobTitle: '',
-    role: '',
-    password: '',
+    name: "",
+    lname: "",
+    email: "",
+    phone: "",
+    jobTitle: "",
+    role: "",
+    password: "",
   });
 
   // Handle input change
@@ -52,7 +54,15 @@ const AddTeam = ({ setOpen }) => {
 
   // Validation
   const validateForm = () => {
-    let newErrors = { name: '', lname: '', email: '', phone: '', jobTitle: '', role: '', password: '' };
+    let newErrors = {
+      name: "",
+      lname: "",
+      email: "",
+      phone: "",
+      jobTitle: "",
+      role: "",
+      password: "",
+    };
     let valid = true;
 
     if (!formData.name) {
@@ -155,26 +165,15 @@ const AddTeam = ({ setOpen }) => {
           >
             ✕
           </button>
-  return (
-    <AnimatePresence>
-      <div className="fixed inset-0 bg-black/40 flex justify-center items-start z-[100] px-4">
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 20, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="bg-white w-full sm:w-[50%] md:max-w-[40%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative mt-5 max-h-[90vh] flex flex-col"
-        >
-          <button
-            onClick={() => setOpen(false)}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
+
+          <p className="text-gray-700 text-[20px] mb-6">
+            {t("add_user_label")}
+          </p>
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]"
           >
-            ✕
-          </button>
-
-          <p className="text-gray-700 text-[20px] mb-6">{t("add_user_label")}</p>
-
-          <form onSubmit={handleSubmit} className="space-y-4 mb-5 overflow-y-auto max-h-[70vh]">
             <Input
               label={t("first_name")}
               name="name"
@@ -254,7 +253,9 @@ const AddTeam = ({ setOpen }) => {
 
             {/* Details Toggle */}
             <div className="flex items-center justify-between mt-2">
-              <span className="w-32 font-medium text-gray-700 text-sm">{t("details")}</span>
+              <span className="w-32 font-medium text-gray-700 text-sm">
+                {t("details")}
+              </span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -271,7 +272,9 @@ const AddTeam = ({ setOpen }) => {
             {/* Details Section */}
             {details && (
               <div className="p-4 bg-gray-50 border rounded-md">
-                <h3 className="text-lg font-semibold">{t("additional_details")}</h3>
+                <h3 className="text-lg font-semibold">
+                  {t("additional_details")}
+                </h3>
                 {/* Additional form inputs or components for details */}
                 <Input
                   label={t("additional_info")}
@@ -317,5 +320,4 @@ const AddTeam = ({ setOpen }) => {
     </AnimatePresence>
   );
 };
-
 export default AddTeam;

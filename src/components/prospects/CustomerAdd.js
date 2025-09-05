@@ -132,8 +132,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     const validationErrors = validate(formData);
     setErrors(validationErrors);
 
-    const validationErrors = validate(formData);
-    setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       dispatch(customerAdd(formData));
