@@ -19,6 +19,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     (state) => state.customer
   );
   const [details, setDetails] = useState(false);
+  const [users, setUsers] = useState([]);
   const [address_details, setAddressDetails] = useState(false);
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
@@ -45,6 +46,15 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     status: "",
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch("/api/user");
+      const { users } = await response.json();
+      setUsers(users);
+    };
+    fetchUsers();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -131,9 +141,11 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     e.preventDefault();
     const validationErrors = validate(formData);
     setErrors(validationErrors);
+    console.log(validationErrors);
 
 
     if (Object.keys(validationErrors).length === 0) {
+      console.log("no errors");
       dispatch(customerAdd(formData));
     } 
   };
@@ -196,9 +208,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                 <Dropdown
                   label={t("surname")}
                   name="surname"
+                  title={t("select_surname")}
                   value={formData.surname}
                   onChange={handleChange}
-                  // error={errors.surname}
+                  error={errors.surname}
                   options={[
                     { value: "Señor.", label: "Señor." },
                     { value: "Señora.", label: "Señora." }
@@ -221,7 +234,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  // error={errors.last_name}
+                  error={errors.last_name}
                 />
 
                 <Input
@@ -233,13 +246,30 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   error={errors.company}
                 />
 
-                <Input
+                {/* <Input
                   label={t("designation")}
                   type="text"
                   name="designation"
                   value={formData.designation}
                   onChange={handleChange}
                   error={errors.designation}
+                /> */}
+                <Dropdown
+                  label={t("designation")}
+                  name="designation"
+                  title={t("select_designation")}
+                  value={formData.designation}
+                  onChange={handleChange}
+                  error={errors.designation}
+                  options={[
+                    { value: "ceo", label: t("ceo") },
+                    { value: "marketing_manager", label: t("marketing_manager") },
+                    { value: "hr_executive", label: t("hr_executive") },
+                    { value: "sales_head", label: t("sales_head") },
+                    { value: "owner_founder", label: t("owner_founder") },
+                    { value: "team_lead", label: t("team_lead") },
+                    { value: "agent", label: t("agent") },
+                  ]}
                 />
 
                 <Input
@@ -270,18 +300,32 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   error={errors.lead_value}
                 />
 
-                <Input
+                {/* <Input
                   label={t("assigned_to")}
                   type="text"
                   name="assigned"
                   value={formData.assigned}
                   onChange={handleChange}
                   error={errors.assigned}
+                /> */}
+
+                <Dropdown
+                  label={t("assigned_to")}
+                  name="assigned"
+                  title={t("select_assigned")}
+                  value={formData.assigned}
+                  onChange={handleChange}
+                  error={errors.assigned}
+                  options={users.map((item) => ({
+                    value: item._id,
+                    label: item.name,
+                  }))}
                 />
 
                 <Dropdown
                   label={t("status")}
                   name="status"
+                  title={t("select_status")}
                   value={formData.status}
                   onChange={handleChange}
                   required
@@ -294,47 +338,50 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                 <Dropdown
                   label={t("type_of_operation")}
                   name="type_of_opration"
+                  title={t("select_type_of_operation")}
                   value={formData.type_of_opration}
                   onChange={handleChange}
                   error={errors.type_of_opration}
                   options={[
-                    { value: "Primera casa", label: "Primera casa" },
-                    { value: "Segunda casa", label: "Segunda casa" },
-                    { value: "Inversión", label: "Inversión" },
-                    { value: "Subrogación", label: "Subrogación" },
-                    { value: "Refinanciación", label: "Refinanciación" },
+                    { value: t("first_house"), label: t("first_house") },
+                    { value: t("second_house"), label: t("second_house") },
+                    { value: t("investment"), label: t("investment") },
+                    { value: t("surrogacy"), label: t("surrogacy") },
+                    { value: t("refinancing"), label: t("refinancing") },
                   ]}
                 />
 
                 <Dropdown
                   label={t("customer_situation")}
                   name="customer_situation"
+                  title={t("select_customer_situation")}
                   value={formData.customer_situation}
                   onChange={handleChange}
                   error={errors.customer_situation}
                   required
                   options={[
-                    { value: "Tomará tiempo", label: "Tomará tiempo" },
-                    { value: "Urgente", label: "Urgente" },
-                    { value: "Evaluando", label: "Evaluando" },
-                    { value: "Decidida", label: "Decidida" },
+                    { value: t("customer_situation1"), label: t("customer_situation1") },
+                    { value: t("urgent"), label: t("urgent") },
+                    { value: t("evaluating"), label: t("evaluating") },
+                    { value: t("decided"), label: t("decided") },
                   ]}
                 />
 
                 <Dropdown
                   label={t("purchase_status")}
                   name="purchase_status"
+                  title={t("select_purchase_status")}
                   value={formData.purchase_status}
                   onChange={handleChange}
                   error={errors.purchase_status}
                   required
                   options={[
-                    { value: "Todavía buscando", label: "Todavía buscando" },
+                    { value: t("still_searching"), label: t("still_searching") },
                     {
-                      value: "Vivienda Seleccionada",
-                      label: "Vivienda Seleccionada",
+                      value: t("selected_housing"),
+                      label: t("selected_housing"),
                     },
-                    { value: "Propiedad", label: "Propiedad" },
+                    { value: t("property"), label: t("property") },
                   ]}
                 />
               </section>

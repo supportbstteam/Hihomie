@@ -10,7 +10,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
     city: "",
     state: "",
     zip_code: "",
-    country: "India",
+    country: "Spain",
     website: "",
   });
 
@@ -22,7 +22,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
         city: selectedUser.city || "",
         state: selectedUser.state || "",
         zip_code: selectedUser.zip_code || "",
-        country: selectedUser.country || "India",
+        country: selectedUser.country || "Spain",
         website: selectedUser.website || "",
       });
 
@@ -33,7 +33,7 @@ const Form2 = ({ setAddressDetailsData, selectedUser }) => {
         city: selectedUser.city || "",
         state: selectedUser.state || "",
         zip_code: selectedUser.zip_code || "",
-        country: selectedUser.country || "India",
+        country: selectedUser.country || "Spain",
         website: selectedUser.website || "",
       });
     }

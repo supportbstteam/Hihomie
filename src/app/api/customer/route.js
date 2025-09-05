@@ -76,7 +76,7 @@ export async function PUT(req) {
   try {
 
     const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData } = await req.json()
-      
+
 
     await dbConnect();
 
@@ -123,32 +123,32 @@ export async function PUT(req) {
 
     if (status != colId) {
 
-         // 1️⃣ Find source column
-         const sourceCol = await LeadStatus.findById(colId);
-         if (!sourceCol) {
-           return NextResponse.json({ error: "Source column not found" }, { status: 404 });
-         }
-     
-         // 2️⃣ Find the card inside source
-         const cardIndex = sourceCol.cards.findIndex(
-           (c) => c._id.toString() === id
-         );
-         if (cardIndex === -1) {
-           return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
-         }
-     
-         // 3️⃣ Remove card from source
-         const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
-         await sourceCol.save();
-     
-         // 4️⃣ Add card into destination column
-         const destCol = await LeadStatus.findById(status);
-         if (!destCol) {
-           return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
-         }
-     
-         destCol.cards.push(movedCard);
-         await destCol.save();
+      // 1️⃣ Find source column
+      const sourceCol = await LeadStatus.findById(colId);
+      if (!sourceCol) {
+        return NextResponse.json({ error: "Source column not found" }, { status: 404 });
+      }
+
+      // 2️⃣ Find the card inside source
+      const cardIndex = sourceCol.cards.findIndex(
+        (c) => c._id.toString() === id
+      );
+      if (cardIndex === -1) {
+        return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
+      }
+
+      // 3️⃣ Remove card from source
+      const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
+      await sourceCol.save();
+
+      // 4️⃣ Add card into destination column
+      const destCol = await LeadStatus.findById(status);
+      if (!destCol) {
+        return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
+      }
+
+      destCol.cards.push(movedCard);
+      await destCol.save();
     }
 
 

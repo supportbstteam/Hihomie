@@ -194,9 +194,6 @@ export default function CustomDnD() {
   };
 
    useEffect(() => {
-
-     console.log('card')
-
     if (successMessage) {
       dispatch(messageClear());
       dispatch(get_leadStatusDataForList())
