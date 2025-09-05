@@ -3,7 +3,7 @@ import es from './es';
 
 // Get selected language from localStorage, fallback to 'en'
 // const savedLang = typeof window !== "undefined" ? localStorage.getItem('hi_home_trans') : null;
-const DEFAULT_LANGUAGE = 'es'; // change fallback to 'es' if needed
+const DEFAULT_LANGUAGE = 'en'; // change fallback to 'es' if needed
 
 const translations = {
   en,

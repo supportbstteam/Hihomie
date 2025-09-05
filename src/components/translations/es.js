@@ -74,11 +74,10 @@ const es = {
   country : "País",
   website : "Sitio web",
   edit_lead : "Editar cliente potencial", 
-   filter : "Filtrar",
+  filter : "Filtrar",
   find_exact : "Encuentra exactamente lo que necesitas",
   apply :"Aplicar",
-  serial : "De seriel",
-
+  serial: "De seriel",
 };
 
 export default es;

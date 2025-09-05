@@ -130,45 +130,49 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
     <div className="overflow-x-auto bg-white rounded-md shadow-md">
       <table className="min-w-full divide-y divide-gray-200 rounded-lg shadow-md overflow-hidden">
         <thead className="bg-[#F8FAFD]">
-          <tr>
-            <th className="psm text-dark px-4 py-3 text-left">
+          <tr className="">
+            <th className="w-[80px] psm text-dark px-1 py-3 text-left">{ t('Sr. No')}</th>
+
+            <th className="w-[250px] psm text-dark pl-4 py-3 text-left">
               {t("full_name")}
             </th>
-            <th className="psm text-dark px-4 py-3 text-left">{t("title")}</th>
-            <th className="psm text-dark px-4 py-3 text-left">
+            <th className="w-[150px] psm text-dark px-1 py-3 text-left">{t("title")}</th>
+            <th className="w-[150px] psm text-dark px-1 py-3 text-left">
               {t("created_at")}
             </th>
-            <th className="psm text-dark px-4 py-3 text-left">{t("value")}</th>
-            <th className="psm text-dark px-4 py-3 text-left">
+            <th className="w-[150px] psm text-dark px-1 py-3 text-left">{t("value")}</th>
+            <th className="w-[250px] psm text-dark px-1 py-3 text-left">
               {t("assigned")}
             </th>
-            <th className="psm text-dark px-4 py-3 text-left">{t("phone")}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t("status")}</th>
-            <th className="psm text-dark px-4 py-3 text-left">{t("action")}</th>
+            <th className="w-[250px] psm text-dark px-1 py-3 text-left">{t("phone")}</th>
+            <th className="w-[250px] psm text-dark px-1 py-3 text-left">{t("status")}</th>
+            <th className="w-[250px] psm text-dark pr-4 py-3 text-left">{t("action")}</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 text-sm">
           {filteredList.length > 0 ? (
             filteredList.map((item, i) => (
+              
               <tr
                 key={i}
                 className={`hover:bg-gray-50 transition-colors duration-200 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
               >
+                
                 {/* Serial Number */}
-                <td className="px-4 py-4 text-gray-700 font-medium">{i + 1}</td>
+                <td className="pl-4 py-3 pxs text-light font-medium">{i + 1}</td>
 
                 {/* Full Name */}
-                <td className="px-4 py-4 text-gray-500 font-medium">{item.first_name} {item.last_name}</td>
+                <td className="px-1 py-3 pxs text-light font-medium">{item.first_name} {item.last_name}</td>
 
                 {/* Lead Title */}
-                <td className="px-4 py-4 text-gray-500">{item.lead_title}</td>
+                <td className="px-1 py-3 pxs text-light">{item.lead_title}</td>
 
                 {/* Created At */}
-                <td className="px-4 py-4 text-gray-500">{item.createdAt}</td>
+                <td className="px-1 py-3 pxs text-light">{new Date(item.createdAt).toLocaleDateString()}</td>
 
                 {/* Lead Value */}
-                <td className="px-4 py-4 text-gray-500">{item.lead_value}</td>
-                <td className="px-4 py-4 text-gray-500 flex gap-1">
+                <td className="px-1 py-3 pxs text-light">{item.lead_value}</td>
+                <td className="pr-4 py-3 pxs text-light flex gap-1">
 
                 {item?.users?.slice(0, 3).map((user, p) => (
                   <Avatar
@@ -186,7 +190,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
                 </td>
 
                 {/* Phone */}
-                <td className="px-4 py-4 text-gray-500">{item.phone}</td>
+                <td className="px-4 py-4 text-light">{item.phone}</td>
                 {/* Status */}
                 <td className="px-4 py-4">
                   <span
@@ -199,7 +203,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
                     {item.leadStatusname}
                   </span>
                 </td>
-                <td className="  px-4 py-4 flex justify-between gap-2 text-gray-400">
+                <td className="  px-4 py-4 flex justify-between gap-2 ">
                   <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
                   <Icon
                     icon={MessageSquareText}
@@ -217,7 +221,7 @@ const List = ({ leadStatusList, selecteFilterData, setSelectedUser, successMessa
 
                     {/* Actions visible on hover */}
                     {iconOpen === item._id && (
-                      <div className="absolute w-20 right-5 top-[-100] mt-1 flex justify-evenly gap-2 bg-background shadow-md p-2 rounded-lg z-10">
+                      <div className="absolute w-24 right-4 top-0 mt-[-8px] flex justify-evenly gap-2 bg-background shadow-md p-2 rounded-lg z-10">
                         <Icon
                           icon={Trash}
                           size={20}

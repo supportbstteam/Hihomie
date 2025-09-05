@@ -87,7 +87,7 @@ const Category = () => {
           <table className="w-full table-auto border-collapse">
             <thead>
               <tr className="bg-gray-100 text-gray-700">
-                <th className="py-3 px-4 text-left text-sm font-semibold">{t("serial")}</th>
+                <th className="py-3 px-4 text-left text-sm font-semibold">{t("Sr. No")}</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold">{t("category")}</th>
                 <th className="py-3 px-4 text-left text-sm font-semibold">{t("status")}</th>
                 <th className="py-3 px-4 text-center text-sm font-semibold">{t("action")}</th>

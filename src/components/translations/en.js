@@ -77,8 +77,7 @@ const en = {
   filter : "Filter",
   find_exact : "Find exactly what you need",  
   apply : "Apply",
-  serial : "Serial",
-
+  serial: "Serial",
 };
 
 export default en;

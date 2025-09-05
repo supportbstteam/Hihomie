@@ -83,7 +83,7 @@ const Page = () => {
                         <table className="min-w-full table-auto border border-gray-200 rounded-lg overflow-hidden">
                             <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('S.N')}</th>
+                                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('Sr. No')}</th>
                                     <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('name')}</th>
                                     <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">{t('color')}</th>
                                     <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">{t('action')}</th>
