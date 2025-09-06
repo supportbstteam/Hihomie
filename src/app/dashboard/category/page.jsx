@@ -73,7 +73,7 @@ const Category = () => {
             <Icon
               variant="outline"
               icon={Plus}
-              size={20}
+              size={16}
               color="#99A1B7"
               onClick={() => setOpen(true)}
             />

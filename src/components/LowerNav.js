@@ -1,22 +1,20 @@
-import Link from "next/link";
-import { LuBellDot } from "react-icons/lu";
+
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { SlCalender } from "react-icons/sl";
-import { MdOutlineFilterList, MdOutlineFilterListOff } from "react-icons/md";
+
 import Date from "./ui/Date";
 import Icon from "./ui/Icon";
 import { Download, List, ListFilter, Plus } from "lucide-react";
 import { t } from "@/components/translations";
 
-export default async function LoweNav() {
+export default async function LowerNav() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
 
   return (
-    <aside className="w-full bg-white sticky top-0 z-50">
-      <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4">
+    <aside className="w-full bg-background ">
+      <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4 ">
         {/* Title (hide on mobile) */}
         <div className="hidden sm:flex flex-col">
           <p className="h5 text-dark">{t("control_panel")}</p>

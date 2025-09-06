@@ -174,7 +174,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
             animate={{ y: 20, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-white w-full md:max-w-[60%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+            className="bg-white w-full md:max-w-[60%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto  mt-5"
           >
             <button
               onClick={() => setOpen(false)}
@@ -189,7 +189,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
             <form
               onSubmit={handleSubmit}
-              className="mb-5 overflow-y-auto max-h-[90vh] md:max-h-[70vh]"
+              className="mb-5 overflow-y-auto custom-scrollbar pr-1 max-h-[90vh] md:max-h-[70vh]"
             >
               <section className="grid grid-cols-1 lg:grid-cols-2 gap-2" >
 

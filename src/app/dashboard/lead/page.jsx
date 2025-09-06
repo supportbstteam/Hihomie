@@ -33,10 +33,13 @@ import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
+// import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
   const dispatch = useDispatch();
-  const { leadStatus, leadStatusList, successMessage } = useSelector((state) => state.setting);
+  const { leadStatus, leadStatusList, successMessage } = useSelector(
+    (state) => state.setting
+  );
 
   const [columns, setColumns] = useState({});
   const [draggedCard, setDraggedCard] = useState(null);
@@ -193,36 +196,38 @@ export default function CustomDnD() {
     setSelectedUser(card);
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (successMessage) {
       dispatch(messageClear());
-      dispatch(get_leadStatusDataForList())
-      dispatch(get_leadStatusData())
+      dispatch(get_leadStatusDataForList());
+      dispatch(get_leadStatusData());
     }
-
   }, [successMessage, dispatch]);
 
-
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* HEADER */}
-      <aside className="w-full bg-white sticky top-0 z-50">
+      <aside className="w-full bg-white">
         <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
           <div className="hidden sm:flex flex-col"></div>
           <div className="flex w-full sm:w-auto justify-end">
             <div className="flex items-center gap-2 sm:gap-4">
-
-
-
-              <Icon onClick={() => { setOpen(true) }} variant="outline" icon={Plus} size={16} color="#99A1B7" />
-              <Icon variant="outline"
+              <Icon
+                onClick={() => {
+                  setOpen(true);
+                }}
+                variant="outline"
+                icon={Plus}
+                size={16}
+                color="#99A1B7"
+              />
+              <Icon
+                variant="outline"
                 icon={ListIcon}
-
                 size={16}
                 color="#99A1B7"
                 onClick={() => setListComponent((prev) => !prev)}
               />
-
 
               <Icon
                 variant="outline"
@@ -232,52 +237,44 @@ export default function CustomDnD() {
                 onClick={() => setImpodeOpen(true)}
               />
 
-
               <Icon
                 icon={ListFilter}
                 variant="outline"
-
                 size={16}
                 color="#99A1B7"
                 onClick={() => setFilterOpen(true)}
               />
-
             </div>
           </div>
         </div>
       </aside>
+      {/* <LowerNav /> */}
 
-
-      <div className=" bg-white">
-        <Stats leadStatus={leadStatus} />
-      </div>
-
-
+      <Stats leadStatus={leadStatus} />
 
       {/* BOARD */}
       {!listComponent ? (
-
-        <div className="flex p-2 h-full overflow-clip bg-background"> 
-
-        <div className="bg-white p-2 rounded-radius-base w-full flex gap-6">
-
-
+        <div className="flex-1 h-[40vh] p-4 rounded-md w-full grid grid-flow-col auto-cols-[296px] gap-4  overflow-x-auto custom-scrollbar mb-1">
           {Object.values(columns).map((col) => (
             <div
               key={col.id}
               data-col-id={col.id}
-              className={`p-2 w-72 h-full transition-colors duration-200 overflow-hidden border-t-5 rounded-radius-base
-                                ${dragOverColId === col.id
-                  ? "bg-blue-100"
-                  : "bg-[#F9F9F9]"
-                }`}
+              className={`p-2 pb-8 flex-1 transition-colors duration-200 overflow-hidden border-t-5 rounded-md
+                                ${
+                                  dragOverColId === col.id
+                                    ? "bg-blue-100"
+                                    : "bg-[#F9F9F9]"
+                                }`}
               style={{ borderTopColor: col.color }}
               onDragOver={(e) => handleDragOver(e, col.id)}
               onDrop={() => handleDropColumn(col.id)}
             >
               <div className="flex justify-between items-center gap-2 mb-2">
                 <div className="flex gap-2 items-center">
-                  <div style={{ backgroundColor: col.color }} className={`bg-[${col.color}] w-2 h-2 rounded-full`}></div>
+                  <div
+                    style={{ backgroundColor: col.color }}
+                    className={`bg-[${col.color}] w-2 h-2 rounded-full`}
+                  ></div>
                   <h2 className="font-semibold">{col.title}</h2>
                 </div>
                 <button
@@ -290,7 +287,7 @@ export default function CustomDnD() {
                   <CiCirclePlus />
                 </button>
               </div>
-              <div className="overflow-y-scroll scrollbar-hide h-full">
+              <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
                 {col.cards.map((card, index) => (
                   <div
                     key={card._id}
@@ -305,19 +302,24 @@ export default function CustomDnD() {
                     }
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
-                    className={`shadow-md rounded-radius p-4 mb-3 cursor-grab transition 
-                                        ${draggingCardId === card.id
-                        ? "opacity-60 border-2 border-blue-500"
-                        : "bg-white "
-                      }`}
+                    className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
+                                        ${
+                                          draggingCardId === card.id
+                                            ? "opacity-60 border-2 border-blue-500"
+                                            : "bg-white "
+                                        }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        {(card.first_name?.[0]?.toUpperCase()) || "?"}
+                        {card.first_name?.[0]?.toUpperCase() || "?"}
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                          {`${card.first_name?.charAt(0).toUpperCase() || ''}${card.first_name?.slice(1) || ''} ${card.last_name?.charAt(0).toUpperCase() || ''}${card.last_name?.slice(1) || ''}`}
+                          {`${card.first_name?.charAt(0).toUpperCase() || ""}${
+                            card.first_name?.slice(1) || ""
+                          } ${card.last_name?.charAt(0).toUpperCase() || ""}${
+                            card.last_name?.slice(1) || ""
+                          }`}
                         </h3>
                       </div>
                     </div>
@@ -339,9 +341,6 @@ export default function CustomDnD() {
                         </p>
                       </span>
                     </div>
-
-
-
 
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
@@ -369,8 +368,6 @@ export default function CustomDnD() {
             </div>
           ))}
         </div>
-        </div>
-
       ) : (
         <div className="p-3 sm:p-5">
           <Filter
@@ -405,8 +402,9 @@ export default function CustomDnD() {
         />
       )}
 
-      {impodeOpen && (<ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />)}
-
-    </>
+      {impodeOpen && (
+        <ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />
+      )}
+    </div>
   );
 }

@@ -4,14 +4,13 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Head from "next/head";
 import LowerNav from "@/components/LowerNav";
 import Stats from "@/components/Stats";
-import List from "@/components/List";
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
   return (
     <>
       <LowerNav className="w-full p-0" />
-      <div className="p-6">
+      <div className="p-6 bg-background-secondary h-full">
         <h1 className="mb-2 text-2xl font-bold">
           Welcome, {session.user?.name || session.user?.email}
         </h1>

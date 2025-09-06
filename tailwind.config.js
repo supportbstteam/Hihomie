@@ -11,5 +11,5 @@ module.exports = {
         stock: '#e7eaf3',   // light gray border color
       },
   } },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 }

@@ -201,7 +201,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             animate={{ y: 20, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+            className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5 custom-scrollbar"
           >
             {/* Close Button */}
             <button
@@ -215,7 +215,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
 
             {/* Form */}
-            <div className="overflow-y-auto max-h-[70vh] flex flex-col-reverse md:flex-row justify-between gap-4">
+            <div className="overflow-y-auto custom-scrollbar max-h-[70vh] flex flex-col-reverse md:flex-row justify-between gap-4">
               <form
                 onSubmit={handleSubmit}
                 className="space-y-4 mb-5  w-full md:w-8/12  "

@@ -9,7 +9,7 @@ export default async function TopNav() {
   if (!session) redirect('/')
 
   return (
-    <aside className="w-full shrink-0 border-b border-stock bg-white p-4 flex items-center justify-between relative">
+    <aside className="w-full shrink-0 border-b border-stock bg-white p-2 h-full flex items-center justify-between relative">
       
       {/* Logo */}
       <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
