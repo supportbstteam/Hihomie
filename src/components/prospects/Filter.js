@@ -87,6 +87,7 @@ const Filter = ({
             label={t("manager")}
             type="text"
             name="manager"
+            title={t("select_manager")}
             value={selectedGestor}
             onChange={(e) => setSelectedGestor(e.target.value)}
             placeholder="Buscar por contacto"
@@ -103,14 +104,19 @@ const Filter = ({
             label={t("status")}
             type="text"
             name="status"
+            title={t("select_status")}
             value={selectedEstado}
             onChange={(e) => setSelectedEstado(e.target.value)}
             placeholder="Buscar por contacto"
             options={leadStatusList.map((item, i) => ({
-              //  key: i,
-              value: item.leadStatusId,
-              label: item.leadStatusname,
+              value: item._id,
+              label: item.status_name,
             }))}
+            // options={leadStatusList.map((item, i) => ({
+            //   //  key: i,
+            //   value: item.leadStatusId,
+            //   label: item.leadStatusname,
+            // }))}
           />
 
           {/* Usuario */}

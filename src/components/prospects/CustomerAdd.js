@@ -147,7 +147,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("no errors");
       dispatch(customerAdd(formData));
-    } 
+    }
   };
 
 
@@ -213,8 +213,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.surname}
                   options={[
-                    { value: "Señor.", label: "Señor." },
-                    { value: "Señora.", label: "Señora." }
+                    { value: t("mr"), label: t("mr") },
+                    { value: t("mrs"), label: t("mrs") }
                   ]}
                 />
 

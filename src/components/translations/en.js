@@ -105,6 +105,9 @@ const en = {
   still_searching: "Still Searching",
   selected_housing: "Selected Housing",
   property: "Property",
+  mr : "Mr.",
+  mrs: "Mrs./Ms.",
+  select_manager: "Select Manager",
 };
 
 export default en;

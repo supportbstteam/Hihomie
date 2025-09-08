@@ -15,7 +15,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const { loader, successMessage, errorMessage } = useSelector(
     (state) => state.customer
   );
-
+  const [users, setUsers] = useState([]);
   const [details, setDetails] = useState(false);
   const [address_details, setAddressDetails] = useState(false);
   const [detailsData, setDetailsData] = useState({});
@@ -55,6 +55,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     colId: "",
     colId: "",
   });
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch("/api/user");
+      const { users } = await response.json();
+      setUsers(users);
+    };
+    fetchUsers();
+  }, []);
 
   // 🔹 reusable function to reset form
 
@@ -101,14 +110,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       newErrors.last_name = "Last name is required";
       valid = false;
     }
-    if (!formData.company.trim()) {
-      newErrors.company = "Company is required";
-      valid = false;
-    }
-    if (!formData.designation.trim()) {
-      newErrors.designation = "Designation is required";
-      valid = false;
-    }
+    // if (!formData.company.trim()) {
+    //   newErrors.company = "Company is required";
+    //   valid = false;
+    // }
+    // if (!formData.designation.trim()) {
+    //   newErrors.designation = "Designation is required";
+    //   valid = false;
+    // }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
       valid = false;
@@ -238,8 +247,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="surname"
                     options={[
-                      { value: "Señor.", label: "Señor." },
-                      { value: "Señora.", label: "Señora." },
+                      { value: t("mr"), label: t("mr") },
+                      { value: t("mrs"), label: t("mrs") }
                     ]}
                   />
 
@@ -275,14 +284,33 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     name="company"
                     error={errors.company}
                   />
-                  <Input
+                  {/* <Input
                     label={t("designation")}
                     type="text"
                     value={formData.designation}
                     onChange={handleChange}
                     name="designation"
                     error={errors.designation}
+                  /> */}
+
+                  <Dropdown
+                    label={t("designation")}
+                    name="designation"
+                    title={t("select_designation")}
+                    value={formData.designation}
+                    onChange={handleChange}
+                    error={errors.designation}
+                    options={[
+                      { value: "ceo", label: t("ceo") },
+                      { value: "marketing_manager", label: t("marketing_manager") },
+                      { value: "hr_executive", label: t("hr_executive") },
+                      { value: "sales_head", label: t("sales_head") },
+                      { value: "owner_founder", label: t("owner_founder") },
+                      { value: "team_lead", label: t("team_lead") },
+                      { value: "agent", label: t("agent") },
+                    ]}
                   />
+
                   <Input
                     label={t("phone")}
                     type="text"
@@ -306,13 +334,27 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="lead_value"
                   />
-                  <Input
+                  {/* <Input
                     label={t("assigned")}
                     type="text"
                     value={formData.assigned}
                     onChange={handleChange}
                     name="assigned"
+                  /> */}
+
+                  <Dropdown
+                    label={t("assigned_to")}
+                    name="assigned"
+                    title={t("select_assigned")}
+                    value={formData.assigned}
+                    onChange={handleChange}
+                    error={errors.assigned}
+                    options={users.map((item) => ({
+                      value: item._id,
+                      label: item.name,
+                    }))}
                   />
+
                   <Dropdown
                     label={t("status")}
                     type="text"
@@ -326,31 +368,30 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     error={errors.status}
                   />
                   <Dropdown
-                    label={t("type_of_opration")}
+                    label={t("type_of_operation")}
                     type="text"
                     value={formData.type_of_opration}
                     onChange={handleChange}
                     name="type_of_opration"
                     options={[
-                      { value: "Primera casa", label: "Primera casa" },
-                      { value: "Segunda casa", label: "Segunda casa" },
-                      { value: "Inversión", label: "Inversión" },
-                      { value: "Subrogación", label: "Surrogacy" },
-                      { value: "Refinanciación", label: "Refinanciación" },
+                      { value: t("first_house"), label: t("first_house") },
+                      { value: t("second_house"), label: t("second_house") },
+                      { value: t("investment"), label: t("investment") },
+                      { value: t("surrogacy"), label: t("surrogacy") },
+                      { value: t("refinancing"), label: t("refinancing") },
                     ]}
                   />
                   <Dropdown
-                    label={t("custome_setiuation")}
+                    label={t("customer_situation")}
                     type="text"
                     value={formData.customer_situation}
                     onChange={handleChange}
                     name="customer_situation"
                     options={[
-                      { value: "Quiere información", label: "Quiere información" },
-                      { value: "Tomará tiempo", label: "Tomará tiempo" },
-                      { value: "Urgente", label: "Urgente" },
-                      { value: "Evaluando", label: "Evaluando" },
-                      { value: "Decidida", label: "Decidida" },
+                      { value: t("customer_situation1"), label: t("customer_situation1") },
+                      { value: t("urgent"), label: t("urgent") },
+                      { value: t("evaluating"), label: t("evaluating") },
+                      { value: t("decided"), label: t("decided") },
                     ]}
                   />
                   <Dropdown
@@ -360,9 +401,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="purchase_status"
                     options={[
-                      { value: "Todavía buscando", label: "Todavía buscando" },
-                      { value: "Vivienda Seleccionada", label: "Vivienda Seleccionada" },
-                      { value: "Propiedad", label: "Propiedad" },
+                      { value: t("still_searching"), label: t("still_searching") },
+                      {
+                        value: t("selected_housing"),
+                        label: t("selected_housing"),
+                      },
+                      { value: t("property"), label: t("property") },
                     ]}
                   />
                 </section>
