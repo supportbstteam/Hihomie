@@ -372,12 +372,12 @@ export default function CustomDnD() {
               </div>
             </div>
           ))}
-          <Filter
+          {/* <Filter
             leadStatusList={leadStatus}
             filterOpen={filterOpen}
             setFilterOpen={setFilterOpen}
             setSelecteFilterData={setSelecteFilterData}
-          />
+          /> */}
         </div>
       ) : (
         <div className="p-3 sm:p-5">

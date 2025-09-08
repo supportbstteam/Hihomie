@@ -8,7 +8,7 @@ import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
-import Button from "../ui/Button";
+import {Button} from "../ui/Button";
 
 const EditCategory = ({ setEditOpen, categorys }) => {
   const dispatch = useDispatch();

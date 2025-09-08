@@ -10,7 +10,7 @@ import {
   upload_file,
 } from "@/store/setting";
 import toast from "react-hot-toast";
-import Button from "../ui/Button";
+import {Button} from "../ui/Button";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
 

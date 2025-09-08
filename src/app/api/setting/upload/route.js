@@ -5,18 +5,18 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req) => {
   await dbConnect();
-
+  
   try {
     const formData = await req.formData();
     const file = formData.get("file");
-
+    
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-
+    
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
+    
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);

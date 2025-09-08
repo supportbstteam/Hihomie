@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import Dropdown from "../ui/DropDown";
-import Button from "../ui/Button";
+import {Button} from "../ui/Button";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
 
@@ -92,13 +92,10 @@ const Filter = ({
             value={selectedGestor}
             onChange={(e) => setSelectedGestor(e.target.value)}
             placeholder="Buscar por contacto"
-            options={[
-              { value: "", label: `--${t("select_manager")}--` },
-              ...team.map((item, i) => ({
-              //  key: i,
+            options={team.map((item, i) => ({
               value: item._id,
               label: `${item.name} ${item.lname}`,
-            }))]}
+            }))}
           />
 
           {/* Estado */}
@@ -161,10 +158,10 @@ const Filter = ({
           </div> */}
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
-          <Button onClick={handleCancel} variant="outline" size="full">
+          <Button onClick={handleCancel} className="py-2 px-4" variant="outline" size="full">
             {t("cancel")}
           </Button>
-          <Button onClick={handleApply} size="full">
+          <Button onClick={handleApply} className="py-2 px-4" size="full">
             {t("apply")}
           </Button>
         </div>
