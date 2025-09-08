@@ -105,6 +105,12 @@ const es = {
   still_searching: "Todavía buscando",
   selected_housing: "Vivienda Seleccionada",
   property: "Propiedad",
+  lead_management: "Gestión de clientes potenciales",
+  select_state: "Seleccione Estado",
+  select_manager: "Gerente Seleccionado",
+  organize_leads_and_track_their_progress_effectively_here: "Organice los clientes potenciales y haga un seguimiento eficaz de su progreso aquí"
+
+
 };
 
 export default es;

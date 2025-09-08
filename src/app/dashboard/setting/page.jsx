@@ -62,13 +62,14 @@ const Page = () => {
     return (
         <div className="grid w-full">
             {/* Header */}
-            <aside className="w-full bg-white shadow-md border-b sticky top-0 z-50">
-                <div className="flex items-center justify-between px-4 py-3">
+            <aside className="w-full bg-white border- sticky top-0 z-50">
+                <div className="flex items-center justify-between p-4">
                     <div></div>
                     <div className="flex justify-end">
                         <Icon
                             icon={Plus}
-                            size={20}
+                            variant="outline"
+                            size={16}
                             color="#99A1B7"
                             onClick={() => setOpen(true)}
                         />
@@ -77,7 +78,7 @@ const Page = () => {
             </aside>
 
             {/* Table */}
-            <div className="p-5">
+            <div className="p-4 bg-background-secondary">
                 <div className="p-6 bg-white rounded-xl shadow-md">
                     <div className="overflow-x-auto">
                         <table className="min-w-full table-auto border border-gray-200 rounded-lg overflow-hidden">

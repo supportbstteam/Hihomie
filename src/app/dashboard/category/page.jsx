@@ -9,7 +9,42 @@ import EditCategory from "@/components/category/EditCategory";
 import { t } from "@/components/translations";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
-import { Plus } from "lucide-react";
+import {
+  Mail,
+  MessageSquareText,
+  Pencil,
+  Phone,
+  Plus,
+  Trash,
+} from "lucide-react";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 const Category = () => {
   const [open, setOpen] = useState(false);
@@ -54,7 +89,7 @@ const Category = () => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      setIsModalOpen(false)
+      setIsModalOpen(false);
       dispatch(messageClear());
     }
     if (errorMessage) {
@@ -67,8 +102,10 @@ const Category = () => {
     <div className="">
       {/* Header */}
       <aside className="w-full bg-white sticky top-0 z-50">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div></div>
+        <div className="flex items-center justify-between p-4">
+          <div>
+            <h2 className="h2">{t("category")}</h2>
+          </div>
           <div className="flex justify-end">
             <Icon
               variant="outline"
@@ -80,61 +117,119 @@ const Category = () => {
           </div>
         </div>
       </aside>
-
       {/* Table */}
-      <div className="p-5">
-        <div className="bg-white rounded-xl shadow-lg p-5">
-          <table className="w-full table-auto border-collapse">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th className="py-3 px-4 text-left text-sm font-semibold">{t("Sr. No")}</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold">{t("category")}</th>
-                <th className="py-3 px-4 text-left text-sm font-semibold">{t("status")}</th>
-                <th className="py-3 px-4 text-center text-sm font-semibold">{t("action")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {currentRecords.map((item, i) => (
-                <tr
-                  key={item._id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="py-3 px-4 text-sm font-medium text-gray-700">
-                    {indexOfFirstRecord + i + 1}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                  </td>
-                  <td className="py-3 px-4 text-sm">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${item.status
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                        }`}
-                    >
-                      {item.status ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex justify-center gap-4 text-lg">
-                      <FaRegEdit
-                        onClick={() => handleEdit(item, true)}
-                        className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
-                      />
-                      <FaRegTrashAlt
-                        onClick={() => openDeleteModal(item._id)}
-                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="p-4 bg-background-secondary ">
+        <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md bg-white">
+          <Table>
+            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+            <TableHeader>
+              <TableRow>
+                <TableHead className=" pl-8">{t("Sr. No")}</TableHead>
+                <TableHead>{t("category")}</TableHead>
+                <TableHead>{t("status")}</TableHead>
+                <TableHead>{t("action")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentRecords.length > 0 ? (
+                currentRecords.map((item, i) => (
+                  <TableRow
+                    key={i}
+                    className={`hover:bg-gray-50 transition-colors duration-200 ${
+                      i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
+                  >
+                    <TableCell className="pl-8">{i + 1}</TableCell>
 
+                    <TableCell>
+                      {" "}
+                      {item.category.charAt(0).toUpperCase() +
+                        item.category.slice(1)}
+                    </TableCell>
+
+                    <TableCell>
+                      <Badge variant={item.status ? "active" : "inactive"}>
+                        {item.status ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="flex justify-start gap-2">
+
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Icon
+                              icon={Pencil}
+                              size={20}
+                              onClick={() => handleEdit(item, true)}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Icon
+                              icon={Trash}
+                              size={20}
+                              onClick={() =>
+                                openDeleteModal(item._id, item.leadStatusId)
+                              }
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    No data available
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <button
+          <div className="flex justify-between items-center mt-4 p-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                    disabled={currentPage === 1}
+                    href="#"
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(index + 1)}
+                    href="#"
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                    disabled={currentPage === totalPages}
+                    href="#"
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+
+            {/* <button
               className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
               onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={currentPage === 1}
@@ -147,10 +242,11 @@ const Category = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`px-3 py-1 rounded ${currentPage === index + 1
+                  className={`px-3 py-1 rounded ${
+                    currentPage === index + 1
                       ? "bg-sky-500 text-white"
                       : "bg-gray-200"
-                    }`}
+                  }`}
                 >
                   {index + 1}
                 </button>
@@ -163,7 +259,7 @@ const Category = () => {
               disabled={currentPage === totalPages}
             >
               {t("next")}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

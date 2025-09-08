@@ -105,6 +105,11 @@ const en = {
   still_searching: "Still Searching",
   selected_housing: "Selected Housing",
   property: "Property",
+  lead_management: "Lead Management",
+  select_manager: "Select Manager",
+  select_state: "Select State",
+  organize_leads_and_track_their_progress_effectively_here: "Organize leads and track their progress effectively here"
+ 
 };
 
 export default en;

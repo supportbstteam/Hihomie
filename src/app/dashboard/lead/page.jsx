@@ -33,6 +33,7 @@ import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
+import { t } from "@/components/translations";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
@@ -208,8 +209,12 @@ export default function CustomDnD() {
     <div className="flex flex-col h-full">
       {/* HEADER */}
       <aside className="w-full bg-white">
-        <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
-          <div className="hidden sm:flex flex-col"></div>
+        <div className="flex items-center justify-between p-4">
+          <div className="hidden sm:flex flex-col">
+            <h2 className="h2">{t("lead_management")}</h2>
+            <span className="p text-muted-foreground">{t("organize_leads_and_track_their_progress_effectively_here")}</span>
+
+          </div>
           <div className="flex w-full sm:w-auto justify-end">
             <div className="flex items-center gap-2 sm:gap-4">
               <Icon

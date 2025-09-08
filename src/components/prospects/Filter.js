@@ -75,6 +75,7 @@ const Filter = ({
           </div>
           <Icon
             icon={X}
+            size={20}
             variant="primary"
             onClick={() => setFilterOpen(false)}
           />
@@ -90,11 +91,13 @@ const Filter = ({
             value={selectedGestor}
             onChange={(e) => setSelectedGestor(e.target.value)}
             placeholder="Buscar por contacto"
-            options={team.map((item, i) => ({
+            options={[
+              { value: "", label: `--${t("select_manager")}--` },
+              ...team.map((item, i) => ({
               //  key: i,
               value: item._id,
               label: `${item.name} ${item.lname}`,
-            }))}
+            }))]}
           />
 
           {/* Estado */}
@@ -106,11 +109,13 @@ const Filter = ({
             value={selectedEstado}
             onChange={(e) => setSelectedEstado(e.target.value)}
             placeholder="Buscar por contacto"
-            options={leadStatusList.map((item, i) => ({
-              //  key: i,
-              value: item.leadStatusId,
-              label: item.leadStatusname,
-            }))}
+            options={[
+              { value: "", label: `--${t("select_state")}--` },
+              ...leadStatusList.map((item) => ({
+                value: item.leadStatusId,
+                label: item.leadStatusname,
+              })),
+            ]}
           />
 
           {/* Usuario */}
@@ -121,7 +126,7 @@ const Filter = ({
             name="full_name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            placeholder="Buscar por contacto"
+            placeholder="Nombre completo"
           />
 
           {/* Contacto */}
@@ -150,17 +155,15 @@ const Filter = ({
               {t("apply")}
             </button>
           </div> */}
-
-         
         </div>
-         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
-            <Button onClick={handleCancel} variant="outline" size="full">
-              {t("cancel")}
-            </Button>
-            <Button onClick={handleApply} size="full">
-              {t("apply")}
-            </Button>
-          </div>
+        <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
+          <Button onClick={handleCancel} variant="outline" size="full">
+            {t("cancel")}
+          </Button>
+          <Button onClick={handleApply} size="full">
+            {t("apply")}
+          </Button>
+        </div>
       </aside>
     </div>
   );
