@@ -65,7 +65,7 @@ export default function Sidebar() {
   if (status === "loading") {
     return (
       <aside className="w-full shrink-0 border-r border-stock bg-white p-4">
-        <div className="text-gray-500">Loading menu...</div>
+        <div className="text-muted-foreground">Loading menu...</div>
       </aside>
     );
   }
@@ -100,7 +100,7 @@ export default function Sidebar() {
 
         <div className="flex items-center gap-2 mb-4">
           <FaAt size={20} className="text-[#F8C51B]" />
-          <h2 className="font-semibold">{t("account")}</h2>
+          <h2 className="font-medium">{t("account")}</h2>
         </div>
 
         <nav className="flex-1 space-y-2  overflow-y-auto  pr-1 custom-scrollbar ">

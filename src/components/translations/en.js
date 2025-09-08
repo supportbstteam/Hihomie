@@ -108,6 +108,9 @@ const en = {
   mr : "Mr.",
   mrs: "Mrs./Ms.",
   select_manager: "Select Manager",
+  lead_management: "Lead Management",
+  select_state: "Select State",
+  organize_leads_and_track_their_progress_effectively_here: "Organize leads and track their progress effectively here"
 };
 
 export default en;

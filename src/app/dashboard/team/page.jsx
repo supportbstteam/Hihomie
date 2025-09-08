@@ -65,7 +65,7 @@ const Team = () => {
     <div className="grid w-full">
       {/* Header */}
       <aside className="w-full bg-white  sticky top-0 z-50">
-        <div className="flex items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
+        <div className="flex items-center justify-between p-4">
           <div className="hidden sm:flex flex-col"></div>
 
           <div className="flex w-full sm:w-auto justify-end">
@@ -80,8 +80,7 @@ const Team = () => {
         </div>
       </aside>
 
-            <div className='p-5'>
-                <div className="p-6 bg-white rounded-xl shadow-md">
+            <div className='p-4 bg-background-secondary'>
                     <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden">
                         <thead className="bg-gray-100">
                             <tr>
@@ -171,7 +170,6 @@ const Team = () => {
                             Next
                         </button>
                     </div>
-                </div>
             </div>
 
       {open && <AddTeam setOpen={setOpen} />}

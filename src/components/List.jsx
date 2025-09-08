@@ -139,7 +139,6 @@ const List = ({
 
   return (
     <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md ">
-
       {/* -----------------------new table starts----------------------- */}
 
       <Table>
@@ -148,13 +147,13 @@ const List = ({
           <TableRow>
             <TableHead className="w-[70px] pl-4">{t("Sr. No")}</TableHead>
             <TableHead className="w-[180px]">{t("full_name")}</TableHead>
-            <TableHead className="w-[150px]" >{t("title")}</TableHead>
-            <TableHead >{t("created_at")}</TableHead>
-            <TableHead >{t("value")}</TableHead>
-            <TableHead >{t("assigned")}</TableHead>
-            <TableHead >{t("phone")}</TableHead>
-            <TableHead >{t("status")}</TableHead>
-            <TableHead >{t("action")}</TableHead>
+            <TableHead className="w-[150px]">{t("title")}</TableHead>
+            <TableHead>{t("created_at")}</TableHead>
+            <TableHead>{t("value")}</TableHead>
+            <TableHead>{t("assigned")}</TableHead>
+            <TableHead>{t("phone")}</TableHead>
+            <TableHead>{t("status")}</TableHead>
+            <TableHead>{t("action")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -167,9 +166,11 @@ const List = ({
                 }`}
               >
                 <TableCell className="pl-4">{i + 1}</TableCell>
-                <TableCell>{item.first_name} {item.last_name}</TableCell>
+                <TableCell>
+                  {item.first_name} {item.last_name}
+                </TableCell>
                 <TableCell>{item.lead_title}</TableCell>
-                <TableCell >
+                <TableCell>
                   {new Date(item.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>{item.lead_value}</TableCell>
@@ -188,10 +189,10 @@ const List = ({
                     </span>
                   )}
                 </TableCell>
-                <TableCell >{item.phone}</TableCell>
+                <TableCell>{item.phone}</TableCell>
                 <TableCell >
                   <span
-                    className="px-2 py-1 rounded-full text-xs font-semibold"
+                    className="px-2 py-1 rounded-full text-xs font-normal"
                     style={{
                       color: item.color, // text color
                       backgroundColor: `${item.color}33`, // light background with 20% opacity
@@ -199,7 +200,14 @@ const List = ({
                   >
                     {item.leadStatusname}
                   </span>
+
+
                 </TableCell>
+                {/* <TableCell>
+                  <Badge variant={item.status ? "active" : "inactive"}>
+                    {item.status ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell> */}
                 <TableCell className="flex justify-between gap-2 ">
                   <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
                   <Icon
@@ -228,7 +236,9 @@ const List = ({
                         <Icon
                           icon={Trash}
                           size={20}
-                          onClick={() => openDeleteModal(item._id, item.leadStatusId)}
+                          onClick={() =>
+                            openDeleteModal(item._id, item.leadStatusId)
+                          }
                         />
                         <Icon
                           icon={Pencil}
@@ -247,7 +257,7 @@ const List = ({
                 No data available
               </TableCell>
             </TableRow>
-          )}  
+          )}
         </TableBody>
       </Table>
 

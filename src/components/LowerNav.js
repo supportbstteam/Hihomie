@@ -17,8 +17,8 @@ export default async function LowerNav() {
       <div className="flex items-center justify-between px-4 py-2 sm:px-4 sm:py-4 ">
         {/* Title (hide on mobile) */}
         <div className="hidden sm:flex flex-col">
-          <p className="h5 text-dark">{t("control_panel")}</p>
-          <span className="p text-light">{t("complete_view")}</span>
+          <h2 className="h2 text-dark">{t("control_panel")}</h2>
+          <span className="p text-muted-foreground">{t("complete_view")}</span>
         </div>
 
         {/* Right Side - Date & Filter */}

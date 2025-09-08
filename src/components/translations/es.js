@@ -108,6 +108,9 @@ const es = {
   mr : "Señor.",
   mrs: "Señora.",
   select_manager: "Seleccionar administrador",
+  lead_management: "Gestión de clientes potenciales",
+  select_state: "Seleccione Estado",
+  organize_leads_and_track_their_progress_effectively_here: "Organice los clientes potenciales y haga un seguimiento eficaz de su progreso aquí"
 };
 
 export default es;

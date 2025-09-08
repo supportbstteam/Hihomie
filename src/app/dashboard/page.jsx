@@ -11,12 +11,12 @@ export default async function DashboardPage() {
     <>
       <LowerNav className="w-full p-0" />
       <div className="p-6 bg-background-secondary h-full">
-        <h1 className="mb-2 text-2xl font-bold">
+        <h1 className="h1 mb-2 ">
           Welcome, {session.user?.name || session.user?.email}
         </h1>
-        <p className="text-gray-600">
+        <p className="p text-muted-foreground">
           You are signed in as{" "}
-          <span className="font-medium">{session.user.role}</span>.
+          <span className="font-medium text-primary">{session.user.role}</span>.
         </p>
       </div>
     </>
