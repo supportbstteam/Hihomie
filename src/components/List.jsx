@@ -138,7 +138,7 @@ const List = ({
   }, [successMessage, dispatch]);
 
   return (
-    <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md bg-yellow-400">
+    <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md ">
 
       {/* -----------------------new table starts----------------------- */}
 
@@ -157,7 +157,7 @@ const List = ({
             <TableHead >{t("action")}</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="overflow-auto custom-scrollbar max-h-[30vh] rounded-md shadow-md bg-red-500 ">
+        <TableBody>
           {filteredList.length > 0 ? (
             filteredList.map((item, i) => (
               <TableRow

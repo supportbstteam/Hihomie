@@ -50,13 +50,13 @@ const Button = ({
 
   const variantStyles = {
     primary:
-      "rounded-radius min-w-[90px] bg-primary text-white border border-transparent hover:bg-primary/80 hover:text-white hover:border-primary/80 transition",
+      "rounded-md min-w-[90px] bg-primary text-white border border-transparent hover:bg-primary/80 hover:text-white hover:border-primary/80 transition",
     secondary:
-      "rounded-radius min-w-[90px] bg-white border-2 border-white hover:border-black hover:bg-primary hover:text-white hover:border-primary",
+      "rounded-md min-w-[90px] bg-white border-2 border-white hover:border-black hover:bg-primary hover:text-white hover:border-primary",
     outline:
-      "rounded-radius min-w-[90px] border-1 border-stock text-black bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
+      "rounded-md min-w-[90px] border-1 border-stock text-black bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
     outlineWhite:
-      "rounded-radius min-w-[90px] border border-white text-white bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
+      "rounded-md min-w-[90px] border border-white text-white bg-transparent hover:bg-primary hover:text-white hover:border-primary transition",
     icon: "w-fit bg-transparent ",
   };
 

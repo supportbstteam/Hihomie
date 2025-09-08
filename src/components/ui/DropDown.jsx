@@ -23,7 +23,7 @@ const Dropdown = ({
   const selectId = name || "dropdown";
 
   return (
-    <div className={clsx("space-y-1 rounded-radius text-black", className)}>
+    <div className={clsx("space-y-1 rounded-md text-black", className)}>
       <div className="flex">
         {label && (
           <label htmlFor={selectId} className="block psm text-dark">
@@ -47,7 +47,7 @@ const Dropdown = ({
             });
           }}
           className={clsx(
-            "text-light text-sm appearance-none font-normal font-heading w-full px-2 py-3 border pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary overflow-hidden",
+            "text-light text-sm appearance-none font-normal font-heading w-full px-2 py-3 border pr-10 rounded-md focus:outline-none focus:ring-1 focus:ring-primary overflow-hidden",
             error ? "border-red-500" : "border-stroke",
             // sizeStyles[size],
             className
@@ -59,14 +59,14 @@ const Dropdown = ({
             </option>
           )}
           {options.map((opt,i) => (
-            <option key={i} value={opt.value} className="text-dark">
+            <option key={i} value={opt.value} className="text-foreground">
               {opt.label}
             </option>
           ))}
         </select>
 
         {/* Custom SVG arrow */}
-        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center ">
           <svg
             className="w-5 h-5 text-light"
             fill="none"
