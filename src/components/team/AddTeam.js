@@ -13,6 +13,12 @@ const AddTeam = ({ setOpen }) => {
     (state) => state.team
   );
 
+  const [details, setDetails] = useState(false);
+
+  const handleToggle = () => {
+    setDetails(!details);
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     lname: "",
