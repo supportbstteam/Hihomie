@@ -53,7 +53,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     addressDetailsData: {},
     id: "",
     colId: "",
-    colId: "",
   });
 
   useEffect(() => {
@@ -90,7 +89,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       designation: '',
       email: '',
       phone: '',
-      status: ''
     };
     let valid = true;
 

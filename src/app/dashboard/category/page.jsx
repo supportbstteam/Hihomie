@@ -124,7 +124,7 @@ const Category = () => {
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
             <TableHeader>
               <TableRow>
-                <TableHead className=" pl-8">{t("Sr. No")}</TableHead>
+                <TableHead className="pl-8">{t("Sr. No")}</TableHead>
                 <TableHead>{t("category")}</TableHead>
                 <TableHead>{t("status")}</TableHead>
                 <TableHead>{t("action")}</TableHead>
@@ -205,25 +205,22 @@ const Category = () => {
                   <PaginationPrevious
                     onClick={() => setCurrentPage((prev) => prev - 1)}
                     disabled={currentPage === 1}
-                    href="#"
                   />
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
-                    onClick={() => setCurrentPage(index + 1)}
-                    href="#"
+                    onClick={() => setCurrentPage(currentPage)}
                   >
-                    1
+                    {currentPage}
                   </PaginationLink>
                 </PaginationItem>
-                <PaginationItem>
+                {/* <PaginationItem>
                   <PaginationEllipsis />
-                </PaginationItem>
+                </PaginationItem> */}
                 <PaginationItem>
                   <PaginationNext
                     onClick={() => setCurrentPage((prev) => prev + 1)}
                     disabled={currentPage === totalPages}
-                    href="#"
                   />
                 </PaginationItem>
               </PaginationContent>

@@ -12,7 +12,6 @@ export async function POST(req, context) {
 
     // ✅ Get email from route params
     const { email } = context.params;
-    console.log("Email:", email);
 
     const user = await User.findOne({ email });
     if (!user) {

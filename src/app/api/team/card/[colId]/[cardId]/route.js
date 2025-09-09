@@ -10,13 +10,12 @@ export async function POST(req, context) {
     const { colId, cardId } = params;
 
     const text = await req.text();
-    console.log("Raw body:", text);
 
     let parsedData = [];
     try {
       parsedData = JSON.parse(text);
     } catch (e) {
-      console.log("Parsed data error, probably empty body");
+      console.error("Parsed data error, probably empty body");
     }
 
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
@@ -33,8 +32,6 @@ export async function POST(req, context) {
     const users = await User.find(
       { _id: { $in: parsedData } },  // match only IDs provided
     );
-
-    console.log(users)
 
     return NextResponse.json({
       message: "Data received successfully",
@@ -53,7 +50,6 @@ export async function GET(req, context) {
     await dbConnect();
 
     const { colId, cardId } = await context.params;
-    console.log("colId:", colId, "cardId:", cardId);
 
     // Admin ko exclude karo aur password field ko hata do
 

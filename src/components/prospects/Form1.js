@@ -24,7 +24,6 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
     const fetchCategories = async () => {
       const response = await fetch("/api/category");
       const { data } = await response.json();
-      console.log(data);
       setCategories(data);
     };
     fetchCategories();
@@ -113,7 +112,7 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
           }
         />
 
-        <Dropdown
+        {/* <Dropdown
           label={t("tag")}
           name="tag"
           value={detailsData.tag}
@@ -125,16 +124,15 @@ const Form1 = ({ setDetailsData, selectedUser }) => {
             { value: "Diseño Web", label: "Diseño Web" },
             { value: "Wordpress", label: "Wordpress" },
           ]}
+        /> */}
+
+        <Input
+          label={t("tag")}
+          name="tag"
+          value={detailsData.tag}
+          onChange={handleChange}
         />
 
-        {/* <Input
-          label={t("date")}
-          type="Date"
-          name="last_connected"
-          value={detailsData.last_connected}
-          onChange={handleChange}
-          required
-        /> */}
         <Datepicker
           label={t("date")}
           name="last_connected"

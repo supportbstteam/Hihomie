@@ -33,11 +33,6 @@ export const get_leadStatusCardUpdate = createAsyncThunk(
    "customer/get_leadStatusCardUpdate",
    async ({ sourceColId, destColId, cardId }, { rejectWithValue, fulfillWithValue }) => {
       try {
-         console.log("hello");
-         console.log("Source Column ID:", sourceColId);
-         console.log("Destination Column ID:", destColId);
-         console.log("Card ID:", cardId);
-
          const { data } = await api.put(
             `/setting/leadStatus`,
             {

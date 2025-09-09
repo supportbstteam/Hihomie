@@ -43,7 +43,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     detailsData: {},
     addressDetailsData: {},
     selectedColId: selectedColId || "",
-    status: "",
+    // status: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -51,7 +51,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     const fetchUsers = async () => {
       const response = await fetch("/api/team");
       const { data } = await response.json();
-      console.log(data);
       setUsers(data);
     };
     fetchUsers();
@@ -135,8 +134,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     }
 
 
-    if (!values.status) {
-      newErrors.status = t("statusRequired");
+    if (!values.selectedColId) {
+      newErrors.selectedColId = t("statusRequired");
     }
 
     return newErrors;
@@ -147,11 +146,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     e.preventDefault();
     const validationErrors = validate(formData);
     setErrors(validationErrors);
-    console.log(validationErrors);
-
-
+    console.log(formData);
     if (Object.keys(validationErrors).length === 0) {
-      console.log("no errors");
       dispatch(customerAdd(formData));
     }
   };
@@ -331,12 +327,12 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
                 <Dropdown
                   label={t("status")}
-                  name="status"
+                  name="selectedColId"
                   title={t("select_status")}
-                  value={formData.status}
+                  value={formData.selectedColId}
                   onChange={handleChange}
                   required
-                  error={errors.status}
+                  error={errors.selectedColId}
                   options={leadStatus.map((item) => ({
                     value: item._id,
                     label: item.status_name,

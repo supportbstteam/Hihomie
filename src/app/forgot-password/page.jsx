@@ -39,9 +39,6 @@ const ForgotePassword = () => {
     if (errorMessage) toast.error(errorMessage)
   }, [successMessage, errorMessage])
 
-
-  console.log(loader)
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9F8F1] px-4">
       {/* Logo */}

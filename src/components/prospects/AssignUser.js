@@ -60,8 +60,6 @@ const AssignUser = ({ colId, cardid }) => {
         }
     },[dispatch, cardid, colId, successMessage])
 
-    console.log(team)
-
     return (
 
         <>            <div>
