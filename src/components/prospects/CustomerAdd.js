@@ -206,7 +206,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                 />
 
                 <Dropdown
-                  label={t("surname")}
+                  // label={t("surname")}
+                  label={t("prefix")}
                   name="surname"
                   title={t("select_surname")}
                   value={formData.surname}
