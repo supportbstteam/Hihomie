@@ -72,52 +72,52 @@ const AddTeam = ({ setOpen }) => {
     let valid = true;
 
     if (!formData.name) {
-      newErrors.name = "First Name is required";
+      newErrors.name = t("firstNameRequired");
       valid = false;
     } else if (!/^[A-Za-z\s]+$/.test(formData.name)) {
-      newErrors.name = "Only alphabets are allowed";
+      newErrors.name = t("alphabetAllowed");
       valid = false;
     }
 
     if (!formData.lname) {
-      newErrors.lname = "Last Name is required";
+      newErrors.lname = t("lastNameRequired");
       valid = false;
     } else if (!/^[A-Za-z\s]+$/.test(formData.lname)) {
-      newErrors.lname = "Only alphabets are allowed";
+      newErrors.lname = t("alphabetAllowed");
       valid = false;
     }
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("emailRequired");
       valid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Enter a valid email";
+      newErrors.email = t("validEmail");
       valid = false;
     }
 
     if (!formData.phone) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = t("phoneRequired");
       valid = false;
     } else if (!/^\d+$/.test(formData.phone)) {
-      newErrors.phone = "Only numeric values are allowed";
+      newErrors.phone = t("numericAllowed");
       valid = false;
     }
 
     if (!formData.jobTitle) {
-      newErrors.jobTitle = "Job Title is required";
+      newErrors.jobTitle = t("jobTitleRequired");
       valid = false;
     } else if (!/^[A-Za-z\s]+$/.test(formData.jobTitle)) {
-      newErrors.jobTitle = "Only alphabets are allowed";
+      newErrors.jobTitle = t("alphabetAllowed");
       valid = false;
     }
 
     if (!formData.role) {
-      newErrors.role = "Role is required";
+      newErrors.role = t("roleRequired");
       valid = false;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("passwordRequired");
       valid = false;
     }
 
@@ -226,14 +226,14 @@ const AddTeam = ({ setOpen }) => {
             <Dropdown
               label={t("role")}
               name="role"
+              title={t("select_role")}
               value={formData.role}
               onChange={handleChange}
               error={errors.role}
+              required
               options={[
-                { value: "admin", label: "Administrator" },
+                { value: "manager", label: "Manager" },
                 { value: "staff", label: "Staff" },
-                { value: "accounting", label: "Accounting" },
-                { value: "management", label: "Management" },
               ]}
             />
 
@@ -243,7 +243,6 @@ const AddTeam = ({ setOpen }) => {
               accept="image/*"
               name="image"
               onChange={handleFileChange}
-              required
               error={errors.image}
             />
 

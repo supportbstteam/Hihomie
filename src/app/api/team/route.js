@@ -22,6 +22,7 @@ export async function POST(req) {
     const password = formData.get("password");
     const role = formData.get("role");
     const status = formData.get("status") === "true";
+    const additionalInfo = formData.get("additionalInfo");
 
     const check_email = await User.findOne({ email });
     if (check_email) {
@@ -62,6 +63,7 @@ export async function POST(req) {
       role,
       status,
       password: hashedPassword,
+      additionalInfo,
       ...(imagePath && { image: imagePath }) // only add image if exists
     });
 
@@ -94,17 +96,50 @@ export async function GET() {
 
 export async function PUT(req) {
   try {
-    const { id, name, lname, email, phone, jobTitle, status, password, role } = await req.json();
+    // const { id, name, lname, email, phone, jobTitle, status, password, role, additionalInfo } = await req.json();
 
+    const formData = await req.formData();
 
+    const id = formData.get("id");
+    const name = formData.get("name");
+    const lname = formData.get("lname");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+    const jobTitle = formData.get("jobTitle");
+    const password = formData.get("password");
+    const role = formData.get("role");
+    const status = formData.get("status") === "true";
+    const additionalInfo = formData.get("additionalInfo");
 
     if (!id) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
     }
 
+    let imagePath = null;
+
+    const file = formData.get("image");
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const uploadDir = path.join(process.cwd(), "public/uploads/team");
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const filename = `resized-${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
+      const outputPath = path.join(uploadDir, filename);
+
+      await sharp(buffer)
+        .resize(80, 80, { fit: "cover" })
+        .jpeg({ quality: 80 })
+        .toFile(outputPath);
+
+      imagePath = `/uploads/team/${filename}`;
+    }
+
     await dbConnect(); // Connect to DB
 
-    let updateData = { name, lname, email, phone, jobTitle, status, role };
+    let updateData = { name, lname, email, phone, jobTitle, status, role, additionalInfo, ...(imagePath && { image: imagePath }) };
 
     if (password) {
       const saltRounds = 10;

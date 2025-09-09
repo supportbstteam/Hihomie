@@ -110,7 +110,21 @@ const es = {
   select_manager: "Seleccionar administrador",
   lead_management: "Gestión de clientes potenciales",
   select_state: "Seleccione Estado",
-  organize_leads_and_track_their_progress_effectively_here: "Organice los clientes potenciales y haga un seguimiento eficaz de su progreso aquí"
+  organize_leads_and_track_their_progress_effectively_here: "Organice los clientes potenciales y haga un seguimiento eficaz de su progreso aquí",
+  prefix : "Prefijo",
+  additional_info: "Información adicional",
+  additional_details : "Detalles adicionales",
+  select_role: "Seleccione Rol",
+  firstNameRequired: "Nombre de pila es requerido",
+  lastNameRequired: "Apellido es requerido",
+  emailRequired: "Email es requerido",
+  phoneRequired: "Telefono es requerido",
+  jobTitleRequired: "Titulo es requerido",
+  roleRequired: "Rol es requerido",
+  passwordRequired: "Contraseña es requerida",
+  alphabetAllowed: "Solo se permiten letras",
+  validEmail: "Introduce un correo electrónico válido",
+  numericAllowed: "Solo se permiten números",
 };
 
 export default es;

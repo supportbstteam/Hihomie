@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
   status  : {type : Boolean},
   jobTitle : {type : String},
   image : {type : String},
-  role: { type: String, enum: ['admin', 'management', 'accounting','staff'], default: 'staff' },
+  role: { type: String, enum: ['manager', 'staff'], default: 'staff' },
+  additionalInfo: { type: String },
 }, { timestamps: true })
 
 export default mongoose.models.User || mongoose.model('User', UserSchema)

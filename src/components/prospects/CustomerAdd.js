@@ -49,9 +49,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch("/api/user");
-      const { users } = await response.json();
-      setUsers(users);
+      const response = await fetch("/api/team");
+      const { data } = await response.json();
+      console.log(data);
+      setUsers(data);
     };
     fetchUsers();
   }, []);

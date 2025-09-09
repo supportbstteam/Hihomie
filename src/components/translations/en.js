@@ -110,7 +110,21 @@ const en = {
   select_manager: "Select Manager",
   lead_management: "Lead Management",
   select_state: "Select State",
-  organize_leads_and_track_their_progress_effectively_here: "Organize leads and track their progress effectively here"
+  organize_leads_and_track_their_progress_effectively_here: "Organize leads and track their progress effectively here",
+  prefix : "Prefix",
+  additional_info: "Additional Info",
+  additional_details: "Additional Details",  
+  select_role: "Select Role",
+  firstNameRequired: "First Name is required",
+  lastNameRequired: "Last Name is required",
+  emailRequired: "Email is required",
+  phoneRequired: "Phone is required",
+  jobTitleRequired: "Job Title is required",
+  roleRequired: "Role is required",
+  passwordRequired: "Password is required",
+  alphabetAllowed: "Only alphabets are allowed",
+  validEmail: "Enter a valid email",
+  numericAllowed: "Only numeric values are allowed",
 };
 
 export default en;
