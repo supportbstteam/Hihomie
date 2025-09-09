@@ -7,9 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import { Switch } from "../ui/switch";
-import {Button} from "../ui/Button";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
+import { Button } from "../ui/Button";
 
 const AddCategory = ({ setOpen }) => {
   const dispatch = useDispatch();

@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import Dropdown from "../ui/DropDown";
-import {Button} from "../ui/Button";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
+import { Button } from "../ui/Button";
 
 const Filter = ({
   leadStatusList,
