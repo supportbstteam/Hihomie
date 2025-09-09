@@ -95,19 +95,19 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     let valid = true;
 
     if (!formData.lead_title.trim()) {
-      newErrors.lead_title = "Lead title is required";
+      newErrors.lead_title = t("leadTitleRequired");
       valid = false;
     }
     if (!formData.surname) {
-      newErrors.surname = "Surname is required";
+      newErrors.surname = t("prefixRequired");
       valid = false;
     }
     if (!formData.first_name.trim()) {
-      newErrors.first_name = "First name is required";
+      newErrors.first_name = t("firstNameRequired");
       valid = false;
     }
     if (!formData.last_name.trim()) {
-      newErrors.last_name = "Last name is required";
+      newErrors.last_name = t("lastNameRequired");
       valid = false;
     }
     // if (!formData.company.trim()) {
@@ -119,18 +119,18 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     //   valid = false;
     // }
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("emailRequired");
       valid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("validEmail");
       valid = false;
     }
     if (formData.phone && !/^[0-9]{7,15}$/.test(formData.phone)) {
-      newErrors.phone = "Phone must be digits (7–15 numbers)";
+      newErrors.phone = t("validPhone");
       valid = false;
     }
     if (!formData.status) {
-      newErrors.status = "Status is required";
+      newErrors.status = t("statusRequired");
       valid = false;
     }
 

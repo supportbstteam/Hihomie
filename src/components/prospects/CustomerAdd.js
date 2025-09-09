@@ -99,19 +99,19 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     const newErrors = {};
 
     if (!values.lead_title.trim()) {
-      newErrors.lead_title = "Lead title is required";
+      newErrors.lead_title = t("leadTitleRequired");
     }
 
     if (!values.surname) {
-      newErrors.surname = "Surname is required";
+      newErrors.surname = t("prefixRequired");
     }
 
     if (!values.first_name.trim()) {
-      newErrors.first_name = "First name is required";
+      newErrors.first_name = t("firstNameRequired");
     }
 
     if (!values.last_name.trim()) {
-      newErrors.last_name = "Last name is required";
+      newErrors.last_name = t("lastNameRequired");
     }
 
     // if (!values.company.trim()) {
@@ -122,16 +122,21 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     //   newErrors.designation = "Designation is required";
     // }
 
+    if (!values.email.trim()) {
+      newErrors.email = t("emailRequired");
+    }
+
     if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("validEmail");
     }
 
     if (values.phone && !/^[0-9]{7,15}$/.test(values.phone)) {
-      newErrors.phone = "Phone must be digits (7–15 numbers)";
+      newErrors.phone = t("validPhone");
     }
 
+
     if (!values.status) {
-      newErrors.status = "Status is required";
+      newErrors.status = t("statusRequired");
     }
 
     return newErrors;

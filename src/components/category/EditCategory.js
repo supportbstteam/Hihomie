@@ -48,10 +48,10 @@ const EditCategory = ({ setEditOpen, categorys }) => {
 
     // ✅ Alphabet-only Validation for Category
     if (!formData.category) {
-      newErrors.category = "Category is required";
+      newErrors.category = t("categoryRequired");
       valid = false;
     } else if (!/^[A-Za-z\s]+$/.test(formData.category)) {
-      newErrors.category = "Only alphabets are allowed";
+      newErrors.category = t("alphabetAllowed");
       valid = false;
     }
 

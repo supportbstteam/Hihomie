@@ -125,6 +125,11 @@ const es = {
   alphabetAllowed: "Solo se permiten letras",
   validEmail: "Introduce un correo electrónico válido",
   numericAllowed: "Solo se permiten números",
+  leadTitleRequired: "Se requiere el título del líder",
+  prefixRequired: "Se requiere el prefijo",
+  validPhone: "El teléfono debe ser un número (7–15 números)",
+  statusRequired: "Estado es requerido",
+  categoryRequired: "Categoría es requerida",
 };
 
 export default es;

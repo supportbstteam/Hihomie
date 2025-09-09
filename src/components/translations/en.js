@@ -125,6 +125,11 @@ const en = {
   alphabetAllowed: "Only alphabets are allowed",
   validEmail: "Enter a valid email",
   numericAllowed: "Only numeric values are allowed",
+  leadTitleRequired: "Lead title is required",
+  prefixRequired: "Prefix is required",
+  validPhone: "Phone must be digits (7–15 numbers)",
+  statusRequired: "Status is required",
+  categoryRequired: "Category is required",
 };
 
 export default en;
