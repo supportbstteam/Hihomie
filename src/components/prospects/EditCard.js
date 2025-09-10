@@ -43,10 +43,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     email: "",
     lead_value: "",
     assigned: "",
-    status: "Nueva",
-    type_of_opration: "Primera casa",
-    customer_situation: "Quiere información",
-    purchase_status: "Todavía buscando",
+    status: "",
+    type_of_opration: "",
+    customer_situation: "",
+    purchase_status: "",
     commercial_notes: "",
     manager_notes: "",
     detailsData: {},
@@ -57,9 +57,9 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch("/api/user");
-      const { users } = await response.json();
-      setUsers(users);
+      const response = await fetch("/api/team");
+      const { data } = await response.json();
+      setUsers(data);
     };
     fetchUsers();
   }, []);
@@ -161,10 +161,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         email: "",
         lead_value: "",
         assigned: "",
-        status: "New",
-        type_of_opration: "First Home",
-        customer_situation: "Want Information",
-        purchase_status: "Still Looking",
+        status: "",
+        type_of_opration: "",
+        customer_situation: "",
+        purchase_status: "",
         commercial_notes: "",
         manager_notes: "",
         detailsData: {},
@@ -218,7 +218,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
               ✕
             </button>
 
-            <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
             <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
 
             {/* Form */}
@@ -332,15 +331,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="lead_value"
                   />
-                  {/* <Input
-                    label={t("assigned")}
-                    type="text"
-                    value={formData.assigned}
-                    onChange={handleChange}
-                    name="assigned"
-                  /> */}
 
-                  <Dropdown
+                  {/* <Dropdown
                     label={t("assigned_to")}
                     name="assigned"
                     title={t("select_assigned")}
@@ -351,7 +343,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       value: item._id,
                       label: item.name,
                     }))}
-                  />
+                  /> */}
 
                   <Dropdown
                     label={t("status")}

@@ -3,8 +3,8 @@ import CustomerAdd from "@/components/prospects/CustomerAdd";
 import EditCard from "@/components/prospects/EditCard";
 import {
   get_leadStatusCardUpdate,
-  get_leadStatusData,
-  get_leadStatusDataForList,
+  get_manager_leadStatusData,
+  get_manager_leadStatusDataForList,
 } from "@/store/setting";
 import React, { useEffect, useRef, useState } from "react";
 import { CiCirclePlus, CiMail } from "react-icons/ci";
@@ -57,9 +57,9 @@ export default function CustomDnD() {
 
   useEffect(() => {
     if (!listComponent) {
-      dispatch(get_leadStatusData());
+      dispatch(get_manager_leadStatusData());
     } else {
-      dispatch(get_leadStatusDataForList());
+      dispatch(get_manager_leadStatusDataForList());
     }
   }, [dispatch, listComponent]);
 
@@ -199,8 +199,8 @@ export default function CustomDnD() {
   useEffect(() => {
     if (successMessage) {
       dispatch(messageClear());
-      dispatch(get_leadStatusDataForList());
-      dispatch(get_leadStatusData());
+      dispatch(get_manager_leadStatusDataForList());
+      dispatch(get_manager_leadStatusData());
     }
   }, [successMessage, dispatch]);
 

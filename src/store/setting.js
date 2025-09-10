@@ -29,6 +29,18 @@ export const get_leadStatusData = createAsyncThunk(
    }
 );
 
+export const get_manager_leadStatusData = createAsyncThunk(
+   "customer/get_manager_leadStatusData",
+   async (_, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/manager/setting/leadStatus`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 export const get_leadStatusCardUpdate = createAsyncThunk(
    "customer/get_leadStatusCardUpdate",
    async ({ sourceColId, destColId, cardId }, { rejectWithValue, fulfillWithValue }) => {
@@ -89,6 +101,18 @@ export const get_leadStatusDataForList = createAsyncThunk(
    async (_, { rejectWithValue, fulfillWithValue }) => {
       try {
          const { data } = await api.get(`/setting/leadListStatus`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
+export const get_manager_leadStatusDataForList = createAsyncThunk(
+   "customer/get_manager_leadStatusDataForList",
+   async (_, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/manager/setting/leadListStatus`, { withCredentials: true });
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response?.data || "Something went wrong");
@@ -253,13 +277,26 @@ export const settingReducer = createSlice({
             state.successMessage = payload?.message;
             state.loader = false;
          })
-
          .addCase(upload_file.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload?.message || "Something went wrong";
          })
 
+         .addCase(get_manager_leadStatusData.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(get_manager_leadStatusData.fulfilled, (state, { payload }) => {
+            state.leadStatus = payload.data;
+            state.loader = false;
+         })
 
+         .addCase(get_manager_leadStatusDataForList.pending, (state, { payload }) => {
+            state.loader = true;
+         })
+         .addCase(get_manager_leadStatusDataForList.fulfilled, (state, { payload }) => {
+            state.leadStatusList = payload.cards;
+            state.loader = false;
+         })
 
    }
 })

@@ -196,7 +196,7 @@ const List = ({
                     {item?.users?.slice(0, 3).map((user, p) => (
                       <Avatar
                         key={p}
-                        src={user.image}
+                        src={user.image ? user.image : "admin.png"}
                         alt={item?.users?.[0]?.name}
                         size="xs"
                       />

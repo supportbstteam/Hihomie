@@ -69,7 +69,7 @@ const AssignUser = ({ colId, cardid }) => {
                 {assignTeam?.map((item, index) => (
                     <img
                         key={index}
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.image}`}
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.image? item.image : 'admin.png'}`}
                         alt={item.name}
                         className="w-8 h-8 rounded-full"
                     />
@@ -106,7 +106,7 @@ const AssignUser = ({ colId, cardid }) => {
                                                 className="w-4 h-4 accent-teal-500"
                                             />
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${user.image}`}
+                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${user.image? user.image : 'admin.png'}`}
                                                 className="w-6 h-6 rounded-full"
                                             />
                                             <span>{user.name} {user.lname}</span>

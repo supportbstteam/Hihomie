@@ -5,6 +5,7 @@ import Customer from '@/models/Customer'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LeadStatus from '@/models/LeadStatus'
+import CardAssignUser from '@/models/CardAssignUser'
 
 export async function POST(req) {
 
@@ -38,6 +39,10 @@ export async function POST(req) {
       { $push: { cards: newCard } },
       { new: true } // return the updated document
     );
+
+    // these two lines are used to assign the card to the manager or staff or any user at the time of lead creation
+    const newCardId = updatedColumn.cards[updatedColumn.cards.length - 1]._id;
+    await CardAssignUser.create({ userId: assigned, cardId: newCardId, colId: selectedColId })
 
     if (!updatedColumn) {
       return NextResponse.json({ error: 'Column not found' }, { status: 404 });
