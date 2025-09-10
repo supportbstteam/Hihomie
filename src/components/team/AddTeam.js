@@ -232,8 +232,8 @@ const AddTeam = ({ setOpen }) => {
               error={errors.role}
               required
               options={[
-                { value: "manager", label: "Manager" },
-                { value: "staff", label: "Staff" },
+                { value: t("manager"), label: t("manager") },
+                { value: t("staff"), label: t("staff") },
               ]}
             />
 
@@ -255,6 +255,22 @@ const AddTeam = ({ setOpen }) => {
               required
               error={errors.password}
             />
+
+            {/* Status */}
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-700 mb-1">{t('status')}</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="status"
+                  checked={formData.status}
+                  onChange={handleChange}
+                  className="sr-only peer"
+                />
+                <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+              </label>
+            </div>
 
             {/* Details Toggle */}
             <div className="flex items-center justify-between mt-2">

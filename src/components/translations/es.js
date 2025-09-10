@@ -130,6 +130,7 @@ const es = {
   validPhone: "El teléfono debe ser un número (7–15 números)",
   statusRequired: "Estado es requerido",
   categoryRequired: "Categoría es requerida",
+  staff: "Personal",
 };
 
 export default es;

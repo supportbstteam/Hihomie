@@ -130,6 +130,7 @@ const en = {
   validPhone: "Phone must be digits (7–15 numbers)",
   statusRequired: "Status is required",
   categoryRequired: "Category is required",
+  staff: "Staff",
 };
 
 export default en;

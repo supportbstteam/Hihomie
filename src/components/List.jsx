@@ -269,7 +269,7 @@ const List = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
+                <TableCell colSpan={9} className="text-center py-4">
                   No data available
                 </TableCell>
               </TableRow>

@@ -45,7 +45,7 @@ const MENU = {
   ],
   manager: [
     { href: "/dashboard", label: "Tablero", icon: <MdOutlineDashboard /> },
-    // { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/manager/lead', label: 'Prospectos', icon: <MdOutlineCalculate /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },

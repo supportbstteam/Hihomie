@@ -283,8 +283,8 @@ const EditTeam = ({ user, setUser }) => {
               error={errors.role}
               required
               options={[
-                { value: "manager", label: "Manager" },
-                { value: "staff", label: "Staff" },
+                { value: t("manager"), label: t("manager") },
+                { value: t("staff"), label: t("staff") },
               ]}
             />
 
