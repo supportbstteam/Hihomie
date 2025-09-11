@@ -248,14 +248,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   error={errors.company}
                 />
 
-                {/* <Input
-                  label={t("designation")}
-                  type="text"
-                  name="designation"
-                  value={formData.designation}
-                  onChange={handleChange}
-                  error={errors.designation}
-                /> */}
                 <Dropdown
                   label={t("designation")}
                   name="designation"
@@ -301,15 +293,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.lead_value}
                 />
-
-                {/* <Input
-                  label={t("assigned_to")}
-                  type="text"
-                  name="assigned"
-                  value={formData.assigned}
-                  onChange={handleChange}
-                  error={errors.assigned}
-                /> */}
 
                 <Dropdown
                   label={t("assigned_to")}
@@ -386,6 +369,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     { value: t("property"), label: t("property") },
                   ]}
                 />
+
               </section>
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <section className="bg-gray-50 p-4 rounded-md border border-stroke">

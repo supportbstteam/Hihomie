@@ -65,7 +65,6 @@ const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-  // Pagination logic
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = category.slice(indexOfFirstRecord, indexOfLastRecord);
@@ -101,7 +100,7 @@ const Category = () => {
   return (
     <div className="">
       {/* Header */}
-      <aside className="w-full bg-white sticky top-0 z-50">
+      <aside className="w-full bg-gray-100 sticky top-0 z-50">
         <div className="flex items-center justify-between p-4">
           <div>
             <h2 className="h2">{t("category")}</h2>
@@ -118,7 +117,7 @@ const Category = () => {
         </div>
       </aside>
       {/* Table */}
-      <div className="p-4 bg-background-secondary ">
+      <div className="p-4">
         <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md bg-white">
           <Table>
             {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
@@ -154,7 +153,6 @@ const Category = () => {
                     </TableCell>
 
                     <TableCell className="flex justify-start gap-2">
-
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
@@ -197,8 +195,8 @@ const Category = () => {
               )}
             </TableBody>
           </Table>
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 p-4">
+          {/* shadcn Pagination */}
+          {/* <div className="flex justify-between items-center mt-4 p-4">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -214,9 +212,6 @@ const Category = () => {
                     {currentPage}
                   </PaginationLink>
                 </PaginationItem>
-                {/* <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem> */}
                 <PaginationItem>
                   <PaginationNext
                     onClick={() => setCurrentPage((prev) => prev + 1)}
@@ -225,39 +220,42 @@ const Category = () => {
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
+          </div> */}
+        </div>
 
-            {/* <button
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              disabled={currentPage === 1}
-            >
-              {t("previous")}
-            </button>
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
 
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={`px-3 py-1 rounded ${
-                    currentPage === index + 1
-                      ? "bg-sky-500 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-
-            <button
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={currentPage === totalPages}
-            >
-              {t("next")}
-            </button> */}
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-3 py-1 rounded-md transition ${
+                  currentPage === index + 1
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
           </div>
+
+          <button
+            className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </div>
 

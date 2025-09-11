@@ -17,7 +17,7 @@ const Stats = ({ leadStatus }) => {
   });
 
   return (
-    <section className="h-fit p-4 grid  grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 bg-background-secondary ">
+    <section className="h-fit p-4 grid grid-flow-col auto-cols-[296px] overflow-x-auto custom-scrollbar gap-4 bg-background-secondary ">
       {aggregatedStats.map((item, i) => (
         <div
           key={i}
