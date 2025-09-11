@@ -12,6 +12,7 @@ import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import Dropdown from "../ui/DropDown";
 import { Asterisk } from "lucide-react";
+import { useSession } from "next-auth/react"; // 1. Import useSession
 
 const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
   const [address_details, setAddressDetails] = useState(false);
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
+  const { data: session } = useSession(); // 2. Get the session data
 
   const [formData, setFormData] = useState({
     lead_title: "",
@@ -43,7 +45,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     detailsData: {},
     addressDetailsData: {},
     selectedColId: selectedColId || "",
-    // status: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -55,6 +56,19 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     };
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    // 3. Conditionally set the 'assigned' field based on the user's role
+    if (session?.user?.role === t("manager") || session?.user?.role === t("staff")) {
+      setFormData((prev) => ({
+        ...prev,
+        assigned: session.user.id,
+      }));
+    } else if (session?.user?.role === t("admin")) {
+      // If admin, they can choose anyone, but we can set a default if needed
+      // For now, we'll leave it as is so they can select from the dropdown.
+    }
+  }, [session]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -93,54 +107,35 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
     }));
   }, [addressDetailsData]);
 
-
   const validate = (values) => {
     const newErrors = {};
 
     if (!values.lead_title.trim()) {
       newErrors.lead_title = t("leadTitleRequired");
     }
-
     if (!values.surname) {
       newErrors.surname = t("prefixRequired");
     }
-
     if (!values.first_name.trim()) {
       newErrors.first_name = t("firstNameRequired");
     }
-
     if (!values.last_name.trim()) {
       newErrors.last_name = t("lastNameRequired");
     }
-
-    // if (!values.company.trim()) {
-    //   newErrors.company = "Company is required";
-    // }
-
-    // if (!values.designation.trim()) {
-    //   newErrors.designation = "Designation is required";
-    // }
-
     if (!values.email.trim()) {
       newErrors.email = t("emailRequired");
     }
-
     if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       newErrors.email = t("validEmail");
     }
-
     if (values.phone && !/^[0-9]{7,15}$/.test(values.phone)) {
       newErrors.phone = t("validPhone");
     }
-
-
     if (!values.selectedColId) {
       newErrors.selectedColId = t("statusRequired");
     }
-
     return newErrors;
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -150,7 +145,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
       dispatch(customerAdd(formData));
     }
   };
-
 
   useEffect(() => {
     if (successMessage) {
@@ -175,7 +169,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
             animate={{ y: 20, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-white w-full md:max-w-[60%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto  mt-5"
+            className="bg-white w-full md:max-w-[60%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
           >
             <button
               onClick={() => setOpen(false)}
@@ -183,19 +177,15 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
             >
               ✕
             </button>
-
             <p className="text-gray-700 text-[20px] mb-6">
               {t("add_new_lead")}
             </p>
-
             <form
               onSubmit={handleSubmit}
               className="mb-5 overflow-y-auto custom-scrollbar pr-1 max-h-[90vh] md:max-h-[70vh]"
             >
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-2" >
-
-                {/* Lead Title */}
-
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                {/* ... other inputs ... */}
                 <Input
                   label={t("lead_title")}
                   type="text"
@@ -205,9 +195,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   required
                   error={errors.lead_title}
                 />
-
                 <Dropdown
-                  // label={t("surname")}
                   label={t("prefix")}
                   name="surname"
                   title={t("select_surname")}
@@ -216,10 +204,9 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   error={errors.surname}
                   options={[
                     { value: t("mr"), label: t("mr") },
-                    { value: t("mrs"), label: t("mrs") }
+                    { value: t("mrs"), label: t("mrs") },
                   ]}
                 />
-
                 <Input
                   label={t("first_name")}
                   type="text"
@@ -229,7 +216,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   required
                   error={errors.first_name}
                 />
-
                 <Input
                   label={t("last_name")}
                   type="text"
@@ -238,7 +224,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.last_name}
                 />
-
                 <Input
                   label={t("company")}
                   type="text"
@@ -247,7 +232,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.company}
                 />
-
                 <Dropdown
                   label={t("designation")}
                   name="designation"
@@ -265,7 +249,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     { value: "agent", label: t("agent") },
                   ]}
                 />
-
                 <Input
                   label={t("phone")}
                   type="text"
@@ -274,7 +257,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.phone}
                 />
-
                 <Input
                   label={t("email")}
                   type="email"
@@ -284,7 +266,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   required
                   error={errors.email}
                 />
-
                 <Input
                   label={t("lead_amout") + " ($)"}
                   type="number"
@@ -293,20 +274,35 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   onChange={handleChange}
                   error={errors.lead_value}
                 />
-
-                <Dropdown
-                  label={t("assigned_to")}
-                  name="assigned"
-                  title={t("select_assigned")}
-                  value={formData.assigned}
-                  onChange={handleChange}
-                  error={errors.assigned}
-                  options={users.map((item) => ({
-                    value: item._id,
-                    label: item.name,
-                  }))}
-                />
-
+                {/* Conditional rendering based on user role from NextAuth */}
+                {session?.user?.role === t("admin") ? (
+                  <Dropdown
+                    label={t("assigned_to")}
+                    name="assigned"
+                    title={t("select_assigned")}
+                    value={formData.assigned}
+                    onChange={handleChange}
+                    error={errors.assigned}
+                    options={users.map((item) => ({
+                      value: item._id,
+                      label: item.name,
+                    }))}
+                  />
+                ) : (
+                  <Dropdown
+                    label={t("assigned_to")}
+                    name="assigned"
+                    title={t("select_assigned")}
+                    value={session?.user?.id || ""}
+                    onChange={() => { }}
+                    options={[
+                      {
+                        value: session?.user?.id || "",
+                        label: session?.user?.name || "",
+                      },
+                    ]}
+                  />
+                )}
                 <Dropdown
                   label={t("status")}
                   name="selectedColId"
@@ -335,7 +331,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     { value: t("refinancing"), label: t("refinancing") },
                   ]}
                 />
-
                 <Dropdown
                   label={t("customer_situation")}
                   name="customer_situation"
@@ -351,7 +346,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     { value: t("decided"), label: t("decided") },
                   ]}
                 />
-
                 <Dropdown
                   label={t("purchase_status")}
                   name="purchase_status"
@@ -369,17 +363,13 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     { value: t("property"), label: t("property") },
                   ]}
                 />
-
               </section>
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <section className="bg-gray-50 p-4 rounded-md border border-stroke">
                   <h3 className="p mb-4">{t("note")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label
-                        htmlFor="commercial_notes"
-                        className="block psm mb-1"
-                      >
+                      <label htmlFor="commercial_notes" className="block psm mb-1">
                         {t("commerical_note")}
                       </label>
                       <textarea
@@ -392,10 +382,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                       />
                     </div>
                     <div>
-                      <label
-                        htmlFor="manager_notes"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
+                      <label htmlFor="manager_notes" className="block text-sm font-medium text-gray-700 mb-1">
                         {t("Managers_notes")}
                       </label>
                       <textarea
@@ -425,10 +412,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                   </label>
                 </div>
-
                 {details && <Form1 setDetailsData={setDetailsData} />}
-
-                {/* Automatic Toggle */}
                 <div className="flex items-center justify-between mt-2">
                   <span className="font-medium text-dark psm">
                     {t("address_organization")}
@@ -441,18 +425,13 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                       checked={address_details}
                       onChange={handleToggleAddress}
                     />
-                    {/* Outer background */}
                     <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                    {/* Inner circle */}
                     <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
                   </label>
                 </div>
-
                 {address_details && (
                   <Form2 setAddressDetailsData={setAddressDetailsData} />
                 )}
-
-                {/* Buttons */}
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => setOpen(false)}
@@ -469,7 +448,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     {loader ? t("loading") : t("submit")}
                   </button>
                 </div>
-
               </div>
             </form>
           </motion.div>
