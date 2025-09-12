@@ -86,9 +86,9 @@ export const forgot_password = createAsyncThunk(
 
 export const reset_password = createAsyncThunk(
    'reset_password',
-   async ({password, token}, { rejectWithValue, fulfillWithValue }) => {
+   async ({ password, token }, { rejectWithValue, fulfillWithValue }) => {
       try {
-         const { data } = await api.put(`/customer/forgotPassword`,{password, token } ,{ withCredentials: true });
+         const { data } = await api.put(`/customer/forgotPassword`, { password, token }, { withCredentials: true });
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response.data)
@@ -129,6 +129,7 @@ export const customerReducer = createSlice({
          .addCase(customerAdd.fulfilled, (state, { payload }) => {
             state.loader = false;
             state.successMessage = payload.message;
+            console.log(state.customer)
             state.customer = [...state.customer, payload.customer]
          })
          .addCase(get_customer.pending, (state, { payload }) => {
@@ -136,6 +137,7 @@ export const customerReducer = createSlice({
          })
          .addCase(get_customer.fulfilled, (state, { payload }) => {
             state.customer = payload.customer;
+            console.log(state.customer)
             state.loader = false;
          })
 
@@ -152,10 +154,28 @@ export const customerReducer = createSlice({
             state.successMessage = payload.message;
          })
          .addCase(cardDelete.fulfilled, (state, { payload }) => {
+            console.log(payload)
             state.successMessage = payload.message; // if backend sends a message
-            state.customer = state.customer.filter(
-               (cust) => cust._id !== payload._id  // remove deleted one
+            // state.customer = state.customer.filter(
+            //    (cust) => cust._id !== payload._id  // remove deleted one
+            // );
+
+            // Find the lead that contains the deleted card
+            const leadIndex = state.customer.findIndex(
+               (cust) => cust._id === payload.colId
             );
+
+            if (leadIndex !== -1) {
+               // Create a new array of cards without the deleted one
+               const updatedCards = state.customer[leadIndex].cards.filter(
+                  (card) => card._id !== payload.cardId
+               );
+               // Update the state with the new cards array
+               state.customer[leadIndex] = {
+                  ...state.customer[leadIndex],
+                  cards: updatedCards,
+               };
+            }
          })
 
          .addCase(forgot_password.pending, (state, { payload }) => {

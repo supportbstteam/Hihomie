@@ -10,6 +10,10 @@ import Dropdown from "../ui/DropDown";
 import Form1 from "./Form1";
 import Form2 from "./Form2";
 import AssignUser from "./AssignUser";
+import { Button } from "../ui/Button";
+import { Trash2 } from "lucide-react";
+import ConfirmDeleteModal from "@/components/ConfirmAlert";
+
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage } = useSelector(
@@ -20,6 +24,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const [address_details, setAddressDetails] = useState(false);
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
+  const [deleteConfirmAlert, setDeleteConfirmAlert] = useState(false);
   const [errors, setErrors] = useState({
     surname: '',
     lead_title: '',
@@ -144,8 +149,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   };
 
   const handleDelete = (id) => {
-    dispatch(cardDelete(id));;
-  };;
+    dispatch(cardDelete(id));
+  };
 
   useEffect(() => {
     if (successMessage) {
@@ -224,7 +229,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <div className="overflow-y-auto custom-scrollbar max-h-[70vh] flex flex-col-reverse md:flex-row justify-between gap-4">
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 mb-5  w-full md:w-8/12  "
+                className="space-y-4 mb-5  w-full md:w-8/12"
               >
                 {/* Lead Title */}
                 <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -332,6 +337,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     name="lead_value"
                   />
 
+                  {/* because the assigning process is now done by the assign user module not this dropdown */}
                   {/* <Dropdown
                     label={t("assigned_to")}
                     name="assigned"
@@ -504,10 +510,21 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   </div>
                 </section>
               </form>
-              <div className="w-full md:w-4/12 h-fit bg-primary/20 p-2 rounded-radius">
+              <div className="w-full md:w-4/12 h-full bg-gray-100 p-2 rounded-lg">
+              <div className="h-fit bg-primary/20 p-2 rounded-lg mb-4">
                 <AssignUser colId={colId} cardid={selectedUser._id} />
+                {/* <Comments colId={colId} cardid={selectedUser._id} /> */}
+              </div>
+                <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             </div>
+            <ConfirmDeleteModal
+              isOpen={deleteConfirmAlert}
+              onClose={() => setDeleteConfirmAlert(false)}
+              onConfirm={() => handleDelete(selectedUser._id)}
+            />
           </motion.div>
         </div>
       )}

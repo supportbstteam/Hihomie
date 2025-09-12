@@ -174,15 +174,16 @@ export async function PUT(req) {
 
 
 
-// ✅ GET - Fetch all customers
-
 export async function DELETE(req, { params }) {
   try {
     await dbConnect();
 
     const { id } = params; // 👈 capture id from URL
 
-    const deletedUser = await Customer.findByIdAndDelete(id);
+    const deletedUser = await LeadStatus.findOneAndUpdate(
+      { "cards._id": id },
+      { $pull: { cards: { _id: id } } }
+    );
 
     if (!deletedUser) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
@@ -194,4 +195,23 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+// export async function DELETE(req, { params }) {
+//   try {
+//     await dbConnect();
+
+//     const { id } = params; // 👈 capture id from URL
+
+//     const deletedUser = await Customer.findByIdAndDelete(id);
+
+//     if (!deletedUser) {
+//       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+//     }
+
+//     return NextResponse.json({ message: "Customer deleted successfully" }, { status: 200 });
+//   } catch (error) {
+//     console.error("DELETE Error:", error);
+//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+//   }
+// }
 
