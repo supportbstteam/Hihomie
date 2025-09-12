@@ -13,7 +13,7 @@ import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { t } from "@/components/translations";
 import Icon from "./ui/Icon";
 import Avatar from "./ui/Avatar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   card_delete_list,
   get_leadStatusData,
@@ -38,8 +38,10 @@ const List = ({
   selecteFilterData,
   setSelectedUser,
   successMessage,
+  setSelectedColId,
 }) => {
   const dispatch = useDispatch();
+  const { assignTeam } = useSelector((state) => state.team);
 
   const [onEdit, setOnEdit] = useState({
     lead_title: "",
@@ -114,9 +116,9 @@ const List = ({
       colId: item.leadStatusId, // assign leadStatusId to colId
       id: item._id, // assign card _id to id
     };
-
-    setSelectedUser(updatedUser); // update local state
-    if (onEdit) setSelectedUser(updatedUser); // send to parent
+    console.log(item);
+    setSelectedColId(item.leadStatusId);
+    setSelectedUser(updatedUser); 
   };
 
   const handleDeleteClick = async (cardId, columId) => {
@@ -149,10 +151,10 @@ const List = ({
     if (successMessage) {
       dispatch(messageClear());
       setIsModalOpen(false);
-      dispatch(get_leadStatusDataForList());
-      dispatch(get_leadStatusData());
     }
-  }, [successMessage, dispatch]);
+    dispatch(get_leadStatusDataForList());
+    dispatch(get_leadStatusData());
+  }, [successMessage, dispatch, assignTeam]);
 
   return (
     <div>
@@ -196,9 +198,10 @@ const List = ({
                     {item?.users?.slice(0, 3).map((user, p) => (
                       <Avatar
                         key={p}
-                        src={user.image ? user.image : "admin.png"}
-                        alt={item?.users?.[0]?.name}
+                        src={user.image ? user.image : "default.jpg"}
+                        alt={user?.name}
                         size="xs"
+                        title={user?.name}
                       />
                     ))}
                     {item?.users?.length > 3 && (

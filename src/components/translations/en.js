@@ -131,8 +131,8 @@ const en = {
   statusRequired: "Status is required",
   categoryRequired: "Category is required",
   staff: "Staff",
-
-  new_lead: "New Lead",
+  comment: "Comment",
+  enter_comment: "Enter comment",
 };
 
 export default en;

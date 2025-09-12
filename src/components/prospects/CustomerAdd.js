@@ -436,14 +436,14 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                   <button
                     onClick={() => setOpen(false)}
                     type="reset"
-                    className="px-6 py-2 border border-stock rounded-sm text-gray-700 hover:bg-gray-100"
+                    className="px-6 py-2 cursor-pointer border border-stock rounded-sm text-gray-700 hover:bg-gray-100"
                   >
                     {t("cancel")}
                   </button>
                   <button
                     disabled={loader}
                     type="submit"
-                    className="px-6 py-2 bg-green-600 text-white rounded-sm hover:bg-green-700"
+                    className="px-6 py-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700"
                   >
                     {loader ? t("loading") : t("submit")}
                   </button>

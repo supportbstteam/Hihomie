@@ -392,6 +392,7 @@ export default function CustomDnD() {
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}
             successMessage={successMessage}
+            setSelectedColId={setSelectedColId}
           />
         </div>
       )}

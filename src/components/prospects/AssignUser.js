@@ -4,21 +4,21 @@ import React, { useEffect, useState } from 'react'
 import { BsPlusCircleDotted } from 'react-icons/bs'
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
-const AssignUser = ({ colId, cardid }) => {
+import getUserFromSession from '@/lib/getUserFromSession';
+import { t } from '@/components/translations';
 
+const AssignUser = ({ colId, cardid }) => {
+    const user = getUserFromSession();
     const dispatch = useDispatch();
     const { loader, assignTeam, team, errorMessage, successMessage } = useSelector((state) => state.team);
 
     const [assignUser, setAssigneUser] = useState(false)
     const [selectedUsers, setSelectedUsers] = useState([]);
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
         dispatch(assign_to_team({ object: selectedUsers, colId, cardId: cardid }))
     };
-
 
 
     const toggleUser = (id) => {
@@ -27,14 +27,11 @@ const AssignUser = ({ colId, cardid }) => {
         );
     };
 
-
     useEffect(() => {
         if (cardid && colId) {
             dispatch(get_assignTeam({ cardId: cardid, colId }));
         }
     }, [dispatch, cardid, colId]);
-
-
 
     useEffect(() => {
         dispatch(get_teamData());
@@ -58,25 +55,27 @@ const AssignUser = ({ colId, cardid }) => {
             }
 
         }
-    },[dispatch, cardid, colId, successMessage])
+    }, [dispatch, cardid, colId, successMessage])
 
     return (
-
-        <>            <div>
-            <h1 className="text-[#67757c]">Assigned User</h1>
-            <div className='flex items-center gap-1'>
-
-                {assignTeam?.map((item, index) => (
-                    <img
-                        key={index}
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.image? item.image : 'default.jpg'}`}
-                        alt={item.name}
-                        className="w-8 h-8 rounded-full"
-                    />
-                ))}  <button className="text-2xl" onClick={() => setAssigneUser(true)}><BsPlusCircleDotted /></button>
-
+        <>
+            <div>
+                <h1 className="text-[#67757c]">Assigned User</h1>
+                <div className='flex items-center gap-1'>
+                    {assignTeam?.map((item, index) => (
+                        <img
+                            key={index}
+                            src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.image ? item.image : 'default.jpg'}`}
+                            alt={item.name}
+                            title={item.name}
+                            className="w-8 h-8 rounded-full"
+                        />
+                    ))}
+                    {user.role === t('admin') && (
+                        <button className="text-2xl" onClick={() => setAssigneUser(true)}><BsPlusCircleDotted /></button>
+                    )}
+                </div>
             </div>
-        </div>
 
             <AnimatePresence>
                 {assignUser && (
@@ -86,7 +85,7 @@ const AssignUser = ({ colId, cardid }) => {
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -100, opacity: 0 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="bg-white h-[30vh] w-full max-w-[40%] rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto"
+                            className="bg-white h-[30vh] w-full max-w-[40%] rounded-lg shadow-2xl p-6 md:p-8 relative overflow-y-auto"
                         >
                             <button
                                 onClick={() => setAssigneUser(false)}
@@ -106,7 +105,9 @@ const AssignUser = ({ colId, cardid }) => {
                                                 className="w-4 h-4 accent-teal-500"
                                             />
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${user.image? user.image : 'default.jpg'}`}
+                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${user.image ? user.image : 'default.jpg'}`}
+                                                alt={user.name}
+                                                title={user.name}
                                                 className="w-6 h-6 rounded-full"
                                             />
                                             <span>{user.name} {user.lname}</span>

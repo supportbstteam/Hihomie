@@ -131,8 +131,8 @@ const es = {
   statusRequired: "Estado es requerido",
   categoryRequired: "Categoría es requerida",
   staff: "Personal",
-
-  new_lead: "Nuevo Lead",
+  comment: "Comentario",
+  enter_comment: "Introduce un comentario",
 };
 
 export default es;

@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import React from 'react'
 
-const Avatar = ({src, alt, size}) => {
+const Avatar = ({src, alt, size, title }) => {
 
     const sizeStyle = {
         xs: "w-6 h-6",
@@ -19,6 +19,7 @@ const Avatar = ({src, alt, size}) => {
             src={`${process.env.NEXT_PUBLIC_BASE_URL}/${src}`}
             alt={alt || "User"}
             className={`${classes} rounded-full cursor-pointer object-cover hover:scale-110 transition-all`}
+            title={title || "User"}
             width={32}
             height={32}
         />

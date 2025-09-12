@@ -96,6 +96,18 @@ export const reset_password = createAsyncThunk(
    }
 )
 
+export const add_customer_comments = createAsyncThunk(
+   'add_customer_comments',
+   async ({ commentFormData, cardId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post(`/customer/${cardId}/comments`, commentFormData, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
 
 
 
@@ -200,6 +212,15 @@ export const customerReducer = createSlice({
          .addCase(reset_password.fulfilled, (state, { payload }) => {
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
+         })
+      
+         .addCase(add_customer_comments.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(add_customer_comments.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
          })
    }
 })

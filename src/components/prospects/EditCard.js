@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
@@ -204,6 +204,23 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }));
   }, [addressDetailsData]);
 
+  const [commentFormData, setCommentFormData] = useState({
+    comment: "",
+  });
+
+  const handleCommentChange = (e) => {
+    const { name, value } = e.target;
+    setCommentFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    dispatch(add_customer_comments({commentFormData, cardId: selectedUser._id}));
+  };
+
   return (
     <AnimatePresence>
       {selectedUser && (
@@ -226,10 +243,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
 
             {/* Form */}
-            <div className="overflow-y-auto custom-scrollbar max-h-[70vh] flex flex-col-reverse md:flex-row justify-between gap-4">
+            <div className="overflow-y-auto custom-scrollbar max-h-[70vh] grid grid-cols-1 md:grid-cols-12 gap-4">
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 mb-5  w-full md:w-8/12"
+                className="space-y-4 mb-5 col-span-8"
               >
                 {/* Lead Title */}
                 <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -510,14 +527,28 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   </div>
                 </section>
               </form>
-              <div className="w-full md:w-4/12 h-full bg-gray-100 p-2 rounded-lg">
-              <div className="h-fit bg-primary/20 p-2 rounded-lg mb-4">
-                <AssignUser colId={colId} cardid={selectedUser._id} />
-                {/* <Comments colId={colId} cardid={selectedUser._id} /> */}
-              </div>
-                <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
+              <div className="col-span-4 h-full space-y-4 bg-gray-100 p-2 rounded-lg">
+                <div className="h-fit bg-primary/20 p-2 rounded-lg mb-4">
+                  <AssignUser colId={colId} cardid={selectedUser._id} />
+                </div>
+                {/* <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
                   <Trash2 className="w-4 h-4" />
-                </Button>
+                </Button> */}
+              </div>
+              <div className="space-y-4 mb-5 col-span-8">
+                <form onSubmit={handleCommentSubmit}>
+                  <Input
+                    label={t("comment")}
+                    value={commentFormData.comment}
+                    onChange={handleCommentChange}
+                    name="comment"
+                    placeholder={t("enter_comment")}
+                    error={errors.comment}
+                  />
+                  <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                    {loader ? t("loading") : t("submit")}
+                  </button>
+                </form>
               </div>
             </div>
             <ConfirmDeleteModal
