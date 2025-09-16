@@ -116,7 +116,6 @@ const List = ({
       colId: item.leadStatusId, // assign leadStatusId to colId
       id: item._id, // assign card _id to id
     };
-    console.log(item);
     setSelectedColId(item.leadStatusId);
     setSelectedUser(updatedUser); 
   };

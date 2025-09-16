@@ -15,8 +15,6 @@ export const customerAdd = createAsyncThunk(
    }
 )
 
-
-
 export const get_customer = createAsyncThunk(
    "customer/get_customer",
    async (_, { rejectWithValue, fulfillWithValue }) => {
@@ -108,6 +106,18 @@ export const add_customer_comments = createAsyncThunk(
    }
 );
 
+export const get_customer_comments = createAsyncThunk(
+   'get_customer_comments',
+   async (cardId, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/customer/${cardId}/comments`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
 
 
 
@@ -119,6 +129,7 @@ export const customerReducer = createSlice({
       errorMessage: '',
       loader: false,
       customer: [],
+      comments: [],
    },
    reducers: {
 
@@ -219,6 +230,16 @@ export const customerReducer = createSlice({
             state.loader = false;
          })
          .addCase(add_customer_comments.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+      
+         .addCase(get_customer_comments.fulfilled, (state, { payload }) => {
+            state.comments = payload.comments;
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(get_customer_comments.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })

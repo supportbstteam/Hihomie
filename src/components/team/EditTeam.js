@@ -166,18 +166,6 @@ const EditTeam = ({ user, setUser }) => {
           <p className="text-gray-700 text-[20px] mb-6 font-semibold">{t('edit_user')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-4 mb-5 max-h-[77vh] overflow-y-auto">
-            {/* First Name */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('first_name')}*</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={inputClass("name")}
-              />
-              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-            </div> */}
             <Input
               label={t("first_name")}
               name="name"
@@ -186,58 +174,6 @@ const EditTeam = ({ user, setUser }) => {
               required
               error={errors.name}
             />
-
-            {/* Last Name */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('last_name')}*</label>
-              <input
-                type="text"
-                name="lname"
-                value={formData.lname}
-                onChange={handleChange}
-                className={inputClass("lname")}
-              />
-              {errors.lname && <p className="text-red-500 text-xs mt-1">{errors.lname}</p>}
-            </div> */}
-
-            {/* Email */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('email')}*</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={inputClass("email")}
-              />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </div> */}
-
-            {/* Phone */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('phone')}*</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className={inputClass("phone")}
-              />
-              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-            </div> */}
-
-            {/* Job Title */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('position')}*</label>
-              <input
-                type="text"
-                name="jobTitle"
-                value={formData.jobTitle}
-                onChange={handleChange}
-                className={inputClass("jobTitle")}
-              />
-              {errors.jobTitle && <p className="text-red-500 text-xs mt-1">{errors.jobTitle}</p>}
-            </div> */}
 
             <Input
               label={t("last_name")}
@@ -283,8 +219,8 @@ const EditTeam = ({ user, setUser }) => {
               error={errors.role}
               required
               options={[
-                { value: t("manager"), label: t("manager") },
-                { value: t("staff"), label: t("staff") },
+                { value: "manager", label: t("manager") },
+                { value: "staff", label: t("staff") },
               ]}
             />
 
@@ -297,44 +233,12 @@ const EditTeam = ({ user, setUser }) => {
               error={errors.image}
             />
 
-            {/* Role */}
-            {/* <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">{t('role')}</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className={inputClass("role")}
-              >
-                <option value="">--Seleccionar Rol--</option>
-                <option value="admin">Administradora</option>
-                <option value="staff">Personal</option>
-                <option value="accounting">Contabilidad</option>
-                <option value="management">Gestión</option>
-              </select>
-              {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
-            </div> */}
-
-            {/* Password */}
-            {/* <div className="flex flex-col gap-1">
-              <label className="text-gray-700 font-medium text-sm">{t('password')}</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Leave blank to keep same"
-                className="p-2 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-green-400 focus:outline-none"
-              />
-            </div> */}
-
             <Input
               label="Password"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
               error={errors.password}
             />
 

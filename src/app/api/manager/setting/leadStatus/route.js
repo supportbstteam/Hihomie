@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
+import getUserFromServerSession from '@/lib/getUserFromServerSession'
 
 export async function POST(req) {
     try {
@@ -21,11 +22,12 @@ export async function POST(req) {
 
 // ✅ GET - Fetch all customers
 export async function GET() {
+
+    const user = await getUserFromServerSession()
+
     try {
-        await dbConnect();
-        // const data = await LeadStatus.find().lean();
-        // const cardData = await LeadStatus.find({ 'cards.assigned': '68bfff3410b85721ab2f2565' }).lean();
-        // console.log(cardData)
+        await dbConnect(); 
+
         const pipeline = [
             {
                 // Stage 1: Check for documents that have at least one matching nested card.
@@ -37,7 +39,7 @@ export async function GET() {
                                 $map: {
                                     input: "$cards",
                                     as: "card",
-                                    in: { $eq: ["$$card.assigned", "68bfff3410b85721ab2f2565"] }
+                                    in: { $eq: ["$$card.assigned", user.id] }
                                 }
                             }
                         ]
@@ -59,14 +61,12 @@ export async function GET() {
                                 $filter: {
                                     input: "$cards",
                                     as: "card",
-                                    cond: { $eq: ["$$card.assigned", "68bfff3410b85721ab2f2565"] }
+                                    cond: { $eq: ["$$card.assigned", user.id] }
                                 }
                             },
                             else: []
                         }
                     },
-                    // Exclude the temporary 'hasMatch' field.
-                    // hasMatch: 0
                 }
             }
         ]

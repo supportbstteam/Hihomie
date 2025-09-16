@@ -232,8 +232,8 @@ const AddTeam = ({ setOpen }) => {
               error={errors.role}
               required
               options={[
-                { value: t("manager"), label: t("manager") },
-                { value: t("staff"), label: t("staff") },
+                { value: "manager", label: t("manager") },
+                { value: "staff", label: t("staff") },
               ]}
             />
 

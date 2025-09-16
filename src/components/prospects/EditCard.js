@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
@@ -13,12 +13,14 @@ import AssignUser from "./AssignUser";
 import { Button } from "../ui/Button";
 import { Trash2 } from "lucide-react";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
+import getUserFromSession from "@/lib/getUserFromSession";
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage } = useSelector(
+  const { loader, successMessage, errorMessage, comments } = useSelector(
     (state) => state.customer
   );
+  const authUser = getUserFromSession();
   const [users, setUsers] = useState([]);
   const [details, setDetails] = useState(false);
   const [address_details, setAddressDetails] = useState(false);
@@ -154,29 +156,32 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (successMessage) {
-      setSelectedUser(null);
-      setFormData({
-        lead_title: "",
-        surname: "",
-        first_name: "",
-        last_name: "",
-        company: "",
-        designation: "",
-        phone: "",
-        email: "",
-        lead_value: "",
-        assigned: "",
-        status: "",
-        type_of_opration: "",
-        customer_situation: "",
-        purchase_status: "",
-        commercial_notes: "",
-        manager_notes: "",
-        detailsData: {},
-        addressDetailsData: {},
-        id: "",
-        colId: "", // ✅ keep the current colId
-      });
+      if (successMessage === "Comment added successfully") {
+      } else {
+        setSelectedUser(null);
+        setFormData({
+          lead_title: "",
+          surname: "",
+          first_name: "",
+          last_name: "",
+          company: "",
+          designation: "",
+          phone: "",
+          email: "",
+          lead_value: "",
+          assigned: "",
+          status: "",
+          type_of_opration: "",
+          customer_situation: "",
+          purchase_status: "",
+          commercial_notes: "",
+          manager_notes: "",
+          detailsData: {},
+          addressDetailsData: {},
+          id: "",
+          colId: "", // ✅ keep the current colId
+        });
+      }
     }
   }, [successMessage, errorMessage]);
 
@@ -185,7 +190,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       setFormData({
         ...selectedUser,
         id: selectedUser._id || "",
-        colId: selectedUser.colId ? selectedUser.colId : colId || "",
+        colId: selectedUser.status ? selectedUser.status : colId || "",
       });
     }
   }, [selectedUser]);
@@ -206,7 +211,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const [commentFormData, setCommentFormData] = useState({
     comment: "",
+    colId: selectedUser.status ? selectedUser.status : colId || "",
+    userId: authUser.id,
   });
+
+  useEffect(() => {
+    dispatch(get_customer_comments(selectedUser._id));
+  }, [selectedUser, successMessage]);
 
   const handleCommentChange = (e) => {
     const { name, value } = e.target;
@@ -218,7 +229,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    dispatch(add_customer_comments({commentFormData, cardId: selectedUser._id}));
+    dispatch(add_customer_comments({ commentFormData, cardId: selectedUser._id }));
   };
 
   return (
@@ -549,6 +560,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     {loader ? t("loading") : t("submit")}
                   </button>
                 </form>
+                <div>
+                  <div className="space-y-1 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg shadow-inner">
+                    {comments && comments.map((comment, index) => (
+                      <div key={index} className="bg-white p-2 rounded-md shadow-sm border border-gray-200">
+                        <p className="text-gray-800 text-sm">{comment.comment}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
             <ConfirmDeleteModal

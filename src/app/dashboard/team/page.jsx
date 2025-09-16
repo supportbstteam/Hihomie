@@ -130,7 +130,7 @@ const Team = () => {
                   {capitalizeFirstLetter(row.jobTitle)}
                 </td>
                 <td className="py-3 text-sm px-4 text-gray-700">
-                  {capitalizeFirstLetter(row.role)}
+                  {capitalizeFirstLetter(t(row.role))}
                 </td>
                 <td className="py-3 text-sm px-4  text-gray-700">
                   {row.email}
