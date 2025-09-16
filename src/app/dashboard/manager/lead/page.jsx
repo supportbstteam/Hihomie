@@ -14,7 +14,8 @@ import { LuPhone, LuPhoneCall } from "react-icons/lu";
 import { FaListUl, FaPlus, FaWhatsapp } from "react-icons/fa";
 import { MdFilterList } from "react-icons/md";
 import Filter from "@/components/prospects/Filter";
-import List from "@/components/List";
+// import List from "@/components/List";
+import ManagerList from "@/components/ManagerList";
 import Stats from "@/components/Stats";
 import { CiImport } from "react-icons/ci";
 import {
@@ -371,12 +372,6 @@ export default function CustomDnD() {
               </div>
             </div>
           ))}
-          {/* <Filter
-            leadStatusList={leadStatus}
-            filterOpen={filterOpen}
-            setFilterOpen={setFilterOpen}
-            setSelecteFilterData={setSelecteFilterData}
-          /> */}
         </div>
       ) : (
         <div className="p-3 sm:p-5">
@@ -386,7 +381,7 @@ export default function CustomDnD() {
             setFilterOpen={setFilterOpen}
             setSelecteFilterData={setSelecteFilterData}
           />
-          <List
+          <ManagerList
             leadStatusList={leadStatusList}
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}

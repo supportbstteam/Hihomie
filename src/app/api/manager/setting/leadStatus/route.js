@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
+import CardAssignUser from '@/models/CardAssignUser'
 import getUserFromServerSession from '@/lib/getUserFromServerSession'
 
 export async function POST(req) {
@@ -26,50 +27,37 @@ export async function GET() {
     const user = await getUserFromServerSession()
 
     try {
-        await dbConnect(); 
-
+        await dbConnect();
+  
         const pipeline = [
             {
-                // Stage 1: Check for documents that have at least one matching nested card.
-                // This is not a strict filter; it just helps in the next stage.
-                $addFields: {
-                    hasMatch: {
-                        $anyElementTrue: [
-                            {
-                                $map: {
-                                    input: "$cards",
-                                    as: "card",
-                                    in: { $eq: ["$$card.assigned", user.id] }
-                                }
-                            }
-                        ]
-                    }
+                $lookup: {
+                    from: "cardassignusers",
+                    let: { userIdStr: { $toString: user.id } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$userId", "$$userIdStr"] } } },
+                        { $project: { cardId: 1, _id: 0 } }
+                    ],
+                    as: "assignedCards"
                 }
             },
             {
-                // Stage 2: Reshape the document based on whether a match was found.
                 $project: {
-                    // Keep all fields from the original document.
                     _id: '$_id',
                     status_name: '$status_name',
                     color: '$color',
                     cards: {
-                        $cond: {
-                            if: "$hasMatch",
-                            // then: "matched",
-                            then: {
-                                $filter: {
-                                    input: "$cards",
-                                    as: "card",
-                                    cond: { $eq: ["$$card.assigned", user.id] }
-                                }
-                            },
-                            else: []
+                        $filter: {
+                            input: "$cards",
+                            as: "card",
+                            // The core condition: check if the card's _id (as a string) is in the assignedCardIds array
+                            // We can directly access the 'cardId' field from the assignedCards array
+                            cond: { $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"] }
                         }
-                    },
+                    }
                 }
-            }
-        ]
+            },
+        ];
         const data = await LeadStatus.aggregate(pipeline);
         return NextResponse.json({ data }, { status: 201 })
     } catch (error) {

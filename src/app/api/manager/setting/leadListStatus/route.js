@@ -3,13 +3,38 @@ import LeadStatus from "@/models/LeadStatus";
 import CardAssignUser from "@/models/CardAssignUser";
 import User from "@/models/User";
 import dbConnect from "@/lib/db";
+import getUserFromServerSession from "@/lib/getUserFromServerSession";
 
 
 export async function GET(req) {
   await dbConnect();
 
   try {
+    const user = await getUserFromServerSession()
+
     const cards = await LeadStatus.aggregate([
+      {
+        $lookup: {
+          from: "cardassignusers",
+          let: { userIdStr: { $toString: user.id } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$userId", "$$userIdStr"] } } },
+            { $project: { cardId: 1, _id: 0 } }
+          ],
+          as: "assignedCards"
+        }
+      },
+      {
+        $addFields: {
+          cards: {
+            $filter: {
+              input: "$cards",
+              as: "card",
+              cond: { $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"] },
+            },
+          },
+        },
+      },
       { $unwind: "$cards" }, // 🔥 Flatten cards from all statuses
 
       // 🔥 Lookup assigned users by matching cardId (convert _id -> string)
@@ -57,7 +82,7 @@ export async function GET(req) {
       {
         $project: {
           _id: "$cards._id",
-          leadStatusname: "$status_name", 
+          leadStatusname: "$status_name",
           name: "$cards.lead_title", // renamed
           surname: "$cards.surname",
           lead_title: "$cards.lead_title",
