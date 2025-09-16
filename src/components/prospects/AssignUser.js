@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { BsPlusCircleDotted } from 'react-icons/bs'
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
-import getUserFromSession from '@/lib/getUserFromSession';
+import useUserFromSession from '@/lib/useUserFromSession';
 import { t } from '@/components/translations';
 
 const AssignUser = ({ colId, cardid }) => {
-    const user = getUserFromSession();
+    const user = useUserFromSession();
     const dispatch = useDispatch();
     const { loader, assignTeam, team, errorMessage, successMessage } = useSelector((state) => state.team);
 

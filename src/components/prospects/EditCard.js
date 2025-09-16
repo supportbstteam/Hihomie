@@ -13,14 +13,14 @@ import AssignUser from "./AssignUser";
 import { Button } from "../ui/Button";
 import { Trash2 } from "lucide-react";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
-import getUserFromSession from "@/lib/getUserFromSession";
+import useUserFromSession from "@/lib/useUserFromSession";
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage, comments } = useSelector(
     (state) => state.customer
   );
-  const authUser = getUserFromSession();
+  const authUser = useUserFromSession();
   const [users, setUsers] = useState([]);
   const [details, setDetails] = useState(false);
   const [address_details, setAddressDetails] = useState(false);
