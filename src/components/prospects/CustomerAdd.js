@@ -14,7 +14,7 @@ import Dropdown from "../ui/DropDown";
 import { Asterisk } from "lucide-react";
 import { useSession } from "next-auth/react"; // 1. Import useSession
 
-const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
+const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus }) => {
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage } = useSelector(
     (state) => state.customer
@@ -59,12 +59,12 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
 
   useEffect(() => {
     // 3. Conditionally set the 'assigned' field based on the user's role
-    if (session?.user?.role === t("manager") || session?.user?.role === t("staff")) {
+    if (session?.user?.role === "manager" || session?.user?.role === "staff") {
       setFormData((prev) => ({
         ...prev,
         assigned: session.user.id,
       }));
-    } else if (session?.user?.role === t("admin")) {
+    } else if (session?.user?.role === "admin") {
       // If admin, they can choose anyone, but we can set a default if needed
       // For now, we'll leave it as is so they can select from the dropdown.
     }
@@ -149,10 +149,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      setOpen(false);
-      dispatch(messageClear());
-      dispatch(get_leadStatusData());
-      dispatch(get_leadStatusDataForList());
+      handleCardAdded();
     }
     if (errorMessage) {
       toast.error(errorMessage);
@@ -293,8 +290,8 @@ const CustomerAdd = ({ open, setOpen, selectedColId, leadStatus }) => {
                     label={t("assigned_to")}
                     name="assigned"
                     title={t("select_assigned")}
-                    value={session?.user?.id || ""}
-                    onChange={() => { }}
+                    value={formData.assigned || ""}
+                    onChange={handleChange}
                     options={[
                       {
                         value: session?.user?.id || "",

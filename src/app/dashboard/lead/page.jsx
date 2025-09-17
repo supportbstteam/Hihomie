@@ -79,14 +79,11 @@ export default function CustomDnD() {
     }
   }, [leadStatus]);
 
-  const handleCardAdded = (colId, newCard) => {
-    setColumns((prev) => ({
-      ...prev,
-      [colId]: {
-        ...prev[colId],
-        cards: [...prev[colId].cards, newCard],
-      },
-    }));
+  const handleCardAdded = () => {
+    setOpen(false);
+    dispatch(messageClear());
+    dispatch(get_leadStatusData());
+    dispatch(get_leadStatusDataForList());
   };
 
   const handleDragStart = (cardId, sourceColId, index) => {
@@ -372,12 +369,6 @@ export default function CustomDnD() {
               </div>
             </div>
           ))}
-          {/* <Filter
-            leadStatusList={leadStatus}
-            filterOpen={filterOpen}
-            setFilterOpen={setFilterOpen}
-            setSelecteFilterData={setSelecteFilterData}
-          /> */}
         </div>
       ) : (
         <div className="p-3 sm:p-5">
@@ -397,13 +388,13 @@ export default function CustomDnD() {
         </div>
       )}
 
-      <CustomerAdd
+      {open && <CustomerAdd
         open={open}
         setOpen={setOpen}
         selectedColId={selectedColId}
-        onCardAdded={handleCardAdded}
+        handleCardAdded={handleCardAdded}
         leadStatus={leadStatus}
-      />
+      />}
 
       {selectedUser && (
         <EditCard

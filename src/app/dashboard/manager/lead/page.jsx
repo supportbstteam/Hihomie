@@ -79,14 +79,11 @@ export default function CustomDnD() {
     }
   }, [leadStatus]);
 
-  const handleCardAdded = (colId, newCard) => {
-    setColumns((prev) => ({
-      ...prev,
-      [colId]: {
-        ...prev[colId],
-        cards: [...prev[colId].cards, newCard],
-      },
-    }));
+  const handleCardAdded = () => {
+    setOpen(false);
+    dispatch(messageClear());
+    dispatch(get_manager_leadStatusData());
+    dispatch(get_manager_leadStatusDataForList());
   };
 
   const handleDragStart = (cardId, sourceColId, index) => {
@@ -212,8 +209,9 @@ export default function CustomDnD() {
         <div className="flex items-center justify-between p-4">
           <div className="hidden sm:flex flex-col">
             <h2 className="h2">{t("lead_management")}</h2>
-            <span className="p text-muted-foreground">{t("organize_leads_and_track_their_progress_effectively_here")}</span>
-
+            <span className="p text-muted-foreground">
+              {t("organize_leads_and_track_their_progress_effectively_here")}
+            </span>
           </div>
           <div className="flex w-full sm:w-auto justify-end">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -386,17 +384,20 @@ export default function CustomDnD() {
             selecteFilterData={selecteFilterData}
             setSelectedUser={setSelectedUser}
             successMessage={successMessage}
+            setSelectedColId={setSelectedColId}
           />
         </div>
       )}
 
-      <CustomerAdd
-        open={open}
-        setOpen={setOpen}
-        selectedColId={selectedColId}
-        onCardAdded={handleCardAdded}
-        leadStatus={leadStatus}
-      />
+      {open && (
+        <CustomerAdd
+          open={open}
+          setOpen={setOpen}
+          selectedColId={selectedColId}
+          handleCardAdded={handleCardAdded}
+          leadStatus={leadStatus}
+        />
+      )}
 
       {selectedUser && (
         <EditCard

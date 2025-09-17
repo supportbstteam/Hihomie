@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import { t } from "@/components/translations";
 import Input from "../ui/Input";
 import Dropdown from "../ui/DropDown";
@@ -157,6 +158,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   useEffect(() => {
     if (successMessage) {
       if (successMessage === "Comment added successfully") {
+        toast.success(successMessage);
       } else {
         setSelectedUser(null);
         setFormData({
