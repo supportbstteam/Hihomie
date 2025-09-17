@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -157,7 +157,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (successMessage) {
-      if (successMessage === "Comment added successfully") {
+      if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully") {
         toast.success(successMessage);
       } else {
         setSelectedUser(null);
@@ -232,6 +232,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     dispatch(add_customer_comments({ commentFormData, cardId: selectedUser._id }));
+  };
+
+  const handleCommentDelete = (id) => {
+    dispatch(delete_comments(id));
   };
 
   return (
@@ -565,8 +569,25 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 <div>
                   <div className="space-y-1 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg shadow-inner">
                     {comments && comments.map((comment, index) => (
-                      <div key={index} className="bg-white p-2 rounded-md shadow-sm border border-gray-200">
-                        <p className="text-gray-800 text-sm">{comment.comment}</p>
+                      // Comment component
+                      <div key={index} className="relative flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
+                        <p className="text-gray-800 text-sm pr-10">{comment.comment}</p>
+                        {authUser?.role === "admin" ? (
+                          <button
+                            onClick={() => handleCommentDelete(comment._id)}
+                            className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
+                          >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )
+                         : authUser?.id === comment.userId && (
+                            <button
+                              onClick={() => handleCommentDelete(comment._id)}
+                              className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                        )}
                       </div>
                     ))}
                   </div>

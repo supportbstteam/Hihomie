@@ -118,6 +118,18 @@ export const get_customer_comments = createAsyncThunk(
    }
 );
 
+export const delete_comments = createAsyncThunk(
+   'delete_comments',
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/customer/${id}/comments`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
 
 
 
@@ -224,7 +236,7 @@ export const customerReducer = createSlice({
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
          })
-      
+
          .addCase(add_customer_comments.fulfilled, (state, { payload }) => {
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
@@ -233,13 +245,22 @@ export const customerReducer = createSlice({
             state.loader = false;
             state.errorMessage = payload.error;
          })
-      
+
          .addCase(get_customer_comments.fulfilled, (state, { payload }) => {
             state.comments = payload.comments;
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
          })
          .addCase(get_customer_comments.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+
+         .addCase(delete_comments.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(delete_comments.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })

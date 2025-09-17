@@ -35,3 +35,20 @@ export async function GET(req, context) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function DELETE(req, context) { 
+    const { id } = await context.params;
+    try {
+        await dbConnect();
+
+        const deletedComment = await Comments.findByIdAndDelete(id);
+
+        if (!deletedComment) {
+            return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ message: "Comment deleted successfully" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+ }
