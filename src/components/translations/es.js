@@ -133,6 +133,7 @@ const es = {
   staff: "Personal",
   comment: "Comentario",
   enter_comment: "Introduce un comentario",
+  due_date: "Fecha de vencimiento",
 };
 
 export default es;

@@ -130,6 +130,29 @@ export const delete_comments = createAsyncThunk(
    }
 );
 
+export const add_due_date = createAsyncThunk(
+   'add_due_date',
+   async ({ dueDateForm, cardId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post(`/customer/${cardId}/due-date`, dueDateForm, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
+export const get_due_date = createAsyncThunk(
+   'get_due_date',
+   async (cardId, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/customer/${cardId}/due-date`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
 
 
 
@@ -142,6 +165,7 @@ export const customerReducer = createSlice({
       loader: false,
       customer: [],
       comments: [],
+      dueDate: '',
    },
    reducers: {
 
@@ -261,6 +285,25 @@ export const customerReducer = createSlice({
             state.loader = false;
          })
          .addCase(delete_comments.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+
+         .addCase(add_due_date.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(add_due_date.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+
+         .addCase(get_due_date.fulfilled, (state, { payload }) => {
+            state.dueDate = payload.dueDate;
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(get_due_date.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })

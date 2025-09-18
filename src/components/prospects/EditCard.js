@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -15,10 +15,14 @@ import { Button } from "../ui/Button";
 import { Trash2 } from "lucide-react";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import useUserFromSession from "@/lib/useUserFromSession";
+import Datepicker from "../ui/Datepicker";
+import { format } from "date-fns";
+
+const date = format(new Date(), "yyyy-MM-dd");
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage, comments } = useSelector(
+  const { loader, successMessage, errorMessage, comments, dueDate } = useSelector(
     (state) => state.customer
   );
   const authUser = useUserFromSession();
@@ -211,6 +215,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     }));
   }, [addressDetailsData]);
 
+  // Comment Section Logic
   const [commentFormData, setCommentFormData] = useState({
     comment: "",
     colId: selectedUser.status ? selectedUser.status : colId || "",
@@ -219,6 +224,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     dispatch(get_customer_comments(selectedUser._id));
+  }, []);
+
+  useEffect(() => {
+    if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully") {
+      dispatch(get_customer_comments(selectedUser._id));
+    }
   }, [selectedUser, successMessage]);
 
   const handleCommentChange = (e) => {
@@ -236,6 +247,47 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const handleCommentDelete = (id) => {
     dispatch(delete_comments(id));
+  };
+
+  // Due Date Section Logic
+  const [dueDateForm, setDueDateForm] = useState({
+    due_date: "",
+    due_date_note: "",
+    colId: selectedUser.status ? selectedUser.status : colId || "",
+    userId: authUser.id,
+  });
+
+  useEffect(() => {
+    dispatch(get_due_date(selectedUser._id));
+  }, []);
+
+  useEffect(() => {
+    if (dueDate) {
+      setDueDateForm((prev) => ({
+        ...prev,
+        due_date: dueDate.due_date || "",
+        due_date_note: dueDate.due_date_note || "",
+      }));
+    }
+  }, [dueDate]);
+
+  useEffect(() => {
+    if (successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully") {
+      dispatch(get_due_date(selectedUser._id));
+    }
+  }, [selectedUser, successMessage]);
+
+  const handleDueDateFormChange = (e) => {
+    const { name, value } = e.target;
+    setDueDateForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDueDateSubmit = (e) => {
+    e.preventDefault();
+    dispatch(add_due_date({ dueDateForm, cardId: selectedUser._id }));
   };
 
   return (
@@ -551,6 +603,24 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 {/* <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
                   <Trash2 className="w-4 h-4" />
                 </Button> */}
+                <form onSubmit={handleDueDateSubmit}>
+                  <Input
+                    label={t("due_date")}
+                    name="due_date_note"
+                    value={dueDateForm.due_date_note}
+                    onChange={handleDueDateFormChange}
+                  />
+                  <Datepicker
+                    // label={t("due_date")}
+                    name="due_date"
+                    value={dueDateForm.due_date}
+                    onChange={handleDueDateFormChange}
+                    dateFormat="dd/MM/yyyy" // <-- Customize your format here!
+                  />
+                  <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                    {loader ? t("loading") : t("submit")}
+                  </button>
+                </form>
               </div>
               <div className="space-y-4 mb-5 col-span-8">
                 <form onSubmit={handleCommentSubmit}>
@@ -563,7 +633,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     error={errors.comment}
                   />
                   <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
-                    {loader ? t("loading") : t("submit")}
+                    {t("submit")}
                   </button>
                 </form>
                 <div>
@@ -577,17 +647,17 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                             onClick={() => handleCommentDelete(comment._id)}
                             className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
                           >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )
-                         : authUser?.id === comment.userId && (
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )
+                          : authUser?.id === comment.userId && (
                             <button
                               onClick={() => handleCommentDelete(comment._id)}
                               className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
-                        )}
+                          )}
                       </div>
                     ))}
                   </div>

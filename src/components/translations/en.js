@@ -133,6 +133,7 @@ const en = {
   staff: "Staff",
   comment: "Comment",
   enter_comment: "Enter comment",
+  due_date: "Due Date",
 };
 
 export default en;
