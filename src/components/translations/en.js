@@ -134,6 +134,10 @@ const en = {
   comment: "Comment",
   enter_comment: "Enter comment",
   due_date: "Due Date",
+  from_date: "From Date",
+  to_date: "To Date",
+  user: "User",
+  select_user: "Select User",
 };
 
 export default en;

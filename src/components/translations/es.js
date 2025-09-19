@@ -134,6 +134,10 @@ const es = {
   comment: "Comentario",
   enter_comment: "Introduce un comentario",
   due_date: "Fecha de vencimiento",
+  from_date: "Fecha de inicio",
+  to_date: "Fecha final",
+  user: "Usuario",
+  select_user: "Seleccionar usuario",
 };
 
 export default es;

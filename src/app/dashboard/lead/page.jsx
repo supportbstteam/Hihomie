@@ -28,9 +28,11 @@ import {
   List as ListIcon,
   ListFilter,
   Download,
+  Upload,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
+import ExportModal from "@/components/prospects/Export";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
 import { t } from "@/components/translations";
@@ -53,6 +55,7 @@ export default function CustomDnD() {
   const [listComponent, setListComponent] = useState(false);
   const [selecteFilterData, setSelecteFilterData] = useState();
   const [impodeOpen, setImpodeOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const touchPosition = useRef({ x: 0, y: 0 });
 
@@ -209,8 +212,9 @@ export default function CustomDnD() {
         <div className="flex items-center justify-between p-4">
           <div className="hidden sm:flex flex-col">
             <h2 className="h2">{t("lead_management")}</h2>
-            <span className="p text-muted-foreground">{t("organize_leads_and_track_their_progress_effectively_here")}</span>
-
+            <span className="p text-muted-foreground">
+              {t("organize_leads_and_track_their_progress_effectively_here")}
+            </span>
           </div>
           <div className="flex w-full sm:w-auto justify-end">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -233,10 +237,20 @@ export default function CustomDnD() {
 
               <Icon
                 variant="outline"
-                icon={Download}
+                title="Upload"
+                icon={Upload}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setImpodeOpen(true)}
+              />
+
+              <Icon
+                variant="outline"
+                title="Download"
+                icon={Download}
+                size={16}
+                color="#99A1B7"
+                onClick={() => setExportOpen(true)}
               />
 
               <Icon
@@ -388,13 +402,15 @@ export default function CustomDnD() {
         </div>
       )}
 
-      {open && <CustomerAdd
-        open={open}
-        setOpen={setOpen}
-        selectedColId={selectedColId}
-        handleCardAdded={handleCardAdded}
-        leadStatus={leadStatus}
-      />}
+      {open && (
+        <CustomerAdd
+          open={open}
+          setOpen={setOpen}
+          selectedColId={selectedColId}
+          handleCardAdded={handleCardAdded}
+          leadStatus={leadStatus}
+        />
+      )}
 
       {selectedUser && (
         <EditCard
@@ -407,6 +423,9 @@ export default function CustomDnD() {
 
       {impodeOpen && (
         <ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />
+      )}
+      {exportOpen && (
+        <ExportModal isOpen={exportOpen} setExportOpen={setExportOpen} />
       )}
     </div>
   );

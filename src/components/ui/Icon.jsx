@@ -10,6 +10,7 @@ const Icon = ({
   className ,
   href,
   onClick,
+  title,
   ...props
 }) => {
   if (!IconComponent) {
@@ -46,7 +47,7 @@ const Icon = ({
   );
 
   const wrapper = (
-    <div onClick={onClick} className={classes}>
+    <div onClick={onClick} className={classes} title={title}>
       {iconElement}
     </div>
   );
