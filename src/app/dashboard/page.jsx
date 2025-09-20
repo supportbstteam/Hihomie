@@ -9,7 +9,7 @@ export default async function DashboardPage() {
   if (!session) redirect("/login");
   return (
     <>
-      <LowerNav className="w-full p-0" />
+      {/* <LowerNav className="w-full p-0" /> */}
       <div className="p-6 bg-background-secondary h-full">
         <h1 className="h1 mb-2 ">
           Welcome, {session.user?.name || session.user?.email}

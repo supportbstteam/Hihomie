@@ -34,7 +34,6 @@ export async function POST(request) {
                 assignedCardIds = allCardIds.map(id => new mongoose.Types.ObjectId(id));
             }
         }
-        console.log(assignedCardIds, assignedCardIds.length);
 
         const pipeline = [
             // 1. Unwind the 'category' array to work with individual category documents.

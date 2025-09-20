@@ -2,7 +2,7 @@
 import CustomerAdd from "@/components/prospects/CustomerAdd";
 import EditCard from "@/components/prospects/EditCard";
 import {
-  get_leadStatusCardUpdate,
+  get_manager_leadStatusCardUpdate,
   get_manager_leadStatusData,
   get_manager_leadStatusDataForList,
 } from "@/store/setting";
@@ -29,9 +29,11 @@ import {
   List as ListIcon,
   ListFilter,
   Download,
+  Upload,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
+import ExportModal from "@/components/prospects/Export";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
 import { t } from "@/components/translations";
@@ -53,6 +55,7 @@ export default function CustomDnD() {
   const [listComponent, setListComponent] = useState(false);
   const [selecteFilterData, setSelecteFilterData] = useState();
   const [impodeOpen, setImpodeOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const touchPosition = useRef({ x: 0, y: 0 });
 
@@ -125,7 +128,7 @@ export default function CustomDnD() {
 
     handleDragEnd();
     dispatch(
-      get_leadStatusCardUpdate({
+      get_manager_leadStatusCardUpdate({
         sourceColId: draggedCard.sourceColId,
         destColId: destColId,
         cardId: draggedObj._id || draggedObj.id,
@@ -234,10 +237,20 @@ export default function CustomDnD() {
 
               <Icon
                 variant="outline"
-                icon={Download}
+                title="Upload"
+                icon={Upload}
                 size={16}
                 color="#99A1B7"
                 onClick={() => setImpodeOpen(true)}
+              />
+
+              <Icon
+                variant="outline"
+                title="Download"
+                icon={Download}
+                size={16}
+                color="#99A1B7"
+                onClick={() => setExportOpen(true)}
               />
 
               <Icon
@@ -410,6 +423,9 @@ export default function CustomDnD() {
 
       {impodeOpen && (
         <ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />
+      )}
+      {exportOpen && (
+        <ExportModal isOpen={exportOpen} setExportOpen={setExportOpen} />
       )}
     </div>
   );

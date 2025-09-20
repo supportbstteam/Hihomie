@@ -64,6 +64,29 @@ export const get_leadStatusCardUpdate = createAsyncThunk(
    }
 );
 
+export const get_manager_leadStatusCardUpdate = createAsyncThunk(
+   "customer/get_manager_leadStatusCardUpdate",
+   async ({ sourceColId, destColId, cardId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.put(
+            `/manager/setting/leadStatus`,
+            {
+               sourceColId,
+               destColId,
+               cardId,
+            },
+            {
+               withCredentials: true,
+            }
+         );
+
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
 
 export const delete_leadStatusDelete = createAsyncThunk(
    "customer/delete_leadStatusDelete",
@@ -211,6 +234,16 @@ export const settingReducer = createSlice({
             state.loader = false;
          })
 
+         .addCase(get_manager_leadStatusCardUpdate.fulfilled, (state, { payload }) => {
+            // const { sourceCol, destCol } = payload;
+
+            // state.leadStatus = state.leadStatus.map(col => {
+            //    if (col._id === sourceCol._id) return sourceCol;
+            //    if (col._id === destCol._id) return destCol;
+            //    return col;
+            // });
+            // state.loader = false;
+         })
 
          .addCase(update_statusData.pending, (state, { payload }) => {
             state.loader = true;
