@@ -9,7 +9,7 @@ import Datepicker from "../ui/Datepicker";
 import { X } from "lucide-react";
 import { Button } from "../ui/Button";
 import useUserFromSession from "@/lib/useUserFromSession";
-import Dropdown from "../ui/Dropdown";
+import DropDown from "../ui/DropDown";
 import { t } from "@/components/translations";
 
 const ExportModal = ({ isOpen, setExportOpen }) => {
@@ -120,7 +120,7 @@ const ExportModal = ({ isOpen, setExportOpen }) => {
                                     value={formData.to_date}
                                     onChange={handleChange}
                                 />
-                                {user.role == "admin" && <Dropdown
+                                {user.role == "admin" && <DropDown
                                     label={t("user")}
                                     placeholder={t("select_user")}
                                     name="selected_user"

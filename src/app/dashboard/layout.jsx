@@ -3,12 +3,23 @@ import TopNav from "@/components/TopNav";
 
 export default function DashboardLayout({ children }) {
   return (
-    <>
-      <div className="grid grid-cols-12 grid-rows-12 gap-0  h-screen  ">
-        <div className="col-span-12 row-span-1 overflow-hidden"><TopNav /></div>
-        <div className="col-span-2 row-span-11  overflow-hidden"><Sidebar /></div>
-        <div className="col-span-10 row-span-11  overflow-y-hidden  ">{children}</div>
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* TopNav: Stays fixed at the top */}
+      <div>
+        <TopNav />
       </div>
-    </>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar: Stays fixed on the left */}
+        <div className="w-64 flex-shrink-0 bg-white">
+          <Sidebar />
+        </div>
+
+        {/* Main Content: Takes remaining space and is the only scrollable area */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
+    </div>
   );
-} 
+}

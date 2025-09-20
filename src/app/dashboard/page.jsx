@@ -1,24 +1,25 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Head from "next/head";
 import LowerNav from "@/components/LowerNav";
-import Stats from "@/components/Stats";
+import getUserFromServerSession from "@/lib/getUserFromServerSession";
+import { Dashboard } from "@/components/Dashboard";
+
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
+  const user = await getUserFromServerSession();
+  if (!user) redirect("/login");
   return (
     <>
       {/* <LowerNav className="w-full p-0" /> */}
-      <div className="p-6 bg-background-secondary h-full">
+      {/* <div className="p-6 bg-background-secondary">
         <h1 className="h1 mb-2 ">
-          Welcome, {session.user?.name || session.user?.email}
+          Welcome, {user?.name || user?.email}
         </h1>
         <p className="p text-muted-foreground">
           You are signed in as{" "}
-          <span className="font-medium text-primary">{session.user.role}</span>.
+          <span className="font-medium text-primary">{user.role}</span>.
         </p>
-      </div>
+      </div> */}
+      <Dashboard />
     </>
   );
 }

@@ -80,8 +80,8 @@ const Page = () => {
             {/* Table */}
             <div className="p-4 bg-background-secondary">
                 <div className="p-6 bg-white rounded-xl shadow-md ">
-                    <div className="overflow-x-auto overflow-y-auto h-[calc(100vh-250px)]">
-                        <table className="min-w-full table-auto border border-gray-200 rounded-lg overflow-y-auto">
+                    <div className="overflow-x-auto h-[calc(100vh-250px)]">
+                        <table className="min-w-full table-auto border border-gray-200 rounded-lg">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">{t('Sr. No')}</th>
