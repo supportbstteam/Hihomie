@@ -16,60 +16,11 @@ import {
 } from "recharts";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { get_total_lead } from "@/store/dashboard";
+import { get_total_lead, get_newLeadsThisWeek, get_latestActivities } from "@/store/dashboard";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
 const COLORS_SIGNED = ["#e5e7eb", "#22c55e"];
-
-// --- Data ---
-const newLeadsData = [
-  { name: "Monday", value: 150 },
-  { name: "Tuesday", value: 250 },
-  { name: "Wednesday", value: 180 },
-  { name: "Thursday", value: 30 },
-  { name: "Friday", value: 100 },
-  { name: "Saturday", value: 190 },
-  { name: "Sunday", value: 210 },
-];
-
-const latestActivities = [
-  {
-    name: "Savannah Nguyen",
-    date: "Jun 16, 2025",
-    assigned: "Sonia Degollada",
-    status: "In Bank",
-    initial: "S",
-  },
-  {
-    name: "Darrell Steward",
-    date: "Jul 30, 2025",
-    assigned: "Adria Fernandez",
-    status: "In Bank",
-    initial: "D",
-  },
-  {
-    name: "Arlene McCoy",
-    date: "Mar 29, 2025",
-    assigned: "Inma Macias",
-    status: "In Bank",
-    initial: "A",
-  },
-  {
-    name: "Dianne Russell",
-    date: "May 11, 2025",
-    assigned: "Axel Ortega",
-    status: "In Bank",
-    initial: "D",
-  },
-  {
-    name: "Jenny Wilson",
-    date: "Jun 13, 2025",
-    assigned: "Tandem Test",
-    status: "In Bank",
-    initial: "J",
-  },
-];
 
 const signedOrderData = [
   { name: "With Signed", value: 75 },
@@ -176,11 +127,13 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
 
 export function Dashboard() {
   const dispatch = useDispatch();
-  const { totalLeads, totalManager, totalAgent, successTag } = useSelector(
+  const { totalLeads, totalManager, totalAgent, latestActivities, newLeadsThisWeek, successTag } = useSelector(
     (state) => state.dashboard
   );
   useEffect(() => {
     dispatch(get_total_lead());
+    dispatch(get_newLeadsThisWeek());
+    dispatch(get_latestActivities());
   }, []);
   return (
     <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
@@ -213,18 +166,21 @@ export function Dashboard() {
             <div className="h-48 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={newLeadsData}
+                  data={newLeadsThisWeek}
                   margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
                 >
                   <XAxis
                     dataKey="name"
                     tickLine={false}
-                    axisLine={false}
+                    axisLine={true}
                     tick={{ fontSize: 12 }}
+                    angle={-25}
+                    textAnchor="end"
+                    height={40}
                   />
                   <YAxis
-                    tickLine={false}
-                    axisLine={false}
+                    tickLine={true}
+                    axisLine={true}
                     tick={{ fontSize: 12 }}
                   />
                   <Tooltip />
@@ -251,22 +207,28 @@ export function Dashboard() {
                     <td className="py-3 pr-3">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-                          {activity.initial}
+                          {activity.lead_title.charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <div className="font-medium text-gray-800">
-                            {activity.name}
+                            {activity.lead_title}
                           </div>
-                          <div className="text-gray-500">{activity.date}</div>
+                          <div className="text-gray-500">
+                            {new Date(activity.createdAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="py-3 px-3 text-gray-600">
-                      {activity.assigned}
+                      {activity.lead_value}
                     </td>
                     <td className="py-3 pl-3 text-right">
                       <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                        {activity.status}
+                        {activity.status_name}
                       </span>
                     </td>
                   </tr>
