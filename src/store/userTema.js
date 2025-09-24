@@ -28,6 +28,29 @@ export const get_teamData = createAsyncThunk(
    }
 );
 
+export const get_userById = createAsyncThunk(
+   "user/get_userById",
+   async({ id }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/user/${id}`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
+
+export const update_userById = createAsyncThunk(
+   "user/update_userById",
+   async ({ id, object }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.patch(`/user/${id}`, object, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
+);
 
 export const delete_teamData = createAsyncThunk(
    "team/delete_teamData",
@@ -93,7 +116,8 @@ export const userTeamReducer = createSlice({
       errorMessage: '',
       loader: false,
       team: [],
-      assignTeam : [],
+      assignTeam: [],
+      userById: '',
    },
    reducers: {
 
@@ -183,6 +207,32 @@ export const userTeamReducer = createSlice({
             state.assignTeam = payload.data;
             state.loader = false;
             state.successMessage = payload.message;
+         })
+      
+         .addCase(get_userById.pending, (state, _) => {
+            state.loader = true;
+         })
+         .addCase(get_userById.fulfilled, (state, { payload }) => {
+            state.userById = payload.data;
+            state.loader = false;
+            state.successMessage = payload.message;
+         })
+         .addCase(get_userById.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
+         })
+      
+         .addCase(update_userById.pending, (state, _) => {
+            state.loader = true;
+         })
+         .addCase(update_userById.fulfilled, (state, { payload }) => {
+            state.loader = false;
+            state.successMessage = payload.message;
+            state.userById = payload.data;
+         })
+         .addCase(update_userById.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
          })
    }
 })

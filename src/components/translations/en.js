@@ -138,6 +138,8 @@ const en = {
   to_date: "To Date",
   user: "User",
   select_user: "Select User",
+  profile: "Profile",
+  admin: "Admin",
 };
 
 export default en;

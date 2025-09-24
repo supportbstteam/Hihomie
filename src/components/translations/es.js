@@ -138,6 +138,8 @@ const es = {
   to_date: "Fecha final",
   user: "Usuario",
   select_user: "Seleccionar usuario",
+  profile: "Perfil",
+  admin: "Administración",
 };
 
 export default es;

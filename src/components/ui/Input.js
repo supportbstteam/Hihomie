@@ -11,7 +11,7 @@ const Input = ({ label, error, className, required, ...props }) => {
       </div>
       <input
         className={clsx(
-          "w-full text-sm text-gray-400 px-2 py-3 border rounded-md focus:outline-none focus:ring-inset focus:ring-1",
+          "w-full text-sm text-gray-500 px-2 py-3 border rounded-md focus:outline-none focus:ring-inset focus:ring-1",
           error ? "border-red-500" : "border-stroke focus:ring-primary placeholder-light",
           className
         )}

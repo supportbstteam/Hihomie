@@ -14,6 +14,7 @@ const Datepicker = ({
   name,
   error,
   required,
+  icon,
   dateFormat = "dd/MM/yyyy", // Default format, can be overridden by props
   ...props
 }) => {
@@ -41,11 +42,12 @@ const Datepicker = ({
         )}
         {required && <Asterisk size={12} color="#E33629" />}
       </div>
-      
+
+      <div className="relative">
       <DatePicker
         id={inputId}
         name={name}
-        selected={ formattedValue ? formattedValue : null} // `selected` expects a Date object or null
+        selected={formattedValue ? formattedValue : null} // `selected` expects a Date object or null
         onChange={handleChange}
         dateFormat={dateFormat} // <-- THE KEY PROP FOR FORMATTING
         className={clsx(
@@ -56,7 +58,12 @@ const Datepicker = ({
         autoComplete="off"
         {...props}
       />
-      
+      {icon && (
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pr-4 pointer-events-none">
+          {icon}
+        </span>
+      )}
+      </div>
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );

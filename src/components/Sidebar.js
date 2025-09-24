@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { usePathname } from "next/navigation"; // ✅ Add this
-import { FaAt } from "react-icons/fa";
+import { FaAt, FaRegUser } from "react-icons/fa";
 import {
   MdOutlineAssuredWorkload,
   MdOutlineCalculate,
@@ -46,6 +46,7 @@ const MENU = {
   manager: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
@@ -53,6 +54,7 @@ const MENU = {
   staff: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
