@@ -47,7 +47,7 @@ const Dropdown = ({
             });
           }}
           className={clsx(
-            "text-gray-400 text-sm appearance-none font-normal font-heading w-full px-2 py-3 border pr-10 rounded-md focus:outline-none focus:ring-inset focus:ring-1 focus:ring-primary overflow-hidden",
+            "text-gray-400 text-sm appearance-none font-normal font-heading w-full px-2 py-3 border border-gray-400 pr-10 rounded-md focus:outline-none focus:ring-inset focus:ring-1 focus:ring-primary overflow-hidden",
             error ? "border-red-500" : "border-stroke",
             // sizeStyles[size],
             className

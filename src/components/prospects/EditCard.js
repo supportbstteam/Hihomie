@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ import Form1 from "./Form1";
 import Form2 from "./Form2";
 import AssignUser from "./AssignUser";
 import { Button } from "../ui/Button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Clock } from "lucide-react";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import useUserFromSession from "@/lib/useUserFromSession";
 import Datepicker from "../ui/Datepicker";
@@ -161,7 +161,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (successMessage) {
-      if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully") {
+      if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully") {
         toast.success(successMessage);
       } else {
         setSelectedUser(null);
@@ -288,6 +288,11 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const handleDueDateSubmit = (e) => {
     e.preventDefault();
     dispatch(add_due_date({ dueDateForm, cardId: selectedUser._id }));
+  };
+
+  const handleDeleteDueDate = (id) => {
+    console.log(id);
+    dispatch(delete_due_date(id));
   };
 
   return (
@@ -596,31 +601,80 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   </div>
                 </section>
               </form>
-              <div className="col-span-4 h-full space-y-4 bg-gray-100 p-2 rounded-lg">
-                <div className="h-fit bg-primary/20 p-2 rounded-lg mb-4">
+              <div className="col-span-4 h-full space-y-4 bg-gray-50">
+                <div className="h-fit bg-primary/20 p-2 mb-4">
                   <AssignUser colId={colId} cardid={selectedUser._id} />
                 </div>
                 {/* <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
                   <Trash2 className="w-4 h-4" />
                 </Button> */}
-                <form onSubmit={handleDueDateSubmit}>
-                  <Input
-                    label={t("due_date")}
-                    name="due_date_note"
-                    value={dueDateForm.due_date_note}
-                    onChange={handleDueDateFormChange}
-                  />
-                  <Datepicker
-                    // label={t("due_date")}
-                    name="due_date"
-                    value={dueDateForm.due_date}
-                    onChange={handleDueDateFormChange}
-                    dateFormat="dd/MM/yyyy" // <-- Customize your format here!
-                  />
-                  <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
-                    {loader ? t("loading") : t("submit")}
-                  </button>
-                </form>
+                <div>
+                  <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-t border-gray-300">
+                    {dueDate.map((item, index) => (
+                      <div
+                        key={index}
+                        className="p-4 m-2 bg-primary/20 rounded-xl flex flex-col gap-2 shadow-sm"
+                      >
+                        {/* Note Text */}
+                        <div className="text-gray-800 text-sm">
+                          {item.due_date_note}
+                        </div>
+
+                        {/* Footer with Icon + Date + Delete */}
+                        <div className="flex items-center justify-between text-gray-600 text-sm">
+                          <div className="flex items-center gap-2">
+                            <Clock size={20} />
+                            <span>
+                              {new Date(item.due_date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <Trash2
+                            onClick={() => handleDeleteDueDate(item._id)}
+                            size={20}
+                            className="cursor-pointer hover:text-red-500 transition"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <form onSubmit={handleDueDateSubmit} className="p-2">
+                    {/* The text input for the note */}
+                    <textarea
+                      name="due_date_note"
+                      value={dueDateForm.due_date_note}
+                      onChange={handleDueDateFormChange}
+                      placeholder="Hello, Enter your note..."
+                      className="w-full p-3 border border-gray-400 rounded-md" // Example styling for the text box
+                    />
+
+                    {/* Flex container for the bottom row */}
+                    <div className="flex items-center gap-2">
+                      {/* Wrapper to make the date picker fill available space */}
+                      <div className="flex-grow">
+                        <Datepicker
+                          name="due_date"
+                          value={dueDateForm.due_date}
+                          onChange={handleDueDateFormChange}
+                          dateFormat="dd/MM/yyyy" // <-- Customize your format here!
+                        />
+                      </div>
+
+                      {/* The schedule button */}
+                      <button
+                        type="submit"
+                        className="px-4 py-2 cursor-pointer bg-green-500 text-white rounded-md hover:bg-green-600"
+                      >
+                        {/* Using "Schedule" to match the image */}
+                        {loader ? t("loading") : "Schedule"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
               <div className="space-y-4 mb-5 col-span-8">
                 <form onSubmit={handleCommentSubmit}>

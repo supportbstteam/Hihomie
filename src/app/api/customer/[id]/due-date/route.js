@@ -32,9 +32,9 @@ export async function GET(req, context) {
     try {
         await dbConnect();
 
-        const dueDate = await DueDates.findOne({ cardId: id }).lean();
+        const dueDates = await DueDates.find({ cardId: id }).lean();
 
-        return NextResponse.json({ dueDate }, { status: 200 });
+        return NextResponse.json({ dueDates }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
@@ -42,16 +42,17 @@ export async function GET(req, context) {
 
 export async function DELETE(req, context) { 
     const { id } = await context.params;
+    console.log(id);
     try {
         await dbConnect();
 
-        const deletedComment = await Comments.findByIdAndDelete(id);
+        const deletedDueDate = await DueDates.findByIdAndDelete(id);
 
-        if (!deletedComment) {
-            return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+        if (!deletedDueDate) {
+            return NextResponse.json({ error: "Due date not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ message: "Comment deleted successfully" }, { status: 200 });
+        return NextResponse.json({ message: "Due date deleted successfully" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }

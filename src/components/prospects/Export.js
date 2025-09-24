@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import Icon from "../ui/Icon";
 import Datepicker from "../ui/Datepicker";
-import { X, Calendar } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "../ui/Button";
 import useUserFromSession from "@/lib/useUserFromSession";
 import DropDown from "../ui/DropDown";
@@ -116,7 +116,7 @@ const ExportModal = ({ isOpen, setExportOpen }) => {
                         </h2>
 
                         <div className="flex flex-col justify-center space-x-4 mb-4">
-                            <div className="grid grid-cols-1 mx-4 py-4 pr-4">
+                            <div className="grid grid-cols-1 mx-4 py-4">
                                 {user.role == "admin" && <DropDown
                                     label={t("select_user")}
                                     placeholder={t("select_user")}
@@ -131,7 +131,7 @@ const ExportModal = ({ isOpen, setExportOpen }) => {
                                 />}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-12 mx-4">
+                            <div className="grid grid-cols-2 gap-6 mx-4">
                                 <Datepicker
                                     label={t("from_date")}
                                     placeholder={t("from_date")}
@@ -139,7 +139,6 @@ const ExportModal = ({ isOpen, setExportOpen }) => {
                                     value={formData.from_date}
                                     onChange={handleChange}
                                     dateFormat="dd/MM/yyyy"
-                                    icon={<Calendar />  }
                                 />
                                 <Datepicker
                                     label={t("to_date")}
@@ -148,17 +147,16 @@ const ExportModal = ({ isOpen, setExportOpen }) => {
                                     value={formData.to_date}
                                     onChange={handleChange}
                                     dateFormat="dd/MM/yyyy"
-                                    icon={<Calendar />  }
                                 />
                             </div>
                         </div>
 
-                        {isLoading && <div className="flex justify-center items-center rounded-lg bg-green-100 ml-4 mr-8 p-4 ">
+                        {isLoading && <div className="flex justify-center items-center rounded-lg bg-green-100 mx-4 p-4 ">
                             <span className="mr-10"><p>Import in progress: We are currently processing your Excel sheet.</p></span>
                             <FaSpinner className="ml-2 animate-spin" size={30} />
                         </div>}
 
-                        <div className="flex justify-end space-x-2 mx-8 mt-6">
+                        <div className="flex justify-end space-x-2 mx-4 mt-6">
                             <Button variant="outline" onClick={() => setExportOpen(false)}>
                                 Cancel
                             </Button>

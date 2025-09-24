@@ -154,6 +154,18 @@ export const get_due_date = createAsyncThunk(
    }
 );
 
+export const delete_due_date = createAsyncThunk(
+   'delete_due_date',
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/customer/${id}/due-date`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
 
 
 export const customerReducer = createSlice({
@@ -165,7 +177,7 @@ export const customerReducer = createSlice({
       loader: false,
       customer: [],
       comments: [],
-      dueDate: '',
+      dueDate: [],
    },
    reducers: {
 
@@ -299,11 +311,20 @@ export const customerReducer = createSlice({
          })
 
          .addCase(get_due_date.fulfilled, (state, { payload }) => {
-            state.dueDate = payload.dueDate;
+            state.dueDate = payload.dueDates;
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
          })
          .addCase(get_due_date.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+      
+         .addCase(delete_due_date.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(delete_due_date.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })
