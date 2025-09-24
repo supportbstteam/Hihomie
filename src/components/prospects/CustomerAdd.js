@@ -272,7 +272,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                   error={errors.lead_value}
                 />
                 {/* Conditional rendering based on user role from NextAuth */}
-                {session?.user?.role === t("admin") ? (
+                {session?.user?.role === "admin" ? (
                   <Dropdown
                     label={t("assigned_to")}
                     name="assigned"

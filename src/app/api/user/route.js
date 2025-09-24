@@ -8,5 +8,6 @@ export async function GET() {
     const userData = users.map(({ password, ...rest }) => ({
       ...rest,
     }));
+  console.log("userData",userData);
     return NextResponse.json({ users: userData }, { status: 200 });
 }

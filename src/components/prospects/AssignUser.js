@@ -71,7 +71,7 @@ const AssignUser = ({ colId, cardid }) => {
                             className="w-8 h-8 rounded-full"
                         />
                     ))}
-                    {user.role === t('admin') && (
+                    {user.role === "admin" && (
                         <button className="text-2xl" onClick={() => setAssigneUser(true)}><BsPlusCircleDotted /></button>
                     )}
                 </div>

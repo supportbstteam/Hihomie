@@ -601,15 +601,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   </div>
                 </section>
               </form>
-              <div className="col-span-4 h-full space-y-4 bg-gray-50">
-                <div className="h-fit bg-primary/20 p-2 mb-4">
+              <div className="col-span-4 h-full bg-gray-50">
+                <div className="h-fit bg-primary/20 p-2 mb-2">
                   <AssignUser colId={colId} cardid={selectedUser._id} />
                 </div>
                 {/* <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
                   <Trash2 className="w-4 h-4" />
                 </Button> */}
                 <div>
-                  <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-t border-gray-300">
+                  <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-gray-300">
                     {dueDate.map((item, index) => (
                       <div
                         key={index}
