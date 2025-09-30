@@ -215,3 +215,26 @@
   width: 100%;
 }
 
+/* Custom styles for the range slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.125rem; /* 18px */
+  height: 1.125rem; /* 18px */
+  background-color: #10b981; /* emerald-500 */
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 1.125rem; /* 18px */
+  height: 1.125rem; /* 18px */
+  background-color: #10b981; /* emerald-500 */
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+

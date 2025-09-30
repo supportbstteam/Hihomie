@@ -13,6 +13,8 @@ import {
   MdOutlineHeadphones,
   MdOutlineLogout,
   MdOutlineRealEstateAgent,
+  MdOutlineDiversity3,
+  MdOutlineContactPhone,
 } from "react-icons/md";
 import { SiConvertio } from "react-icons/si";
 import { RxCross2 } from "react-icons/rx";
@@ -28,8 +30,9 @@ const MENU = {
       label: t("category"),
       icon: <MdOutlineCategory />,
     },
-    { href: "/dashboard/lead", label: t("lead"), icon: <MdOutlineCalculate /> },
-    { href: "/dashboard/team", label: t("team"), icon: <MdOutlineCalculate /> },
+    { href: "/dashboard/lead", label: t("lead"), icon: <MdOutlineContactPhone /> },
+    { href: "/dashboard/team", label: t("team"), icon: <MdOutlineDiversity3 /> },
+    { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     // { href: '#', label: t('manager'), icon: <MdOutlineHandshake /> },
     // { href: '#', label: t('agent'), icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: t('bank'), icon: <MdOutlineAssuredWorkload /> },
@@ -45,7 +48,7 @@ const MENU = {
   ],
   manager: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
@@ -53,7 +56,7 @@ const MENU = {
   ],
   staff: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineCalculate /> },
+    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },

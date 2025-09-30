@@ -89,7 +89,8 @@ export default function CustomDnD() {
     dispatch(get_leadStatusDataForList());
   };
 
-  const handleDragStart = (cardId, sourceColId, index) => {
+  const handleDragStart = (e, cardId, sourceColId, index) => {
+    e.dataTransfer.setDragImage(e.target, 0, 0);
     setDraggedCard({ cardId, sourceColId, index });
     setDraggingCardId(cardId);
   };
@@ -307,8 +308,8 @@ export default function CustomDnD() {
                 {col.cards.map((card, index) => (
                   <div
                     key={card._id}
-                    draggable
-                    onDragStart={() => handleDragStart(card._id, col.id, index)}
+                    draggable={true}
+                    onDragStart={(e) => handleDragStart(e, card._id, col.id, index)}
                     onDragEnd={handleDragEnd}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => handleDropBetween(col.id, index)}
@@ -320,7 +321,7 @@ export default function CustomDnD() {
                     onTouchEnd={handleTouchEnd}
                     className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
                                         ${
-                                          draggingCardId === card.id
+                                          draggingCardId === card._id
                                             ? "opacity-60 border-2 border-blue-500"
                                             : "bg-white "
                                         }`}

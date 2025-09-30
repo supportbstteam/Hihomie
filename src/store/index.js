@@ -5,6 +5,7 @@ import settingReducer from './setting'
 import categoryReducer from './category'
 import userTeamReducer from './userTema'
 import dashboardReducer from './dashboard'
+import calculatorReducer from './calculator'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     category: categoryReducer,
     team: userTeamReducer,
     dashboard: dashboardReducer,
+    calculator: calculatorReducer,
   },
 })
 
