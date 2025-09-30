@@ -53,17 +53,17 @@ const calculator = () => {
           >
             Loan Calculator
           </button>
-          <button
+          {/* <button
             onClick={() => dispatch(setTab("affordability"))}
             className={`text-sm font-medium py-2 px-3 sm:px-5 rounded-md border ${tab === "affordability" ? "bg-emerald-500 text-white border-emerald-500" : "border-gray-200 bg-white text-gray-800"} cursor-pointer transition-colors whitespace-nowrap`}
           >
             Affordability Checker
-          </button>
+          </button> */}
         </nav>
       </div>
       {tab === "mortgage" && <MortgageSimulator />}
       {tab === "loan" && <LoanCalculator />}
-      {tab === "affordability" && <AffordabilityChecker />}
+      {/* {tab === "affordability" && <AffordabilityChecker />} */}
     </>
   );
 };

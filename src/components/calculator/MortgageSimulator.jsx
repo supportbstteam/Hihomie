@@ -58,6 +58,10 @@ const MortgageSimulator = () => {
     background: `linear-gradient(to right, #10b981 ${financing}%, #e5e7eb ${financing}%)`,
   };
 
+  const handleAddInterestRow = () => {
+    setFinancing(financing + 1);
+  };
+
   return (
     <>
       <div className="w-full mx-auto p-4">
@@ -166,7 +170,7 @@ const MortgageSimulator = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Rate of Interest
                 </label>
-                <div className="grid grid-cols-7 gap-2 items-center mb-2">
+                <div className="grid grid-cols-6 gap-2 items-center mb-2">
                   <select className={`${formControlBase} col-span-2`}>
                     <option>Fixed</option>
                     <option>Variable</option>
@@ -181,14 +185,14 @@ const MortgageSimulator = () => {
                     placeholder="Year"
                     className={`${formControlBase} col-span-2`}
                   />
-                  <button
+                  {/* <button
                     type="button"
                     className="w-11 h-11 col-span-1 rounded-md border border-gray-300 bg-white text-2xl font-light text-gray-500 hover:border-emerald-500 hover:text-emerald-500 transition"
                   >
                     +
-                  </button>
+                  </button> */}
                 </div>
-                <div className="grid grid-cols-7 gap-2 items-center">
+                {/* <div className="grid grid-cols-7 gap-2 items-center">
                   <select className={`${formControlBase} col-span-2`}>
                     <option>Variable</option>
                     <option>Fixed</option>
@@ -203,7 +207,7 @@ const MortgageSimulator = () => {
                     placeholder="Year"
                     className={`${formControlBase} col-span-2`}
                   />
-                </div>
+                </div> */}
               </div>
             </form>
           </section>
