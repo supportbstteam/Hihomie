@@ -148,10 +148,10 @@ export function Dashboard() {
           />
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="">
-              <StatCard title="Total Manager" value="100" change="+ 25%" />
+              <StatCard title="Total Manager" value="4" change="+ 25%" />
             </div>
             <div className="">
-              <StatCard title="Total Manager" value="100" change="+ 25%" />
+              <StatCard title="Total Staff" value="2" change="+ 25%" />
             </div>
           </div>
         </div>

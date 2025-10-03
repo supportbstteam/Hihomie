@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaRegClipboard } from 'react-icons/fa';
+import { FaRegClipboard } from "react-icons/fa";
 
 const PlaceholderIcon = () => (
   <svg
@@ -47,33 +47,98 @@ const PlaceholderIcon = () => (
   </svg>
 );
 
+const initialFormData = {
+  property_location: "",
+  property_price: "",
+  bank_financing: 0,
+  savings: "",
+  itp: "",
+  fees: "",
+  roi_type: "",
+  roi_interest: "",
+  roi_year: "",
+};
+// roi == rate of interest
+
+const initialResultData = {
+  monthly_fee: "",
+  mortgage_amount: "",
+  total_fee: "",
+  property_value: "",
+  itp: "",
+  fees: "",
+  interest: "",
+};
+
 const MortgageSimulator = () => {
   const [financing, setFinancing] = useState(0);
+  const [formData, setFormData] = useState(initialFormData);
+  const [result, setResult] = useState(false);
+  const [resultData, setResultData] = useState(initialResultData);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleReset = () => {
+    setResult(false);
+    setFormData(initialFormData);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setResult(true);
+    const r = formData.roi_interest / 12 / 100; // monthly interest rate
+    const n = formData.roi_year * 12; // total months
+
+    if (r === 0) {
+      return formData.property_price / n; // simple division if interest = 0
+    }
+
+    // Stable formula
+    const pp_after_financing = formData.property_price * formData.bank_financing / 100;
+    const down_payment = formData.property_price - pp_after_financing;
+    const denominator = 1 - Math.pow(1 + r, -n);
+    const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
+    const totalPayment = monthlyPayment * n + down_payment;
+    const totalInterest = parseInt(totalPayment) - parseInt(formData.property_price);
+    const total_itp = formData.property_price * formData.itp / 100;
+    const totalFee = parseInt(formData.property_price) + parseInt(formData.fees) + parseInt(total_itp);
+    setResultData({
+      monthly_fee: monthlyPayment,
+      mortgage_amount: pp_after_financing,
+      total_fee: totalFee,
+      property_value: formData.property_price,
+      itp: total_itp,
+      fees: formData.fees,
+      interest: totalInterest,
+    });
+  };
 
   // Base styles for form controls
   const formControlBase =
     "w-full p-3 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition";
 
   const sliderTrackStyle = {
-    background: `linear-gradient(to right, #10b981 ${financing}%, #e5e7eb ${financing}%)`,
-  };
-
-  const handleAddInterestRow = () => {
-    setFinancing(financing + 1);
+    background: `linear-gradient(to right, #10b981 ${formData.bank_financing}%, #e5e7eb ${formData.bank_financing}%)`,
   };
 
   return (
     <>
       <div className="w-full mx-auto p-4">
-
         {/* Calculator Body */}
         <main className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Input Form Card */}
           <section className="lg:col-span-3 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
-              <span className="text-emerald-500 font-bold text-xl">%</span> Mortgage Simulator
+              <span className="text-emerald-500 font-bold text-xl">%</span>{" "}
+              Mortgage Simulator
             </h2>
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="mb-6">
                   <label
@@ -99,7 +164,9 @@ const MortgageSimulator = () => {
                     </span>
                     <input
                       type="text"
-                      id="price"
+                      name="property_price"
+                      value={formData.property_price}
+                      onChange={handleChange}
                       placeholder="Enter Price"
                       className={`${formControlBase} pl-8`}
                     />
@@ -116,17 +183,17 @@ const MortgageSimulator = () => {
                     Bank Financing
                   </label>
                   <span className="font-semibold text-emerald-500">
-                    {financing}%
+                    {formData.bank_financing}%
                   </span>
                 </div>
                 <input
                   type="range"
-                  id="financing"
+                  name="bank_financing"
                   min="0"
                   max="100"
-                  value={financing}
+                  value={formData.bank_financing}
                   style={sliderTrackStyle}
-                  onChange={(e) => setFinancing(e.target.value)}
+                  onChange={handleChange}
                   className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
@@ -139,6 +206,9 @@ const MortgageSimulator = () => {
                     </label>
                     <input
                       type="text"
+                      name="savings"
+                      value={formData.savings}
+                      onChange={handleChange}
                       placeholder="Enter Savings Contributed"
                       className={formControlBase}
                     />
@@ -149,6 +219,9 @@ const MortgageSimulator = () => {
                     </label>
                     <input
                       type="text"
+                      name="itp"
+                      value={formData.itp}
+                      onChange={handleChange}
                       placeholder="Enter ITP/General Type"
                       className={formControlBase}
                     />
@@ -159,6 +232,9 @@ const MortgageSimulator = () => {
                     </label>
                     <input
                       type="text"
+                      name="fees"
+                      value={formData.fees}
+                      onChange={handleChange}
                       placeholder="Enter Fees / Other Costs"
                       className={formControlBase}
                     />
@@ -177,11 +253,17 @@ const MortgageSimulator = () => {
                   </select>
                   <input
                     type="text"
+                    name="roi_interest"
+                    value={formData.roi_interest}
+                    onChange={handleChange}
                     placeholder="Interest (TIH)"
                     className={`${formControlBase} col-span-2`}
                   />
                   <input
                     type="text"
+                    name="roi_year"
+                    value={formData.roi_year}
+                    onChange={handleChange}
                     placeholder="Year"
                     className={`${formControlBase} col-span-2`}
                   />
@@ -209,6 +291,21 @@ const MortgageSimulator = () => {
                   />
                 </div> */}
               </div>
+              <div className="flex justify-end mt-6 gap-2">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="bg-gray-400 text-white p-2 px-5 rounded-md hover:bg-gray-600 transition"
+                >
+                  Reset
+                </button>
+                <button
+                  type="submit"
+                  className="bg-emerald-500 text-white p-2 px-3 rounded-md hover:bg-emerald-600 transition"
+                >
+                  Calculate
+                </button>
+              </div>
             </form>
           </section>
 
@@ -216,19 +313,70 @@ const MortgageSimulator = () => {
           <section className="lg:col-span-2 bg-white rounded-lg p-6 sm:p-8 shadow-lg flex flex-col">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
               <span className="text-emerald-500 flex items-center">
-                <FaRegClipboard className="h-6 w-6"/>
+                <FaRegClipboard className="h-6 w-6" />
               </span>{" "}
               Result
             </h2>
-            <div className="flex-grow flex flex-col justify-center items-center text-center">
-              <div className="mb-6">
-                <PlaceholderIcon />
+            {!result ? (
+              <div className="flex-grow flex flex-col justify-center items-center text-center">
+                <div className="mb-6">
+                  <PlaceholderIcon />
+                </div>
+                <p className="max-w-xs text-sm leading-relaxed text-gray-500">
+                  Enter your property details to see monthly payments and total
+                  costs.
+                </p>
               </div>
-              <p className="max-w-xs text-sm leading-relaxed text-gray-500">
-                Enter your property details to see monthly payments and total
-                costs.
-              </p>
-            </div>
+            ) : (
+              <div className="flex-grow flex flex-col justify-start">
+                {" "}
+                {/* Align content to top of result card */}
+                <div className="bg-emerald-50 p-4 rounded-md mb-6">
+                  <p className="text-sm text-emerald-700 font-medium mb-1">
+                    Your Monthly Fee
+                  </p>
+                  <p className="text-2xl font-bold text-emerald-700">
+                    €{resultData.monthly_fee}/month
+                  </p>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">
+                    Total Purchase Cost
+                  </span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.total_fee}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">Property Value</span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.property_value}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">
+                    ITP Type/General Type
+                  </span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.itp}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">
+                    Fees / Other Costs
+                  </span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.fees}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                <span className="text-gray-500 text-sm">Total Interest</span>
+                <span className="text-gray-800 font-medium">
+                  €{resultData.interest}
+                </span>
+              </div>
+              </div>
+            )}
           </section>
         </main>
       </div>
