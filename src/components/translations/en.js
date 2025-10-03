@@ -140,6 +140,7 @@ const en = {
   select_user: "Select User",
   profile: "Profile",
   admin: "Admin",
+  agenda: "Agenda",
 };
 
 export default en;

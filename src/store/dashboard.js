@@ -37,17 +37,43 @@ export const get_latestActivities = createAsyncThunk(
     }
 )
 
-export const dashboardReducer = createSlice({
+export const get_total_manager = createAsyncThunk(
+    'get_total_manager',
+    async (_, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/dashboard/totalManagers`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
 
+export const get_total_staff = createAsyncThunk(
+    'get_total_staff',
+    async (_, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/dashboard/totalStaff`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const dashboardReducer = createSlice({
+    // totalLeads: [totalLeads, contactedLeads]
+    // totalManager: [totalManager, activeManager]
+    // totalStaff: [totalStaff, activeStaff]
     name: 'dashboard',
     initialState: {
         successMessage: '',
         errorMessage: '',
         successTag: '',
         loader: false,
-        totalLeads: 0,
-        totalManager: 0,
-        totalAgent: 0,
+        totalLeads: [0,0],
+        totalManager: [0,0],
+        totalStaff: [0,0],
         newLeadsThisWeek: [],
         latestActivities: [],
     },
@@ -71,6 +97,34 @@ export const dashboardReducer = createSlice({
                 state.successTag = payload.successTag
             })
             .addCase(get_total_lead.rejected, (state, { payload }) => {
+                state.loader = false
+                state.errorMessage = payload.message
+            })
+            
+            .addCase(get_total_manager.pending, (state, _) => {
+                state.loader = true
+            })
+            .addCase(get_total_manager.fulfilled, (state, { payload }) => {
+                state.loader = false
+                state.totalManager = payload.data
+                state.successMessage = payload.message,
+                state.successTag = payload.successTag
+            })
+            .addCase(get_total_manager.rejected, (state, { payload }) => {
+                state.loader = false
+                state.errorMessage = payload.message
+            })
+            
+            .addCase(get_total_staff.pending, (state, _) => {
+                state.loader = true
+            })
+            .addCase(get_total_staff.fulfilled, (state, { payload }) => {
+                state.loader = false
+                state.totalStaff = payload.data
+                state.successMessage = payload.message,
+                state.successTag = payload.successTag
+            })
+            .addCase(get_total_staff.rejected, (state, { payload }) => {
                 state.loader = false
                 state.errorMessage = payload.message
             })

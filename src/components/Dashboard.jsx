@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { get_total_lead, get_newLeadsThisWeek, get_latestActivities } from "@/store/dashboard";
+import { get_total_lead, get_newLeadsThisWeek, get_latestActivities, get_total_manager, get_total_staff } from "@/store/dashboard";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
@@ -57,7 +57,7 @@ const failureReasons = [
 
 // --- Individual Components ---
 
-const StatCard = ({ title, value, change, progress }) => (
+const StatCard = ({ title, value, change, pending, progress }) => (
   <Card>
     <div className="text-sm text-gray-500 uppercase">{title}</div>
     <div className="flex items-end justify-between mt-2">
@@ -77,7 +77,7 @@ const StatCard = ({ title, value, change, progress }) => (
         </div>
       )}
     </div>
-    {progress !== undefined && (
+    {pending !== undefined && (
       <div className="mt-4">
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
@@ -88,7 +88,7 @@ const StatCard = ({ title, value, change, progress }) => (
         <div className="flex items-center justify-between mt-2">
           <div className="text-left text-sm text-gray-500 mt-1">Pending</div>
           <div className="text-right text-sm text-gray-500 mt-1">
-            {progress}%
+            {pending}
           </div>
         </div>
       </div>
@@ -127,11 +127,13 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
 
 export function Dashboard() {
   const dispatch = useDispatch();
-  const { totalLeads, totalManager, totalAgent, latestActivities, newLeadsThisWeek, successTag } = useSelector(
+  const { totalLeads, totalManager, totalStaff, latestActivities, newLeadsThisWeek, successTag } = useSelector(
     (state) => state.dashboard
   );
   useEffect(() => {
     dispatch(get_total_lead());
+    dispatch(get_total_manager());
+    dispatch(get_total_staff());
     dispatch(get_newLeadsThisWeek());
     dispatch(get_latestActivities());
   }, []);
@@ -142,16 +144,17 @@ export function Dashboard() {
         <div className="md:col-span-1 lg:col-span-2 xl:col-span-3">
           <StatCard
             title="Total Leads"
-            value={totalLeads}
-            change="+ 36%"
-            progress={45}
+            value={totalLeads[0]}
+            change={`+ ${totalLeads[1]}`}
+            pending={totalLeads[0] - totalLeads[1]}
+            progress={(totalLeads[1] / totalLeads[0]) * 100}
           />
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="">
-              <StatCard title="Total Manager" value="4" change="+ 25%" />
+              <StatCard title="Total Manager" value={totalManager[0]} change={`+ ${totalManager[1]}`} />
             </div>
             <div className="">
-              <StatCard title="Total Staff" value="2" change="+ 25%" />
+              <StatCard title="Total Staff" value={totalStaff[0]} change={`+ ${totalStaff[1]}`} />
             </div>
           </div>
         </div>
@@ -243,10 +246,13 @@ export function Dashboard() {
             data={signedOrderData}
             colors={COLORS_SIGNED}
           />
+          {/* <Card>
+
+          </Card> */}
         </div>
 
         {/* Row 3 */}
-        <div className="lg:col-span-1 xl:col-span-2">
+        {/* <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Contacted vs. Uncontacted Users"
             data={contactedData}
@@ -282,10 +288,10 @@ export function Dashboard() {
             data={bankData}
             colors={COLORS_BANK}
           />
-        </div>
+        </div> */}
 
         {/* Row 4 */}
-        <div className="lg:col-span-4 xl:col-span-6">
+        {/* <div className="lg:col-span-4 xl:col-span-6">
           <Card>
             <h3 className="text-lg font-semibold text-gray-700">
               Mortgage Status
@@ -319,7 +325,7 @@ export function Dashboard() {
               </ResponsiveContainer>
             </div>
           </Card>
-        </div>
+        </div> */}
       </div>
     </main>
   );

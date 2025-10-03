@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { usePathname } from "next/navigation"; // ✅ Add this
-import { FaAt, FaRegUser } from "react-icons/fa";
+import { FaAt, FaRegUser, FaTasks } from "react-icons/fa";
 import {
   MdOutlineAssuredWorkload,
   MdOutlineCalculate,
@@ -50,6 +50,7 @@ const MENU = {
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
+    { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
@@ -58,6 +59,7 @@ const MENU = {
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
+    { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },

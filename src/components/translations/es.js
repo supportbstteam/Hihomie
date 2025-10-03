@@ -140,6 +140,7 @@ const es = {
   select_user: "Seleccionar usuario",
   profile: "Perfil",
   admin: "Administración",
+  agenda: "orden del día",
 };
 
 export default es;
