@@ -20,8 +20,6 @@ export async function GET() {
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        console.log('Week range:', startOfWeek.toDateString(), 'to', endOfWeek.toDateString());
-
         const result = await LeadStatus.aggregate([
             {
                 $unwind: "$cards"

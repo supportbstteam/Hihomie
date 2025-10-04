@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import Task from "@/models/Task";
 
-export async function GET() {
+export async function GET(request) {
+    const url = new URL(request.url);
+    const date = url.searchParams.get('date');
     try {
         await dbConnect()
-        const tasks = await Task.find()
+        const tasks = await Task.find({ date: new Date(date) })
         return NextResponse.json( tasks, { status: 200 })
     } catch (error) {
         console.error(error)

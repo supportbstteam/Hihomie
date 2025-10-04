@@ -111,7 +111,6 @@ const List = ({
 
   // ✅ Handle Edit Click
   const handleEditClick = (item) => {
-    //   console.log("hello",item);
     const updatedUser = {
       ...item,
       colId: item.leadStatusId, // assign leadStatusId to colId

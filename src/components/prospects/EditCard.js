@@ -291,7 +291,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   };
 
   const handleDeleteDueDate = (id) => {
-    console.log(id);
     dispatch(delete_due_date(id));
   };
 

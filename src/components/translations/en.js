@@ -141,6 +141,18 @@ const en = {
   profile: "Profile",
   admin: "Admin",
   agenda: "Agenda",
+  tasks: "Tasks",
+  newLeadsThisWeek: "New Leads This Week",
+  comparedToPreviousWeek: "Compared To The Previous Week",
+  latest_activities: "Latest Activities",
+  total_leads: "Total Leads",
+  total_manager: "Total Manager",
+  total_staff: "Total Staff",
+  pending: "Pending",
+  schedule_date: "Schedule Date",
+  today_tasks: "Today's Tasks",
+  add: "Add",
+  addNewTask: "Add a new task...",
 };
 
 export default en;

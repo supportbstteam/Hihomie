@@ -8,7 +8,6 @@ import CardAssignUser from '@/models/CardAssignUser';
 export async function POST(request) {
     try {
         const { from_date, to_date, user_id, user_role, selected_user } = await request.json();
-        // console.log(from_date, to_date, user_id, user_role, selected_user);
 
         await dbConnect();
 
@@ -85,7 +84,6 @@ export async function POST(request) {
 
         // Conditionally add the date range match stage
         if (from_date || to_date) {
-            console.log(from_date, to_date);
             const dateMatch = {};
             if (from_date) {
                 dateMatch['$gte'] = new Date(from_date);
@@ -161,8 +159,6 @@ export async function POST(request) {
         })
 
         const leads = await LeadStatus.aggregate(pipeline);
-
-        // console.log(leads, leads.length);
 
         // Create a new workbook
         const workbook = XLSX.utils.book_new();

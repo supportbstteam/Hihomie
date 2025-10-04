@@ -141,6 +141,18 @@ const es = {
   profile: "Perfil",
   admin: "Administración",
   agenda: "orden del día",
+  tasks: "Tareas",
+  newLeadsThisWeek: "Nuevos prospectos esta semana",
+  comparedToPreviousWeek: "Comparado con la semana anterior",
+  latest_activities: "Actividades Recientes",
+  total_leads: "Total de Clientes Potenciales",
+  total_manager: "Gerente Total",
+  total_staff: "Personal Total",
+  pending: "Pendiente",
+  schedule_date: "Fecha Programada",
+  today_tasks: "Tareas de hoy",
+  add: "Agregar",
+  addNewTask: "Añadir una nueva tarea...",
 };
 
 export default es;

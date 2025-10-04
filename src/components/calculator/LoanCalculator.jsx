@@ -34,7 +34,7 @@ const LoanCalculator = () => {
       setTotalPayment(totalPayment);
       setTotalInterest(totalInterest);
     } else {
-      console.log("Please enter all the fields");
+      console.error("Please enter all the fields");
     }
   };
   return (

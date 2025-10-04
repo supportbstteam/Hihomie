@@ -7,8 +7,7 @@ export async function POST(req, { params }) {
     try {
         const { id } = await params;
         const { due_date, due_date_note, userId, colId } = await req.json();
-        // console.log(due_date, due_date_note, userId, colId, id);
-        // return;
+
         await dbConnect();
 
         const newDueDate = new DueDates({
@@ -42,7 +41,7 @@ export async function GET(req, context) {
 
 export async function DELETE(req, context) { 
     const { id } = await context.params;
-    console.log(id);
+
     try {
         await dbConnect();
 

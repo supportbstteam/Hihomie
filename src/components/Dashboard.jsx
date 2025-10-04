@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { t } from "@/components/translations";
 import { Card } from "@/components/ui/Card";
 import {
   Bar,
@@ -15,8 +16,17 @@ import {
   Legend,
 } from "recharts";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { get_total_lead, get_newLeadsThisWeek, get_latestActivities, get_total_manager, get_total_staff } from "@/store/dashboard";
+import {
+  get_total_lead,
+  get_newLeadsThisWeek,
+  get_latestActivities,
+  get_total_manager,
+  get_total_staff,
+} from "@/store/dashboard";
+import { get_tasks } from "@/store/task";
+import useUserFromSession from "@/lib/useUserFromSession";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
@@ -86,10 +96,8 @@ const StatCard = ({ title, value, change, pending, progress }) => (
           ></div>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <div className="text-left text-sm text-gray-500 mt-1">Pending</div>
-          <div className="text-right text-sm text-gray-500 mt-1">
-            {pending}
-          </div>
+          <div className="text-left text-sm text-gray-500 mt-1">{t("pending")}</div>
+          <div className="text-right text-sm text-gray-500 mt-1">{pending}</div>
         </div>
       </div>
     )}
@@ -127,15 +135,23 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
 
 export function Dashboard() {
   const dispatch = useDispatch();
-  const { totalLeads, totalManager, totalStaff, latestActivities, newLeadsThisWeek, successTag } = useSelector(
-    (state) => state.dashboard
-  );
+  const {
+    totalLeads,
+    totalManager,
+    totalStaff,
+    latestActivities,
+    newLeadsThisWeek,
+    successTag,
+  } = useSelector((state) => state.dashboard);
+  const { tasks } = useSelector((state) => state.task);
+  const user = useUserFromSession();
   useEffect(() => {
     dispatch(get_total_lead());
     dispatch(get_total_manager());
     dispatch(get_total_staff());
     dispatch(get_newLeadsThisWeek());
     dispatch(get_latestActivities());
+    dispatch(get_tasks(new Date().toISOString().split("T")[0]));
   }, []);
   return (
     <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
@@ -143,7 +159,7 @@ export function Dashboard() {
         {/* Row 1 */}
         <div className="md:col-span-1 lg:col-span-2 xl:col-span-3">
           <StatCard
-            title="Total Leads"
+            title={t("total_leads")}
             value={totalLeads[0]}
             change={`+ ${totalLeads[1]}`}
             pending={totalLeads[0] - totalLeads[1]}
@@ -151,20 +167,28 @@ export function Dashboard() {
           />
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="">
-              <StatCard title="Total Manager" value={totalManager[0]} change={`+ ${totalManager[1]}`} />
+              <StatCard
+                title={t("total_manager")}
+                value={totalManager[0]}
+                change={`+ ${totalManager[1]}`}
+              />
             </div>
             <div className="">
-              <StatCard title="Total Staff" value={totalStaff[0]} change={`+ ${totalStaff[1]}`} />
+              <StatCard
+                title={t("total_staff")}
+                value={totalStaff[0]}
+                change={`+ ${totalStaff[1]}`}
+              />
             </div>
           </div>
         </div>
         <div className="md:col-span-1 lg:col-span-2 xl:col-span-3">
           <Card>
             <h3 className="text-lg font-semibold text-gray-700">
-              New Leads This Week
+              {t("newLeadsThisWeek")}
             </h3>
             <p className="text-sm text-gray-500">
-              Compared To The Previous Week
+              {t("comparedToPreviousWeek")}
             </p>
             <div className="h-48 mt-4">
               <ResponsiveContainer width="100%" height="100%">
@@ -198,11 +222,8 @@ export function Dashboard() {
         <div className="lg:col-span-3 xl:col-span-4">
           <Card>
             <h3 className="text-lg font-semibold text-gray-700">
-              Latest Activities
+              {t("latest_activities")}
             </h3>
-            <p className="text-sm text-gray-500">
-              User Distribution Across Different Stages.
-            </p>
             <table className="w-full mt-4 text-sm text-left">
               <tbody>
                 {latestActivities.map((activity, i) => (
@@ -217,11 +238,14 @@ export function Dashboard() {
                             {activity.lead_title}
                           </div>
                           <div className="text-gray-500">
-                            {new Date(activity.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {new Date(activity.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
                           </div>
                         </div>
                       </div>
@@ -241,14 +265,40 @@ export function Dashboard() {
           </Card>
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
-          <DonutChartCard
-            title="Users Signed Order"
-            data={signedOrderData}
-            colors={COLORS_SIGNED}
-          />
-          {/* <Card>
-
-          </Card> */}
+          {user?.role === "admin" && (
+            <DonutChartCard
+              title="Users Signed Order"
+              data={signedOrderData}
+              colors={COLORS_SIGNED}
+            />
+          )}
+          {user?.role !== "admin" && (
+            <Card className="h-full overflow-y-auto">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                {t("tasks")}
+              </h3>
+              {tasks.map((task) => (
+                <div key={task._id} className="flex items-center flex-grow">
+                  {/* <span className="mr-3 text-lg">
+                  {task.completed ? (
+                    <FaCheckCircle className="text-green-500" />
+                  ) : (
+                    <FaRegCircle className="text-gray-400 hover:text-blue-500" />
+                  )}
+                </span> */}
+                  <span
+                    className={`text-base flex-grow mb-2 px-2 py-1 ${
+                      task.completed
+                        ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                        : "bg-green-100 text-gray-800 rounded-sm"
+                    }`}
+                  >
+                    {task.task}
+                  </span>
+                </div>
+              ))}
+            </Card>
+          )}
         </div>
 
         {/* Row 3 */}

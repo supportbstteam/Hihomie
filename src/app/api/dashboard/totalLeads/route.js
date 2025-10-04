@@ -38,7 +38,6 @@ export async function GET() {
 
     const totalLeads = result[0].totalItemCount;
     const contactedLeads = leadsAttended[0].totalCardCount;
-    console.log(contactedLeads)
 
     return NextResponse.json({ message: 'Total Leads fetched successfully', data: [totalLeads, contactedLeads], successTag: "get_total_lead" }, { status: 200 })
   } catch (error) {

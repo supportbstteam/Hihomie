@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { t } from "@/components/translations";
 import { useDispatch, useSelector } from "react-redux";
 import {
   get_tasks,
@@ -31,30 +32,29 @@ const DailyTaskPage = () => {
   );
   const user = useUserFromSession();
   const today = formatDate(new Date());
-  const [selectedDate, setSelectedDate] = useState(today);
   const [newTask, setNewTask] = useState({
     text: "",
     completed: false,
     userId: user?.id,
-    date: selectedDate,
+    date: today,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(get_tasks());
+    dispatch(get_tasks(newTask.date));
     setIsLoading(false);
-  }, [selectedDate]);
+  }, [newTask.date]);
 
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
       dispatch(messageClear());
-      dispatch(get_tasks());
+      dispatch(get_tasks(newTask.date));
     }
     if (errorMessage) {
       toast.error(errorMessage);
       dispatch(messageClear());
-      dispatch(get_tasks());
+      dispatch(get_tasks(newTask.date));
     }
   }, [errorMessage, successMessage, dispatch]);
 
@@ -73,7 +73,6 @@ const DailyTaskPage = () => {
     setNewTask({
       ...newTask,
       userId: user?.id,
-      date: selectedDate,
     });
 
     dispatch(set_task({ object: newTask }));
@@ -87,11 +86,10 @@ const DailyTaskPage = () => {
     dispatch(delete_task({ object: { task_id: taskId } }));
   };
 
-  // Determine the header text
   const getHeaderText = () => {
-    if (selectedDate === today) return "Today's Tasks";
+    if (newTask.date === today) return t("today_tasks");
 
-    const dateObj = new Date(selectedDate);
+    const dateObj = new Date(newTask.date);
     // Format as "Fri, Oct 4, 2025"
     return (
       dateObj.toLocaleDateString("en-US", {
@@ -99,15 +97,15 @@ const DailyTaskPage = () => {
         // year: 'numeric',
         month: "short",
         day: "numeric",
-      }) + "th Tasks"
+      }) + "th" + " " + t("tasks")
     );
   };
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-medium text-blue-600">
-          Loading tasks...
+        <div className="text-xl font-medium text-green-600">
+          {t("loading")}
         </div>
       </div>
     );
@@ -123,20 +121,21 @@ const DailyTaskPage = () => {
             htmlFor="task-date"
             className="text-gray-600 font-medium mb-2 md:mb-0"
           >
-            Schedule Date:
+            {t("schedule_date")}:
           </label>
           <input
             type="date"
             id="task-date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            name="date"
+            value={newTask.date}
+            onChange={handleChange}
             className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 w-full md:w-auto"
           />
         </div>
 
         {/* Header */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 flex items-center mb-6 border-b pb-3">
-          <FaCalendarDay className="text-blue-600 mr-3" />
+          <FaCalendarDay className="text-green-500 mr-3" />
           {getHeaderText()}
         </h1>
 
@@ -147,7 +146,7 @@ const DailyTaskPage = () => {
             name="text"
             value={newTask.text}
             onChange={handleChange}
-            placeholder="Add a new task..."
+            placeholder={t("addNewTask")}
             className="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
           />
           <button
@@ -155,7 +154,7 @@ const DailyTaskPage = () => {
             disabled={!newTask.text.trim()}
             className="flex items-center justify-center bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-150 disabled:bg-green-300 disabled:cursor-not-allowed"
           >
-            <FaPlus className="mr-1" /> Add
+            <FaPlus className="mr-1" /> {t("add")}
           </button>
         </form>
 
@@ -179,7 +178,7 @@ const DailyTaskPage = () => {
                   {task.completed ? (
                     <FaCheckCircle className="text-green-500" />
                   ) : (
-                    <FaRegCircle className="text-gray-400 hover:text-blue-500" />
+                    <FaRegCircle className="text-gray-400 hover:text-green-500" />
                   )}
                 </span>
                 <span

@@ -3,9 +3,9 @@ import api from "../lib/api/api"
 
 export const get_tasks = createAsyncThunk(
     'get_tasks',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async (date, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/manager/tasks`, { withCredentials: true })
+            const { data } = await api.get(`/manager/tasks?date=${date}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -40,7 +40,6 @@ export const update_task = createAsyncThunk(
 export const delete_task = createAsyncThunk(
     'delete_task',
     async ({ object }, { rejectWithValue, fulfillWithValue }) => {
-        console.log(object);
         try {
             const { data } = await api.delete(`/manager/tasks`, { data: object, withCredentials: true })
             return fulfillWithValue(data);
