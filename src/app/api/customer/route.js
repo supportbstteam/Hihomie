@@ -10,7 +10,7 @@ import CardAssignUser from '@/models/CardAssignUser'
 export async function POST(req) {
 
   try {
-    const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId } = await req.json()
+    const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed } = await req.json()
 
     const newCard = {
       lead_title,
@@ -31,7 +31,11 @@ export async function POST(req) {
       manager_notes,
       detailsData,
       addressDetailsData,
+      contacted,
+      contract_signed,
     };
+
+    console.log("newCard", newCard)
 
     // Find the LeadStatus by ID and push the new card
     const updatedColumn = await LeadStatus.findByIdAndUpdate(
@@ -80,7 +84,7 @@ import mongoose from "mongoose";
 export async function PUT(req) {
   try {
 
-    const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData } = await req.json()
+    const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, contacted, contract_signed } = await req.json()
 
 
     await dbConnect();
@@ -120,6 +124,8 @@ export async function PUT(req) {
           "cards.$.manager_notes": manager_notes,
           "cards.$.detailsData": detailsData,
           "cards.$.addressDetailsData": addressDetailsData,
+          "cards.$.contacted": contacted,
+          "cards.$.contract_signed": contract_signed,
         },
       },
       { new: true }

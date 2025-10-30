@@ -153,6 +153,12 @@ const en = {
   today_tasks: "Today's Tasks",
   add: "Add",
   addNewTask: "Add a new task...",
+  contacted: "Contacted",
+  contract_signed: "Contract Signed",
+  bank: "Bank",
+  enter_bank_name: "Enter bank name",
+  document: "Document",
+  upload_document: "Upload Document",
 };
 
 export default en;

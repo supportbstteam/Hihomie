@@ -13,6 +13,18 @@ export const get_tasks = createAsyncThunk(
     }
 )
 
+export const get_admin_tasks = createAsyncThunk(
+    'get_admin_tasks',
+    async (date, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/admin/tasks?date=${date}`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const set_task = createAsyncThunk(
     'set_task',
     async ({object}, { rejectWithValue, fulfillWithValue }) => {
@@ -57,7 +69,8 @@ export const taskReducer = createSlice({
         errorMessage: '',
         successTag: '',
         loader: false,
-        tasks: []
+        tasks: [],
+        admin_tasks: [],
     },
     reducers: {
         messageClear: (state, _) => {
@@ -110,6 +123,17 @@ export const taskReducer = createSlice({
                 state.successMessage = action.payload.message
             })
             .addCase(delete_task.rejected, (state, _) => {
+                state.loader = false
+            })
+
+            .addCase(get_admin_tasks.pending, (state, _) => {
+                state.loader = true
+            })
+            .addCase(get_admin_tasks.fulfilled, (state, action) => {
+                state.admin_tasks = action.payload
+                state.loader = false
+            })
+            .addCase(get_admin_tasks.rejected, (state, _) => {
                 state.loader = false
             })
     }

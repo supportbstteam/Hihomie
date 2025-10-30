@@ -24,6 +24,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
   const [address_details, setAddressDetails] = useState(false);
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
+  const [contract_signed, setContractSigned] = useState(false);
   const { data: session } = useSession(); // 2. Get the session data
 
   const [formData, setFormData] = useState({
@@ -40,6 +41,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
     type_of_opration: "Primera casa",
     customer_situation: "Quiere información",
     purchase_status: "Todavía buscando",
+    contacted: "no",
     commercial_notes: "",
     manager_notes: "",
     detailsData: {},
@@ -106,6 +108,13 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
       addressDetailsData: addressDetailsData,
     }));
   }, [addressDetailsData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      contract_signed: contract_signed,
+    }));
+  }, [contract_signed]);
 
   const validate = (values) => {
     const newErrors = {};
@@ -360,6 +369,18 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                     { value: t("property"), label: t("property") },
                   ]}
                 />
+                <Dropdown
+                  label={t("contacted")}
+                  name="contacted"
+                  value={formData.contacted}
+                  onChange={handleChange}
+                  error={errors.contacted}
+                  required
+                  options={[
+                    { value: "no", label: "No" },
+                    { value: "yes", label: "Yes" },
+                  ]}
+                />
               </section>
               <div className="grid grid-cols-1 gap-2 mt-4">
                 <section className="bg-gray-50 p-4 rounded-md border border-stroke">
@@ -429,6 +450,22 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                 {address_details && (
                   <Form2 setAddressDetailsData={setAddressDetailsData} />
                 )}
+                <div className="flex items-center justify-between mt-2">
+                  <span className="font-medium text-dark psm">
+                    {t("contract_signed")}
+                  </span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      name="contract_signed"
+                      checked={contract_signed}
+                      onChange={() => setContractSigned(!contract_signed)}
+                    />
+                    <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                    <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                  </label>
+                </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => setOpen(false)}

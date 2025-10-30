@@ -166,7 +166,17 @@ export const delete_due_date = createAsyncThunk(
    }
 );
 
-
+export const save_bank = createAsyncThunk(
+   'save_bank',
+   async ({ bankData, cardId }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.put(`/customer/${cardId}/bank`, bankData, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
 
 export const customerReducer = createSlice({
 
@@ -322,6 +332,15 @@ export const customerReducer = createSlice({
             state.loader = false;
          })
          .addCase(delete_due_date.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+      
+         .addCase(save_bank.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(save_bank.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })

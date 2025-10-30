@@ -16,10 +16,13 @@ const CardSchema = new mongoose.Schema({
   type_of_opration: { type: String },
   customer_situation: { type: String },
   purchase_status: { type: String },
+  contacted: { type: String },
+  contract_signed: { type: Boolean },
   commercial_notes: { type: String },
   manager_notes: { type: String },
   detailsData: { type: Object },
   addressDetailsData: { type: Object },
+  bankDetailsData: { type: Object },
 
 }, { timestamps: true })
 

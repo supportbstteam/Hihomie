@@ -97,7 +97,7 @@ const DailyTaskPage = () => {
         // year: 'numeric',
         month: "short",
         day: "numeric",
-      }) + "th" + " " + t("tasks")
+      }) + " " + t("tasks")
     );
   };
 

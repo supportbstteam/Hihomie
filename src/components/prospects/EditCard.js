@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -32,6 +32,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const [detailsData, setDetailsData] = useState({});
   const [addressDetailsData, setAddressDetailsData] = useState({});
   const [deleteConfirmAlert, setDeleteConfirmAlert] = useState(false);
+  const [contract_signed, setContractSigned] = useState(false);
+  const [documentStatus, setDocumentStatus] = useState("");
+  const [bankData, setBankData] = useState({
+    bank_name: "",
+    colId: selectedUser?.status ? selectedUser.status : colId || "",
+  });
   const [errors, setErrors] = useState({
     surname: '',
     lead_title: '',
@@ -59,6 +65,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     type_of_opration: "",
     customer_situation: "",
     purchase_status: "",
+    contacted: "",
     commercial_notes: "",
     manager_notes: "",
     detailsData: {},
@@ -180,6 +187,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
           type_of_opration: "",
           customer_situation: "",
           purchase_status: "",
+          contacted: "",
           commercial_notes: "",
           manager_notes: "",
           detailsData: {},
@@ -193,6 +201,8 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (selectedUser) {
+      setContractSigned(selectedUser?.contract_signed ?? false);
+      setBankData({bank_name: selectedUser?.bankDetailsData?.bank_name ?? "", colId: selectedUser?.status ? selectedUser.status : colId});
       setFormData({
         ...selectedUser,
         id: selectedUser._id || "",
@@ -214,6 +224,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       addressDetailsData: addressDetailsData,
     }));
   }, [addressDetailsData]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      contract_signed: contract_signed,
+    }));
+  }, [contract_signed]);
 
   // Comment Section Logic
   const [commentFormData, setCommentFormData] = useState({
@@ -293,6 +310,47 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const handleDeleteDueDate = (id) => {
     dispatch(delete_due_date(id));
   };
+
+  const handleBankChange = (e) => {
+    const { name, value } = e.target;
+    setBankData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleBankSubmit = (e) => {
+    e.preventDefault();
+    dispatch(save_bank({ bankData, cardId: selectedUser._id }));
+  };
+
+  async function handleDocumentSubmit(event) {
+    event.preventDefault();
+    setDocumentStatus("Uploading...");
+
+    const formData = new FormData(event.currentTarget);
+    formData.append("colId", selectedUser.status ? selectedUser.status : colId || "");
+    formData.append("cardId", selectedUser._id);
+    formData.append("userId", authUser.id);
+
+    try {
+      const response = await fetch("/api/documents", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to upload.");
+      }
+
+      setDocumentStatus("File uploaded successfully.");
+
+    } catch (error) {
+      setDocumentStatus(`Error: ${error.message}`);
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -495,6 +553,18 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       { value: t("property"), label: t("property") },
                     ]}
                   />
+                  <Dropdown
+                    label={t("contacted")}
+                    name="contacted"
+                    value={formData.contacted}
+                    onChange={handleChange}
+                    error={errors.contacted}
+                    required
+                    options={[
+                      { value: "no", label: "No" },
+                      { value: "yes", label: "Yes" },
+                    ]}
+                  />
                 </section>
 
                 <section className="grid gap-4">
@@ -581,6 +651,23 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       selectedUser={selectedUser.addressDetailsData}
                     />
                   )}
+
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="font-medium text-dark psm">
+                      {t("contract_signed")}
+                    </span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        name="contract_signed"
+                        checked={contract_signed}
+                        onChange={() => setContractSigned(!contract_signed)}
+                      />
+                      <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                      <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                    </label>
+                  </div>
 
                   <div className="flex gap-3 justify-end">
                     <button
@@ -672,6 +759,37 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         {loader ? t("loading") : "Schedule"}
                       </button>
                     </div>
+                  </form>
+
+                </div>
+                <div>
+                  <form onSubmit={handleBankSubmit} className="p-2 mt-2">
+                    <Input
+                      label={t("bank")}
+                      value={bankData?.bank_name}
+                      onChange={handleBankChange}
+                      name="bank_name"
+                      placeholder={t("enter_bank_name")}
+                      error={errors.bank_name}
+                    />
+                    <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                      {t("submit")}
+                    </button>
+                  </form>
+                </div>
+                <div>
+                  <form onSubmit={handleDocumentSubmit} className="p-2 mt-2">
+                    <Input
+                      label={t("document")}
+                      type="file"
+                      name="document"
+                      placeholder={t("upload_document")}
+                      error={errors.document}
+                    />
+                    {documentStatus && <p className="text-green-600 mt-2">{documentStatus}</p>}
+                    <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                      {t("submit")}
+                    </button>
                   </form>
                 </div>
               </div>

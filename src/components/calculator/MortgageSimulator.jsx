@@ -70,17 +70,83 @@ const initialResultData = {
   interest: "",
 };
 
+const locations = [
+  { _id: "1", name: "A Coruña", itp: 9 },
+  { _id: "2", name: "Álava", itp: 7 },
+  { _id: "3", name: "Albacete", itp: 9 },
+  { _id: "4", name: "Alicante", itp: 10 },
+  { _id: "5", name: "Almería", itp: 7 },
+  { _id: "6", name: "Asturias", itp: 8 },
+  { _id: "7", name: "Ávila", itp: 8 },
+  { _id: "8", name: "Badajoz", itp: 8 },
+  { _id: "9", name: "Baleares (Illes)", itp: 8 },
+  { _id: "10", name: "Barcelona", itp: 10 },
+  { _id: "11", name: "Burgos", itp: 8 },
+  { _id: "12", name: "Cáceres", itp: 8 },
+  { _id: "13", name: "Cádiz", itp: 7 },
+  { _id: "14", name: "Cantabria", itp: 8 },
+  { _id: "15", name: "Castellón", itp: 10 },
+  { _id: "16", name: "Ceuta", itp: 6 },
+  { _id: "17", name: "Ciudad Real", itp: 9 },
+  { _id: "18", name: "Córdoba", itp: 7 },
+  { _id: "19", name: "Cuenca", itp: 9 },
+  { _id: "20", name: "Girona", itp: 10 },
+  { _id: "21", name: "Granada", itp: 7 },
+  { _id: "22", name: "Guadalajara", itp: 9 },
+  { _id: "23", name: "Guipúzcoa", itp: 7 },
+  { _id: "24", name: "Huelva", itp: 7 },
+  { _id: "25", name: "Huesca", itp: 8 },
+  { _id: "26", name: "Jaén", itp: 7 },
+  { _id: "27", name: "La Rioja", itp: 7 },
+  { _id: "28", name: "Las Palmas", itp: 6.5 },
+  { _id: "29", name: "León", itp: 8 },
+  { _id: "30", name: "Lleida", itp: 10 },
+  { _id: "31", name: "Lugo", itp: 9 },
+  { _id: "32", name: "Madrid", itp: 6 },
+  { _id: "33", name: "Málaga", itp: 7 },
+  { _id: "34", name: "Melilla", itp: 6 },
+  { _id: "35", name: "Murcia", itp: 8 },
+  { _id: "36", name: "Navarra", itp: 6 },
+  { _id: "37", name: "Ourense", itp: 9 },
+  { _id: "38", name: "Palencia", itp: 8 },
+  { _id: "39", name: "Pontevedra", itp: 9 },
+  { _id: "40", name: "Salamanca", itp: 8 },
+  { _id: "41", name: "Santa Cruz de Tenerife", itp: 6.5 },
+  { _id: "42", name: "Segovia", itp: 8 },
+  { _id: "43", name: "Sevilla", itp: 7 },
+  { _id: "44", name: "Soria", itp: 8 },
+  { _id: "45", name: "Tarragona", itp: 10 },
+  { _id: "46", name: "Teruel", itp: 8 },
+  { _id: "47", name: "Toledo", itp: 9 },
+  { _id: "48", name: "Valencia", itp: 10 },
+  { _id: "49", name: "Valladolid", itp: 8 },
+  { _id: "50", name: "Vizcaya", itp: 7 },
+  { _id: "51", name: "Zamora", itp: 8 },
+  { _id: "52", name: "Zaragoza", itp: 8 },
+];
+
 const MortgageSimulator = () => {
   const [financing, setFinancing] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
   const [result, setResult] = useState(false);
   const [resultData, setResultData] = useState(initialResultData);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [email, setEmail] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleLocationChange = (e) => {
+    const location = locations.find((loc) => loc._id === e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      property_location: location.name,
+      itp: location.itp,
     }));
   };
 
@@ -100,13 +166,13 @@ const MortgageSimulator = () => {
     }
 
     // Stable formula
-    const pp_after_financing = formData.property_price * formData.bank_financing / 100;
+    const pp_after_financing = (formData.property_price * formData.bank_financing) / 100;
     const down_payment = formData.property_price - pp_after_financing;
     const denominator = 1 - Math.pow(1 + r, -n);
     const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
     const totalPayment = monthlyPayment * n + down_payment;
     const totalInterest = parseInt(totalPayment) - parseInt(formData.property_price);
-    const total_itp = formData.property_price * formData.itp / 100;
+    const total_itp = (formData.property_price * formData.itp) / 100;
     const totalFee = parseInt(formData.property_price) + parseInt(formData.fees) + parseInt(total_itp);
     setResultData({
       monthly_fee: monthlyPayment,
@@ -125,6 +191,22 @@ const MortgageSimulator = () => {
 
   const sliderTrackStyle = {
     background: `linear-gradient(to right, #10b981 ${formData.bank_financing}%, #e5e7eb ${formData.bank_financing}%)`,
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEmail("");
+  };
+
+  const handleSendSimulation = () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+    
+    const res = fetch("/api/send-email", { method: "POST", body: JSON.stringify({ email, data: resultData }) });
+    
+    handleCloseModal();
   };
 
   return (
@@ -147,8 +229,17 @@ const MortgageSimulator = () => {
                   >
                     Property Location
                   </label>
-                  <select id="location" className={formControlBase}>
+                  <select
+                    id="location"
+                    className={formControlBase}
+                    onChange={handleLocationChange}
+                  >
                     <option>Select Location</option>
+                    {locations.map((location) => (
+                      <option key={location._id} value={location._id}>
+                        {location.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="mb-6">
@@ -370,16 +461,71 @@ const MortgageSimulator = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                <span className="text-gray-500 text-sm">Total Interest</span>
-                <span className="text-gray-800 font-medium">
-                  €{resultData.interest}
-                </span>
-              </div>
+                  <span className="text-gray-500 text-sm">Total Interest</span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.interest}
+                  </span>
+                </div>
+                <div>
+                  <button type="button" onClick={() => setIsModalOpen(true)} className="bg-emerald-500 text-white p-2 mt-3 px-3 rounded-md hover:bg-emerald-600 transition">
+                    Send Mortagage Simulation
+                  </button>
+                </div>
               </div>
             )}
           </section>
         </main>
       </div>
+
+      {/* --- New Email Modal --- */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={handleCloseModal} // Close on backdrop click
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md mx-4"
+            onClick={(e) => e.stopPropagation()} // Prevent closing on modal click
+          >
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Send Simulation
+            </h3>
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                className={formControlBase} // Re-use existing style
+                autoFocus
+              />
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSendSimulation}
+                className="bg-emerald-500 text-white py-2 px-4 rounded-md hover:bg-emerald-600 transition"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
