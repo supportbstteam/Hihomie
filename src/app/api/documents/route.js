@@ -10,6 +10,7 @@ export async function POST(request) {
     const colId = data.get("colId");
     const cardId = data.get("cardId");
     const userId = data.get("userId");
+    const document_type = data.get("document_type");
 
     if (!file) {
         return NextResponse.json({ success: false, error: "No file provided." });
@@ -27,6 +28,7 @@ export async function POST(request) {
 
         await dbConnect();
         const newDocument = new Document({
+            document_type,
             document_name: filename,
             document_path: `/uploads/documents/${filename}`,
             colId,

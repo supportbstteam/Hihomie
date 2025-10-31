@@ -1,8 +1,71 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
+import CardAssignUser from '@/models/CardAssignUser';
 
-export async function GET() {
+export async function GET(req) {
+    const url = new URL(req.url);
+    const userId = url.searchParams.get('userId');
+    if (userId !== "68a2eeb6f31c60d58b33191e") {
+        const totalLeads = await CardAssignUser.find({ userId: userId });
+        const result = await CardAssignUser.aggregate([
+            // Stage 1: Find the user's assigned card
+            {
+                $match: { userId: userId }
+            },
+
+            // Stage 2: Use a Pipelined Lookup
+            {
+                $lookup: {
+                    from: "leadstatuses",
+                    let: { lookupCardId: "$cardId" },
+                    pipeline: [
+                        { $unwind: "$cards" },
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
+                                        { $eq: ["$cards.contacted", "yes"] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 0, matched: "true" } }
+                    ],
+                    as: "contacted"
+                }
+            },
+            {
+                $unwind: {
+                    path: '$contacted',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    contactedb: {
+                        $cond: {
+                            if: { $eq: ["$contacted.matched", "true"] },
+                            then: true,
+                            else: false
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    contactedCount: { $sum: { $cond: { if: "$contactedb", then: 1, else: 0 } } }
+                }
+            },
+        ]);
+        const totalLeadsCount = totalLeads.length;
+        const user_contacted_count = result[0].contactedCount;
+        const user_not_contacted_count = totalLeadsCount - user_contacted_count;
+        console.log(user_contacted_count, user_not_contacted_count);
+        return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
+    }
     try {
         await dbConnect()
 

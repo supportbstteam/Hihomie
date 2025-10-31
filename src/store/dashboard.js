@@ -63,9 +63,9 @@ export const get_total_staff = createAsyncThunk(
 
 export const get_contractData = createAsyncThunk(
     'get_contractData',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contractData`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/contractData?userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -75,9 +75,9 @@ export const get_contractData = createAsyncThunk(
 
 export const get_contactedUsers = createAsyncThunk(
     'get_contactedUsers',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contactedUsers`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/contactedUsers?userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

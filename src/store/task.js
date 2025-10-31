@@ -3,9 +3,9 @@ import api from "../lib/api/api"
 
 export const get_tasks = createAsyncThunk(
     'get_tasks',
-    async (date, { rejectWithValue, fulfillWithValue }) => {
+    async ({date, manager_id}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/manager/tasks?date=${date}`, { withCredentials: true })
+            const { data } = await api.get(`/manager/tasks?date=${date}&manager_id=${manager_id}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

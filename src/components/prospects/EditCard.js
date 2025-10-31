@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank } from "@/store/customer";
+import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ import Form1 from "./Form1";
 import Form2 from "./Form2";
 import AssignUser from "./AssignUser";
 import { Button } from "../ui/Button";
-import { Trash2, Clock } from "lucide-react";
+import { Trash2, Clock, Eye } from "lucide-react";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import useUserFromSession from "@/lib/useUserFromSession";
 import Datepicker from "../ui/Datepicker";
@@ -22,7 +22,7 @@ const date = format(new Date(), "yyyy-MM-dd");
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage, comments, dueDate } = useSelector(
+  const { loader, successMessage, errorMessage, comments, dueDate, documents } = useSelector(
     (state) => state.customer
   );
   const authUser = useUserFromSession();
@@ -34,6 +34,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const [deleteConfirmAlert, setDeleteConfirmAlert] = useState(false);
   const [contract_signed, setContractSigned] = useState(false);
   const [documentStatus, setDocumentStatus] = useState("");
+  const [documentType, setDocumentType] = useState("id");
   const [bankData, setBankData] = useState({
     bank_name: "",
     colId: selectedUser?.status ? selectedUser.status : colId || "",
@@ -168,7 +169,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   useEffect(() => {
     if (successMessage) {
-      if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully") {
+      if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully" || successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
         toast.success(successMessage);
       } else {
         setSelectedUser(null);
@@ -202,7 +203,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   useEffect(() => {
     if (selectedUser) {
       setContractSigned(selectedUser?.contract_signed ?? false);
-      setBankData({bank_name: selectedUser?.bankDetailsData?.bank_name ?? "", colId: selectedUser?.status ? selectedUser.status : colId});
+      setBankData({ bank_name: selectedUser?.bankDetailsData?.bank_name ?? "", colId: selectedUser?.status ? selectedUser.status : colId });
       setFormData({
         ...selectedUser,
         id: selectedUser._id || "",
@@ -324,6 +325,17 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     dispatch(save_bank({ bankData, cardId: selectedUser._id }));
   };
 
+  useEffect(() => {
+    dispatch(get_documents(selectedUser._id));
+  }, []);
+
+  useEffect(() => {
+    if (successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
+      dispatch(get_documents(selectedUser._id));
+    }
+  }, [selectedUser, successMessage]);
+  console.log(documents);
+
   async function handleDocumentSubmit(event) {
     event.preventDefault();
     setDocumentStatus("Uploading...");
@@ -332,6 +344,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     formData.append("colId", selectedUser.status ? selectedUser.status : colId || "");
     formData.append("cardId", selectedUser._id);
     formData.append("userId", authUser.id);
+    formData.append("document_type", documentType);
 
     try {
       const response = await fetch("/api/documents", {
@@ -344,13 +357,17 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       if (!response.ok || !result.success) {
         throw new Error(result.error || "Failed to upload.");
       }
-
+      dispatch(get_documents(selectedUser._id));
       setDocumentStatus("File uploaded successfully.");
 
     } catch (error) {
       setDocumentStatus(`Error: ${error.message}`);
     }
   }
+
+  const handleDocDelete = (id) => {
+    dispatch(delete_document(id));
+  };
 
   return (
     <AnimatePresence>
@@ -779,6 +796,24 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
                 <div>
                   <form onSubmit={handleDocumentSubmit} className="p-2 mt-2">
+                    <Dropdown
+                      className={"mb-2"}
+                      label={t("document_type")}
+                      value={documentType}
+                      onChange={(e) => setDocumentType(e.target.value)}
+                      name="document_type"
+                      placeholder={t("enter_document_type")}
+                      options={[
+                        { value: "id", label: t("id") },
+                        { value: "employment_contract", label: t("employment_contract") },
+                        { value: "payroll", label: t("payroll") },
+                        { value: "working_life", label: t("working_life") },
+                        { value: "income", label: t("income") },
+                        { value: "receipt", label: t("receipt") },
+                        { value: "other", label: t("other") },
+                      ]}
+                      error={errors.document_type}
+                    />
                     <Input
                       label={t("document")}
                       type="file"
@@ -791,6 +826,36 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       {t("submit")}
                     </button>
                   </form>
+                  <div className="p-2 mt-2">
+                    <h1 className="text-lg font-semibold mb-4">{t("available_documents")}</h1>
+                    {documents.length === 0 ? (
+                      <p>{t("no_documents_found")}</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {documents.map((doc) => (
+                          <li key={doc._id} className="flex items-center justify-between border py-1 px-2 rounded-sm">
+                            <span>{t(doc.document_type)}</span>
+                            <div className="flex items-center space-x-2">
+                              <a
+                                href={doc.document_path.startsWith("http") ? doc.document_path : `${process.env.NEXT_PUBLIC_BASE_URL}${doc.document_path}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                              >
+                                <Eye className="w-4 h-4 text-green-600" />
+                              </a>
+                              <button
+                                onClick={() => handleDocDelete(doc._id)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="space-y-4 mb-5 col-span-8">

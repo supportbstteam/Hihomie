@@ -34,8 +34,8 @@ import useUserFromSession from "@/lib/useUserFromSession";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
-const COLORS_SIGNED = ["#91a5caff", "#22c55e"];
-const COLORS_CONTACTED = ["#91a5caff", "#22c55e"];
+const COLORS_SIGNED = ["#22c55e", "#91a5caff"];
+const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
 
 const bankData = [
   { name: "CaixaBank", value: 40 },
@@ -167,19 +167,22 @@ export function Dashboard() {
   } = useSelector((state) => state.dashboard);
   const { tasks, admin_tasks } = useSelector((state) => state.task);
   const user = useUserFromSession();
+  console.log(user);
   useEffect(() => {
-    dispatch(get_total_lead());
-    dispatch(get_total_manager());
-    dispatch(get_total_staff());
-    dispatch(get_newLeadsThisWeek());
-    dispatch(get_latestActivities());
-    dispatch(get_tasks(new Date().toISOString().split("T")[0]));
-    dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
-    dispatch(get_contractData());
-    dispatch(get_contactedUsers());
-    dispatch(get_documentSubmittedUsers());
-    dispatch(get_mortgageStatusData());
-  }, []);
+    if(user?.id){
+      dispatch(get_total_lead());
+      dispatch(get_total_manager());
+      dispatch(get_total_staff());
+      dispatch(get_newLeadsThisWeek());
+      dispatch(get_latestActivities());
+      dispatch(get_tasks({ date: new Date().toISOString().split("T")[0], manager_id: user.id }));
+      dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
+      dispatch(get_contractData({ userId: user.id }));
+      dispatch(get_contactedUsers({ userId: user.id }));
+      dispatch(get_documentSubmittedUsers());
+      dispatch(get_mortgageStatusData());
+    }
+  }, [user?.id]);
   return (
     <main className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
@@ -362,6 +365,13 @@ export function Dashboard() {
         {/* Row 3 */}
         <div className="lg:col-span-1 xl:col-span-2">
           {user?.role === "admin" && (
+            <DonutChartCard
+              title="User's Contracts Data"
+              data={contractData}
+              colors={COLORS_SIGNED}
+            />
+          )}
+          {user?.role !== "admin" && (
             <DonutChartCard
               title="User's Contracts Data"
               data={contractData}

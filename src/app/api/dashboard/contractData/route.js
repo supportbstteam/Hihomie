@@ -1,8 +1,71 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
+import CardAssignUser from '@/models/CardAssignUser';
+import mongoose from 'mongoose';
 
-export async function GET() {
+export async function GET(req) {
+    const url = new URL(req.url);
+    const userId = url.searchParams.get('userId');
+    if (userId !== "68a2eeb6f31c60d58b33191e") {
+        const totalLeads = await CardAssignUser.find({ userId: userId });
+        const result = await CardAssignUser.aggregate([
+            // Stage 1: Find the user's assigned card
+            {
+                $match: { userId: userId }
+            },
+
+            // Stage 2: Use a Pipelined Lookup
+            {
+                $lookup: {
+                    from: "leadstatuses",
+                    let: { lookupCardId: "$cardId" },
+                    pipeline: [
+                        { $unwind: "$cards" },
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
+                                        { $eq: ["$cards.contract_signed", true] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 0, matched: "true" } }
+                    ],
+                    as: "signed"
+                }
+            },
+            {
+                $unwind: {
+                    path: '$signed',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    signedb: {
+                        $cond: {
+                            if: { $eq: ["$signed.matched", "true"] },
+                            then: true,
+                            else: false
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalSignedCount: { $sum: { $cond: { if: "$signedb", then: 1, else: 0 } } }
+                }
+            },
+        ]);
+        const totalLeadsCount = totalLeads.length;
+        const user_signed_count = result[0].totalSignedCount;
+        const user_not_signed_count = totalLeadsCount - user_signed_count;
+        return NextResponse.json({ message: 'Total Leads fetched successfully', data: [{ name: "Contract Signed", value: user_signed_count }, { name: "Contract Not Signed", value: user_not_signed_count }], successTag: "get_contract_signed_lead" }, { status: 200 })
+    }
     try {
         await dbConnect()
 

@@ -178,6 +178,30 @@ export const save_bank = createAsyncThunk(
    }
 );
 
+export const get_documents = createAsyncThunk(
+   'get_documents',
+   async (cardId, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.get(`/customer/${cardId}/documents`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+);
+
+export const delete_document = createAsyncThunk(
+   'delete_document',
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/customer/${id}/documents`, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+)
+
 export const customerReducer = createSlice({
 
    name: 'customer',
@@ -188,6 +212,7 @@ export const customerReducer = createSlice({
       customer: [],
       comments: [],
       dueDate: [],
+      documents: [],
    },
    reducers: {
 
@@ -341,6 +366,25 @@ export const customerReducer = createSlice({
             state.loader = false;
          })
          .addCase(save_bank.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+      
+         .addCase(get_documents.fulfilled, (state, { payload }) => {
+            state.documents = payload.documents;
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(get_documents.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+
+         .addCase(delete_document.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; // if backend sends a message
+            state.loader = false;
+         })
+         .addCase(delete_document.rejected, (state, { payload }) => {
             state.loader = false;
             state.errorMessage = payload.error;
          })

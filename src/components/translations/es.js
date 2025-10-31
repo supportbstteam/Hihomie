@@ -158,7 +158,17 @@ const es = {
   bank: "Banco",
   enter_bank_name: "Introduce el nombre del banco",
   document: "Documento",
+  document_type: "Tipo de Documento",
   upload_document: "Subir Documento",
+  id: "ID",
+  employment_contract: "Contrato de Empleo",
+  payroll: "Nomina",
+  working_life: "Vida laboral",
+  income: "Ingreso",
+  receipt: "Recibo",
+  other: "Otros",
+  available_documents: "Documentos Disponibles",
+  no_documents_found: "No se encontraron documentos",
 };
 
 export default es;
