@@ -35,8 +35,6 @@ export async function POST(req) {
       contract_signed,
     };
 
-    console.log("newCard", newCard)
-
     // Find the LeadStatus by ID and push the new card
     const updatedColumn = await LeadStatus.findByIdAndUpdate(
       selectedColId,

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser';
-import mongoose from 'mongoose';
 
 export async function GET(req) {
     const url = new URL(req.url);

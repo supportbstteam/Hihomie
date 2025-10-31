@@ -59,7 +59,6 @@ export async function GET(request) {
             }
         ]);
 
-        // console.log(tasks[0].task_Details[0].task);
         return NextResponse.json(tasks, { status: 200 })
     } catch (error) {
         console.error(error)

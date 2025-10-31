@@ -7,7 +7,8 @@ export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
     if (userId !== "68a2eeb6f31c60d58b33191e") {
-        const totalLeads = await CardAssignUser.find({ userId: userId });
+        const totalLeads = await CardAssignUser.find({ userId: userId }).lean();
+        
         const result = await CardAssignUser.aggregate([
             // Stage 1: Find the user's assigned card
             {
@@ -63,7 +64,6 @@ export async function GET(req) {
         const totalLeadsCount = totalLeads.length;
         const user_contacted_count = result[0].contactedCount;
         const user_not_contacted_count = totalLeadsCount - user_contacted_count;
-        console.log(user_contacted_count, user_not_contacted_count);
         return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
     }
     try {

@@ -169,6 +169,12 @@ const en = {
   other: "Other",
   available_documents: "Available Documents",
   no_documents_found: "No documents found",
+  dueDateNoteError: "Please enter a due date note.",
+  dueDateError: "Please enter a due date.",
+  bankNameError: "Please enter a bank name.",
+  bankNameLengthError: "Bank name must be at least 3 characters long.",
+  documentTypeRequired: "Please select a document type.",
+  documentFileRequired: "Please select a document file.",
 };
 
 export default en;

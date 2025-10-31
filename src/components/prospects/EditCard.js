@@ -260,6 +260,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
+    if (!commentFormData.comment) {
+      toast.error("Please enter a comment.");
+      return;
+    }
     dispatch(add_customer_comments({ commentFormData, cardId: selectedUser._id }));
   };
 
@@ -305,6 +309,14 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const handleDueDateSubmit = (e) => {
     e.preventDefault();
+    if (!dueDateForm.due_date_note) {
+      toast.error(t("dueDateNoteError"));
+      return;
+    }
+    if(!dueDateForm.due_date){
+      toast.error(t("dueDateError"));
+      return;
+    }
     dispatch(add_due_date({ dueDateForm, cardId: selectedUser._id }));
   };
 
@@ -322,6 +334,16 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const handleBankSubmit = (e) => {
     e.preventDefault();
+    if (!bankData || !bankData.bank_name || bankData.bank_name.trim() === "") {
+      toast.error(t("bankNameError"));
+      return;
+    }
+
+    if (bankData.bank_name.trim().length < 3) {
+      toast.error(t("bankNameLengthError"));
+      return;
+    }
+
     dispatch(save_bank({ bankData, cardId: selectedUser._id }));
   };
 
@@ -334,17 +356,23 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       dispatch(get_documents(selectedUser._id));
     }
   }, [selectedUser, successMessage]);
-  console.log(documents);
 
   async function handleDocumentSubmit(event) {
     event.preventDefault();
+    if (!documentType) {
+      toast.error(t("documentTypeRequired"));
+      return;
+    }
+    if (!event.currentTarget.document.value) {
+      toast.error(t("documentFileRequired"));
+      return;
+    }
     setDocumentStatus("Uploading...");
 
     const formData = new FormData(event.currentTarget);
     formData.append("colId", selectedUser.status ? selectedUser.status : colId || "");
     formData.append("cardId", selectedUser._id);
     formData.append("userId", authUser.id);
-    formData.append("document_type", documentType);
 
     try {
       const response = await fetch("/api/documents", {

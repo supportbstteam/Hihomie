@@ -169,6 +169,12 @@ const es = {
   other: "Otros",
   available_documents: "Documentos Disponibles",
   no_documents_found: "No se encontraron documentos",
+  dueDateNoteError: "Por favor, ingresa una fecha de vencimiento.",
+  dueDateError: "Por favor, ingresa una fecha de vencimiento.",
+  bankNameError: "Por favor, ingresa un nombre de banco.",
+  bankNameLengthError: "El nombre del banco debe tener al menos 3 caracteres.",
+  documentTypeRequired: "Por favor, selecciona un tipo de documento.",
+  documentFileRequired: "Por favor, selecciona un archivo de documento.",
 };
 
 export default es;

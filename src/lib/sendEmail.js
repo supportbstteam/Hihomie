@@ -40,7 +40,6 @@ export async function sendEmail(emailAddress, simulationData) {
   // 3. Send the Mail
   try {
     let info = await transporter.sendMail(mailOptions);
-    console.log(`Message sent: ${info.messageId}`);
     return info;
   } catch (error) {
     console.error("Error sending email:", error);

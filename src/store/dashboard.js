@@ -87,9 +87,9 @@ export const get_contactedUsers = createAsyncThunk(
 
 export const get_documentSubmittedUsers = createAsyncThunk(
     'get_documentSubmittedUsers',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/documentSubmittedUsers`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/documentSubmittedUsers?userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -99,9 +99,9 @@ export const get_documentSubmittedUsers = createAsyncThunk(
 
 export const get_mortgageStatusData = createAsyncThunk(
     'get_mortgageStatusData',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/mortgageStatus`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/mortgageStatus?userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

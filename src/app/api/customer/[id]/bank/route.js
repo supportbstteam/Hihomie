@@ -8,7 +8,6 @@ export async function PUT(req, context) {
     
     try {
         const { colId, bank_name } = await req.json()
-        console.log(colId, id, bank_name);
         await dbConnect();
 
         if (!colId || !id) {

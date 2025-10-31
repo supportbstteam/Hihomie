@@ -167,7 +167,6 @@ export function Dashboard() {
   } = useSelector((state) => state.dashboard);
   const { tasks, admin_tasks } = useSelector((state) => state.task);
   const user = useUserFromSession();
-  console.log(user);
   useEffect(() => {
     if(user?.id){
       dispatch(get_total_lead());
@@ -179,8 +178,8 @@ export function Dashboard() {
       dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
       dispatch(get_contractData({ userId: user.id }));
       dispatch(get_contactedUsers({ userId: user.id }));
-      dispatch(get_documentSubmittedUsers());
-      dispatch(get_mortgageStatusData());
+      dispatch(get_documentSubmittedUsers({ userId: user.id }));
+      dispatch(get_mortgageStatusData({ userId: user.id }));
     }
   }, [user?.id]);
   return (
