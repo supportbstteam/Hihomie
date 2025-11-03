@@ -3,9 +3,9 @@ import api from "../lib/api/api"
 
 export const get_total_lead = createAsyncThunk(
     'get_total_lead',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/totalLeads`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/totalLeads?userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

@@ -59,18 +59,40 @@ export async function POST(req) {
 }
 
 // ✅ GET - Fetch all customers
-export async function GET() {
+export async function GET(req) {
+  const { searchParams } = req.nextUrl;
+  const email_like = searchParams.get("email_like");
   try {
     await dbConnect();
 
-    const users = await Customer.find().lean();
+    const users = await LeadStatus.aggregate([
+      { $unwind: "$cards" },
+      {
+        $match: {
+          $or: [
+            { "cards.email": { $regex: email_like, $options: "i" } },
+            {
+              $expr: {
+                $regexMatch: {
+                  input: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+                  regex: email_like,
+                  options: "i",
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+          email: "$cards.email",
+        },
+      },
+    ]);
 
-    const userData = users.map(({ password, ...rest }) => ({
-      ...rest,
-    }));
-
-
-    return NextResponse.json({ customer: userData, }, { status: 201 })
+    return NextResponse.json(users, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

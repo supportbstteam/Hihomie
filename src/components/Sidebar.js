@@ -49,6 +49,7 @@ const MENU = {
   manager: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
@@ -58,6 +59,7 @@ const MENU = {
   staff: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
@@ -131,16 +133,14 @@ export default function Sidebar() {
                     ${isActive ? "bg-[#21B57340]" : ""} `}
                 >
                   <span
-                    className={`${
-                      isActive ? "text-[#21B573]" : "text-[#84909A]"
-                    }`}
+                    className={`${isActive ? "text-[#21B573]" : "text-[#84909A]"
+                      }`}
                   >
                     {i.icon}
                   </span>
                   <span
-                    className={`${
-                      isActive ? "text-[#21B573]" : "text-[#071437]"
-                    }`}
+                    className={`${isActive ? "text-[#21B573]" : "text-[#071437]"
+                      }`}
                   >
                     {i.label}
                   </span>

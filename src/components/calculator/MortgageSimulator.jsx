@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { FaRegClipboard } from "react-icons/fa";
+import Dropdown from "@/components/ui/DropDown";
+import DynamicEmailDropdown from "@/components/DynamicEmailDropdown";
 
 const PlaceholderIcon = () => (
   <svg
@@ -166,14 +168,19 @@ const MortgageSimulator = () => {
     }
 
     // Stable formula
-    const pp_after_financing = (formData.property_price * formData.bank_financing) / 100;
+    const pp_after_financing =
+      (formData.property_price * formData.bank_financing) / 100;
     const down_payment = formData.property_price - pp_after_financing;
     const denominator = 1 - Math.pow(1 + r, -n);
     const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
     const totalPayment = monthlyPayment * n + down_payment;
-    const totalInterest = parseInt(totalPayment) - parseInt(formData.property_price);
+    const totalInterest =
+      parseInt(totalPayment) - parseInt(formData.property_price);
     const total_itp = (formData.property_price * formData.itp) / 100;
-    const totalFee = parseInt(formData.property_price) + parseInt(formData.fees) + parseInt(total_itp);
+    const totalFee =
+      parseInt(formData.property_price) +
+      parseInt(formData.fees) +
+      parseInt(total_itp);
     setResultData({
       monthly_fee: monthlyPayment,
       mortgage_amount: pp_after_financing,
@@ -203,11 +210,16 @@ const MortgageSimulator = () => {
       alert("Please enter a valid email address.");
       return;
     }
-    
-    const res = fetch("/api/send-email", { method: "POST", body: JSON.stringify({ email, data: resultData }) });
-    
+
+    const res = fetch("/api/send-email", {
+      method: "POST",
+      body: JSON.stringify({ email, data: resultData }),
+    });
+
     handleCloseModal();
   };
+
+  const [query, setQuery] = useState("");
 
   return (
     <>
@@ -467,7 +479,11 @@ const MortgageSimulator = () => {
                   </span>
                 </div>
                 <div>
-                  <button type="button" onClick={() => setIsModalOpen(true)} className="bg-emerald-500 text-white p-2 mt-3 px-3 rounded-md hover:bg-emerald-600 transition">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-emerald-500 text-white p-2 mt-3 px-3 rounded-md hover:bg-emerald-600 transition"
+                  >
                     Send Mortagage Simulation
                   </button>
                 </div>
@@ -490,23 +506,11 @@ const MortgageSimulator = () => {
             <h3 className="text-lg font-semibold mb-4 text-gray-800">
               Send Simulation
             </h3>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                className={formControlBase} // Re-use existing style
-                autoFocus
-              />
-            </div>
+
+            <DynamicEmailDropdown
+            setEmail={setEmail}
+            />
+
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"

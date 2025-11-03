@@ -175,6 +175,7 @@ const en = {
   bankNameLengthError: "Bank name must be at least 3 characters long.",
   documentTypeRequired: "Please select a document type.",
   documentFileRequired: "Please select a document file.",
+  
 };
 
 export default en;

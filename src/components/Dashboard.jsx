@@ -169,7 +169,7 @@ export function Dashboard() {
   const user = useUserFromSession();
   useEffect(() => {
     if(user?.id){
-      dispatch(get_total_lead());
+      dispatch(get_total_lead({ userId: user.id }));
       dispatch(get_total_manager());
       dispatch(get_total_staff());
       dispatch(get_newLeadsThisWeek());
