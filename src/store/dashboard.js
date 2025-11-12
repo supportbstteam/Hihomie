@@ -109,6 +109,18 @@ export const get_mortgageStatusData = createAsyncThunk(
     }
 )
 
+export const get_banksData = createAsyncThunk(
+    'get_banksData',
+    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/dashboard/banksData?userId=${userId}`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const dashboardReducer = createSlice({
     name: 'dashboard',
     initialState: {
@@ -125,6 +137,7 @@ export const dashboardReducer = createSlice({
         contactedUsers: [{ name: "Users Contacted", value: 0 }, { name: "Users Not Contacted", value: 100 }],
         documentSubmittedUsers: [{ name: "Documents Submitted Users", value: 0 }, { name: "Documents Not Submitted Users", value: 100 }],
         mortgageStatusData: [],
+        banksData: [],
     },
     reducers: {
         messageClear: (state, _) => {
@@ -246,6 +259,18 @@ export const dashboardReducer = createSlice({
                 state.successTag = payload.successTag
             })
             .addCase(get_mortgageStatusData.rejected, (state, { payload }) => {
+                state.loader = false
+                state.errorMessage = payload.message
+            })
+        
+            .addCase(get_banksData.pending, (state, _) => { state.loader = true })
+            .addCase(get_banksData.fulfilled, (state, { payload }) => {
+                state.loader = false
+                state.banksData = payload.data
+                state.successMessage = payload.message,
+                state.successTag = payload.successTag
+            })
+            .addCase(get_banksData.rejected, (state, { payload }) => {
                 state.loader = false
                 state.errorMessage = payload.message
             })

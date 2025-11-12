@@ -34,7 +34,7 @@ import useUserFromSession from "@/lib/useUserFromSession";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
-const COLORS_SIGNED = ["#22c55e", "#91a5caff"];
+const COLORS_SIGNED = ["#22c55e", "#3b82f6"];
 const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
 
 const bankData = [
@@ -43,17 +43,6 @@ const bankData = [
   { name: "BBVA", value: 30 },
 ];
 
-// const mortgageStatusData = [
-//   { name: "Pending Doc", value: 180 },
-//   { name: "Pre-study", value: 100 },
-//   { name: "Sent to Bank", value: 250 },
-//   { name: "Pending Prop", value: 220 },
-//   { name: "Valuation", value: 120 },
-//   { name: "FEIN", value: 30 },
-//   { name: "Signing", value: 100 },
-//   { name: "Denied", value: 130 },
-//   { name: "Granted", value: 240 },
-// ];
 
 const failureReasons = [
   { reason: "Not Contacted", value: "1,43,382" },
@@ -392,13 +381,13 @@ export function Dashboard() {
             colors={COLORS_CONTACTED}
           />
         </div>
-        {/* <div className="lg:col-span-1 xl:col-span-2">
+        <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Distribution by Bank"
             data={bankData}
             colors={COLORS_BANK}
           />
-        </div> */}
+        </div>
 
         {/* Row 4 */}
         <div className="lg:col-span-4 xl:col-span-6">

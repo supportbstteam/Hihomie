@@ -12,6 +12,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
 
     const [formData, setFormData] = useState({
         status_name: "",
+        order: "",
         color: "",
         id: "",
     });
@@ -20,6 +21,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
         if (statusData) {
             setFormData({
                 status_name: statusData.status_name || "",
+                order: statusData.order || "",
                 color: statusData.color || "",
                 id: statusData._id || "",
             });
@@ -36,6 +38,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
     };
     const [errors, setErrors] = useState({
         status_name: "",
+        order: "",
         color: "",
     });
 
@@ -52,7 +55,10 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
             newErrors.status_name = "Only alphabets and spaces allowed";
             valid = false;
         }
-
+        if (!formData.order) {
+            newErrors.order = "Order is required";
+            valid = false;
+        }
         if (!formData.color) {
             newErrors.color = "Please select a color";
             valid = false;
@@ -101,7 +107,7 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                         animate={{ y: 30, opacity: 1 }}
                         exit={{ y: -100, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="bg-white md:w-full h-[35vh] sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+                        className="bg-white md:w-full h-[60vh] sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
                     >
 
                         {/* Header */}
@@ -131,6 +137,24 @@ const EditStatus = ({ open, setOpen, statusData, setStatusData }) => {
                                 />
                                 {errors.status_name && (
                                     <p className="text-red-500 text-xs mt-1">{errors.status_name}</p>
+                                )}
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    {t('order')}*
+                                </label>
+                                <input
+                                    type="number"
+                                    className={`w-full border rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:outline-none ${errors.order ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"
+                                        }`}
+                                    placeholder='Enter order'
+                                    name="order"
+                                    value={formData.order}
+                                    onChange={handleChange}
+                                />
+                                {errors.order && (
+                                    <p className="text-red-500 text-xs mt-1">{errors.order}</p>
                                 )}
                             </div>
 

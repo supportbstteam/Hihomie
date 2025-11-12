@@ -5,11 +5,12 @@ import LeadStatus from '@/models/LeadStatus'
 export async function POST(req) {
   try {
 
-    const { status_name, color } = await req.json()
+    const { status_name, color, order } = await req.json()
+    console.log(status_name, color, order)
 
     await dbConnect() // Connect to DB
 
-    const data = await LeadStatus.create({ status_name, color })
+    const data = await LeadStatus.create({ status_name, color, order })
 
     return NextResponse.json({ message: "Lead Status created successfully", data }, { status: 201 })
 

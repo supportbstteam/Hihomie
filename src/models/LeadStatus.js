@@ -30,6 +30,7 @@ const CardSchema = new mongoose.Schema({
 const LeadStatusSchema = new mongoose.Schema({
   status_name: { type: String },
   color: { type: String },
+  order: { type: Number, default: 0 },
   cards: [CardSchema]  // Array of subdocuments
 }, { timestamps: true })
 

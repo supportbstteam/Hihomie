@@ -41,22 +41,32 @@ const DailyTaskPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(get_tasks(newTask.date));
-    setIsLoading(false);
-  }, [newTask.date]);
+    if (user?.id) {
+      setNewTask({
+        ...newTask,
+        userId: user?.id,
+      });
+      dispatch(get_tasks({ date: newTask.date, manager_id: user?.id }));
+      setIsLoading(false);
+    }
+  }, [newTask.date, user?.id]);
 
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
       dispatch(messageClear());
-      dispatch(get_tasks(newTask.date));
+      if (user?.id) {
+        dispatch(get_tasks({ date: newTask.date, manager_id: user?.id }));
+      }
     }
     if (errorMessage) {
       toast.error(errorMessage);
       dispatch(messageClear());
-      dispatch(get_tasks(newTask.date));
+      if (user?.id) {
+        dispatch(get_tasks({ date: newTask.date, manager_id: user?.id }));
+      }
     }
-  }, [errorMessage, successMessage, dispatch]);
+  }, [errorMessage, successMessage, dispatch, user?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,12 +79,6 @@ const DailyTaskPage = () => {
   const addTask = (e) => {
     e.preventDefault();
     if (newTask.text.trim() === "") return;
-
-    setNewTask({
-      ...newTask,
-      userId: user?.id,
-    });
-
     dispatch(set_task({ object: newTask }));
   };
 
@@ -97,16 +101,16 @@ const DailyTaskPage = () => {
         // year: 'numeric',
         month: "short",
         day: "numeric",
-      }) + " " + t("tasks")
+      }) +
+      " " +
+      t("tasks")
     );
   };
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-medium text-green-600">
-          {t("loading")}
-        </div>
+        <div className="text-xl font-medium text-green-600">{t("loading")}</div>
       </div>
     );
   }

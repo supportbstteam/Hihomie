@@ -1,7 +1,8 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
+import { messageClear, cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
+import { get_leadStatusData, get_leadStatusDataForList } from "@/store/setting";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -172,30 +173,34 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully" || successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
         toast.success(successMessage);
       } else {
-        setSelectedUser(null);
-        setFormData({
-          lead_title: "",
-          surname: "",
-          first_name: "",
-          last_name: "",
-          company: "",
-          designation: "",
-          phone: "",
-          email: "",
-          lead_value: "",
-          assigned: "",
-          status: "",
-          type_of_opration: "",
-          customer_situation: "",
-          purchase_status: "",
-          contacted: "",
-          commercial_notes: "",
-          manager_notes: "",
-          detailsData: {},
-          addressDetailsData: {},
-          id: "",
-          colId: "", // ✅ keep the current colId
-        });
+        dispatch(get_leadStatusDataForList());
+        dispatch(get_leadStatusData());
+        dispatch(messageClear());
+        toast.success(successMessage);
+        // setSelectedUser(null);
+        // setFormData({
+        //   lead_title: "",
+        //   surname: "",
+        //   first_name: "",
+        //   last_name: "",
+        //   company: "",
+        //   designation: "",
+        //   phone: "",
+        //   email: "",
+        //   lead_value: "",
+        //   assigned: "",
+        //   status: "",
+        //   type_of_opration: "",
+        //   customer_situation: "",
+        //   purchase_status: "",
+        //   contacted: "",
+        //   commercial_notes: "",
+        //   manager_notes: "",
+        //   detailsData: {},
+        //   addressDetailsData: {},
+        //   id: "",
+        //   colId: "", // ✅ keep the current colId
+        // });
       }
     }
   }, [successMessage, errorMessage]);
@@ -241,8 +246,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   });
 
   useEffect(() => {
-    dispatch(get_customer_comments(selectedUser._id));
-  }, []);
+    if (selectedUser._id) {
+      dispatch(get_customer_comments(selectedUser._id));
+    }
+  }, [selectedUser._id]);
 
   useEffect(() => {
     if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully") {
@@ -280,8 +287,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   });
 
   useEffect(() => {
-    dispatch(get_due_date(selectedUser._id));
-  }, []);
+    if (selectedUser._id) {
+      dispatch(get_due_date(selectedUser._id));
+    }
+  }, [selectedUser._id]);
 
   useEffect(() => {
     if (dueDate) {
@@ -313,7 +322,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       toast.error(t("dueDateNoteError"));
       return;
     }
-    if(!dueDateForm.due_date){
+    if (!dueDateForm.due_date) {
       toast.error(t("dueDateError"));
       return;
     }
@@ -348,8 +357,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   };
 
   useEffect(() => {
-    dispatch(get_documents(selectedUser._id));
-  }, []);
+    if (selectedUser._id) {
+      dispatch(get_documents(selectedUser._id));
+    }
+  }, [selectedUser._id]);
 
   useEffect(() => {
     if (successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {

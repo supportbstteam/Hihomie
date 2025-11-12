@@ -12,11 +12,13 @@ const AddStatus = ({ open, setOpen }) => {
 
   const [formData, setFormData] = useState({
     status_name: "",
+    order: "",
     color: "",
   });
 
   const [errors, setErrors] = useState({
     status_name: "",
+    order: "",
     color: "",
   });
 
@@ -31,7 +33,7 @@ const AddStatus = ({ open, setOpen }) => {
 
   // ✅ Validate function
   const validateForm = () => {
-    const newErrors = { status_name: "", color: "" };
+    const newErrors = { status_name: "", order: "", color: "" };
     let valid = true;
 
     if (!formData.status_name) {
@@ -39,6 +41,11 @@ const AddStatus = ({ open, setOpen }) => {
       valid = false;
     } else if (!/^[A-Za-z\s]+$/.test(formData.status_name)) {
       newErrors.status_name = "Only alphabets and spaces allowed";
+      valid = false;
+    }
+
+    if (!formData.order) {
+      newErrors.order = "Order is required";
       valid = false;
     }
 
@@ -61,7 +68,7 @@ const AddStatus = ({ open, setOpen }) => {
   useEffect(() => {
     if (successMessage) {
       setOpen(false);
-      setFormData({ status_name: "", color: "" });
+      setFormData({ status_name: "", order: "", color: "" });
       dispatch(messageClear());
     }
 
@@ -92,7 +99,7 @@ const AddStatus = ({ open, setOpen }) => {
               animate={{ y: 30, opacity: 1 }}
               exit={{ y: -100, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="bg-white md:w-full h-[35vh] sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
+              className="bg-white md:w-full h-[60vh] sm:w-[50%] md:max-w-[35%] mx-auto rounded-xl shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5"
             >
               {/* Header */}
               <h2 className="text-xl font-semibold text-gray-800 mb-4">{t('add_status')}</h2>
@@ -112,9 +119,8 @@ const AddStatus = ({ open, setOpen }) => {
                   </label>
                   <input
                     type="text"
-                    className={`w-full border rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:outline-none ${
-                      errors.status_name ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"
-                    }`}
+                    className={`w-full border rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:outline-none ${errors.status_name ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"
+                      }`}
                     placeholder='Escribir estado'
                     name="status_name"
                     value={formData.status_name}
@@ -122,6 +128,25 @@ const AddStatus = ({ open, setOpen }) => {
                   />
                   {errors.status_name && (
                     <p className="text-red-500 text-xs mt-1">{errors.status_name}</p>
+                  )}
+                </div>
+
+                {/* Order */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t('order')}*
+                  </label>
+                  <input
+                    type="number"
+                    className={`w-full border rounded-sm px-3 py-2 mt-2 text-sm focus:ring-1 focus:outline-none ${errors.order ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-green-400"
+                      }`}
+                    placeholder='Enter order'
+                    name="order"
+                    value={formData.order}
+                    onChange={handleChange}
+                  />
+                  {errors.order && (
+                    <p className="text-red-500 text-xs mt-1">{errors.order}</p>
                   )}
                 </div>
 
@@ -142,9 +167,8 @@ const AddStatus = ({ open, setOpen }) => {
                           className="hidden"
                         />
                         <span
-                          className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition ${
-                            formData.color === item.color ? "border-black scale-110" : "border-gray-300"
-                          }`}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition ${formData.color === item.color ? "border-black scale-110" : "border-gray-300"
+                            }`}
                           style={{ backgroundColor: item.color }}
                         >
                           {formData.color === item.color && (

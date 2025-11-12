@@ -6,7 +6,7 @@ export async function PUT(req) {
   try {
     await dbConnect(); // DB connect
 
-    const { id, status_name, color } = await req.json();
+    const { id, status_name, color, order } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
@@ -15,7 +15,7 @@ export async function PUT(req) {
     // Update the record
     const updatedData = await LeadStatus.findByIdAndUpdate(
       id,
-      { status_name, color },
+      { status_name, color, order },
       { new: true, runValidators: true }
     );
 

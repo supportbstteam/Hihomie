@@ -309,7 +309,9 @@ export default function CustomDnD() {
                   <div
                     key={card._id}
                     draggable={true}
-                    onDragStart={(e) => handleDragStart(e, card._id, col.id, index)}
+                    onDragStart={(e) =>
+                      handleDragStart(e, card._id, col.id, index)
+                    }
                     onDragEnd={handleDragEnd}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => handleDropBetween(col.id, index)}
@@ -362,18 +364,21 @@ export default function CustomDnD() {
                     <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                       <a
                         href={`tel:${card.phone}`}
+                        target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <LuPhoneCall />
                       </a>
                       <a
                         href={`https://wa.me/${card.phone}`}
+                        target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <FaWhatsapp />
                       </a>
                       <a
                         href={`mailto:${card.email}`}
+                        target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <CiMail />
