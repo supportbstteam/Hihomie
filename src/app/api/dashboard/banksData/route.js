@@ -6,7 +6,7 @@ import CardAssignUser from '@/models/CardAssignUser';
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
-    if (userId !== "68a2eeb6f31c60d58b33191e") {
+    if (userId === "68a2eeb6f31c60d58b33191e") {
         const totalLeads = await CardAssignUser.find({ userId: userId }).lean();
 
         const result = await CardAssignUser.aggregate([
@@ -25,46 +25,34 @@ export async function GET(req) {
                         {
                             $match: {
                                 $expr: {
-                                    $and: [
-                                        { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
-                                        { $eq: ["$cards.contacted", "yes"] }
-                                    ]
+                                    // only match by id (remove the contacted check)
+                                    $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"]
                                 }
                             }
                         },
-                        { $project: { _id: 0, matched: "true" } }
+                        // Return the matched card document directly
+                        { $replaceRoot: { newRoot: "$cards" } }
                     ],
-                    as: "contacted"
+                    as: "matchedCard" // will be array with 0 or 1 element
                 }
             },
-            {
-                $unwind: {
-                    path: '$contacted',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $addFields: {
-                    contactedb: {
-                        $cond: {
-                            if: { $eq: ["$contacted.matched", "true"] },
-                            then: true,
-                            else: false
-                        }
-                    }
-                }
-            },
+            // If you want to work with a single card document instead of array:
+            { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
+
+            // Group cards by bankName (global grouping across documents)
             {
                 $group: {
-                    _id: null,
-                    contactedCount: { $sum: { $cond: { if: "$contactedb", then: 1, else: 0 } } }
+                    _id: "$matchedCard.bankDetailsData.bank_name",
+                    cards: { $push: "$matchedCard" },
+                    count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
                 }
             },
         ]);
-        const totalLeadsCount = totalLeads.length;
-        const user_contacted_count = result[0].contactedCount;
-        const user_not_contacted_count = totalLeadsCount - user_contacted_count;
-        return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
+        console.log("resultbank",result);
+        // const totalLeadsCount = totalLeads.length;
+        // const user_contacted_count = result[0].contactedCount;
+        // const user_not_contacted_count = totalLeadsCount - user_contacted_count;
+        // return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
     }
     try {
         await dbConnect()

@@ -820,13 +820,25 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 </div>
                 <div>
                   <form onSubmit={handleBankSubmit} className="p-2 mt-2">
-                    <Input
+                    {/* <Input
                       label={t("bank")}
                       value={bankData?.bank_name}
                       onChange={handleBankChange}
                       name="bank_name"
                       placeholder={t("enter_bank_name")}
                       error={errors.bank_name}
+                    /> */}
+                    <Dropdown
+                      label={t("bank")}
+                      value={bankData?.bank_name}
+                      onChange={handleBankChange}
+                      name="bank_name"
+                      title={t("enter_bank_name")}
+                      options={[
+                        { value: "CaixaBank", label: "CaixaBank" },
+                        { value: "Banco Santander", label: "Banco Santander" },
+                        { value: "BBVA", label: "BBVA" }
+                      ]}
                     />
                     <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
                       {t("submit")}

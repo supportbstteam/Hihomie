@@ -79,14 +79,18 @@ const AddStatus = ({ open, setOpen }) => {
   }, [errorMessage, successMessage]);
 
   const menu = [
-    { color: '#cccccc' },
-    { color: '#20aee3' },
-    { color: '#24d2b5' },
-    { color: '#ff5c6c' },
-    { color: '#ff9041' },
-    { color: '#6772e5' },
-    { color: '#cddc39' },
-    { color: '#795548' },
+    { color: '#FF0000' },
+    { color: '#FF7F00' },
+    { color: '#FFFF00' },
+    { color: '#00FF00' },
+    { color: '#0000FF' },
+    { color: '#8B00FF' },
+    { color: '#00FFFF' },
+    { color: '#020c63ff' },
+    { color: '#e06ce0ff' },
+    { color: '#939896ff' },
+    { color: '#e02e8dff' },
+    { color: '#A52A2A' }
   ];
 
   return (

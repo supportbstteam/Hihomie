@@ -24,7 +24,7 @@ export async function POST(req) {
 export async function GET() {
   try {
     await dbConnect();
-    const data = await LeadStatus.find().lean();
+    const data = await LeadStatus.find().sort({ order: 1 }).lean();
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
@@ -60,7 +60,7 @@ export async function PUT(req) {
     const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
     await sourceCol.save();
 
-     movedCard.status = destColId;
+    movedCard.status = destColId;
 
     // 4️⃣ Add card into destination column
     const destCol = await LeadStatus.findById(destColId);

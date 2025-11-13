@@ -7,7 +7,7 @@ export async function PUT(req, context) {
     const { id } = await context.params;
     
     try {
-        const { colId, bank_name } = await req.json()
+        const { colId, bank_name } = await req.json();
         await dbConnect();
 
         if (!colId || !id) {

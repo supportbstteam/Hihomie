@@ -28,6 +28,7 @@ import {
   get_contactedUsers,
   get_documentSubmittedUsers,
   get_mortgageStatusData,
+  get_banksData,
 } from "@/store/dashboard";
 import { get_tasks, get_admin_tasks } from "@/store/task";
 import useUserFromSession from "@/lib/useUserFromSession";
@@ -152,6 +153,7 @@ export function Dashboard() {
     contactedUsers,
     documentSubmittedUsers,
     mortgageStatusData,
+    banksData,
     successTag,
   } = useSelector((state) => state.dashboard);
   const { tasks, admin_tasks } = useSelector((state) => state.task);
@@ -169,6 +171,7 @@ export function Dashboard() {
       dispatch(get_contactedUsers({ userId: user.id }));
       dispatch(get_documentSubmittedUsers({ userId: user.id }));
       dispatch(get_mortgageStatusData({ userId: user.id }));
+      dispatch(get_banksData({ userId: user.id }));
     }
   }, [user?.id]);
   return (
