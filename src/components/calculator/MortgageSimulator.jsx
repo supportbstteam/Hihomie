@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaRegClipboard } from "react-icons/fa";
 import Dropdown from "@/components/ui/DropDown";
 import DynamicEmailDropdown from "@/components/DynamicEmailDropdown";
@@ -51,14 +51,15 @@ const PlaceholderIcon = () => (
 
 const initialFormData = {
   property_location: "",
-  property_price: "",
-  bank_financing: 0,
-  savings: "",
+  property_price: 0,
+  bank_financing: 100,
+  savings: 0,
   itp: "",
-  fees: "",
+  fees: 0,
+  other_costs: 0,
   roi_type: "",
-  roi_interest: "",
-  roi_year: "",
+  roi_interest: 1,
+  roi_year: 1,
 };
 // roi == rate of interest
 
@@ -135,6 +136,16 @@ const MortgageSimulator = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
 
+  const [principal, setPrincipal] = useState(0);
+  const [loanTerm, setLoanTerm] = useState(1);
+  const [interestRate, setInterestRate] = useState(1);
+  const [monthlyLoanPayment, setMonthlyLoanPayment] = useState("");
+  const [totalLoanPayment, setTotalLoanPayment] = useState("");
+  const [totalLoanInterest, setTotalLoanInterest] = useState("");
+
+  const timerRef = useRef(null);
+  const mortgageTimerRef = useRef(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -155,42 +166,224 @@ const MortgageSimulator = () => {
   const handleReset = () => {
     setResult(false);
     setFormData(initialFormData);
+    setResultData(initialResultData);
+  };
+
+  // const calculateMortgage = () => {
+  //   console.log(formData);
+  //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
+  //   const n = formData.roi_year * 12; // total months
+
+  //   if (r === 0) {
+  //     return formData.property_price / n; // simple division if interest = 0
+  //   }
+
+  //   // Stable formula
+  //   const pp_after_financing =
+  //     (formData.property_price * formData.bank_financing) / 100;
+  //   const down_payment = formData.property_price - pp_after_financing;
+  //   const denominator = 1 - Math.pow(1 + r, -n);
+  //   const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
+  //   const totalPayment = monthlyPayment * n + down_payment;
+  //   const totalInterest =
+  //     parseInt(totalPayment) - parseInt(formData.property_price);
+  //   const total_itp = (formData.property_price * formData.itp) / 100;
+  //   const totalFee =
+  //     parseInt(formData.property_price) +
+  //     parseInt(formData.fees) +
+  //     parseInt(total_itp);
+  //   setResultData({
+  //     monthly_fee: monthlyPayment,
+  //     mortgage_amount: pp_after_financing,
+  //     total_fee: totalFee,
+  //     property_value: formData.property_price,
+  //     itp: total_itp,
+  //     fees: formData.fees,
+  //     interest: totalInterest,
+  //   });
+  // };
+
+  // const calculateMortgage = () => {
+  //   // console.log(formData);
+  //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
+  //   const n = formData.roi_year * 12; // total months
+  //   let mortgage_amount = 0;
+  //   let credit_amount = 0;
+
+  //   if (r === 0) {
+  //     return formData.property_price / n; // simple division if interest = 0
+  //   }
+
+  //   // Stable formula
+  //   const total_itp = (formData.property_price * formData.itp) / 100;
+  //   const pp_after_financing =
+  //     (formData.property_price * formData.bank_financing) / 100;
+  //   const down_payment = formData.property_price - pp_after_financing;
+  //   const totalFee =
+  //     parseInt(formData.property_price) +
+  //     parseInt(formData.fees) +
+  //     parseInt(total_itp) +
+  //     parseInt(formData.other_costs);
+  //   const extra_expenses =
+  //     total_itp + (parseInt(formData.other_costs) + parseInt(formData.fees) + down_payment);
+  //   if (parseInt(formData.savings) >= parseInt(extra_expenses)) {
+  //     mortgage_amount = Math.round(totalFee - formData.savings);
+  //   } else {
+  //     mortgage_amount = Math.round(formData.property_price - down_payment);
+  //     credit_amount = extra_expenses - formData.savings;
+  //   }
+  //   const denominator = 1 - Math.pow(1 + r, -n);
+  //   const monthlyPayment = Math.round((mortgage_amount * r) / denominator);
+  //   const totalPayment = monthlyPayment * n + down_payment;
+  //   const totalInterest =
+  //     parseInt(totalPayment) - parseInt(formData.property_price);
+
+  //   setResultData({
+  //     monthly_fee: monthlyPayment,
+  //     mortgage_amount: mortgage_amount,
+  //     total_fee: totalFee,
+  //     property_value: formData.property_price,
+  //     itp: total_itp,
+  //     fees: formData.fees,
+  //     other_costs: formData.other_costs,
+  //     interest: totalInterest,
+  //   });
+  // };
+
+  const calculateMortgage = () => {
+    // parse numeric inputs once (use radix 10 for parseInt)
+    const propertyPrice = parseInt(formData.property_price, 10) || 0;
+    const itpPercent = parseInt(formData.itp, 10) || 0;
+    const bankFinancingPercent = parseInt(formData.bank_financing, 10) || 0;
+    const fees = parseInt(formData.fees, 10) || 0;
+    const otherCosts = parseInt(formData.other_costs, 10) || 0;
+    const savings = parseInt(formData.savings, 10) || 0;
+
+    // roi and years: roi can be fractional, so use parseFloat
+    const roiAnnual = parseFloat(formData.roi_interest) || 0;
+    const roiYears = parseInt(formData.roi_year, 10) || 0;
+
+    // derived values
+    const r = roiAnnual / 12 / 100; // monthly rate (decimal)
+    const n = Math.max(roiYears * 12, 1); // total months (avoid divide-by-zero)
+
+    // ITP amount and financed property price
+    const totalItp = Math.round((propertyPrice * itpPercent) / 100);
+    const ppAfterFinancing = Math.round(
+      (propertyPrice * bankFinancingPercent) / 100
+    );
+    const downPayment = propertyPrice - ppAfterFinancing;
+
+    // total fees and extra expenses calculation
+    const totalFee = propertyPrice + fees + totalItp + otherCosts;
+    const extraExpenses = totalItp + otherCosts + fees + downPayment;
+
+    // mortgage (amount to be financed) and credit (if savings insufficient)
+    let mortgageAmount = 0;
+    let creditAmount = 0;
+
+    if (savings >= extraExpenses) {
+      mortgageAmount = Math.round(totalFee - savings);
+    } else {
+      mortgageAmount = Math.round(propertyPrice - downPayment);
+      creditAmount = extraExpenses - savings;
+    }
+
+    // compute monthly payment (handle zero-interest case)
+    let monthlyPayment;
+    if (r === 0) {
+      monthlyPayment = Math.round(mortgageAmount / n);
+    } else {
+      const denominator = 1 - Math.pow(1 + r, -n);
+      monthlyPayment = Math.round((mortgageAmount * r) / denominator);
+    }
+
+    // totals and interest
+    const totalPayment = Math.round(monthlyPayment * n + downPayment);
+    const totalInterest = totalPayment - propertyPrice;
+
+    // set result state
+    setResultData({
+      monthly_fee: monthlyPayment,
+      mortgage_amount: mortgageAmount,
+      // credit_amount: creditAmount,
+      total_fee: totalFee,
+      property_value: propertyPrice,
+      itp: totalItp,
+      fees,
+      other_costs: otherCosts,
+      interest: totalInterest,
+    });
+
+    // also return the object if caller needs it
+    return {
+      monthly_fee: monthlyPayment,
+      mortgage_amount: mortgageAmount,
+      credit_amount: creditAmount,
+      total_fee: totalFee,
+      property_value: propertyPrice,
+      itp: totalItp,
+      fees,
+      other_costs: otherCosts,
+      interest: totalInterest,
+    };
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setResult(true);
-    const r = formData.roi_interest / 12 / 100; // monthly interest rate
-    const n = formData.roi_year * 12; // total months
-
-    if (r === 0) {
-      return formData.property_price / n; // simple division if interest = 0
-    }
-
-    // Stable formula
-    const pp_after_financing =
-      (formData.property_price * formData.bank_financing) / 100;
-    const down_payment = formData.property_price - pp_after_financing;
-    const denominator = 1 - Math.pow(1 + r, -n);
-    const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
-    const totalPayment = monthlyPayment * n + down_payment;
-    const totalInterest =
-      parseInt(totalPayment) - parseInt(formData.property_price);
-    const total_itp = (formData.property_price * formData.itp) / 100;
-    const totalFee =
-      parseInt(formData.property_price) +
-      parseInt(formData.fees) +
-      parseInt(total_itp);
-    setResultData({
-      monthly_fee: monthlyPayment,
-      mortgage_amount: pp_after_financing,
-      total_fee: totalFee,
-      property_value: formData.property_price,
-      itp: total_itp,
-      fees: formData.fees,
-      interest: totalInterest,
-    });
+    calculateMortgage();
   };
+
+  useEffect(() => {
+    if (mortgageTimerRef.current) clearTimeout(mortgageTimerRef.current);
+    mortgageTimerRef.current = setTimeout(() => {
+      setResult(true);
+      calculateMortgage();
+    }, 500);
+
+    return () => {
+      if (mortgageTimerRef.current) clearTimeout(mortgageTimerRef.current);
+    };
+  }, [formData]);
+
+  const calculateLoan = () => {
+    if (loanTerm && interestRate) {
+      const r = interestRate / 12 / 100; // monthly interest rate
+      const n = loanTerm * 12; // total months
+
+      if (r === 0) {
+        return principal / n; // simple division if interest = 0
+      }
+
+      // Stable formula
+      const denominator = 1 - Math.pow(1 + r, -n);
+      const monthlyPayment = Math.round((principal * r) / denominator);
+      const totalPayment = monthlyPayment * n;
+      const totalInterest = totalPayment - principal;
+      setMonthlyLoanPayment(monthlyPayment);
+      setTotalLoanPayment(totalPayment);
+      setTotalLoanInterest(totalInterest);
+    } else {
+      alert("Please enter all the fields");
+    }
+  };
+  const handleLoanSubmit = (e) => {
+    e.preventDefault();
+    calculateLoan();
+  };
+
+  // for automatic calculation of loan just after entering value
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      calculateLoan();
+    }, 500);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [principal, loanTerm, interestRate]);
 
   // Base styles for form controls
   const formControlBase =
@@ -218,8 +411,6 @@ const MortgageSimulator = () => {
 
     handleCloseModal();
   };
-
-  const [query, setQuery] = useState("");
 
   return (
     <>
@@ -302,7 +493,7 @@ const MortgageSimulator = () => {
               </div>
 
               <div className="mb-6">
-                <div className="grid grid-cols-3 gap-3 mb-2">
+                <div className="grid grid-cols-4 gap-3 mb-2">
                   <div className="col-span-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Savings Contributed
@@ -331,14 +522,27 @@ const MortgageSimulator = () => {
                   </div>
                   <div className="col-span-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Fees / Other Costs
+                      Fees
                     </label>
                     <input
                       type="text"
                       name="fees"
                       value={formData.fees}
                       onChange={handleChange}
-                      placeholder="Enter Fees / Other Costs"
+                      placeholder="Enter Fees"
+                      className={formControlBase}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Other Costs
+                    </label>
+                    <input
+                      type="text"
+                      name="other_costs"
+                      value={formData.other_costs}
+                      onChange={handleChange}
+                      placeholder="Enter Other Costs"
                       className={formControlBase}
                     />
                   </div>
@@ -347,29 +551,44 @@ const MortgageSimulator = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rate of Interest
+                  Interest Details
                 </label>
                 <div className="grid grid-cols-6 gap-2 items-center mb-2">
-                  <select className={`${formControlBase} col-span-2`}>
-                    <option>Fixed</option>
-                    <option>Variable</option>
-                  </select>
-                  <input
-                    type="text"
-                    name="roi_interest"
-                    value={formData.roi_interest}
-                    onChange={handleChange}
-                    placeholder="Interest (TIH)"
-                    className={`${formControlBase} col-span-2`}
-                  />
-                  <input
-                    type="text"
-                    name="roi_year"
-                    value={formData.roi_year}
-                    onChange={handleChange}
-                    placeholder="Year"
-                    className={`${formControlBase} col-span-2`}
-                  />
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Type
+                    </label>
+                    <select className={`${formControlBase}`}>
+                      <option>Fixed</option>
+                      <option>Variable</option>
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Interest (TIH)
+                    </label>
+                    <input
+                      type="text"
+                      name="roi_interest"
+                      value={formData.roi_interest}
+                      onChange={handleChange}
+                      placeholder="Interest (TIH)"
+                      className={`${formControlBase}`}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Year
+                    </label>
+                    <input
+                      type="text"
+                      name="roi_year"
+                      value={formData.roi_year}
+                      onChange={handleChange}
+                      placeholder="Year"
+                      className={`${formControlBase} col-span-2`}
+                    />
+                  </div>
                   {/* <button
                     type="button"
                     className="w-11 h-11 col-span-1 rounded-md border border-gray-300 bg-white text-2xl font-light text-gray-500 hover:border-emerald-500 hover:text-emerald-500 transition"
@@ -402,12 +621,12 @@ const MortgageSimulator = () => {
                 >
                   Reset
                 </button>
-                <button
+                {/* <button
                   type="submit"
                   className="bg-emerald-500 text-white p-2 px-3 rounded-md hover:bg-emerald-600 transition"
                 >
                   Calculate
-                </button>
+                </button> */}
               </div>
             </form>
           </section>
@@ -443,6 +662,12 @@ const MortgageSimulator = () => {
                   </p>
                 </div>
                 <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">Mortgage Amount</span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.mortgage_amount}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
                   <span className="text-gray-500 text-sm">
                     Total Purchase Cost
                   </span>
@@ -465,11 +690,15 @@ const MortgageSimulator = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-500 text-sm">
-                    Fees / Other Costs
-                  </span>
+                  <span className="text-gray-500 text-sm">Fees</span>
                   <span className="text-gray-800 font-medium">
                     €{resultData.fees}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-500 text-sm">Other Costs</span>
+                  <span className="text-gray-800 font-medium">
+                    €{resultData.other_costs}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
@@ -491,6 +720,113 @@ const MortgageSimulator = () => {
             )}
           </section>
         </main>
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
+          <section className="col-span-3 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
+            <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
+              <span className="text-emerald-500">%</span> Loan Calculator
+            </h2>
+            <form onSubmit={handleLoanSubmit}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                <div className="form-group">
+                  <label
+                    htmlFor="creditAmount"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Credit Amount
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      id="creditAmount"
+                      value={principal}
+                      onChange={(e) => setPrincipal(e.target.value)}
+                      placeholder="Enter Credit Amount"
+                      className={formControlBase}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label
+                    htmlFor="loanTerm"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Loan Term
+                  </label>
+                  <input
+                    type="number"
+                    id="loanTerm"
+                    value={loanTerm}
+                    onChange={(e) => setLoanTerm(e.target.value)}
+                    placeholder="Enter Loan Term"
+                    className={formControlBase}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-8">
+                {" "}
+                {/* Increased margin bottom as per image */}
+                <label
+                  htmlFor="interestRate"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Interest Rate
+                </label>
+                <input
+                  type="number"
+                  id="interestRate"
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(e.target.value)}
+                  placeholder="Enter Interest Rate"
+                  className={formControlBase}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                {" "}
+                {/* Buttons aligned to the right with gap */}
+                {/* <button
+                  type="submit"
+                  className="px-6 py-2 rounded-md text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 transition-colors"
+                >
+                  Calculate
+                </button> */}
+              </div>
+            </form>
+          </section>
+          <section className="col-span-2 bg-white rounded-lg p-6 sm:p-8 shadow-lg flex flex-col">
+            <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
+              <span className="text-emerald-500 flex items-center">
+                <FaRegClipboard className="h-6 w-6" />
+              </span>{" "}
+              Result
+            </h2>
+            <div className="flex-grow flex flex-col justify-start">
+              {" "}
+              {/* Align content to top of result card */}
+              <div className="bg-emerald-50 p-4 rounded-md mb-6">
+                <p className="text-sm text-emerald-700 font-medium mb-1">
+                  Monthly Credit Fee
+                </p>
+                <p className="text-2xl font-bold text-emerald-700">
+                  €{monthlyLoanPayment}/month
+                </p>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <span className="text-gray-500 text-sm">Total Repayment</span>
+                <span className="text-gray-800 font-medium">
+                  €{totalLoanPayment}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-500 text-sm">Total Interest</span>
+                <span className="text-gray-800 font-medium">
+                  €{totalLoanInterest}
+                </span>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
 
       {/* --- New Email Modal --- */}
@@ -507,9 +843,7 @@ const MortgageSimulator = () => {
               Send Simulation
             </h3>
 
-            <DynamicEmailDropdown
-            setEmail={setEmail}
-            />
+            <DynamicEmailDropdown setEmail={setEmail} />
 
             <div className="flex justify-end gap-3 mt-6">
               <button

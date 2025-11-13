@@ -177,7 +177,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         dispatch(get_leadStatusData());
         dispatch(messageClear());
         toast.success(successMessage);
-        // setSelectedUser(null);
+        setSelectedUser(null);
         // setFormData({
         //   lead_title: "",
         //   surname: "",
@@ -242,7 +242,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const [commentFormData, setCommentFormData] = useState({
     comment: "",
     colId: selectedUser.status ? selectedUser.status : colId || "",
-    userId: authUser.id,
+    userId: authUser?.id,
   });
 
   useEffect(() => {
@@ -283,7 +283,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     due_date: "",
     due_date_note: "",
     colId: selectedUser.status ? selectedUser.status : colId || "",
-    userId: authUser.id,
+    userId: authUser?.id,
   });
 
   useEffect(() => {
@@ -383,7 +383,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     const formData = new FormData(event.currentTarget);
     formData.append("colId", selectedUser.status ? selectedUser.status : colId || "");
     formData.append("cardId", selectedUser._id);
-    formData.append("userId", authUser.id);
+    formData.append("userId", authUser?.id);
 
     try {
       const response = await fetch("/api/documents", {
