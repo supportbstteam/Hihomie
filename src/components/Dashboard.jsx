@@ -38,13 +38,6 @@ const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
 const COLORS_SIGNED = ["#22c55e", "#3b82f6"];
 const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
 
-const bankData = [
-  { name: "CaixaBank", value: 40 },
-  { name: "Banco Santander", value: 30 },
-  { name: "BBVA", value: 30 },
-];
-
-
 const failureReasons = [
   { reason: "Not Contacted", value: "1,43,382" },
   { reason: "Not Viable", value: "1,43,382" },
@@ -387,7 +380,7 @@ export function Dashboard() {
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Distribution by Bank"
-            data={bankData}
+            data={banksData}
             colors={COLORS_BANK}
           />
         </div>

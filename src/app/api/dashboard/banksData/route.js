@@ -6,16 +6,11 @@ import CardAssignUser from '@/models/CardAssignUser';
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
-    if (userId === "68a2eeb6f31c60d58b33191e") {
-        const totalLeads = await CardAssignUser.find({ userId: userId }).lean();
-
+    if (userId !== "68a2eeb6f31c60d58b33191e") {
         const result = await CardAssignUser.aggregate([
-            // Stage 1: Find the user's assigned card
             {
                 $match: { userId: userId }
             },
-
-            // Stage 2: Use a Pipelined Lookup
             {
                 $lookup: {
                     from: "leadstatuses",
@@ -25,73 +20,67 @@ export async function GET(req) {
                         {
                             $match: {
                                 $expr: {
-                                    // only match by id (remove the contacted check)
                                     $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"]
                                 }
                             }
                         },
-                        // Return the matched card document directly
                         { $replaceRoot: { newRoot: "$cards" } }
                     ],
-                    as: "matchedCard" // will be array with 0 or 1 element
+                    as: "matchedCard"
                 }
             },
-            // If you want to work with a single card document instead of array:
             { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
-
-            // Group cards by bankName (global grouping across documents)
             {
                 $group: {
                     _id: "$matchedCard.bankDetailsData.bank_name",
-                    cards: { $push: "$matchedCard" },
                     count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
                 }
             },
+            {
+                $addFields: {
+                    _sortKey: { $toLower: "$_id" }
+                }
+            },
+            {
+                $sort: { _sortKey: 1 }
+            },
+            {
+                $project: {
+                    name: "$_id",
+                    value: "$count",
+                    _id: 0
+                }
+            }
         ]);
-        console.log("resultbank",result);
-        // const totalLeadsCount = totalLeads.length;
-        // const user_contacted_count = result[0].contactedCount;
-        // const user_not_contacted_count = totalLeadsCount - user_contacted_count;
-        // return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
+        return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
     }
     try {
         await dbConnect()
 
         const result = await LeadStatus.aggregate([
+            { $unwind: "$cards" },
             {
                 $group: {
-                    _id: null, // Group all documents into a single bucket
-                    totalItemCount: { $sum: { $size: "$cards" } }, // Sum up the size of the 'cards' array for each doc
-                },
+                    _id: "$cards.bankDetailsData.bank_name",
+                    totalCardCount: { $sum: 1 }
+                }
             },
+            {
+                $addFields: {
+                    _sortKey: { $toLower: "$_id" }
+                }
+            },
+            { $sort: { _sortKey: 1 } },
+            {
+                $project: {
+                    name: "$_id",
+                    value: "$totalCardCount",
+                    _id: 0
+                }
+            }
         ]);
 
-        const leadsAttended = await LeadStatus.aggregate([
-            {
-                // 1. Deconstruct the 'cards' array field
-                $unwind: "$cards",
-            },
-            {
-                // 2. Filter the resulting documents to include only those
-                //    where the unwound card's status matches the target
-                $match: {
-                    "cards.contacted": { $eq: "yes" }
-                },
-            },
-            {
-                // 3. Group all matching cards into a single bucket
-                $group: {
-                    _id: null,
-                    totalCardCount: { $sum: 1 }, // Count the number of documents (which are now individual cards)
-                },
-            },
-        ]);
-
-        const totalLeads = result[0].totalItemCount;
-        const contacted_leads = leadsAttended[0].totalCardCount;
-        const non_contacted_leads = totalLeads - contacted_leads;
-
-        return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: contacted_leads }, { name: "Users Not Contacted", value: non_contacted_leads }], successTag: "get_contacted_lead" }, { status: 200 })
+        return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
