@@ -64,7 +64,7 @@ const initialFormData = {
 // roi == rate of interest
 
 const initialResultData = {
-  monthly_fee: "",
+  monthly_fee: 0,
   mortgage_amount: "",
   total_fee: "",
   property_value: "",
@@ -143,8 +143,16 @@ const MortgageSimulator = () => {
   const [totalLoanPayment, setTotalLoanPayment] = useState("");
   const [totalLoanInterest, setTotalLoanInterest] = useState("");
 
+  const [salary1, setSalary1] = useState(0);
+  const [payment1, setPayment1] = useState(12);
+  const [salary2, setSalary2] = useState(0);
+  const [payment2, setPayment2] = useState(12);
+  const [sumOfDebts, setSumOfDebts] = useState(0);
+  const [debtRatio, setDebtRatio] = useState(0);
+
   const timerRef = useRef(null);
   const mortgageTimerRef = useRef(null);
+  const debtRatioTimerRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -340,7 +348,7 @@ const MortgageSimulator = () => {
     mortgageTimerRef.current = setTimeout(() => {
       setResult(true);
       calculateMortgage();
-    }, 500);
+    }, 2000);
 
     return () => {
       if (mortgageTimerRef.current) clearTimeout(mortgageTimerRef.current);
@@ -378,12 +386,41 @@ const MortgageSimulator = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       calculateLoan();
-    }, 500);
+    }, 2000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [principal, loanTerm, interestRate]);
+
+  const calculateDebtRatio = () => {
+    const sal1int = parseInt(salary1);
+    const sal2int = parseInt(salary2);
+    const pay1int = parseInt(payment1);
+    const pay2int = parseInt(payment2);
+    const sumOfDebtsint = parseInt(sumOfDebts);
+    const totalSalary = (sal1int * pay1int) + (sal2int * pay2int);
+    const totalDebt = (sumOfDebtsint * 12) + (resultData.monthly_fee * 12);
+    if(totalSalary > 0){
+      const debtRatio = (totalDebt / totalSalary) * 100;
+      setDebtRatio(Number(debtRatio.toFixed(2)));
+    }
+  };
+
+  const handleDebtRatioCalculation = (e) => {
+    e.preventDefault();
+    calculateDebtRatio();
+  };
+
+  useEffect(() => {
+    if (debtRatioTimerRef.current) clearTimeout(debtRatioTimerRef.current);
+    debtRatioTimerRef.current = setTimeout(() => {
+      calculateDebtRatio();
+    }, 2000);
+    return () => {
+      if (debtRatioTimerRef.current) clearTimeout(debtRatioTimerRef.current);
+    };
+  }, [salary1, salary2, payment1, payment2, sumOfDebts]);
 
   // Base styles for form controls
   const formControlBase =
@@ -414,9 +451,9 @@ const MortgageSimulator = () => {
 
   return (
     <>
-      <div className="w-full mx-auto p-4">
-        {/* Calculator Body */}
-        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="w-full min-h-screen mx-auto p-4">
+        {/* Mortgage Simulator Calculator */}
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 min-h-0">
           {/* Input Form Card */}
           <section className="lg:col-span-3 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
@@ -720,7 +757,9 @@ const MortgageSimulator = () => {
             )}
           </section>
         </main>
-        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
+
+        {/* Loan Calculator */}
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 min-h-0">
           <section className="col-span-3 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
               <span className="text-emerald-500">%</span> Loan Calculator
@@ -825,6 +864,111 @@ const MortgageSimulator = () => {
                 </span>
               </div>
             </div>
+          </section>
+        </main>
+
+        {/* Affordability Checker */}
+        <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6 min-h-0">
+          <section className="col-span-5 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
+            <h2 className="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-800">
+              <span className="text-emerald-500">%</span> Economic Data
+            </h2>
+            <form onSubmit={handleDebtRatioCalculation}>
+              <div className="mb-6">
+                <label
+                  htmlFor="leads"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Leads
+                </label>
+                <select id="leads" className={formControlBase}>
+                  <option>daniel.romero22@mockmail.net</option>
+                </select>
+              </div>
+              <div className="mb-6">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-10">
+                    <div className="flex-grow">
+                      <label htmlFor="salary1" className="block text-sm font-medium text-gray-700 mb-2">Salary 1</label>
+                      <input
+                        type="text"
+                        id="salary1"
+                        name="salary1"
+                        value={salary1}
+                        onChange={(e) => setSalary1(e.target.value)}
+                        className={formControlBase}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="payment1" className="block text-sm font-medium text-gray-700 mb-2">No. of Payments</label>
+                      <input
+                        type="text"
+                        id="payment1"
+                        name="payment1"
+                        value={payment1}
+                        onChange={(e) => setPayment1(e.target.value)}
+                        className={`${formControlBase}`}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-10">
+                    <div className="flex-grow">
+                      <label htmlFor="salary2" className="block text-sm font-medium text-gray-700 mb-2">Salary 2</label>
+                      <input
+                        type="text"
+                        id="salary2"
+                        name="salary2"
+                        value={salary2}
+                        onChange={(e) => setSalary2(e.target.value)}
+                        className={formControlBase}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="payment2" className="block text-sm font-medium text-gray-700 mb-2">No. of Payments</label>
+                      <input
+                        type="text"
+                        id="payment2"
+                        name="payment2"
+                        value={payment2}
+                        onChange={(e) => setPayment2(e.target.value)}
+                        className={`${formControlBase}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sum of Debts */}
+              <div>
+                <label
+                  htmlFor="sumOfDebts"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Sum of Debts
+                </label>
+                <input
+                  type="text"
+                  id="sumOfDebts"
+                  name="sumOfDebts"
+                  value={sumOfDebts}
+                  onChange={(e) => setSumOfDebts(e.target.value)}
+                  className={formControlBase}
+                />
+              </div>
+
+              <div className="mt-6">
+                <label htmlFor="debtRatio" className="block text-lg font-medium text-gray-700 mb-2">Debt Ratio</label>
+                <span id="debtRatio" className="block text-lg font-medium text-emerald-500">{debtRatio}%</span>
+              </div>
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-md text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 transition-colors"
+                >
+                  Calculate
+                </button>
+              </div>
+            </form>
           </section>
         </main>
       </div>
