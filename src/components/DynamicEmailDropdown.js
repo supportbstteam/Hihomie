@@ -15,7 +15,6 @@ const DynamicEmailDropdown = ({ setEmail }) => {
     return () => clearTimeout(timeout);
   }, [query]);
 
-  // Simulated API call
   const fetchResults = async (searchText) => {
     setLoading(true);
     try {

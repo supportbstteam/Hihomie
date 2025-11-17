@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { usePathname } from "next/navigation"; // ✅ Add this
-import { FaAt, FaRegUser, FaTasks } from "react-icons/fa";
+import { FaAt, FaRegUser, FaTasks, FaRegPaperPlane } from "react-icons/fa";
 import {
   MdOutlineAssuredWorkload,
   MdOutlineCalculate,
@@ -33,6 +33,7 @@ const MENU = {
     { href: "/dashboard/lead", label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: "/dashboard/team", label: t("team"), icon: <MdOutlineDiversity3 /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
+    { href: "/dashboard/mailer", label: t("mailer"), icon: <FaRegPaperPlane /> },
     // { href: '#', label: t('manager'), icon: <MdOutlineHandshake /> },
     // { href: '#', label: t('agent'), icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: t('bank'), icon: <MdOutlineAssuredWorkload /> },

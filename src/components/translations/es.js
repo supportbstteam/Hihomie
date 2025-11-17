@@ -176,6 +176,7 @@ const es = {
   documentTypeRequired: "Por favor, selecciona un tipo de documento.",
   documentFileRequired: "Por favor, selecciona un archivo de documento.",
   order: "Orden",
+  mailer: "Remitente",
 };
 
 export default es;
