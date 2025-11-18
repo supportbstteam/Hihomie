@@ -1,28 +1,96 @@
 import { NextResponse } from "next/server";
 import LeadStatus from "@/models/LeadStatus";
+import Document from "@/models/Document";
 
 export async function GET(request) {
     const { searchParams } = request.nextUrl;
     const userStatus = searchParams.get("userStatus");
 
-    const result = await LeadStatus.aggregate([
-        {
-            $match: { status: userStatus }
-        },
-        {
-            $group: {
-                _id: "$status",
-                count: { $sum: 1 }
-            }
-        }
-    ]);
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
-    const users = [
-        { id: 1, name: "John Doe", email: "bstteam106@gmail.com" },
-        { id: 2, name: "Jane Smith", email: "dixitbrothers601@gmail.com" },
-        { id: 3, name: "Bob Johnson", email: "bob.johnson@example.com" },
-        { id: 4, name: "Alice Brown", email: "alice.brown@example.com" },
-        { id: 5, name: "Charlie Davis", email: "charlie.davis@example.com" },
-    ];
-    return NextResponse.json({ leads: users, message: "Leads Fetched Successfully" });
+    let result = [];
+    switch (userStatus) {
+        case "Pending Documentation":
+            const documentSubmittedUser = await Document.distinct("cardId");
+            result = await LeadStatus.aggregate([
+                {
+                    $unwind: "$cards"
+                },
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                { $gte: ["$cards.createdAt", threeMonthsAgo] },
+                                { $not: { $in: [{ $toString: "$cards._id" }, documentSubmittedUser] } }
+                            ]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        id: { $toString: "$cards._id" },
+                        _id: 0,
+                        name: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+                        email: "$cards.email"
+                    }
+                }
+            ]);
+            break;
+        case "Contacted Users":
+            result = await LeadStatus.aggregate([
+                {
+                    $unwind: "$cards"
+                },
+                {
+                    $match: {
+                        "cards.contacted": "yes",
+                        "cards.createdAt": { $gte: threeMonthsAgo }
+                    }
+                },
+                {
+                    $project: {
+                        id: { $toString: "$cards._id" },
+                        _id: 0,
+                        name: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+                        email: "$cards.email"
+                    }
+                }
+            ]);
+            break;
+        case "Users Not Contacted":
+            result = await LeadStatus.aggregate([
+                {
+                    $unwind: "$cards"
+                },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                $or: [
+                                    { "cards.contacted": "no" },      // explicitly "no"
+                                    { "cards.contacted": { $exists: false } } // no field present
+                                ]
+                            },
+                            {
+                                "cards.createdAt": { $gte: threeMonthsAgo }
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        id: { $toString: "$cards._id" },
+                        _id: 0,
+                        name: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+                        email: "$cards.email"
+                    }
+                }
+            ]);
+            break;
+        default:
+            break;
+    }
+
+    return NextResponse.json({ leads: result, message: "Leads Fetched Successfully" });
 }

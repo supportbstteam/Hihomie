@@ -48,7 +48,7 @@ const mailer = () => {
 
     const res = await fetch("/api/send-bulk-notification-mail", {
       method: "POST",
-      body: JSON.stringify({ leads: selectedLeads }),
+      body: JSON.stringify({ "leads": selectedLeads, "userStatus": userStatus }),
     });
 
     if (!res.ok) {
@@ -69,6 +69,8 @@ const mailer = () => {
               label="Users (last 3 months)"
               name="user_status"
               onChange={(e) => setUserStatus(e.target.value)}
+              title="Select User Status"
+              value={userStatus}
               options={[
                 {
                   value: "Pending Documentation",
