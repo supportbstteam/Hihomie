@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { t } from "@/components/translations";
 
 const DynamicEmailDropdown = ({ setEmail }) => {
   const [query, setQuery] = useState(""); // what user types
   const [results, setResults] = useState([]); // dropdown options
-  const [selected, setSelected] = useState(""); // chosen email
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -23,8 +23,6 @@ const DynamicEmailDropdown = ({ setEmail }) => {
         `/api/customer?email_like=${searchText}`
       );
       const data = await res.json();
-      const emails = data.map((user) => user.email);
-
       setResults(data);
       setShowDropdown(true);
     } catch (error) {
@@ -36,7 +34,6 @@ const DynamicEmailDropdown = ({ setEmail }) => {
 
   const handleSelect = (email) => {
     setEmail(email);
-    setSelected(email);
     setQuery(email);
     setShowDropdown(false);
   };
@@ -44,17 +41,16 @@ const DynamicEmailDropdown = ({ setEmail }) => {
   return (
     <div className="relative mx-auto">
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        Email Address
+        {t("leads")}
       </label>
 
       {/* Input Field */}
       <input
         type="text"
-        placeholder="Type an email..."
+        placeholder={t("enter_email")}
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
-          setSelected("");
         }}
         onFocus={() => setShowDropdown(true)}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -64,7 +60,7 @@ const DynamicEmailDropdown = ({ setEmail }) => {
       {showDropdown && query.length > 1 && (
         <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10">
           {loading ? (
-            <div className="p-3 text-gray-500 text-sm">Loading...</div>
+            <div className="p-3 text-gray-500 text-sm">{t("loading")}</div>
           ) : results.length > 0 ? (
             results.map((res, idx) => (
               <div
@@ -77,7 +73,7 @@ const DynamicEmailDropdown = ({ setEmail }) => {
               </div>
             ))
           ) : (
-            <div className="p-3 text-gray-500 text-sm">No results found</div>
+            <div className="p-3 text-gray-500 text-sm">{t("no_results_found")}</div>
           )}
         </div>
       )}

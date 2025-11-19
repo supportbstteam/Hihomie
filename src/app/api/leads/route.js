@@ -11,6 +11,27 @@ export async function GET(request) {
 
     let result = [];
     switch (userStatus) {
+        case "No Answer":
+            result = await LeadStatus.aggregate([
+                {
+                    $unwind: "$cards"
+                },
+                {
+                    $match: {
+                        "status_name": "Call Back",
+                        "cards.createdAt": { $gte: threeMonthsAgo }
+                    }
+                },
+                {
+                    $project: {
+                        id: { $toString: "$cards._id" },
+                        _id: 0,
+                        name: { $concat: ["$cards.first_name", " ", "$cards.last_name"] },
+                        email: "$cards.email"
+                    }
+                }
+            ]);
+            break;
         case "Pending Documentation":
             const documentSubmittedUser = await Document.distinct("cardId");
             result = await LeadStatus.aggregate([

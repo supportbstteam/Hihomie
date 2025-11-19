@@ -52,7 +52,7 @@ const Icon = ({
     </div>
   );
 
-  return href ? <Link href={href} onClick={onClick}>{wrapper}</Link> : wrapper;
+  return href ? <Link href={href} onClick={onClick} target="_blank">{wrapper}</Link> : wrapper;
 };
 
 export default Icon;

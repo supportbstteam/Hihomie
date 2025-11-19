@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import Dropdown from "@/components/ui/DropDown";
 import { get_leads } from "@/store/mailer";
+import { t } from "@/components/translations";
 
 const mailer = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const mailer = () => {
 
   const handleSendMail = async () => {
     if (selectedLeads.length === 0) {
-      alert("Please select at least one lead.");
+      alert(t("alert1"));
       return;
     }
 
@@ -52,7 +53,7 @@ const mailer = () => {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to send email");
+      throw new Error(t("error1"));
     }
   };
 
@@ -61,23 +62,24 @@ const mailer = () => {
       <main className="grid grid-cols-1 lg:grid-cols-5 gap-6 m-6">
         <section className="col-span-2 bg-white rounded-lg p-6 sm:p-8 shadow-lg">
           <h2 className="text-lg bg-primary/20 rounded-lg px-2 py-3 font-semibold mb-6 flex items-center gap-2 text-gray-800">
-            Actions
+            {t("actions")}
           </h2>
 
           <form onSubmit={handleSubmit}>
             <Dropdown
-              label="Users (last 3 months)"
+              label={t("users_last_3_months")}
               name="user_status"
               onChange={(e) => setUserStatus(e.target.value)}
-              title="Select User Status"
+              title={t("select_user_status")}
               value={userStatus}
               options={[
+                { value: "No Answer", label: t("no_answer") },
                 {
                   value: "Pending Documentation",
-                  label: "Pending Documentation",
+                  label: t("pending_documentation"),
                 },
-                { value: "Contacted Users", label: "Contacted Users" },
-                { value: "Users Not Contacted", label: "Users Not Contacted" },
+                { value: "Contacted Users", label: t("contacted_users") },
+                { value: "Users Not Contacted", label: t("users_not_contacted") },
               ]}
             />
 
@@ -87,7 +89,7 @@ const mailer = () => {
                 disabled={loader}
                 className="px-6 py-2 rounded-md text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 transition-colors disabled:bg-gray-400"
               >
-                {loader ? "Loading..." : "Submit"}
+                {loader ? t("Loading") : t("submit")}
               </button>
             </div>
           </form>
@@ -96,7 +98,7 @@ const mailer = () => {
         <section className="col-span-3 bg-white rounded-lg p-6 sm:p-8 shadow-lg flex flex-col">
           <div className="flex justify-between bg-primary/20 rounded-lg px-2 py-2 mb-6">
             <h2 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
-              Users (last 3 months)
+              {t("users_last_3_months")}
             </h2>
             <button
               disabled={loader}
@@ -104,7 +106,7 @@ const mailer = () => {
               onClick={handleSendMail}
               className="px-6 py-2 rounded-md text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 transition-colors disabled:bg-gray-400"
             >
-              Send Mail
+              {t("send_mail")}
             </button>
           </div>
 
@@ -118,14 +120,14 @@ const mailer = () => {
                 className="w-4 h-4 accent-emerald-600"
               />
             </h2>
-            <h2 className="font-medium col-span-2">Users Name</h2>
-            <h2 className="font-medium col-span-2">Email</h2>
+            <h2 className="font-medium col-span-2">{t("name")}</h2>
+            <h2 className="font-medium col-span-2">{t("email")}</h2>
           </div>
 
           {/* Loader while leads are fetching */}
           {loader && (
             <div className="text-center py-4 text-gray-600">
-              Loading leads...
+              {t("loading")}
             </div>
           )}
 
