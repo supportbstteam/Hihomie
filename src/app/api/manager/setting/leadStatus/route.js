@@ -46,6 +46,7 @@ export async function GET() {
                     _id: '$_id',
                     status_name: '$status_name',
                     color: '$color',
+                    order: '$order',
                     cards: {
                         $filter: {
                             input: "$cards",
@@ -57,6 +58,9 @@ export async function GET() {
                     }
                 }
             },
+            {
+                $sort: { order: 1 }
+            }
         ];
         const data = await LeadStatus.aggregate(pipeline);
         return NextResponse.json({ data }, { status: 201 })

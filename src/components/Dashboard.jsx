@@ -30,7 +30,7 @@ import {
   get_mortgageStatusData,
   get_banksData,
 } from "@/store/dashboard";
-import { get_tasks, get_admin_tasks } from "@/store/task";
+import { get_tasks, get_admin_tasks, get_notes } from "@/store/task";
 import useUserFromSession from "@/lib/useUserFromSession";
 
 // --- Reusable Chart Color Constants ---
@@ -149,7 +149,7 @@ export function Dashboard() {
     banksData,
     successTag,
   } = useSelector((state) => state.dashboard);
-  const { tasks, admin_tasks } = useSelector((state) => state.task);
+  const { tasks, admin_tasks, notes } = useSelector((state) => state.task);
   const user = useUserFromSession();
   useEffect(() => {
     if(user?.id){
@@ -234,8 +234,8 @@ export function Dashboard() {
 
         {/* Row 2 */}
         <div className="lg:col-span-4 xl:col-span-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 h-[calc(100vh-290px)]">
-            <div className="lg:col-span-3 xl:col-span-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-6 gap-6 h-[calc(100vh-290px)]">
+            <div className="lg:col-span-4 xl:col-span-2">
               <Card>
                 <h3 className="text-lg font-semibold text-gray-700">
                   {t("latest_activities")}
@@ -279,7 +279,57 @@ export function Dashboard() {
                 </table>
               </Card>
             </div>
-            <div className="lg:col-span-1 xl:col-span-2 overflow-y-auto">
+            {/* <div className="lg:col-span-2 xl:col-span-2 overflow-y-auto">
+              {user?.role === "admin" && (
+                <Card className="h-full overflow-y-auto">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                    {t("tasks")}
+                  </h3>
+                  {admin_tasks.map((task) => (
+                    <div key={task._id} className="flex-grow pr-1">
+                      <div className="mb-2">
+                        <span className="mb-4 px-2 py-1 text-lg">
+                          {task.user_name}
+                        </span>
+                        {task.task_Details.map((task_number) => (
+                          <div
+                            key={task_number._id}
+                            className={`text-base my-2 ml-4 px-2 ${
+                              task_number.completed
+                                ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                                : "bg-green-100 text-gray-800 rounded-sm"
+                            }`}
+                          >
+                            {task_number.task}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </Card>
+              )}
+              {user?.role !== "admin" && (
+                <Card className="h-full overflow-y-auto">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                    {t("notes")}
+                  </h3>
+                  {tasks.map((task) => (
+                    <div key={task._id} className="flex items-center flex-grow">
+                      <span
+                        className={`text-base flex-grow mb-2 px-2 py-1 ${
+                          task.completed
+                            ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                            : "bg-green-100 text-gray-800 rounded-sm"
+                        }`}
+                      >
+                        {task.task}
+                      </span>
+                    </div>
+                  ))}
+                </Card>
+              )}
+            </div> */}
+            <div className="lg:col-span-2 xl:col-span-2 overflow-y-auto">
               {user?.role === "admin" && (
                 <Card className="h-full overflow-y-auto">
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">

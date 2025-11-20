@@ -34,6 +34,7 @@ import {
 import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
 import ExportModal from "@/components/prospects/Export";
+import MailModel from "@/components/prospects/MailModel";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
 import { t } from "@/components/translations";
@@ -56,6 +57,8 @@ export default function CustomDnD() {
   const [selecteFilterData, setSelecteFilterData] = useState();
   const [impodeOpen, setImpodeOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [mailModelOpen, setMailModelOpen] = useState(false);
+  const [mailDetails, setMailDetails] = useState(null);
 
   const touchPosition = useRef({ x: 0, y: 0 });
 
@@ -89,7 +92,8 @@ export default function CustomDnD() {
     dispatch(get_manager_leadStatusDataForList());
   };
 
-  const handleDragStart = (cardId, sourceColId, index) => {
+  const handleDragStart = (e, cardId, sourceColId, index) => {
+    e.dataTransfer.setDragImage(e.target, 0, 0);
     setDraggedCard({ cardId, sourceColId, index });
     setDraggingCardId(cardId);
   };
@@ -308,7 +312,7 @@ export default function CustomDnD() {
                   <div
                     key={card._id}
                     draggable
-                    onDragStart={() => handleDragStart(card._id, col.id, index)}
+                    onDragStart={(e) => handleDragStart(e, card._id, col.id, index)}
                     onDragEnd={handleDragEnd}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => handleDropBetween(col.id, index)}
@@ -367,16 +371,21 @@ export default function CustomDnD() {
                       </a>
                       <a
                         href={`https://wa.me/${card.phone}`}
+                        target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <FaWhatsapp />
                       </a>
-                      <a
-                        href={`mailto:${card.email}`}
-                        onClick={(e) => e.stopPropagation()}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMailDetails(card);
+                          setMailModelOpen(true);
+                        }}
                       >
                         <CiMail />
-                      </a>
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -426,6 +435,9 @@ export default function CustomDnD() {
       )}
       {exportOpen && (
         <ExportModal isOpen={exportOpen} setExportOpen={setExportOpen} />
+      )}
+      {mailModelOpen && (
+        <MailModel isOpen={mailModelOpen} setMailModelOpen={setMailModelOpen} mailDetails={mailDetails} />
       )}
     </div>
   );

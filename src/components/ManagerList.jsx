@@ -32,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import MailModel from "@/components/prospects/MailModel";
 
 const List = ({
   leadStatusList,
@@ -71,6 +72,8 @@ const List = ({
   const [cardToDelete, setCardToDelete] = useState(null);
   const [columToDelete, setColumToDelete] = useState(null);
   const [iconOpen, setIconOpen] = useState(null);
+  const [mailModelOpen, setMailModelOpen] = useState(false);
+  const [mailDetails, setMailDetails] = useState(null);
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
@@ -117,7 +120,7 @@ const List = ({
       id: item._id, // assign card _id to id
     };
     setSelectedColId(item.leadStatusId);
-    setSelectedUser(updatedUser); 
+    setSelectedUser(updatedUser);
   };
 
   const handleDeleteClick = async (cardId, columId) => {
@@ -233,7 +236,15 @@ const List = ({
                       size={20}
                       href={`https://wa.me/${item.phone}`}
                     />
-                    <Icon icon={Mail} size={20} href={`mailto:${item.email}`} />
+                    <Icon
+                      icon={Mail}
+                      size={20}
+                      onClick={() => {
+                        setMailDetails(item);
+                        setMailModelOpen(true);
+                      }}
+                    />
+                    {/* <Icon icon={Mail} size={20} href={`mailto:${item.email}`} /> */}
                     <div
                       className="relative inline-block"
                       onMouseEnter={() => setIconOpen(item._id)}
@@ -324,6 +335,13 @@ const List = ({
           Next
         </button>
       </div>
+      {mailModelOpen && (
+        <MailModel
+          isOpen={mailModelOpen}
+          setMailModelOpen={setMailModelOpen}
+          mailDetails={mailDetails}
+        />
+      )}
     </div>
   );
 };

@@ -61,6 +61,20 @@ export const delete_task = createAsyncThunk(
     }
 )
 
+export const get_notes = createAsyncThunk(
+    'get_notes',
+    async (userId, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/notes?userId=${userId}`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+
+
 
 export const taskReducer = createSlice({
     name: "task",
@@ -71,6 +85,7 @@ export const taskReducer = createSlice({
         loader: false,
         tasks: [],
         admin_tasks: [],
+        notes: [],
     },
     reducers: {
         messageClear: (state, _) => {
@@ -134,6 +149,17 @@ export const taskReducer = createSlice({
                 state.loader = false
             })
             .addCase(get_admin_tasks.rejected, (state, _) => {
+                state.loader = false
+            })
+        
+            .addCase(get_notes.pending, (state, _) => {
+                state.loader = true
+            })
+            .addCase(get_notes.fulfilled, (state, action) => {
+                state.notes = action.payload
+                state.loader = false
+            })
+            .addCase(get_notes.rejected, (state, _) => {
                 state.loader = false
             })
     }
