@@ -234,8 +234,8 @@ export function Dashboard() {
 
         {/* Row 2 */}
         <div className="lg:col-span-4 xl:col-span-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-6 gap-6 h-[calc(100vh-290px)]">
-            <div className="lg:col-span-4 xl:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-6 h-[calc(100vh-290px)]">
+            <div className="lg:col-span-2 xl:col-span-4">
               <Card>
                 <h3 className="text-lg font-semibold text-gray-700">
                   {t("latest_activities")}

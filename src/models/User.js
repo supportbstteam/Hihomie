@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { t } from "@/components/translations";
 
 const UserSchema = new mongoose.Schema({
   name: { type: String },
@@ -10,7 +9,7 @@ const UserSchema = new mongoose.Schema({
   status  : {type : Boolean},
   jobTitle : {type : String},
   image : {type : String},
-  role: { type: String, enum: [t("manager"), t("staff")], default: t("staff") },
+  role: { type: String, enum: ["manager", "staff"], default: "staff" },
   additionalInfo: { type: String },
 }, { timestamps: true })
 
