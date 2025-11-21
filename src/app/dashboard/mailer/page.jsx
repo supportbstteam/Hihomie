@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Dropdown from "@/components/ui/DropDown";
 import { get_leads } from "@/store/mailer";
 import { t } from "@/components/translations";
+import useUserFromSession from "@/lib/useUserFromSession";
 
 const mailer = () => {
   // mc = mail content
@@ -116,7 +117,8 @@ const mailer = () => {
   Un saludo,
 </p>
 `;
-
+  
+  const user = useUserFromSession();
   const dispatch = useDispatch();
   const { leads, loader, successMessage, errorMessage, successTag } =
     useSelector((state) => state.mailer);
@@ -136,7 +138,9 @@ const mailer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(get_leads(userStatus));
+    if (user?.id) {
+      dispatch(get_leads({"userStatus": userStatus, "userId": user.id}));
+    }
   };
 
   useEffect(() => {

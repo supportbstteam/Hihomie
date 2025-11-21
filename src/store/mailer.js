@@ -3,9 +3,9 @@ import api from "../lib/api/api"
 
 export const get_leads = createAsyncThunk(
     'get_leads',
-    async (userStatus, { rejectWithValue, fulfillWithValue }) => {
+    async ({userStatus, userId}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/leads?userStatus=${userStatus}`, { withCredentials: true })
+            const { data } = await api.get(`/leads?userStatus=${userStatus}&userId=${userId}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

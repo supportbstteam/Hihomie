@@ -1,43 +1,51 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { CiMail } from 'react-icons/ci'
-import toast from 'react-hot-toast'
-import { t } from '@/components/translations'
-import { forgot_password } from '@/store/customer'
+"use client";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { CiMail } from "react-icons/ci";
+import toast from "react-hot-toast";
+import { t } from "@/components/translations";
+import { forgot_password, messageClear } from "@/store/customer";
 
 const ForgotePassword = () => {
-  const [email, setEmail] = useState('')
-  const [errors, setErrors] = useState({ email: '' })
-  const { loader, successMessage, errorMessage } = useSelector(state => state.customer)
-  const dispatch = useDispatch()
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({ email: "" });
+  const { loader, successMessage, errorMessage } = useSelector(
+    (state) => state.customer
+  );
+  const dispatch = useDispatch();
 
   const validateForm = () => {
-    let newErrors = { email: '' }
-    let valid = true
+    let newErrors = { email: "" };
+    let valid = true;
 
     if (!email) {
-      newErrors.email = "Email is required"
-      valid = false
+      newErrors.email = "Email is required";
+      valid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Enter a valid email"
-      valid = false
+      newErrors.email = "Enter a valid email";
+      valid = false;
     }
 
-    setErrors(newErrors)
-    return valid
-  }
+    setErrors(newErrors);
+    return valid;
+  };
 
   const onSubmit = (e) => {
-    e.preventDefault()
-    if (!validateForm()) return
-    dispatch(forgot_password(email))
-  }
+    e.preventDefault();
+    if (!validateForm()) return;
+    dispatch(forgot_password(email));
+  };
 
   useEffect(() => {
-    if (successMessage) toast.success(successMessage)
-    if (errorMessage) toast.error(errorMessage)
-  }, [successMessage, errorMessage])
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(messageClear());
+    }
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(messageClear());
+    }
+  }, [successMessage, errorMessage]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9F8F1] px-4">
@@ -63,7 +71,7 @@ const ForgotePassword = () => {
             </label>
             <div
               className={`flex items-center border rounded-lg px-3 h-12 ${
-                errors.email ? 'border-red-500' : 'border-gray-300'
+                errors.email ? "border-red-500" : "border-gray-300"
               }`}
             >
               <CiMail className="text-gray-400 text-lg mr-2" />
@@ -86,7 +94,7 @@ const ForgotePassword = () => {
             disabled={loader}
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#21b573] px-4 py-2 font-medium text-white disabled:opacity-60"
           >
-            {loader ? t('loading') : 'Iniciar sesión'}
+            {loader ? t("loading") : "Iniciar sesión"}
           </button>
 
           {/* Back to Login */}
@@ -96,7 +104,7 @@ const ForgotePassword = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ForgotePassword
+export default ForgotePassword;
