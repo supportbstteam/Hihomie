@@ -1,22 +1,22 @@
-import { NextResponse } from 'next/server'
-import dbConnect from '@/lib/db'
-import Task from "@/models/Task";
+import { NextResponse } from "next/server";
+import DueDates from "@/models/DueDates";
+import dbConnect from "@/lib/db";
 
 export async function GET(request) {
     const url = new URL(request.url);
     const date = url.searchParams.get('date');
     try {
         await dbConnect()
-        const tasks = await Task.aggregate([
+        const notes = await DueDates.aggregate([
             {
                 // Stage 1: Match the documents you want
-                $match: { date: new Date(date) }
+                $match: { due_date: date }
             },
             {
                 // Stage 2: Group them by userId
                 $group: {
                     _id: "$userId", // This _id is now the string userId
-                    task_Details: { $push: "$$ROOT" }
+                    notes_Details: { $push: "$$ROOT" }
                 }
             },
             {
@@ -57,7 +57,7 @@ export async function GET(request) {
             }
         ]);
 
-        return NextResponse.json(tasks, { status: 200 })
+        return NextResponse.json(notes, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

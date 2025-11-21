@@ -63,9 +63,21 @@ export const delete_task = createAsyncThunk(
 
 export const get_notes = createAsyncThunk(
     'get_notes',
-    async (userId, { rejectWithValue, fulfillWithValue }) => {
+    async ({ date, userId }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/notes?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/notes?date=${date}&userId=${userId}`, { withCredentials: true })
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+export const get_admin_notes = createAsyncThunk(
+    'get_admin_notes',
+    async (date, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/admin/notes?date=${date}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -86,6 +98,7 @@ export const taskReducer = createSlice({
         tasks: [],
         admin_tasks: [],
         notes: [],
+        admin_notes: [],
     },
     reducers: {
         messageClear: (state, _) => {
@@ -160,6 +173,17 @@ export const taskReducer = createSlice({
                 state.loader = false
             })
             .addCase(get_notes.rejected, (state, _) => {
+                state.loader = false
+            })
+        
+            .addCase(get_admin_notes.pending, (state, _) => {
+                state.loader = true
+            })
+            .addCase(get_admin_notes.fulfilled, (state, action) => {
+                state.admin_notes = action.payload
+                state.loader = false
+            })
+            .addCase(get_admin_notes.rejected, (state, _) => {
                 state.loader = false
             })
     }
