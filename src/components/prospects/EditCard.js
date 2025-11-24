@@ -2,7 +2,7 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { messageClear, cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
-import { get_leadStatusData, get_leadStatusDataForList } from "@/store/setting";
+import { get_leadStatusData, get_leadStatusDataForList, get_manager_leadStatusData, get_manager_leadStatusDataForList } from "@/store/setting";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -172,7 +172,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (successMessage) {
       if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully" || successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
         toast.success(successMessage);
-      } else {
+      } else if (authUser.role !== "admin") { 
+        dispatch(get_manager_leadStatusDataForList());
+        dispatch(get_manager_leadStatusData());
+        dispatch(messageClear());
+        setSelectedUser(null);
+      }
+      else{
         dispatch(get_leadStatusDataForList());
         dispatch(get_leadStatusData());
         dispatch(messageClear());
