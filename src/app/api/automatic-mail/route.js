@@ -65,7 +65,7 @@ export async function GET() {
                 subject: "100% Mortgage with the best interest rate",
                 html: mailContent,
             };
-            if (days === 2 || days === 5 || days === 74) {
+            if (days === 2 || days === 5) {
                 toNotify.push({ leadId: lead.cards._id.toString(), days });
                 await sendEmail(mailOptions);
             }

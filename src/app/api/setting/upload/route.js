@@ -20,16 +20,40 @@ export const POST = async (req) => {
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const errorData = [];
 
     for (const row of data) {
-      const { status_name, ...cardData } = row;
+      const { status_name, notes, source, category, tag, last_connected, company_name, street, city, state, zip_code, country, website,  ...cardData } = row;
+
+      const detailsData = {
+        source: source,
+        category: category,
+        tag: tag,
+        last_connected: last_connected,
+        notes: notes,
+      };
+      const addressDetailsData = {
+        company_name: company_name,
+        street: street,
+        city: city,
+        state: state,
+        zip_code: zip_code,
+        country: country,
+        website: website,
+      };
+
+      cardData.detailsData = detailsData;
+      cardData.addressDetailsData = addressDetailsData;
+      cardData.assigned = "";
 
       let status = await Status.findOne({ status_name });
       if (!status) {
-        status = await Status.create({
+        errorData.push({
           status_name,
-          cards: [cardData],
+          error: "Status not found",
+          card: cardData,
         });
+        continue;
       } else {
         status.cards.push(cardData);
         await status.save();
