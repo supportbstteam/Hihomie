@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Task from "@/models/Task";
+import Task from "@/uploads/models/Task";
 
 export async function GET(request) {
     const url = new URL(request.url);
@@ -9,7 +9,7 @@ export async function GET(request) {
     try {
         await dbConnect()
         const tasks = await Task.find({ date: new Date(date), userId })
-        return NextResponse.json( tasks, { status: 200 })
+        return NextResponse.json(tasks, { status: 200 })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
@@ -40,13 +40,13 @@ export async function PUT(request) {
         const task = await Task.updateOne(
             { _id: body.task_id },
             [
-              {
-                $set: {
-                  completed: { $not: "$completed" }
+                {
+                    $set: {
+                        completed: { $not: "$completed" }
+                    }
                 }
-              }
             ]
-          )
+        )
         return NextResponse.json({ task, message: 'Task updated successfully' }, { status: 201 })
     } catch (error) {
         console.error(error)
@@ -54,7 +54,7 @@ export async function PUT(request) {
     }
 }
 
-export async function DELETE(request) { 
+export async function DELETE(request) {
     try {
         await dbConnect()
         const body = await request.json()

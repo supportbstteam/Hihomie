@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import CardAssignUser from '@/models/CardAssignUser'
-import User from '@/models/User'
+import CardAssignUser from '@/uploads/models/CardAssignUser'
+import User from '@/uploads/models/User'
 
 
 export async function POST(req, context) {
@@ -67,7 +67,7 @@ export async function GET(req, context) {
       { password: 0 } // exclude password
     );
 
-    return NextResponse.json({data : users }, { status: 200 });
+    return NextResponse.json({ data: users }, { status: 200 });
   } catch (error) {
     console.error("GET Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

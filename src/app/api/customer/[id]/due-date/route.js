@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Comments from '@/models/Comments'
-import DueDates from '@/models/DueDates'
+import Comments from '@/uploads/models/Comments'
+import DueDates from '@/uploads/models/DueDates'
 
 export async function POST(req, { params }) {
     try {
@@ -26,7 +26,7 @@ export async function POST(req, { params }) {
     }
 }
 
-export async function GET(req, context) { 
+export async function GET(req, context) {
     const { id } = await context.params;
     try {
         await dbConnect();
@@ -39,7 +39,7 @@ export async function GET(req, context) {
     }
 }
 
-export async function DELETE(req, context) { 
+export async function DELETE(req, context) {
     const { id } = await context.params;
 
     try {
@@ -55,4 +55,4 @@ export async function DELETE(req, context) {
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
- }
+}

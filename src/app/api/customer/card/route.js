@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Customer from '@/models/Customer'
+import Customer from '@/uploads/models/Customer'
 
 
 export async function POST(req) {
     try {
         const { userId, to } = await req.json();
-let flag;
+        let flag;
         if (to == 'nuevos') {
             flag = 1;
         } else if (to == 'contactado') {
@@ -33,7 +33,7 @@ let flag;
         }
 
         return NextResponse.json(
-            { message: "Customer updated successfully"},
+            { message: "Customer updated successfully" },
             { status: 200 }
         );
     } catch (error) {

@@ -49,7 +49,8 @@ const MENU = {
   ],
   manager: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    // { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    { href: '/dashboard/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
@@ -60,7 +61,8 @@ const MENU = {
   ],
   staff: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    // { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+    { href: '/dashboard/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },

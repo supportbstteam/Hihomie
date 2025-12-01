@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
-import LeadStatus from "@/models/LeadStatus";
-import CardAssignUser from '@/models/CardAssignUser';
+import LeadStatus from "@/uploads/models/LeadStatus";
+import CardAssignUser from '@/uploads/models/CardAssignUser';
 
 export async function POST(request) {
     try {
@@ -70,7 +70,7 @@ export async function POST(request) {
                             // We match documents where the user's '_id' is in our '$$userIds' array
                             $match: {
                                 $expr: {
-                                    $in: [{$toString: '$_id'}, '$$userIds']
+                                    $in: [{ $toString: '$_id' }, '$$userIds']
                                 }
                             }
                         }

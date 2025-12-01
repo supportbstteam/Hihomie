@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
+import LeadStatus from '@/uploads/models/LeadStatus'
 
 export async function GET() {
     try {
@@ -78,7 +78,7 @@ export async function GET() {
         result.forEach(item => {
             // Find the object in the weeklyLeads array where the name matches
             const dayObject = weeklyLeads.find(day => day.name === item.dayName);
-        
+
             // If the object is found, update its value
             if (dayObject) {
                 dayObject.value = item.count;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db"
-import LeadStatus from "@/models/LeadStatus";
+import LeadStatus from "@/uploads/models/LeadStatus";
 import { sendEmail } from "@/lib/sendEmail";
 
 function daysBetween(a, b) {
@@ -26,7 +26,7 @@ export async function GET() {
             {
                 $match: {
                     "cards.contacted": "yes",
-                    createdAt: { $gte: sevenDaysAgo },   
+                    createdAt: { $gte: sevenDaysAgo },
                 }
             }
         ]);

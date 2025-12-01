@@ -1,7 +1,7 @@
 import { writeFile } from "fs/promises";
 import { join } from "path";
 import { NextResponse } from "next/server";
-import Document from "@/models/Document";
+import Document from "@/uploads/models/Document";
 import dbConnect from "@/lib/db";
 
 export async function POST(request) {

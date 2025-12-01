@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
 import dbConnect from '@/lib/db'
-import Customer from '@/models/Customer'
-import LeadStatus from '@/models/LeadStatus'
+import Customer from '@/uploads/models/Customer'
+import LeadStatus from '@/uploads/models/LeadStatus'
 
 export async function DELETE(req, { params }) {
   try {
@@ -23,7 +23,7 @@ export async function DELETE(req, { params }) {
       colId: deletedUser._id,
       cardId: id
     }
-    
+
     return NextResponse.json({ message: "Customer deleted successfully", data }, { status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);

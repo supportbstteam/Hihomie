@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
+import LeadStatus from '@/uploads/models/LeadStatus'
+import getUserFromServerSession from '@/lib/getUserFromServerSession'
 
 export async function POST(req) {
   try {
 
     const { status_name, color, order } = await req.json()
-    console.log(status_name, color, order)
 
     await dbConnect() // Connect to DB
 
@@ -22,8 +22,54 @@ export async function POST(req) {
 
 // ✅ GET - Fetch all customers
 export async function GET() {
+  const user = await getUserFromServerSession();
+
+  await dbConnect();
+
+  if (user.role !== "admin") {
+    try {
+      const pipeline = [
+        {
+          $lookup: {
+            from: "cardassignusers",
+            let: { userIdStr: { $toString: user.id } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$userId", "$$userIdStr"] } } },
+              { $project: { cardId: 1, _id: 0 } }
+            ],
+            as: "assignedCards"
+          }
+        },
+        {
+          $project: {
+            _id: '$_id',
+            status_name: '$status_name',
+            color: '$color',
+            order: '$order',
+            cards: {
+              $filter: {
+                input: "$cards",
+                as: "card",
+                // The core condition: check if the card's _id (as a string) is in the assignedCardIds array
+                // We can directly access the 'cardId' field from the assignedCards array
+                cond: { $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"] }
+              }
+            }
+          }
+        },
+        {
+          $sort: { order: 1 }
+        }
+      ];
+      const data = await LeadStatus.aggregate(pipeline);
+      return NextResponse.json({ data }, { status: 201 })
+    } catch (error) {
+      console.error("GET Error:", error);
+      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+  }
+
   try {
-    await dbConnect();
     const data = await LeadStatus.find().sort({ order: 1 }).lean();
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {

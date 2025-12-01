@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
+import LeadStatus from '@/uploads/models/LeadStatus'
 import mongoose from 'mongoose'
 
 export async function PUT(req, context) {
     const { id } = await context.params;
-    
+
     try {
         const { colId, bank_name } = await req.json();
         await dbConnect();
@@ -43,5 +43,5 @@ export async function PUT(req, context) {
         console.error("Update Error:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
-    
+
 }

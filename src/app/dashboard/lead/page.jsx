@@ -37,9 +37,11 @@ import MailModel from "@/components/prospects/MailModel";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
 import { t } from "@/components/translations";
+import useUserFromSession from "@/lib/useUserFromSession";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
+  const authUser = useUserFromSession();
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(
     (state) => state.setting
@@ -63,12 +65,14 @@ export default function CustomDnD() {
   const touchPosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (!listComponent) {
-      dispatch(get_leadStatusData());
-    } else {
-      dispatch(get_leadStatusDataForList());
+    if (authUser?.id) {
+      if (!listComponent) {
+        dispatch(get_leadStatusData());
+      } else {
+        dispatch(get_leadStatusDataForList());
+      }
     }
-  }, [dispatch, listComponent]);
+  }, [dispatch, listComponent, authUser?.id]);
 
   useEffect(() => {
     if (leadStatus && leadStatus.length > 0) {
@@ -88,8 +92,10 @@ export default function CustomDnD() {
   const handleCardAdded = () => {
     setOpen(false);
     dispatch(messageClear());
-    dispatch(get_leadStatusData());
-    dispatch(get_leadStatusDataForList());
+    if (authUser?.id) {
+      dispatch(get_leadStatusData());
+      dispatch(get_leadStatusDataForList());
+    }
   };
 
   const handleDragStart = (e, cardId, sourceColId, index) => {
@@ -204,10 +210,12 @@ export default function CustomDnD() {
   useEffect(() => {
     if (successMessage) {
       dispatch(messageClear());
-      dispatch(get_leadStatusDataForList());
-      dispatch(get_leadStatusData());
+      if (authUser?.id) {
+        dispatch(get_leadStatusDataForList());
+        dispatch(get_leadStatusData());
+      }
     }
-  }, [successMessage, dispatch]);
+  }, [successMessage, dispatch, authUser?.id]);
 
   return (
     <div className="flex flex-col h-full">

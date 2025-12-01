@@ -180,7 +180,6 @@ const MortgageSimulator = () => {
   };
 
   // const calculateMortgage = () => {
-  //   console.log(formData);
   //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
   //   const n = formData.roi_year * 12; // total months
 
@@ -214,7 +213,6 @@ const MortgageSimulator = () => {
   // };
 
   // const calculateMortgage = () => {
-  //   // console.log(formData);
   //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
   //   const n = formData.roi_year * 12; // total months
   //   let mortgage_amount = 0;

@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
-import Document from '@/models/Document'
-import CardAssignUser from '@/models/CardAssignUser';
+import LeadStatus from '@/uploads/models/LeadStatus'
+import Document from '@/uploads/models/Document'
+import CardAssignUser from '@/uploads/models/CardAssignUser';
 
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
     if (userId !== "68a2eeb6f31c60d58b33191e") {
         const totalLeads = await CardAssignUser.find({ userId: userId }).lean();
-        
+
         const result = await CardAssignUser.aggregate([
             // Stage 1: Find the user's assigned card
             {

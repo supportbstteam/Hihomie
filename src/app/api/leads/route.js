@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import LeadStatus from "@/models/LeadStatus";
-import Document from "@/models/Document";
-import CardAssignUser from "@/models/CardAssignUser";
-import User from "@/models/User";
+import LeadStatus from "@/uploads/models/LeadStatus";
+import Document from "@/uploads/models/Document";
+import CardAssignUser from "@/uploads/models/CardAssignUser";
+import User from "@/uploads/models/User";
 import mongoose from "mongoose";
 
 export async function GET(request) {
@@ -233,7 +233,7 @@ export async function GET(request) {
             default:
                 break;
         }
-     }
+    }
 
     return NextResponse.json({ leads: result, message: "Leads Fetched Successfully" });
 }

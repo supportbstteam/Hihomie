@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
+import LeadStatus from '@/uploads/models/LeadStatus'
 
 export async function GET() {
     try {
         await dbConnect()
-        
+
         const result = await LeadStatus.aggregate([
             {
                 $unwind: "$cards"

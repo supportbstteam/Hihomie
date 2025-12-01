@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/models/LeadStatus'
-import CardAssignUser from '@/models/CardAssignUser'
+import LeadStatus from '@/uploads/models/LeadStatus'
+import CardAssignUser from '@/uploads/models/CardAssignUser'
 import getUserFromServerSession from '@/lib/getUserFromServerSession'
 
 export async function POST(req) {
@@ -24,11 +24,11 @@ export async function POST(req) {
 // ✅ GET - Fetch all customers
 export async function GET() {
 
-    const user = await getUserFromServerSession()
+    const user = await getUserFromServerSession();
 
     try {
         await dbConnect();
-  
+
         const pipeline = [
             {
                 $lookup: {
