@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/uploads/models/LeadStatus'
-import Document from '@/uploads/models/Document'
-import CardAssignUser from '@/uploads/models/CardAssignUser';
+import LeadStatus from '../../../../models/LeadStatus'
+import Document from '../../../../models/Document'
+import CardAssignUser from '../../../../models/CardAssignUser';
 
 export async function GET(req) {
     const url = new URL(req.url);

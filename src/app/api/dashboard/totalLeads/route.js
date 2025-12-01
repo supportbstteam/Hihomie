@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/uploads/models/LeadStatus'
-import CardAssignUser from '@/uploads/models/CardAssignUser'
+import LeadStatus from '../../../../models/LeadStatus'
+import CardAssignUser from '../../../../models/CardAssignUser'
 
 export async function GET(req) {
   const { searchParams } = req.nextUrl;

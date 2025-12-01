@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
-import LeadStatus from "@/uploads/models/LeadStatus";
-import CardAssignUser from '@/uploads/models/CardAssignUser';
+import LeadStatus from "../../../../models/LeadStatus";
+import CardAssignUser from '../../../../models/CardAssignUser';
 
 export async function POST(request) {
     try {

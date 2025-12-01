@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '@/uploads/models/LeadStatus'
+import LeadStatus from '../../../../models/LeadStatus'
 import getUserFromServerSession from '@/lib/getUserFromServerSession'
 
 export async function POST(req) {

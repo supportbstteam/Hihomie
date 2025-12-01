@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Customer from '@/uploads/models/Customer'
+import Customer from '../../../../models/Customer'
 
 
 export async function POST(req) {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import DueDates from "@/uploads/models/DueDates";
+import DueDates from "../../../models/DueDates";
 import dbConnect from "@/lib/db";
 
 export async function GET(request) {

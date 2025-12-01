@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import dbConnect from '@/lib/db';
-import Status from "@/uploads/models/LeadStatus";
+import Status from "../../../../models/LeadStatus";
 import { NextResponse } from "next/server";
 
 export const POST = async (req) => {

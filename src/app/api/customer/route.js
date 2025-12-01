@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
-import Customer from '@/uploads/models/Customer'
+import Customer from '../../../models/Customer'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import LeadStatus from '@/uploads/models/LeadStatus'
-import CardAssignUser from '@/uploads/models/CardAssignUser'
+import LeadStatus from '../../../models/LeadStatus'
+import CardAssignUser from '../../../models/CardAssignUser'
 
 export async function POST(req) {
 

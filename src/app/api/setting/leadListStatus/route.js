@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import LeadStatus from "@/uploads/models/LeadStatus";
+import LeadStatus from "../../../../models/LeadStatus";
 import dbConnect from "@/lib/db";
 import getUserFromServerSession from '@/lib/getUserFromServerSession';
 

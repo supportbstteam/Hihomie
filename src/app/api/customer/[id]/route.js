@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
 import dbConnect from '@/lib/db'
-import Customer from '@/uploads/models/Customer'
-import LeadStatus from '@/uploads/models/LeadStatus'
+import Customer from '../../../../models/Customer'
+import LeadStatus from '../../../../models/LeadStatus'
 
 export async function DELETE(req, { params }) {
   try {
