@@ -139,8 +139,8 @@ const MortgageSimulator = () => {
   const [email, setEmail] = useState("");
 
   const [principal, setPrincipal] = useState(0);
-  const [loanTerm, setLoanTerm] = useState(1);
-  const [interestRate, setInterestRate] = useState(1);
+  const [loanTerm, setLoanTerm] = useState(8);
+  const [interestRate, setInterestRate] = useState(7);
   const [monthlyLoanPayment, setMonthlyLoanPayment] = useState("");
   const [totalLoanPayment, setTotalLoanPayment] = useState("");
   const [totalLoanInterest, setTotalLoanInterest] = useState("");
@@ -203,6 +203,14 @@ const MortgageSimulator = () => {
 
     // ITP amount and financed property price
     const totalItp = Math.round((propertyPrice * itpPercent) / 100);
+    if (savings >= totalItp + fees + otherCosts) {
+      let mAmount = propertyPrice + fees + totalItp + otherCosts - savings;
+      let bfinancing_required = (mAmount / propertyPrice) * 100;
+      setFormData((prev) => ({
+        ...prev,
+        "bank_financing": bfinancing_required,
+      }));
+    }
     const ppAfterFinancing = Math.round(
       (propertyPrice * bankFinancingPercent) / 100
     );
@@ -234,13 +242,14 @@ const MortgageSimulator = () => {
 
     // totals and interest
     const totalPayment = Math.round(monthlyPayment * n + downPayment);
-    const totalInterest = totalPayment - propertyPrice;
+    const totalInterest = totalPayment - mortgageAmount;
+
+    setPrincipal(creditAmount);
 
     // set result state
     setResultData({
       monthly_fee: monthlyPayment,
       mortgage_amount: mortgageAmount,
-      // credit_amount: creditAmount,
       total_fee: totalFee,
       property_value: propertyPrice,
       itp: totalItp,
