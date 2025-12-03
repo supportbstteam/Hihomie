@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
-import User from '../../../../models/User'
+import User from '@/models/User'
 
 export async function GET(req, context) {
 

@@ -132,7 +132,7 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
               </a>{" "}
               |{" "}
               <a href="/xlsx-sample.xlsx" className="text-blue-500 underline">
-                XLSX Sample
+                Excel File Sample
               </a>
             </p>
           </motion.div>

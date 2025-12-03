@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Comments from '../../../../../models/Comments'
-import DueDates from '../../../../../models/DueDates'
+import Comments from '@/models/Comments'
+import DueDates from '@/models/DueDates'
 
 export async function POST(req, { params }) {
     try {

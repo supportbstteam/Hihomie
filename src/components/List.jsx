@@ -18,8 +18,8 @@ import {
   get_leadStatusData,
   get_leadStatusDataForList,
 } from "@/store/setting";
+import { bulk_assignment, messageClear } from "@/store/customer";
 import toast from "react-hot-toast";
-import { messageClear } from "@/store/customer";
 import ConfirmDeleteModal from "./ConfirmAlert";
 
 import {
@@ -42,6 +42,9 @@ const List = ({
 }) => {
   const dispatch = useDispatch();
   const { assignTeam } = useSelector((state) => state.team);
+  const { successMessage: customerSuccessMessage } = useSelector(
+    (state) => state.customer
+  );
 
   const [onEdit, setOnEdit] = useState({
     lead_title: "",
@@ -73,6 +76,8 @@ const List = ({
   const [iconOpen, setIconOpen] = useState(null);
   const [mailModelOpen, setMailModelOpen] = useState(false);
   const [mailDetails, setMailDetails] = useState(null);
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const { gestor, estado, full_name, phone } = selecteFilterData || {};
 
@@ -110,6 +115,15 @@ const List = ({
     indexOfLastRecord
   );
   const totalPages = Math.ceil(filteredList.length / recordsPerPage);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch("/api/team");
+      const { data } = await response.json();
+      setUsers(data);
+    };
+    fetchUsers();
+  }, []);
 
   // ✅ Handle Edit Click
   const handleEditClick = (item) => {
@@ -157,15 +171,98 @@ const List = ({
     dispatch(get_leadStatusData());
   }, [successMessage, dispatch, assignTeam]);
 
+  const toggleAllLeads = () => {
+    if (selectedLeads.length === currentRecords.length) {
+      setSelectedLeads([]);
+    } else {
+      const allLeads = currentRecords.map((lead) => ({
+        id: lead._id,
+        status: lead.status,
+      }));
+      setSelectedLeads(allLeads);
+    }
+  };
+
+  const toggleLead = (id, status) => {
+    if (selectedLeads.some((lead) => lead.id === id)) {
+      setSelectedLeads(selectedLeads.filter((lead) => lead.id !== id));
+    } else {
+      setSelectedLeads([...selectedLeads, { id: id, status: status }]);
+    }
+  };
+
+  const handleAssignment = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const manager = formData.get("manager");
+    const leads = selectedLeads?.map((lead) => ({
+      userId: manager,
+      cardId: lead.id,
+      colId: lead.status,
+    }));
+
+    dispatch(bulk_assignment(leads));
+  };
+
+  useEffect(() => {
+    if (customerSuccessMessage) {
+      toast.success(customerSuccessMessage);
+      dispatch(messageClear());
+      dispatch(get_leadStatusDataForList());
+      dispatch(get_leadStatusData());
+    }
+  }, [customerSuccessMessage, dispatch]);
+
   return (
     <div>
-      <div className="overflow-auto custom-scrollbar max-h-[50vh] rounded-md shadow-md ">
+      <form
+        onSubmit={handleAssignment}
+        className="flex flex-col md:flex-row md:items-center gap-3 mb-4"
+      >
+        <div className="w-full md:w-64">
+          <select
+            name="manager"
+            id="manager"
+            defaultValue=""
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            required
+          >
+            <option value="" disabled>
+              — { t("select") } { t("manager") } —
+            </option>
+            {users.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          className="px-4 py-2 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
+        >
+          {t("assign") }
+        </button>
+      </form>
+
+      <div className="overflow-auto custom-scrollbar max-h-[42vh] rounded-md shadow-md ">
         {/* -----------------------new table starts----------------------- */}
 
         <Table>
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[70px] pl-4">
+                {" "}
+                <input
+                  type="checkbox"
+                  checked={selectedLeads.length === currentRecords.length}
+                  onChange={toggleAllLeads}
+                  className="w-4 h-4 accent-emerald-600"
+                />
+              </TableHead>
               <TableHead className="w-[70px] pl-4">{t("Sr. No")}</TableHead>
               <TableHead className="w-[180px]">{t("full_name")}</TableHead>
               <TableHead className="w-[150px]">{t("title")}</TableHead>
@@ -186,6 +283,16 @@ const List = ({
                     i % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
+                  <TableCell className="pl-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedLeads.some(
+                        (lead) => lead.id === item._id
+                      )}
+                      onChange={() => toggleLead(item._id, item.status)}
+                      className="w-4 h-4 accent-emerald-600"
+                    />
+                  </TableCell>
                   <TableCell className="pl-4">{i + 1}</TableCell>
                   <TableCell>
                     {item.first_name} {item.last_name}

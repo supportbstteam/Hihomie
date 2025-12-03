@@ -85,7 +85,7 @@ const AssignUser = ({ colId, cardid }) => {
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -100, opacity: 0 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="bg-white h-[30vh] w-full max-w-[40%] rounded-lg shadow-2xl p-6 md:p-8 relative overflow-y-auto"
+                            className="bg-white h-[40vh] w-full max-w-[45%] rounded-lg shadow-2xl p-6 md:p-8 relative overflow-y-auto"
                         >
                             <button
                                 onClick={() => setAssigneUser(false)}
@@ -95,7 +95,7 @@ const AssignUser = ({ colId, cardid }) => {
                             </button>
                             <h2 className="text-lg font-semibold mb-4">Assign Users</h2>
                             <form onSubmit={handleSubmit}>
-                                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
+                                <div className="flex flex-col gap-2 overflow-y-auto">
                                     {team.map(user => (
                                         <label key={user._id} className="flex items-center gap-2 cursor-pointer">
                                             <input

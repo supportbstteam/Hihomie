@@ -143,6 +143,18 @@ export const get_manager_leadStatusDataForList = createAsyncThunk(
    }
 );
 
+export const cardDelete = createAsyncThunk(
+   'cardDelete',
+   async (id, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.delete(`/customer/${id}`, { withCredentials: true });
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+)
+
 export const card_delete_list = createAsyncThunk(
    "customer/card_delete_list",
    async ({ cardId, columId }, { rejectWithValue, fulfillWithValue }) => {
@@ -331,6 +343,16 @@ export const settingReducer = createSlice({
             state.loader = false;
          })
 
+         .addCase(cardDelete.pending, (state, { payload }) => { 
+            state.loader = true;
+         })
+         .addCase(cardDelete.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message; 
+         })
+         .addCase(cardDelete.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload?.message || "Something went wrong";
+         })
    }
 })
 export const { messageClear } = settingReducer.actions

@@ -157,7 +157,12 @@ const MortgageSimulator = () => {
   const debtRatioTimerRef = useRef(null);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+
+    if (name === "bank_financing") {
+      value = Math.min(100, Math.max(0, Number(value)));
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -178,85 +183,6 @@ const MortgageSimulator = () => {
     setFormData(initialFormData);
     setResultData(initialResultData);
   };
-
-  // const calculateMortgage = () => {
-  //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
-  //   const n = formData.roi_year * 12; // total months
-
-  //   if (r === 0) {
-  //     return formData.property_price / n; // simple division if interest = 0
-  //   }
-
-  //   // Stable formula
-  //   const pp_after_financing =
-  //     (formData.property_price * formData.bank_financing) / 100;
-  //   const down_payment = formData.property_price - pp_after_financing;
-  //   const denominator = 1 - Math.pow(1 + r, -n);
-  //   const monthlyPayment = Math.round((pp_after_financing * r) / denominator);
-  //   const totalPayment = monthlyPayment * n + down_payment;
-  //   const totalInterest =
-  //     parseInt(totalPayment) - parseInt(formData.property_price);
-  //   const total_itp = (formData.property_price * formData.itp) / 100;
-  //   const totalFee =
-  //     parseInt(formData.property_price) +
-  //     parseInt(formData.fees) +
-  //     parseInt(total_itp);
-  //   setResultData({
-  //     monthly_fee: monthlyPayment,
-  //     mortgage_amount: pp_after_financing,
-  //     total_fee: totalFee,
-  //     property_value: formData.property_price,
-  //     itp: total_itp,
-  //     fees: formData.fees,
-  //     interest: totalInterest,
-  //   });
-  // };
-
-  // const calculateMortgage = () => {
-  //   const r = formData.roi_interest / 12 / 100; // monthly interest rate
-  //   const n = formData.roi_year * 12; // total months
-  //   let mortgage_amount = 0;
-  //   let credit_amount = 0;
-
-  //   if (r === 0) {
-  //     return formData.property_price / n; // simple division if interest = 0
-  //   }
-
-  //   // Stable formula
-  //   const total_itp = (formData.property_price * formData.itp) / 100;
-  //   const pp_after_financing =
-  //     (formData.property_price * formData.bank_financing) / 100;
-  //   const down_payment = formData.property_price - pp_after_financing;
-  //   const totalFee =
-  //     parseInt(formData.property_price) +
-  //     parseInt(formData.fees) +
-  //     parseInt(total_itp) +
-  //     parseInt(formData.other_costs);
-  //   const extra_expenses =
-  //     total_itp + (parseInt(formData.other_costs) + parseInt(formData.fees) + down_payment);
-  //   if (parseInt(formData.savings) >= parseInt(extra_expenses)) {
-  //     mortgage_amount = Math.round(totalFee - formData.savings);
-  //   } else {
-  //     mortgage_amount = Math.round(formData.property_price - down_payment);
-  //     credit_amount = extra_expenses - formData.savings;
-  //   }
-  //   const denominator = 1 - Math.pow(1 + r, -n);
-  //   const monthlyPayment = Math.round((mortgage_amount * r) / denominator);
-  //   const totalPayment = monthlyPayment * n + down_payment;
-  //   const totalInterest =
-  //     parseInt(totalPayment) - parseInt(formData.property_price);
-
-  //   setResultData({
-  //     monthly_fee: monthlyPayment,
-  //     mortgage_amount: mortgage_amount,
-  //     total_fee: totalFee,
-  //     property_value: formData.property_price,
-  //     itp: total_itp,
-  //     fees: formData.fees,
-  //     other_costs: formData.other_costs,
-  //     interest: totalInterest,
-  //   });
-  // };
 
   const calculateMortgage = () => {
     // parse numeric inputs once (use radix 10 for parseInt)
@@ -436,6 +362,9 @@ const MortgageSimulator = () => {
     setEmail("");
   };
 
+  const formatKey = (key) =>
+    key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
   const handleSendSimulation = () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       alert("Please enter a valid email address.");
@@ -443,16 +372,20 @@ const MortgageSimulator = () => {
     }
     const subject = "Your Mortgage Simulation Results";
     const mailContent = `
-      <h1>Your Mortgage Simulation</h1>
-      <p>Hello,</p>
-      <p>Thank you for using our calculator. Here are the results you requested:</p>
-      <ul>
-        <li>Monthly Fee: <strong>€${resultData.monthly_fee}</strong></li>
-        <li>Total Purchase Cost: <strong>€${resultData.total_fee}</strong></li>
-        <li>Property Value: <strong>€${resultData.property_value}</strong></li>
-        <li>Total Interest: <strong>€${resultData.interest}</strong></li>
-      </ul>
-    `;
+                        <h1>Your Mortgage Simulation</h1>
+                        <p>Hello,</p>
+                        <p>Thank you for using our calculator. Here are the results you requested:</p>
+
+                        <ul>
+                          ${Object.entries(resultData)
+                            .map(([key, value]) => {
+                              return `<li>${formatKey(
+                                key
+                              )}: <strong>€${value}</strong></li>`;
+                            })
+                            .join("")}
+                        </ul>
+                        `;
 
     const res = fetch("/api/send-email", {
       method: "POST",
@@ -531,9 +464,22 @@ const MortgageSimulator = () => {
                   >
                     {t("bank_financing")}
                   </label>
-                  <span className="font-semibold text-emerald-500">
-                    {formData.bank_financing}%
-                  </span>
+                  <div className="relative w-24">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      name="bank_financing"
+                      value={formData.bank_financing}
+                      onChange={handleChange}
+                      className="w-full px-2 py-1 pr-6 border border-gray-300 rounded-md text-sm text-right focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    />
+
+                    {/* Percentage symbol */}
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                      %
+                    </span>
+                  </div>
                 </div>
                 <input
                   type="range"
@@ -897,13 +843,17 @@ const MortgageSimulator = () => {
                 </p>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-500 text-sm">{t("total_repayment")}</span>
+                <span className="text-gray-500 text-sm">
+                  {t("total_repayment")}
+                </span>
                 <span className="text-gray-800 font-medium">
                   €{totalLoanPayment}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-500 text-sm">{t("total_interest")}</span>
+                <span className="text-gray-500 text-sm">
+                  {t("total_interest")}
+                </span>
                 <span className="text-gray-800 font-medium">
                   €{totalLoanInterest}
                 </span>
@@ -920,7 +870,7 @@ const MortgageSimulator = () => {
             </h2>
             <form onSubmit={handleDebtRatioCalculation}>
               <div className="mb-6">
-                <DynamicEmailDropdown setEmail={setLead}/>
+                <DynamicEmailDropdown setEmail={setLead} />
               </div>
               <div className="mb-6">
                 <div className="space-y-3">

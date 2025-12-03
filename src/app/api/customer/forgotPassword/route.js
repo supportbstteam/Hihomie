@@ -2,8 +2,8 @@
 export const runtime = "nodejs";
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
-import PasswordReset from '../../../../models/PasswordReset';
-import User from '../../../../models/User';
+import PasswordReset from '@/models/PasswordReset';
+import User from '@/models/User';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs'
 

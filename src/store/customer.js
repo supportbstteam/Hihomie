@@ -57,19 +57,6 @@ export const cardUpdate = createAsyncThunk(
    }
 )
 
-
-export const cardDelete = createAsyncThunk(
-   'cardDelete',
-   async (id, { rejectWithValue, fulfillWithValue }) => {
-      try {
-         const { data } = await api.delete(`/customer/${id}`, { withCredentials: true });
-         return fulfillWithValue(data);
-      } catch (error) {
-         return rejectWithValue(error.response.data)
-      }
-   }
-)
-
 export const forgot_password = createAsyncThunk(
    'forgot_password',
    async (email, { rejectWithValue, fulfillWithValue }) => {
@@ -202,6 +189,18 @@ export const delete_document = createAsyncThunk(
    }
 )
 
+export const bulk_assignment = createAsyncThunk(
+   'bulk_assignment',
+   async ( leads , { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post(`/customer/bulk-assignment`, { leads }, { withCredentials: true })
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response.data)
+      }
+   }
+)
+
 export const customerReducer = createSlice({
 
    name: 'customer',
@@ -256,29 +255,6 @@ export const customerReducer = createSlice({
          .addCase(customerUpdate.fulfilled, (state, { payload }) => {
             state.loader = false;
             state.successMessage = payload.message;
-         })
-         .addCase(cardDelete.fulfilled, (state, { payload }) => {
-            state.successMessage = payload.message; // if backend sends a message
-            // state.customer = state.customer.filter(
-            //    (cust) => cust._id !== payload._id  // remove deleted one
-            // );
-
-            // Find the lead that contains the deleted card
-            const leadIndex = state.customer.findIndex(
-               (cust) => cust._id === payload.colId
-            );
-
-            if (leadIndex !== -1) {
-               // Create a new array of cards without the deleted one
-               const updatedCards = state.customer[leadIndex].cards.filter(
-                  (card) => card._id !== payload.cardId
-               );
-               // Update the state with the new cards array
-               state.customer[leadIndex] = {
-                  ...state.customer[leadIndex],
-                  cards: updatedCards,
-               };
-            }
          })
 
          .addCase(forgot_password.pending, (state, { payload }) => {
@@ -351,7 +327,7 @@ export const customerReducer = createSlice({
             state.loader = false;
             state.errorMessage = payload.error;
          })
-      
+
          .addCase(delete_due_date.fulfilled, (state, { payload }) => {
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
@@ -360,7 +336,7 @@ export const customerReducer = createSlice({
             state.loader = false;
             state.errorMessage = payload.error;
          })
-      
+
          .addCase(save_bank.fulfilled, (state, { payload }) => {
             state.successMessage = payload.message; // if backend sends a message
             state.loader = false;
@@ -369,7 +345,7 @@ export const customerReducer = createSlice({
             state.loader = false;
             state.errorMessage = payload.error;
          })
-      
+
          .addCase(get_documents.fulfilled, (state, { payload }) => {
             state.documents = payload.documents;
             state.successMessage = payload.message; // if backend sends a message
@@ -385,6 +361,18 @@ export const customerReducer = createSlice({
             state.loader = false;
          })
          .addCase(delete_document.rejected, (state, { payload }) => {
+            state.loader = false;
+            state.errorMessage = payload.error;
+         })
+      
+         .addCase(bulk_assignment.pending, (state, { payload }) => { 
+            state.loader = true;
+         })
+         .addCase(bulk_assignment.fulfilled, (state, { payload }) => {
+            state.successMessage = payload.message;
+            state.loader = false;
+          })
+         .addCase(bulk_assignment.rejected, (state, { payload }) => { 
             state.loader = false;
             state.errorMessage = payload.error;
          })

@@ -36,6 +36,7 @@ import ExportModal from "@/components/prospects/Export";
 import MailModel from "@/components/prospects/MailModel";
 import toast from "react-hot-toast";
 import { messageClear } from "@/store/customer";
+import { messageClear as messageClearSetting } from "@/store/setting";
 import { t } from "@/components/translations";
 import useUserFromSession from "@/lib/useUserFromSession";
 // import LowerNav from "@/components/LowerNav";
@@ -65,14 +66,12 @@ export default function CustomDnD() {
   const touchPosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (authUser?.id) {
-      if (!listComponent) {
-        dispatch(get_leadStatusData());
-      } else {
-        dispatch(get_leadStatusDataForList());
-      }
+    if (!listComponent) {
+      dispatch(get_leadStatusData());
+    } else {
+      dispatch(get_leadStatusDataForList());
     }
-  }, [dispatch, listComponent, authUser?.id]);
+  }, [dispatch, listComponent]);
 
   useEffect(() => {
     if (leadStatus && leadStatus.length > 0) {
@@ -92,10 +91,9 @@ export default function CustomDnD() {
   const handleCardAdded = () => {
     setOpen(false);
     dispatch(messageClear());
-    if (authUser?.id) {
-      dispatch(get_leadStatusData());
-      dispatch(get_leadStatusDataForList());
-    }
+
+    dispatch(get_leadStatusData());
+    dispatch(get_leadStatusDataForList());
   };
 
   const handleDragStart = (e, cardId, sourceColId, index) => {
@@ -209,13 +207,15 @@ export default function CustomDnD() {
 
   useEffect(() => {
     if (successMessage) {
-      dispatch(messageClear());
-      if (authUser?.id) {
-        dispatch(get_leadStatusDataForList());
-        dispatch(get_leadStatusData());
+      if (successMessage === "Lead Deleted successfully") { 
+        toast.success(successMessage);
       }
+      dispatch(messageClear());
+      dispatch(messageClearSetting());
+      dispatch(get_leadStatusDataForList());
+      dispatch(get_leadStatusData());
     }
-  }, [successMessage, dispatch, authUser?.id]);
+  }, [successMessage, dispatch]);
 
   return (
     <div className="flex flex-col h-full">
@@ -449,7 +449,11 @@ export default function CustomDnD() {
       )}
 
       {mailModelOpen && (
-        <MailModel isOpen={mailModelOpen} setMailModelOpen={setMailModelOpen} mailDetails={mailDetails} />
+        <MailModel
+          isOpen={mailModelOpen}
+          setMailModelOpen={setMailModelOpen}
+          mailDetails={mailDetails}
+        />
       )}
     </div>
   );

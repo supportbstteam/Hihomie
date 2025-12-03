@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Task from "../../../../models/Task";
+import Task from "@/models/Task";
 
 export async function GET(request) {
     const url = new URL(request.url);

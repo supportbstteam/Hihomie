@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import LeadStatus from '../../../models/LeadStatus'
-import Category from '../../../models/Category'
+import LeadStatus from '@/models/LeadStatus'
+import Category from '@/models/Category'
 
 export async function POST(req) {
   try {

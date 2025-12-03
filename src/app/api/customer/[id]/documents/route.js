@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
-import Document from '../../../../../models/Document'
+import Document from '@/models/Document'
 
 export async function GET(req, context) {
     const { id } = await context.params;

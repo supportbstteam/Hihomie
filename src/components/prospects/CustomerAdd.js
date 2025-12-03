@@ -208,6 +208,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                   value={formData.surname}
                   onChange={handleChange}
                   error={errors.surname}
+                  required
                   options={[
                     { value: t("mr"), label: t("mr") },
                     { value: t("mrs"), label: t("mrs") },
@@ -229,9 +230,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                   value={formData.last_name}
                   onChange={handleChange}
                   error={errors.last_name}
+                  required
                 />
                 <Input
-                  label={t("company")}
+                  label={t("referred_by")}
                   type="text"
                   name="company"
                   value={formData.company}

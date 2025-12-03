@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
-import User from '../../../models/User'
+import User from '@/models/User'
 import sharp from "sharp";
 import fs from "fs";
 import path from "path";

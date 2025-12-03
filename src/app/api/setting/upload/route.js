@@ -1,11 +1,18 @@
+import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import dbConnect from '@/lib/db';
-import Status from "../../../../models/LeadStatus";
-import { NextResponse } from "next/server";
+import Status from "@/models/LeadStatus";
+import getUserFromServerSession from "@/lib/getUserFromServerSession";
 
 export const POST = async (req) => {
   await dbConnect();
-
+  let assigned = "";
+  const user = await getUserFromServerSession();
+  if (user.role !== "admin") {
+    assigned = user.id;
+  } else { 
+    assigned = "";
+  }
   try {
     const formData = await req.formData();
     const file = formData.get("file");
@@ -44,9 +51,12 @@ export const POST = async (req) => {
 
       cardData.detailsData = detailsData;
       cardData.addressDetailsData = addressDetailsData;
-      cardData.assigned = "";
+      cardData.assigned = assigned;
 
       let status = await Status.findOne({ status_name });
+
+      cardData.status = status._id;
+      
       if (!status) {
         errorData.push({
           status_name,

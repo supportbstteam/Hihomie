@@ -1,8 +1,8 @@
 'use client'
 
 import { useDispatch, useSelector } from "react-redux";
-import { messageClear, cardDelete, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
-import { get_leadStatusData, get_leadStatusDataForList, get_manager_leadStatusData, get_manager_leadStatusDataForList } from "@/store/setting";
+import { messageClear, customerUpdate, add_customer_comments, get_customer_comments, delete_comments, add_due_date, get_due_date, delete_due_date, save_bank, get_documents, delete_document } from "@/store/customer";
+import { get_leadStatusData, get_leadStatusDataForList, get_manager_leadStatusData, get_manager_leadStatusDataForList, cardDelete } from "@/store/setting";
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -165,6 +165,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   };
 
   const handleDelete = (id) => {
+    setSelectedUser(null);
     dispatch(cardDelete(id));
   };
 
@@ -172,13 +173,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (successMessage) {
       if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully" || successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully" || successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
         toast.success(successMessage);
-      } else if (authUser.role !== "admin") { 
+      } else if (authUser.role !== "admin") {
         dispatch(get_manager_leadStatusDataForList());
         dispatch(get_manager_leadStatusData());
         dispatch(messageClear());
         setSelectedUser(null);
       }
-      else{
+      else {
         dispatch(get_leadStatusDataForList());
         dispatch(get_leadStatusData());
         dispatch(messageClear());
@@ -462,6 +463,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       { value: t("mr"), label: t("mr") },
                       { value: t("mrs"), label: t("mrs") }
                     ]}
+                    required
                   />
 
                   {/* First Name */}
@@ -489,22 +491,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   />
 
                   <Input
-                    label={t("company")}
+                    label={t("referred_by")}
                     type="text"
                     value={formData.company}
                     onChange={handleChange}
                     name="company"
                     error={errors.company}
                   />
-                  {/* <Input
-                    label={t("designation")}
-                    type="text"
-                    value={formData.designation}
-                    onChange={handleChange}
-                    name="designation"
-                    error={errors.designation}
-                  /> */}
-
                   <Dropdown
                     label={t("designation")}
                     name="designation"
@@ -538,6 +531,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     onChange={handleChange}
                     name="email"
                     error={errors.email}
+                    required
                   />
                   <Input
                     label={t("lead_amout") + " ($)"}
@@ -753,9 +747,6 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                 <div className="h-fit bg-primary/20 p-2 mb-2">
                   <AssignUser colId={colId} cardid={selectedUser._id} />
                 </div>
-                {/* <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
-                  <Trash2 className="w-4 h-4" />
-                </Button> */}
                 <div>
                   <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-gray-300">
                     {dueDate.map((item, index) => (
@@ -912,6 +903,11 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         ))}
                       </ul>
                     )}
+                  </div>
+                  <div>
+                    <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </div>

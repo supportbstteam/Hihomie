@@ -236,6 +236,8 @@ const en = {
   error1: "Failed to send email",
   financial_suite: "Financial Calculator Suite",
   professional_mortgage: "Professional mortgage & loan analysis",
+  referred_by: "Referred By",
+  assign: "Assign"
 };
 
 export default en;

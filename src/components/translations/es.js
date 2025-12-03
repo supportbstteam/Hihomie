@@ -236,6 +236,8 @@ const es = {
   error1: "Error al enviar correo.",
   financial_suite: "Suite de Cálculos Financieros",
   professional_mortgage: "Análisis de hipoteca profesional",
+  referred_by: "Recomendado por",
+  assign: "Asignar",
 };
 
 export default es;

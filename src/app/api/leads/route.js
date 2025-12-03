@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import LeadStatus from "../../../models/LeadStatus";
-import Document from "../../../models/Document";
-import CardAssignUser from "../../../models/CardAssignUser";
-import User from "../../../models/User";
+import LeadStatus from "@/models/LeadStatus";
+import Document from "@/models/Document";
+import CardAssignUser from "@/models/CardAssignUser";
+import User from "@/models/User";
 import mongoose from "mongoose";
 
 export async function GET(request) {

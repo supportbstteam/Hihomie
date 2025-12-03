@@ -30,8 +30,14 @@ import {
   get_mortgageStatusData,
   get_banksData,
 } from "@/store/dashboard";
-import { get_tasks, get_admin_tasks, get_notes, get_admin_notes } from "@/store/task";
+import {
+  get_tasks,
+  get_admin_tasks,
+  get_notes,
+  get_admin_notes,
+} from "@/store/task";
 import useUserFromSession from "@/lib/useUserFromSession";
+import Datepicker from "@/components/ui/Datepicker";
 
 // --- Reusable Chart Color Constants ---
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
@@ -149,23 +155,48 @@ export function Dashboard() {
     banksData,
     successTag,
   } = useSelector((state) => state.dashboard);
-  const { tasks, admin_tasks, notes, admin_notes } = useSelector((state) => state.task);
+  const { tasks, admin_tasks, notes, admin_notes } = useSelector(
+    (state) => state.task
+  );
   const user = useUserFromSession();
+  const [noteDate, setNoteDate] = useState(new Date());
+
+  const handleNoteDateChange = (e) => {
+    const { name, value } = e.target;
+    setNoteDate(value);
+    if (user?.id) {
+      dispatch(get_tasks({ date: value, manager_id: user.id }));
+      dispatch(get_admin_tasks(value));
+      dispatch(get_notes({ date: value, userId: user.id }));
+      dispatch(get_admin_notes(value));
+    }
+  };
+
   useEffect(() => {
-    if(user?.id){
+    if (user?.id) {
       dispatch(get_total_lead({ userId: user.id }));
       dispatch(get_total_manager());
       dispatch(get_total_staff());
       dispatch(get_newLeadsThisWeek());
       dispatch(get_latestActivities());
-      dispatch(get_tasks({ date: new Date().toISOString().split("T")[0], manager_id: user.id }));
+      dispatch(
+        get_tasks({
+          date: new Date().toISOString().split("T")[0],
+          manager_id: user.id,
+        })
+      );
       dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
       dispatch(get_contractData({ userId: user.id }));
       dispatch(get_contactedUsers({ userId: user.id }));
       dispatch(get_documentSubmittedUsers({ userId: user.id }));
       dispatch(get_mortgageStatusData({ userId: user.id }));
       dispatch(get_banksData({ userId: user.id }));
-      dispatch(get_notes({ date: new Date().toISOString().split("T")[0], userId: user.id }));
+      dispatch(
+        get_notes({
+          date: new Date().toISOString().split("T")[0],
+          userId: user.id,
+        })
+      );
       dispatch(get_admin_notes(new Date().toISOString().split("T")[0]));
     }
   }, [user?.id]);
@@ -238,7 +269,7 @@ export function Dashboard() {
         {/* Row 2 */}
         <div className="lg:col-span-4 xl:col-span-6">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-6 h-[calc(100vh-290px)]">
-            <div className="lg:col-span-2 xl:col-span-2">
+            <div className="lg:col-span-2 xl:col-span-2 overflow-y-auto">
               <Card>
                 <h3 className="text-lg font-semibold text-gray-700">
                   {t("latest_activities")}
@@ -286,9 +317,20 @@ export function Dashboard() {
             <div className="lg:col-span-2 xl:col-span-2 overflow-y-auto">
               {user?.role === "admin" && (
                 <Card className="h-full overflow-y-auto">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                    {t("notes")}
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      {t("notes")}
+                    </h3>
+
+                    <Datepicker
+                      name="due_date"
+                      value={noteDate}
+                      onChange={handleNoteDateChange}
+                      dateFormat="dd/MM/yyyy"
+                      className="text-light text-sm appearance-none font-normal font-heading w-50 px-2 py-1 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+
                   {admin_notes.map((note) => (
                     <div key={note._id} className="flex-grow pr-1">
                       <div className="mb-2">
@@ -310,9 +352,19 @@ export function Dashboard() {
               )}
               {user?.role !== "admin" && (
                 <Card className="h-full overflow-y-auto">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                    {t("notes")}
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      {t("notes")}
+                    </h3>
+
+                    <Datepicker
+                      name="due_date"
+                      value={noteDate}
+                      onChange={handleNoteDateChange}
+                      dateFormat="dd/MM/yyyy"
+                      className="text-light text-sm appearance-none font-normal font-heading w-50 px-2 py-1 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
                   {notes.map((note) => (
                     <div key={note._id} className="flex items-center flex-grow">
                       <span
@@ -325,7 +377,7 @@ export function Dashboard() {
                 </Card>
               )}
             </div>
-            
+
             <div className="lg:col-span-2 xl:col-span-2 overflow-y-auto">
               {user?.role === "admin" && (
                 <Card className="h-full overflow-y-auto">
@@ -334,13 +386,6 @@ export function Dashboard() {
                   </h3>
                   {admin_tasks.map((task) => (
                     <div key={task._id} className="flex-grow pr-1">
-                      {/* <span className="mr-3 text-lg">
-                  {task.completed ? (
-                    <FaCheckCircle className="text-green-500" />
-                  ) : (
-                    <FaRegCircle className="text-gray-400 hover:text-blue-500" />
-                  )}
-                </span> */}
                       <div className="mb-2">
                         <span className="mb-4 px-2 py-1 text-lg">
                           {task.user_name}

@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server'
-
 import dbConnect from '@/lib/db'
-import Customer from '../../../../models/Customer'
-import LeadStatus from '../../../../models/LeadStatus'
+import LeadStatus from '@/models/LeadStatus'
 
 export async function DELETE(req, { params }) {
+  // return NextResponse.json({ message: "Lead Deleted successfully"}, { status: 200 });
   try {
     await dbConnect();
 
-    const { id } = params; // 👈 capture id from URL
+    const { id } = await params; // 👈 capture id from URL
 
     const deletedUser = await LeadStatus.findOneAndUpdate(
       { "cards._id": id },
@@ -19,12 +18,7 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
-    const data = {
-      colId: deletedUser._id,
-      cardId: id
-    }
-
-    return NextResponse.json({ message: "Customer deleted successfully", data }, { status: 200 });
+    return NextResponse.json({ message: "Lead Deleted successfully"}, { status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

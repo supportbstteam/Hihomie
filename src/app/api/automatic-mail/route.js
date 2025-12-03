@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db"
-import LeadStatus from "../../../models/LeadStatus";
+import LeadStatus from "@/models/LeadStatus";
 import { sendEmail } from "@/lib/sendEmail";
 
 function daysBetween(a, b) {
