@@ -95,7 +95,7 @@ const StatCard = ({ title, value, change, pending, progress }) => (
 const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
   <Card className="h-full">
     <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-    <div className="h-64 mt-4">
+    <div className="h-72 mt-4">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -440,20 +440,11 @@ export function Dashboard() {
 
         {/* Row 3 */}
         <div className="lg:col-span-1 xl:col-span-2">
-          {user?.role === "admin" && (
-            <DonutChartCard
-              title="User's Contracts Data"
-              data={contractData}
-              colors={COLORS_SIGNED}
-            />
-          )}
-          {user?.role !== "admin" && (
-            <DonutChartCard
-              title="User's Contracts Data"
-              data={contractData}
-              colors={COLORS_SIGNED}
-            />
-          )}
+          <DonutChartCard
+            title="User's Contracts Data"
+            data={contractData}
+            colors={COLORS_SIGNED}
+          />
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard

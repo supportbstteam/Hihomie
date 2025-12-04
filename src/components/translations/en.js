@@ -237,7 +237,8 @@ const en = {
   financial_suite: "Financial Calculator Suite",
   professional_mortgage: "Professional mortgage & loan analysis",
   referred_by: "Referred By",
-  assign: "Assign"
+  assign: "Assign",
+  manager_stats: "Manager Statistics"
 };
 
 export default en;

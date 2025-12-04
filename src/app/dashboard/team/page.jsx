@@ -11,6 +11,7 @@ import Icon from "@/components/ui/Icon";
 import { Plus } from "lucide-react";
 import { capitalizeFirstLetter } from "@/components/ui/string";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
+import ManagerStats from "@/components/team/ManagerStats"
 
 const Team = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const Team = () => {
   );
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState();
+  const [manager, setManager] = useState();
+  const [ManagerStatsModel, setManagerStatsModel] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
@@ -151,6 +154,10 @@ const Team = () => {
                 </td>
                 <td className="py-3 px-4 text-center">
                   <div className="flex justify-center gap-3 text-lg">
+                    <FaRegEye
+                      onClick={() => {setManagerStatsModel(!ManagerStatsModel); setManager(row)}}
+                      className="text-green-500 cursor-pointer hover:scale-110 transition-transform"
+                    />
                     <FaRegEdit
                       onClick={() => setUser(row)}
                       className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
@@ -213,6 +220,8 @@ const Team = () => {
           onConfirm={() => handleDelete(teamToDelete)}
         />
       )}
+
+      {ManagerStatsModel && <ManagerStats setOpen={setManagerStatsModel} manager={manager} setManager={setManager} />}
     </div>
   );
 };
