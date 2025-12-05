@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { t } from "@/components/translations";
 import { Card } from "@/components/ui/Card";
 import {
@@ -92,36 +93,43 @@ const StatCard = ({ title, value, change, pending, progress }) => (
   </Card>
 );
 
-const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
-  <Card className="h-full">
-    <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-    <div className="h-72 mt-4">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            innerRadius={60}
-            outerRadius={80}
-            fill="#8884d8"
-            paddingAngle={5}
-            dataKey={dataKey}
-            labelLine={true}
-            // label={true}
-            label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={colors[index % colors.length]}
-              />
-            ))}
-          </Pie>
-          <Legend iconType="circle" />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  </Card>
-);
+const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => {
+  const router = useRouter();
+  return (
+    <Card className="h-full">
+      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+      <div className="h-72 mt-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              innerRadius={60}
+              outerRadius={80}
+              fill="#8884d8"
+              paddingAngle={5}
+              dataKey={dataKey}
+              labelLine={true}
+              // label={true}
+              label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                  cursor="pointer"
+                  onClick={() =>
+                    router.push("/dashboard/team")
+                  }
+                />
+              ))}
+            </Pie>
+            <Legend iconType="circle" />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
+  );
+};
 
 const CustomTooltip = ({ active, payload, total }) => {
   if (active && payload && payload.length) {

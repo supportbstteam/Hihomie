@@ -66,6 +66,23 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
     </Card>
 );
 
+const CustomTooltip = ({ active, payload, total }) => {
+    if (active && payload && payload.length) {
+        const value = payload[0].value;
+        const name = payload[0].payload.name;
+        const percentage = ((value / total) * 100).toFixed(2);
+
+        return (
+            <div className="bg-white p-2 border border-gray-300 rounded shadow text-sm">
+                <p className="font-semibold">{name}</p>
+                <p>Leads: {value}</p>
+                <p>Percentage: {percentage}%</p>
+            </div>
+        );
+    }
+    return null;
+};
+
 const ManagerStats = ({ setOpen, manager: user, setManager }) => {
     const dispatch = useDispatch();
     const {
@@ -130,7 +147,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 colors={COLORS_CONTACTED}
                             />
                         </div>
-                        {/* <div className="lg:col-span-1 xl:col-span-2">
+                        <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title="Document Submitted vs. Not Submitted Users"
                                 data={documentSubmittedUsers}
@@ -143,7 +160,51 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 data={banksData}
                                 colors={COLORS_BANK}
                             />
-                        </div> */}
+                        </div>
+                    </div>
+                    <div className="lg:col-span-4 xl:col-span-6">
+                        <Card>
+                            <h3 className="text-lg font-semibold text-gray-700">
+                                Mortgage Status
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                                User Distribution Across Different Mortgage Process Stages.
+                            </p>
+                            <div className="h-64 mt-4">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={mortgageStatusData}
+                                        margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+                                    >
+                                        <XAxis
+                                            dataKey="name"
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fontSize: 10 }}
+                                            angle={-25}
+                                            textAnchor="end"
+                                            height={60}
+                                        />
+                                        <YAxis
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fontSize: 12 }}
+                                        />
+                                        <Tooltip
+                                            content={
+                                                <CustomTooltip
+                                                    total={mortgageStatusData.reduce(
+                                                        (sum, d) => sum + d.value,
+                                                        0
+                                                    )}
+                                                />
+                                            }
+                                        />
+                                        <Bar dataKey="value" fill="#86efac" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </Card>
                     </div>
 
                 </motion.div>

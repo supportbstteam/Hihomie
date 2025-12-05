@@ -186,16 +186,16 @@ const MortgageSimulator = () => {
 
   const calculateMortgage = () => {
     // parse numeric inputs once (use radix 10 for parseInt)
-    const propertyPrice = parseInt(formData.property_price, 10) || 0;
-    const itpPercent = parseInt(formData.itp, 10) || 0;
-    const bankFinancingPercent = parseInt(formData.bank_financing, 10) || 0;
-    const fees = parseInt(formData.fees, 10) || 0;
-    const otherCosts = parseInt(formData.other_costs, 10) || 0;
-    const savings = parseInt(formData.savings, 10) || 0;
+    const propertyPrice = parseFloat(formData.property_price, 10) || 0;
+    const itpPercent = parseFloat(formData.itp, 10) || 0;
+    const bankFinancingPercent = parseFloat(formData.bank_financing, 10) || 0;
+    const fees = parseFloat(formData.fees, 10) || 0;
+    const otherCosts = parseFloat(formData.other_costs, 10) || 0;
+    const savings = parseFloat(formData.savings, 10) || 0;
 
     // roi and years: roi can be fractional, so use parseFloat
     const roiAnnual = parseFloat(formData.roi_interest) || 0;
-    const roiYears = parseInt(formData.roi_year, 10) || 0;
+    const roiYears = parseFloat(formData.roi_year, 10) || 0;
 
     // derived values
     const r = roiAnnual / 12 / 100; // monthly rate (decimal)
@@ -203,17 +203,7 @@ const MortgageSimulator = () => {
 
     // ITP amount and financed property price
     const totalItp = Math.round((propertyPrice * itpPercent) / 100);
-    if (savings >= totalItp + fees + otherCosts) {
-      let mAmount = propertyPrice + fees + totalItp + otherCosts - savings;
-      let bfinancing_required = (mAmount / propertyPrice) * 100;
-      setFormData((prev) => ({
-        ...prev,
-        "bank_financing": bfinancing_required,
-      }));
-    }
-    const ppAfterFinancing = Math.round(
-      (propertyPrice * bankFinancingPercent) / 100
-    );
+    const ppAfterFinancing = (propertyPrice * bankFinancingPercent) / 100;
     const downPayment = propertyPrice - ppAfterFinancing;
 
     // total fees and extra expenses calculation
@@ -226,6 +216,11 @@ const MortgageSimulator = () => {
 
     if (savings >= extraExpenses) {
       mortgageAmount = Math.round(totalFee - savings);
+      let bfinancing_required = ((totalFee - savings) / propertyPrice) * 100;
+      setFormData((prev) => ({
+        ...prev,
+        bank_financing: bfinancing_required,
+      }));
     } else {
       mortgageAmount = Math.round(propertyPrice - downPayment);
       creditAmount = extraExpenses - savings;
@@ -253,7 +248,7 @@ const MortgageSimulator = () => {
       total_fee: totalFee,
       property_value: propertyPrice,
       itp: totalItp,
-      fees,
+      fees: fees,
       other_costs: otherCosts,
       interest: totalInterest,
       savings: savings,
@@ -267,7 +262,7 @@ const MortgageSimulator = () => {
       total_fee: totalFee,
       property_value: propertyPrice,
       itp: totalItp,
-      fees,
+      fees: fees,
       other_costs: otherCosts,
       interest: totalInterest,
     };
@@ -379,22 +374,125 @@ const MortgageSimulator = () => {
       alert("Please enter a valid email address.");
       return;
     }
-    const subject = "Your Mortgage Simulation Results";
-    const mailContent = `
-                        <h1>Your Mortgage Simulation</h1>
-                        <p>Hello,</p>
-                        <p>Thank you for using our calculator. Here are the results you requested:</p>
+    const subject = "Resultados de la simulación de su hipoteca";
 
-                        <ul>
-                          ${Object.entries(resultData)
-                            .map(([key, value]) => {
-                              return `<li>${formatKey(
-                                key
-                              )}: <strong>€${value}</strong></li>`;
-                            })
-                            .join("")}
-                        </ul>
-                        `;
+    const mailContent = `
+      <!-- Email body fragment (table-based, inline styles for email clients) -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;color:#111827;">
+        <tr>
+          <td align="left" style="padding:20px 0 20px 0;">
+            <!-- Header -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(90deg,#4f46e5,#06b6d4);border-radius:8px;color:#ffffff;padding:14px;">
+              <tr>
+                <td style="font-size:18px;font-weight:700;">Simulación de su hipoteca</td>
+              </tr>
+              <tr>
+                <td style="font-size:13px;opacity:0.95;padding-top:6px;">Gracias por usar nuestra calculadora — a continuación encontrará el resumen.</td>
+              </tr>
+            </table>
+    
+            <div style="height:12px;"></div>
+    
+            <!-- Intro -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;border:1px solid #e6e9ee;padding:14px;">
+              <tr>
+                <td style="font-size:14px;color:#374151;line-height:1.5;">
+                  <p style="margin:0 0 8px;">Hola,</p>
+    
+                  <!-- Datos básicos -->
+                  <div style="background:#f8fafc;border-radius:6px;padding:10px;margin-bottom:12px;">
+                    <div style="font-weight:600;color:#111827;margin-bottom:8px;">Datos básicos</div>
+                    <ul style="margin:0;padding-left:18px;color:#374151;font-size:14px;line-height:1.6;">
+                      <li>Precio del inmueble: €${
+                        parseFloat(formData.property_price, 10) || 0
+                      }</li>
+                      <li>Financiación del banco: ${
+                        parseFloat(formData.bank_financing, 10) || 0
+                      }%</li>
+                      <li>Ahorro aportado: €${resultData.savings}</li>
+                      <li>Tipo de interés: ${formData.roi_type}</li>
+                      <li>Tasa de interés (TIN%): ${
+                        parseFloat(formData.roi_interest, 10) || 0
+                      }%</li>
+                      <li>Años de hipoteca: ${
+                        parseFloat(formData.roi_year, 10) || 0
+                      }</li>
+                    </ul>
+                  </div>
+    
+                  <!-- Resultados -->
+                  <div style="background:#f8fafc;border-radius:6px;padding:10px;margin-bottom:12px;">
+                    <div style="font-weight:600;color:#111827;margin-bottom:8px;">Resultados de la simulación de su hipoteca</div>
+    
+                    <!-- two-column layout (stacks in narrow clients) -->
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td valign="top" style="width:50%;padding-right:8px;">
+                          <ul style="margin:0;padding-left:18px;font-size:14px;color:#374151;line-height:1.6;">
+                            <li><strong>Tarifa mensual:</strong> €${
+                              resultData.monthly_fee
+                            }</li>
+                            <li><strong>Monto de la hipoteca:</strong> €${
+                              resultData.mortgage_amount
+                            }</li>
+                            <li><strong>Costo total de la compra:</strong> €${
+                              resultData.total_fee
+                            }</li>
+                          </ul>
+                        </td>
+                        <td valign="top" style="width:50%;padding-left:8px;">
+                          <ul style="margin:0;padding-left:18px;font-size:14px;color:#374151;line-height:1.6;">
+                            <li><strong>Valor de la propiedad:</strong> €${
+                              resultData.property_value
+                            }</li>
+                            <li><strong>ITP/Tipo general:</strong> €${
+                              resultData.itp
+                            }</li>
+                            <li><strong>Honorarios:</strong> €${
+                              resultData.fees
+                            }</li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </table>
+    
+                    <div style="margin-top:10px;padding-left:18px;">
+                      <ul style="margin:0;padding-left:0;font-size:14px;color:#374151;line-height:1.6;list-style:disc;">
+                        <li><strong>Otros costos:</strong> €${
+                          resultData.other_costs
+                        }</li>
+                        <li><strong>Interés total:</strong> €${
+                          resultData.interest
+                        }</li>
+                        <li><strong>Ahorro aportado:</strong> €${
+                          resultData.savings
+                        }</li>
+                      </ul>
+                    </div>
+                  </div>
+    
+                  <!-- CTA -->
+                  <div style="text-align:center;margin-top:8px;">
+                    <a href="https://hihomie.es" style="display:inline-block;padding:10px 18px;border-radius:6px;background:linear-gradient(90deg,#06b6d4,#4f46e5);color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;">
+                      Contactar con un asesor
+                    </a>
+                  </div>
+    
+                  <p style="margin:14px 0 0;color:#6b7280;font-size:13px;">
+                    Si tiene cualquier duda, no dude en ponerse en contacto con nosotros. Esta simulación es orientativa y no constituye una oferta vinculante.
+                  </p>
+    
+                  <p style="margin:12px 0 0;font-size:14px;color:#111827;">
+                    Un saludo,<br/>
+                    <strong>HiHomie</strong>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    `;
 
     const res = fetch("/api/send-email", {
       method: "POST",

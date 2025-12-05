@@ -323,8 +323,8 @@ const List = ({
                     <span
                       className="px-2 py-1 rounded-full text-xs font-normal"
                       style={{
-                        color: item.color, // text color
-                        backgroundColor: `${item.color}33`, // light background with 20% opacity
+                        color: "#000000ff",
+                        backgroundColor: `${item.color}33`, 
                       }}
                     >
                       {item.leadStatusname}
