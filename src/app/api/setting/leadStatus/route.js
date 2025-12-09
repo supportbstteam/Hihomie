@@ -69,14 +69,14 @@ export async function GET() {
 
   try {
     const data = await LeadStatus.find().sort({ order: 1 }).lean();
-    const data1 = await LeadStatus.aggregate([
-      {
+    // const data1 = await LeadStatus.aggregate([
+    //   {
         
-      },
-      {
-        $sort: { order: 1 }
-      }
-    ]); 
+    //   },
+    //   {
+    //     $sort: { order: 1 }
+    //   }
+    // ]); 
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
