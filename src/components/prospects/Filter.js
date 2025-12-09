@@ -23,8 +23,11 @@ const Filter = ({
   // ✅ Local states for filters
   const [selectedGestor, setSelectedGestor] = useState("");
   const [selectedEstado, setSelectedEstado] = useState("");
-  const [fullName, setFullName] = useState(""); // 🔥 New
-  const [phone, setPhone] = useState(""); // 🔥 New
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [contacted, setContacted] = useState("");
+  const [contract_signed, setContract_signed] = useState("");
+  const [bank, setBank] = useState("");
 
   useEffect(() => {
     dispatch(get_teamData());
@@ -37,6 +40,9 @@ const Filter = ({
       estado: selectedEstado,
       full_name: fullName,
       phone: phone,
+      contacted: contacted,
+      contract_signed: contract_signed,
+      bank: bank,
     });
     setFilterOpen(false);
 
@@ -45,6 +51,9 @@ const Filter = ({
     setSelectedEstado("");
     setFullName("");
     setPhone("");
+    setContacted("");
+    setContract_signed("");
+    setBank("");
   };
 
   const handleCancel = () => {
@@ -52,9 +61,11 @@ const Filter = ({
     setSelectedEstado("");
     setFullName("");
     setPhone("");
+    setContacted("");
+    setContract_signed("");
+    setBank("");
     setOpen(false);
   };
-
   return (
     <div>
       {/* ==== Overlay ==== */}
@@ -63,9 +74,8 @@ const Filter = ({
       )}
       {/* ==== Drawer ==== */}
       <aside
-        className={`fixed top-0 right-0 h-full w-[25%] flex flex-col justify-between content-between bg-white  shadow-lg z-50 transform transition-transform duration-300  ${
-          filterOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-[25%] flex flex-col justify-between content-between bg-white  shadow-lg z-50 transform transition-transform duration-300  ${filterOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         {/* Header */}
         <div className="w-full p-4 border-b border-stroke  flex items-center justify-between">
@@ -83,7 +93,6 @@ const Filter = ({
 
         {/* Drawer Content */}
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-60px)] ">
-          {/* Gestor */}
           <Dropdown
             label={t("manager")}
             type="text"
@@ -98,8 +107,6 @@ const Filter = ({
             }))}
           />
 
-          {/* Estado */}
-
           <Dropdown
             label={t("status")}
             type="text"
@@ -112,14 +119,47 @@ const Filter = ({
               value: item._id,
               label: item.status_name,
             }))}
-            // options={leadStatusList.map((item, i) => ({
-            //   //  key: i,
-            //   value: item.leadStatusId,
-            //   label: item.leadStatusname,
-            // }))}
           />
 
-          {/* Usuario */}
+          <Dropdown
+            label={t("contacted")}
+            type="text"
+            name="contacted"
+            title={t("choose_option")}
+            value={contacted}
+            onChange={(e) => setContacted(e.target.value)}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+          />
+
+          <Dropdown
+            label={t("contract_signed")}
+            type="text"
+            name="contract_signed"
+            title={t("choose_option")}
+            value={contract_signed}
+            onChange={(e) => setContract_signed(e.target.value)}
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+          />
+
+          <Dropdown
+            label={t("bank")}
+            type="text"
+            name="bank"
+            title={t("select_bank")}
+            value={bank}
+            onChange={(e) => setBank(e.target.value)}
+            options={[
+              { value: "CaixaBank", label: "CaixaBank" },
+              { value: "Banco Santander", label: "Banco Santander" },
+              { value: "BBVA", label: "BBVA" }
+            ]}
+          />
 
           <Input
             label={t("full_name")}
@@ -130,8 +170,6 @@ const Filter = ({
             placeholder="Nombre completo"
           />
 
-          {/* Contacto */}
-
           <Input
             label={t("phone")}
             type="text"
@@ -140,22 +178,6 @@ const Filter = ({
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Buscar por contacto"
           />
-
-          {/* Action Buttons */}
-          {/* <div className="flex gap-3 h-[7vh] pt-4">
-            <button
-              onClick={handleCancel}
-              className="flex-1 rounded-lg border border-stroke py-2"
-            >
-              {t("cancel")}
-            </button>
-            <button
-              onClick={handleApply}
-              className="flex-1 rounded-lg bg-[#21B573] text-white py-2"
-            >
-              {t("apply")}
-            </button>
-          </div> */}
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
           <Button onClick={handleCancel} className="py-2 px-4" variant="outline" size="full">

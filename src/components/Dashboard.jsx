@@ -117,9 +117,10 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => {
                   key={`cell-${index}`}
                   fill={colors[index % colors.length]}
                   cursor="pointer"
-                  onClick={() =>
-                    router.push("/dashboard/team")
-                  }
+                  onClick={() => {
+                    setListComponent(true); 
+                    router.push("/dashboard/lead"); 
+                  }}
                 />
               ))}
             </Pie>

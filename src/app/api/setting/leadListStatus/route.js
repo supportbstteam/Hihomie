@@ -98,12 +98,15 @@ export async function GET() {
             purchase_status: "$cards.purchase_status",
             commercial_notes: "$cards.commercial_notes",
             manager_notes: "$cards.manager_notes",
+            contacted: "$cards.contacted",
+            contract_signed: "$cards.contract_signed",
+            bankDetailsData: "$cards.bankDetailsData",
             detailsData: "$cards.detailsData",
             addressDetailsData: "$cards.addressDetailsData",
-            leadStatusId: "$_id",          // 🔥 LeadStatus ID inside card
-            createdAt: "$cards.createdAt",// 🔥 LeadStatus Name inside card
+            leadStatusId: "$_id",    
+            createdAt: "$cards.createdAt",
             color: 1,
-            users: "$users"                // 🔥 Assigned users
+            users: "$users"             
           }
         }
       ]);
@@ -181,6 +184,9 @@ export async function GET() {
           purchase_status: "$cards.purchase_status",
           commercial_notes: "$cards.commercial_notes",
           manager_notes: "$cards.manager_notes",
+          contacted: "$cards.contacted",
+          contract_signed: "$cards.contract_signed",
+          bankDetailsData: "$cards.bankDetailsData",
           detailsData: "$cards.detailsData",
           addressDetailsData: "$cards.addressDetailsData",
           leadStatusId: "$_id",          // 🔥 LeadStatus ID inside card

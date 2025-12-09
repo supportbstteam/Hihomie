@@ -156,7 +156,7 @@ const es = {
   contacted: "Contactado",
   contract_signed: "Contrato Firmado",
   bank: "Banco",
-  enter_bank_name: "Introduce el nombre del banco",
+  select_bank: "Seleccionar Banco",
   document: "Documento",
   document_type: "Tipo de Documento",
   upload_document: "Subir Documento",
@@ -238,7 +238,8 @@ const es = {
   professional_mortgage: "Análisis de hipoteca profesional",
   referred_by: "Recomendado por",
   assign: "Asignar",
-  manager_stats: "Estadísticas de gestor"
+  manager_stats: "Estadísticas de gestor",
+  choose_option: "Escoger opción",
 };
 
 export default es;

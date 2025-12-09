@@ -50,8 +50,6 @@ export async function GET() {
               $filter: {
                 input: "$cards",
                 as: "card",
-                // The core condition: check if the card's _id (as a string) is in the assignedCardIds array
-                // We can directly access the 'cardId' field from the assignedCards array
                 cond: { $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"] }
               }
             }
@@ -71,6 +69,14 @@ export async function GET() {
 
   try {
     const data = await LeadStatus.find().sort({ order: 1 }).lean();
+    const data1 = await LeadStatus.aggregate([
+      {
+        
+      },
+      {
+        $sort: { order: 1 }
+      }
+    ]); 
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);

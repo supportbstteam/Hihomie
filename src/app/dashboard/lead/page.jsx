@@ -64,6 +64,7 @@ export default function CustomDnD() {
   const [mailDetails, setMailDetails] = useState(null);
 
   const touchPosition = useRef({ x: 0, y: 0 });
+  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } = selecteFilterData || {};
 
   useEffect(() => {
     if (!listComponent) {
@@ -74,8 +75,57 @@ export default function CustomDnD() {
   }, [dispatch, listComponent]);
 
   useEffect(() => {
-    if (leadStatus && leadStatus.length > 0) {
-      const newColumns = leadStatus.reduce((acc, item) => {
+    console.log("filter",selecteFilterData);
+    // ✅ Filtering Logic
+    const filteredLeadStatus = leadStatus.map((status) => {
+      const filteredCards = status.cards?.filter((item) => {
+        const matchGestor = gestor
+          ? item?.users?.some((user) => user._id === gestor)
+          : true;
+
+        const matchEstado = estado ? item?.status === estado : true;
+
+        const matchName = full_name
+          ? `${item.first_name || ""} ${item.last_name || ""}`
+              .toLowerCase()
+              .includes(full_name.toLowerCase())
+          : true;
+
+        const matchPhone = phone
+          ? item?.phone?.toString().includes(phone)
+          : true;
+
+        const matchContacted = contacted ? item?.contacted === contacted : true;
+
+        const matchContractSigned = contract_signed
+          ? item?.contract_signed === (contract_signed === "true")
+          : true;
+
+        const matchBank = bank
+          ? item?.bankDetailsData?.bank_name === bank
+          : true;
+
+        return (
+          matchGestor &&
+          matchEstado &&
+          matchName &&
+          matchPhone &&
+          matchContacted &&
+          matchContractSigned &&
+          matchBank
+        );
+      });
+
+      return {
+        ...status,
+        cards: filteredCards,
+      };
+    });
+
+    console.log(filteredLeadStatus);
+
+    if (filteredLeadStatus && filteredLeadStatus.length > 0) {
+      const newColumns = filteredLeadStatus.reduce((acc, item) => {
         acc[item._id] = {
           id: item._id,
           title: item.status_name,
@@ -86,7 +136,7 @@ export default function CustomDnD() {
       }, {});
       setColumns(newColumns);
     }
-  }, [leadStatus]);
+  }, [leadStatus, selecteFilterData]);
 
   const handleCardAdded = () => {
     setOpen(false);
@@ -207,7 +257,7 @@ export default function CustomDnD() {
 
   useEffect(() => {
     if (successMessage) {
-      if (successMessage === "Lead Deleted successfully") { 
+      if (successMessage === "Lead Deleted successfully") {
         toast.success(successMessage);
       }
       dispatch(messageClear());
@@ -282,128 +332,136 @@ export default function CustomDnD() {
 
       {/* BOARD */}
       {!listComponent ? (
-        <div className="flex-1 h-[40vh] p-4 rounded-md w-full grid grid-flow-col auto-cols-[296px] gap-4  overflow-x-auto custom-scrollbar mb-1">
-          {Object.values(columns).map((col) => (
-            <div
-              key={col.id}
-              data-col-id={col.id}
-              className={`p-2 pb-8 flex-1 transition-colors duration-200 overflow-hidden border-t-5 rounded-md
+        <>
+          <div className="flex-1 h-[40vh] p-4 rounded-md w-full grid grid-flow-col auto-cols-[296px] gap-4  overflow-x-auto custom-scrollbar mb-1">
+            {Object.values(columns).map((col) => (
+              <div
+                key={col.id}
+                data-col-id={col.id}
+                className={`p-2 pb-8 flex-1 transition-colors duration-200 overflow-hidden border-t-5 rounded-md
                                 ${
                                   dragOverColId === col.id
                                     ? "bg-blue-100"
                                     : "bg-[#F9F9F9]"
                                 }`}
-              style={{ borderTopColor: col.color }}
-              onDragOver={(e) => handleDragOver(e, col.id)}
-              onDrop={() => handleDropColumn(col.id)}
-            >
-              <div className="flex justify-between items-center gap-2 mb-2">
-                <div className="flex gap-2 items-center">
-                  <div
-                    style={{ backgroundColor: col.color }}
-                    className={`bg-[${col.color}] w-2 h-2 rounded-full`}
-                  ></div>
-                  <h2 className="font-semibold">{col.title}</h2>
+                style={{ borderTopColor: col.color }}
+                onDragOver={(e) => handleDragOver(e, col.id)}
+                onDrop={() => handleDropColumn(col.id)}
+              >
+                <div className="flex justify-between items-center gap-2 mb-2">
+                  <div className="flex gap-2 items-center">
+                    <div
+                      style={{ backgroundColor: col.color }}
+                      className={`bg-[${col.color}] w-2 h-2 rounded-full`}
+                    ></div>
+                    <h2 className="font-semibold">{col.title}</h2>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedColId(col.id);
+                      setOpen(true);
+                    }}
+                    className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
+                  >
+                    <CiCirclePlus />
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedColId(col.id);
-                    setOpen(true);
-                  }}
-                  className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
-                >
-                  <CiCirclePlus />
-                </button>
-              </div>
-              <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
-                {col.cards.map((card, index) => (
-                  <div
-                    key={card._id}
-                    draggable={true}
-                    onDragStart={(e) =>
-                      handleDragStart(e, card._id, col.id, index)
-                    }
-                    onDragEnd={handleDragEnd}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleDropBetween(col.id, index)}
-                    onClick={() => handleCardClick(col.id, card)}
-                    onTouchStart={(e) =>
-                      handleTouchStart(e, card._id, col.id, index)
-                    }
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                    className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
+                <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
+                  {col.cards.map((card, index) => (
+                    <div
+                      key={card._id}
+                      draggable={true}
+                      onDragStart={(e) =>
+                        handleDragStart(e, card._id, col.id, index)
+                      }
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => handleDropBetween(col.id, index)}
+                      onClick={() => handleCardClick(col.id, card)}
+                      onTouchStart={(e) =>
+                        handleTouchStart(e, card._id, col.id, index)
+                      }
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                      className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
                                         ${
                                           draggingCardId === card._id
                                             ? "opacity-60 border-2 border-blue-500"
                                             : "bg-white "
                                         }`}
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                        {card.first_name?.[0]?.toUpperCase() || "?"}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                          {card.first_name?.[0]?.toUpperCase() || "?"}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
+                            {`${
+                              card.first_name?.charAt(0).toUpperCase() || ""
+                            }${card.first_name?.slice(1) || ""} ${
+                              card.last_name?.charAt(0).toUpperCase() || ""
+                            }${card.last_name?.slice(1) || ""}`}
+                          </h3>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                          {`${card.first_name?.charAt(0).toUpperCase() || ""}${
-                            card.first_name?.slice(1) || ""
-                          } ${card.last_name?.charAt(0).toUpperCase() || ""}${
-                            card.last_name?.slice(1) || ""
-                          }`}
-                        </h3>
+
+                      <div className=" grid gap-2 mb-4 text-light">
+                        <span className="flex gap-2">
+                          <Mail size={16} />
+
+                          <p className="text-light pxs">{card.email}</p>
+                        </span>
+                        <span className="flex gap-2">
+                          <Phone size={16} />
+                          <p className="text-light pxs">{card.phone}</p>
+                        </span>
+                        <span className="flex gap-2">
+                          <Calendar size={16} />
+                          <p className="text-light pxs">
+                            {new Date().toLocaleDateString()}
+                          </p>
+                        </span>
+                      </div>
+
+                      <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
+                        <a
+                          href={`tel:${card.phone}`}
+                          target="_blank"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <LuPhoneCall />
+                        </a>
+                        <a
+                          href={`https://wa.me/${card.phone}`}
+                          target="_blank"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FaWhatsapp />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMailDetails(card);
+                            setMailModelOpen(true);
+                          }}
+                        >
+                          <CiMail />
+                        </button>
                       </div>
                     </div>
-
-                    <div className=" grid gap-2 mb-4 text-light">
-                      <span className="flex gap-2">
-                        <Mail size={16} />
-
-                        <p className="text-light pxs">{card.email}</p>
-                      </span>
-                      <span className="flex gap-2">
-                        <Phone size={16} />
-                        <p className="text-light pxs">{card.phone}</p>
-                      </span>
-                      <span className="flex gap-2">
-                        <Calendar size={16} />
-                        <p className="text-light pxs">
-                          {new Date().toLocaleDateString()}
-                        </p>
-                      </span>
-                    </div>
-
-                    <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
-                      <a
-                        href={`tel:${card.phone}`}
-                        target="_blank"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <LuPhoneCall />
-                      </a>
-                      <a
-                        href={`https://wa.me/${card.phone}`}
-                        target="_blank"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FaWhatsapp />
-                      </a>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMailDetails(card);
-                          setMailModelOpen(true);
-                        }}
-                      >
-                        <CiMail />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <Filter
+            leadStatusList={leadStatus}
+            filterOpen={filterOpen}
+            setFilterOpen={setFilterOpen}
+            setSelecteFilterData={setSelecteFilterData}
+          />
+        </>
       ) : (
         <div className="p-3 sm:p-5">
           <Filter

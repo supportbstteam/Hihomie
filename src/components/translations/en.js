@@ -156,7 +156,7 @@ const en = {
   contacted: "Contacted",
   contract_signed: "Contract Signed",
   bank: "Bank",
-  enter_bank_name: "Enter bank name",
+  select_bank: "Select Bank",
   document: "Document",
   document_type: "Document Type",
   upload_document: "Upload Document",
@@ -238,7 +238,8 @@ const en = {
   professional_mortgage: "Professional mortgage & loan analysis",
   referred_by: "Referred By",
   assign: "Assign",
-  manager_stats: "Manager Statistics"
+  manager_stats: "Manager Statistics",
+  choose_option: "Choose Option",
 };
 
 export default en;

@@ -79,7 +79,7 @@ const List = ({
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [users, setUsers] = useState([]);
 
-  const { gestor, estado, full_name, phone } = selecteFilterData || {};
+  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } = selecteFilterData || {};
 
   // ✅ Filtering Logic
   const filteredList = leadStatusList.filter((item) => {
@@ -97,7 +97,13 @@ const List = ({
 
     const matchPhone = phone ? item?.phone?.toString().includes(phone) : true;
 
-    return matchGestor && matchEstado && matchName && matchPhone;
+    const matchContacted = contacted ? item?.contacted === contacted : true;
+
+    const matchContract_signed = contract_signed ? item?.contract_signed === (contract_signed === "true") : true;
+
+    const matchBank = bank ? item?.bankDetailsData?.bank_name === bank : true;
+
+    return matchGestor && matchEstado && matchName && matchPhone && matchContacted && matchContract_signed && matchBank;
   });
 
   // Reset pagination when filters change
