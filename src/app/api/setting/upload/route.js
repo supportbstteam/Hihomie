@@ -122,14 +122,11 @@ export const POST = async (req) => {
       cardData.assigned = assigned;
       cardData.status = status._id;
 
-      // status.cards.push(cardData);
-      // await status.save();
+      status.cards.push(cardData);
+      await status.save();
 
       validSaves.push({ row: rowNum, message: `Row ${rowNum} added successfully` });
     }
-
-    // Return all updated statuses with cards
-    // const allStatuses = await Status.find();
 
     const results = [...validSaves, ...errorData];
 
