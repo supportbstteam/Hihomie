@@ -240,6 +240,7 @@ const es = {
   assign: "Asignar",
   manager_stats: "Estadísticas de gestor",
   choose_option: "Escoger opción",
+  document_submitted: "Documento enviado",
 };
 
 export default es;

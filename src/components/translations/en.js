@@ -240,6 +240,7 @@ const en = {
   assign: "Assign",
   manager_stats: "Manager Statistics",
   choose_option: "Choose Option",
+  document_submitted: "Document Submitted",
 };
 
 export default en;

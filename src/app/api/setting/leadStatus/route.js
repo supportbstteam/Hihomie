@@ -29,10 +29,24 @@ export async function GET() {
   if (user.role !== "admin") {
     try {
       const pipeline = [
+        // 1) create string versions of all cards' _id for matching
+        {
+          $addFields: {
+            _cardIdsStr: {
+              $map: {
+                input: { $ifNull: ["$cards", []] },
+                as: "c",
+                in: { $toString: "$$c._id" }
+              }
+            }
+          }
+        },
+
+        // 2) lookup assignments for this user (your original lookup, unchanged)
         {
           $lookup: {
             from: "cardassignusers",
-            let: { userIdStr: { $toString: user.id } },
+            let: { userIdStr: { $toString: user.id } }, // user.id from your JS context
             pipeline: [
               { $match: { $expr: { $eq: ["$userId", "$$userIdStr"] } } },
               { $project: { cardId: 1, _id: 0 } }
@@ -40,26 +54,82 @@ export async function GET() {
             as: "assignedCards"
           }
         },
+
+        // 3) lookup documents that reference these cards (docs.cardId is assumed to be stored as string)
+        {
+          $lookup: {
+            from: "documents",
+            let: { cardIds: "$_cardIdsStr" },
+            pipeline: [
+              { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
+              { $project: { _id: 0, cardId: 1 /*, other fields if needed */ } }
+            ],
+            as: "docs"
+          }
+        },
+
+        // 4) project fields and filter/map the cards array:
         {
           $project: {
-            _id: '$_id',
-            status_name: '$status_name',
-            color: '$color',
-            order: '$order',
+            _id: "$_id",
+            status_name: "$status_name",
+            color: "$color",
+            order: "$order",
+            // filter only cards assigned to this user, then map each card to add documentSubmitted
             cards: {
-              $filter: {
-                input: "$cards",
+              $map: {
+                input: {
+                  $filter: {
+                    input: { $ifNull: ["$cards", []] },
+                    as: "card",
+                    // check if string(card._id) exists in assignedCards.cardId
+                    cond: {
+                      $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"]
+                    }
+                  }
+                },
                 as: "card",
-                cond: { $in: [{ $toString: "$$card._id" }, "$assignedCards.cardId"] }
+                in: {
+                  $mergeObjects: [
+                    "$$card",
+                    {
+                      documentSubmitted: {
+                        $cond: [
+                          {
+                            $gt: [
+                              {
+                                $size: {
+                                  $filter: {
+                                    input: "$docs",
+                                    as: "d",
+                                    cond: { $eq: ["$$d.cardId", { $toString: "$$card._id" }] }
+                                  }
+                                }
+                              },
+                              0
+                            ]
+                          },
+                          "yes",
+                          "no"
+                        ]
+                      }
+                    }
+                  ]
+                }
               }
             }
           }
         },
-        {
-          $sort: { order: 1 }
-        }
+
+        // 5) sort and cleanup if needed
+        { $sort: { order: 1 } },
+
+        // remove temporary arrays from the output
+        { $project: { _cardIdsStr: 0, assignedCards: 0, docs: 0 } }
       ];
+
       const data = await LeadStatus.aggregate(pipeline);
+
       return NextResponse.json({ data }, { status: 201 })
     } catch (error) {
       console.error("GET Error:", error);
@@ -68,15 +138,162 @@ export async function GET() {
   }
 
   try {
-    const data = await LeadStatus.find().sort({ order: 1 }).lean();
-    // const data1 = await LeadStatus.aggregate([
+    // const data = await LeadStatus.aggregate([
     //   {
-        
+    //     $addFields: {
+    //       _cardIdsStr: {
+    //         $map: { input: { $ifNull: ["$cards", []] }, as: "c", in: { $toString: "$$c._id" } }
+    //       }
+    //     }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "cardassignusers",
+    //       let: { cardIds: "$_cardIdsStr" },
+    //       pipeline: [
+    //         { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
+    //         { $project: { _id: 0, cardId: 1, userId: 1 } }
+    //       ],
+    //       as: "assignments"
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       cards: {
+    //         $map: {
+    //           input: { $ifNull: ["$cards", []] },
+    //           as: "c",
+    //           in: {
+    //             $mergeObjects: [
+    //               "$$c",
+    //               {
+    //                 assignedUsers: {
+    //                   $map: {
+    //                     input: {
+    //                       $filter: {
+    //                         input: "$assignments",
+    //                         as: "a",
+    //                         cond: { $eq: ["$$a.cardId", { $toString: "$$c._id" }] }
+    //                       }
+    //                     },
+    //                     as: "m",
+    //                     in: "$$m.userId"
+    //                   }
+    //                 }
+    //               }
+    //             ]
+    //           }
+    //         }
+    //       }
+    //     }
     //   },
     //   {
     //     $sort: { order: 1 }
-    //   }
-    // ]); 
+    //   },
+    //   { $project: { _cardIdsStr: 0, assignments: 0 } }
+    // ]);
+
+    const data = await LeadStatus.aggregate([
+      // 1) build string version of cards' _id for matching
+      {
+        $addFields: {
+          _cardIdsStr: {
+            $map: {
+              input: { $ifNull: ["$cards", []] },
+              as: "c",
+              in: { $toString: "$$c._id" }
+            }
+          }
+        }
+      },
+
+      // 2) lookup assignments (you already had this)
+      {
+        $lookup: {
+          from: "cardassignusers",
+          let: { cardIds: "$_cardIdsStr" },
+          pipeline: [
+            { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
+            { $project: { _id: 0, cardId: 1, userId: 1 } }
+          ],
+          as: "assignments"
+        }
+      },
+
+      // 3) lookup documents that reference these cards
+      {
+        $lookup: {
+          from: "documents",
+          let: { cardIds: "$_cardIdsStr" },
+          pipeline: [
+            // find any documents whose cardId (string) is in the cardIds list
+            { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
+            // include fields you need; here we only need cardId and maybe status/date
+            { $project: { _id: 0, cardId: 1, userId: 1 } }
+          ],
+          as: "docs"
+        }
+      },
+
+      // 4) map over cards and attach assignedUsers + documentSubmitted
+      {
+        $addFields: {
+          cards: {
+            $map: {
+              input: { $ifNull: ["$cards", []] },
+              as: "c",
+              in: {
+                $mergeObjects: [
+                  "$$c",
+                  {
+                    // assignedUsers as before
+                    assignedUsers: {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: "$assignments",
+                            as: "a",
+                            cond: { $eq: ["$$a.cardId", { $toString: "$$c._id" }] }
+                          }
+                        },
+                        as: "m",
+                        in: "$$m.userId"
+                      }
+                    },
+                    // documentSubmitted: "Yes" if any matching doc exists, otherwise "No"
+                    documentSubmitted: {
+                      $cond: [
+                        {
+                          $gt: [
+                            {
+                              $size: {
+                                $filter: {
+                                  input: "$docs",
+                                  as: "d",
+                                  cond: { $eq: ["$$d.cardId", { $toString: "$$c._id" }] }
+                                }
+                              }
+                            },
+                            0
+                          ]
+                        },
+                        "yes",
+                        "no"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+
+      // 5) sort + cleanup temporaries
+      { $sort: { order: 1 } },
+      { $project: { _cardIdsStr: 0, assignments: 0, docs: 0 } }
+    ]);
+
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);

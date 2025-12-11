@@ -10,6 +10,7 @@ const filterSlice = createSlice({
             phone: "",
             contacted: "",
             contract_signed: "",
+            document_submitted: "",
             bank: "",
         }
     },

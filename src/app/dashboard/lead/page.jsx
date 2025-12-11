@@ -69,7 +69,7 @@ export default function CustomDnD() {
   const [mailDetails, setMailDetails] = useState(null);
 
   const touchPosition = useRef({ x: 0, y: 0 });
-  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } =
+  const { gestor, estado, full_name, phone, contacted, contract_signed, bank, document_submitted } =
     selecteFilterData || {};
 
   useEffect(() => {
@@ -82,10 +82,11 @@ export default function CustomDnD() {
 
   useEffect(() => {
     // ✅ Filtering Logic
+    console.log("hello",document_submitted);
     const filteredLeadStatus = leadStatus.map((status) => {
       const filteredCards = status.cards?.filter((item) => {
         const matchGestor = gestor
-          ? item?.users?.some((user) => user._id === gestor)
+          ? item?.assignedUsers?.some((user) => user === gestor)
           : true;
 
         const matchEstado = estado ? item?.status === estado : true;
@@ -110,6 +111,10 @@ export default function CustomDnD() {
         const matchBank = bank
           ? itemBank === bank
           : true;
+        
+        const matchDocumentSubmitted = document_submitted
+          ? item?.documentSubmitted === document_submitted
+          : true;
 
         return (
           matchGestor &&
@@ -118,7 +123,8 @@ export default function CustomDnD() {
           matchPhone &&
           matchContacted &&
           matchContractSigned &&
-          matchBank
+          matchBank &&
+          matchDocumentSubmitted
         );
       });
 

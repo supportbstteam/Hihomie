@@ -8,6 +8,7 @@ import Dropdown from "../ui/DropDown";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
 import { Button } from "../ui/Button";
+import useUserFromSession from "@/lib/useUserFromSession";
 
 const Filter = ({
   leadStatusList,
@@ -27,7 +28,9 @@ const Filter = ({
   const [phone, setPhone] = useState("");
   const [contacted, setContacted] = useState("");
   const [contract_signed, setContract_signed] = useState("");
+  const [document_submitted, setDocument_submitted] = useState("");
   const [bank, setBank] = useState("");
+  const authUser = useUserFromSession();
 
   useEffect(() => {
     dispatch(get_teamData());
@@ -42,6 +45,7 @@ const Filter = ({
       phone: phone,
       contacted: contacted,
       contract_signed: contract_signed,
+      document_submitted: document_submitted,
       bank: bank,
     });
     setFilterOpen(false);
@@ -53,6 +57,7 @@ const Filter = ({
     setPhone("");
     setContacted("");
     setContract_signed("");
+    setDocument_submitted("");
     setBank("");
   };
 
@@ -63,6 +68,7 @@ const Filter = ({
     setPhone("");
     setContacted("");
     setContract_signed("");
+    setDocument_submitted("");
     setBank("");
     setOpen(false);
   };
@@ -93,19 +99,21 @@ const Filter = ({
 
         {/* Drawer Content */}
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-60px)] ">
-          <Dropdown
-            label={t("manager")}
-            type="text"
-            name="manager"
-            title={t("select_manager")}
-            value={selectedGestor}
-            onChange={(e) => setSelectedGestor(e.target.value)}
-            placeholder="Buscar por contacto"
-            options={team.map((item, i) => ({
-              value: item._id,
-              label: `${item.name} ${item.lname}`,
-            }))}
-          />
+          {authUser?.role === "admin" && (
+            <Dropdown
+              label={t("manager")}
+              type="text"
+              name="manager"
+              title={t("select_manager")}
+              value={selectedGestor}
+              onChange={(e) => setSelectedGestor(e.target.value)}
+              placeholder="Buscar por contacto"
+              options={team.map((item, i) => ({
+                value: item._id,
+                label: `${item.name} ${item.lname}`,
+              }))}
+            />
+          )}
 
           <Dropdown
             label={t("status")}
@@ -144,6 +152,19 @@ const Filter = ({
             options={[
               { label: "Yes", value: "true" },
               { label: "No", value: "false" },
+            ]}
+          />
+
+          <Dropdown
+            label={t("document_submitted")}
+            type="text"
+            name="document_submitted"
+            title={t("choose_option")}
+            value={document_submitted}
+            onChange={(e) => setDocument_submitted(e.target.value)}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
             ]}
           />
 

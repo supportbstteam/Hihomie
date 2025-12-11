@@ -1,11 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
 import { Card } from "@/components/ui/Card";
-import useUserFromSession from "@/lib/useUserFromSession";
+import { setFilters } from "@/store/filter";
 import {
     Bar,
     BarChart,
@@ -31,9 +32,6 @@ import {
     get_banksData,
 } from "@/store/dashboard";
 
-const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
-const COLORS_SIGNED = ["#22c55e", "#3b82f6"];
-const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
 function generateColors(count, variation = "default") {
     return Array.from({ length: count }, (_, i) => {
         const hue = Math.floor((360 / count) * i);
@@ -53,36 +51,50 @@ function generateColors(count, variation = "default") {
     });
 }
 
-const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
-    <Card className="h-full">
-        <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-        <div className="h-72 mt-4">
-            <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                    <Pie
-                        data={data}
-                        innerRadius={60}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        paddingAngle={5}
-                        dataKey={dataKey}
-                        labelLine={true}
-                        // label={true}
-                        label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
-                    >
-                        {data.map((entry, index) => (
-                            <Cell
-                                key={`cell-${index}`}
-                                fill={colors[index % colors.length]}
-                            />
-                        ))}
-                    </Pie>
-                    <Legend iconType="circle" />
-                </PieChart>
-            </ResponsiveContainer>
-        </div>
-    </Card>
-);
+const DonutChartCard = ({
+    title,
+    data,
+    colors,
+    onClickData,
+    dataKey = "value",
+}) => {
+    const router = useRouter();
+    return (
+        <Card className="h-full">
+            <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+            <div className="h-72 mt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={data}
+                            innerRadius={60}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            paddingAngle={5}
+                            dataKey={dataKey}
+                            labelLine={true}
+                            // label={true}
+                            label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
+                        >
+                            {data.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={colors[index % colors.length]}
+                                    cursor="pointer"
+                                    onClick={() => {
+                                        if (onClickData) onClickData(entry); // send clicked data to parent
+                                        router.push("/dashboard/lead");
+                                    }}
+                                />
+                            ))}
+                        </Pie>
+                        <Legend iconType="circle" />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+        </Card>
+    );
+};
 
 const CustomTooltip = ({ active, payload, total }) => {
     if (active && payload && payload.length) {
@@ -156,6 +168,11 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 title="User's Contracts Data"
                                 data={contractData}
                                 colors={generateColors(contractData.length, "vivid")}
+                                onClickData={(item) => {
+                                    item.name == "Contract Signed"
+                                        ? dispatch(setFilters({ contract_signed: "true", gestor: user._id }))
+                                        : dispatch(setFilters({ contract_signed: "false", gestor: user._id }));
+                                }}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
@@ -163,6 +180,11 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 title="Contacted vs. Not Contacted Users"
                                 data={contactedUsers}
                                 colors={generateColors(contactedUsers.length, "vivid")}
+                                onClickData={(item) => {
+                                    item.name == "Users Contacted"
+                                        ? dispatch(setFilters({ contacted: "yes", gestor: user._id }))
+                                        : dispatch(setFilters({ contacted: "no", gestor: user._id }));
+                                }}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
@@ -170,6 +192,11 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 title="Document Submitted vs. Not Submitted Users"
                                 data={documentSubmittedUsers}
                                 colors={generateColors(documentSubmittedUsers.length, "vivid")}
+                                onClickData={(item) => {
+                                  item.name == "Documents Submitted Users"
+                                    ? dispatch(setFilters({ document_submitted: "yes", gestor: user._id }))
+                                    : dispatch(setFilters({ document_submitted: "no", gestor: user._id }));
+                                }}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
@@ -177,6 +204,9 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 title="Distribution by Bank"
                                 data={banksData}
                                 colors={generateColors(banksData.length, "vivid")}
+                                onClickData={(item) => {
+                                    dispatch(setFilters({ bank: item.name, gestor: user._id }));
+                                }}
                             />
                         </div>
                     </div>

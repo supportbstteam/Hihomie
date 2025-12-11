@@ -481,9 +481,9 @@ export function Dashboard() {
             data={contractData}
             colors={generateColors(contractData.length, "vivid")}
             onClickData={(item) => {
-              item.name == "Users Contacted"
-                ? dispatch(setFilters({ contacted: "yes" }))
-                : dispatch(setFilters({ contacted: "no" }));
+              item.name == "Contract Signed"
+                ? dispatch(setFilters({ contract_signed: "true" }))
+                : dispatch(setFilters({ contract_signed: "false" }));
             }}
           />
         </div>
@@ -493,9 +493,9 @@ export function Dashboard() {
             data={contactedUsers}
             colors={generateColors(contactedUsers.length, "vivid")}
             onClickData={(item) => {
-              item.name == "Contract Signed"
-                ? dispatch(setFilters({ contract_signed: "true" }))
-                : dispatch(setFilters({ contract_signed: "false" }));
+              item.name == "Users Contacted"
+                ? dispatch(setFilters({ contacted: "yes" }))
+                : dispatch(setFilters({ contacted: "no" }));
             }}
           />
         </div>
