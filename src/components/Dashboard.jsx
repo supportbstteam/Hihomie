@@ -504,11 +504,11 @@ export function Dashboard() {
             title="Document Submitted vs. Not Submitted Users"
             data={documentSubmittedUsers}
             colors={generateColors(documentSubmittedUsers.length, "vivid")}
-            // onClickData={(item) => {
-            //   item.name == "Documents Submitted Users"
-            //     ? dispatch(setFilters({ contract_signed: "true" }))
-            //     : dispatch(setFilters({ contract_signed: "false" }));
-            // }}
+            onClickData={(item) => {
+              item.name == "Documents Submitted Users"
+                ? dispatch(setFilters({ document_submitted: "yes" }))
+                : dispatch(setFilters({ document_submitted: "no" }));
+            }}
           />
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
