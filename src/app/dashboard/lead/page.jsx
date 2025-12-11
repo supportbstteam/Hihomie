@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import CustomerAdd from "@/components/prospects/CustomerAdd";
 import EditCard from "@/components/prospects/EditCard";
 import {
@@ -44,8 +43,6 @@ import useUserFromSession from "@/lib/useUserFromSession";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
-  const searchParams = useSearchParams();
-  const filter = searchParams.get("filter");
   const authUser = useUserFromSession();
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(

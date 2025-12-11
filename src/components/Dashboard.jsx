@@ -141,7 +141,7 @@ const DonutChartCard = ({
                   cursor="pointer"
                   onClick={() => {
                     if (onClickData) onClickData(entry); // send clicked data to parent
-                    router.push("/dashboard/lead?filter=set");
+                    router.push("/dashboard/lead");
                   }}
                 />
               ))}
