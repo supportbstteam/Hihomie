@@ -48,6 +48,18 @@ export async function GET() {
           }
         },
 
+        {
+          $lookup: {
+            from: "documents",
+            let: { cardIdStr: { $toString: "$cards._id" } },
+            pipeline: [
+              { $match: { $expr: { $eq: ["$cardId", "$$cardIdStr"] } } },
+              { $project: { _id: 0, cardId: 1 } }
+            ],
+            as: "docs"
+          }
+        },
+
         // 🔥 Lookup actual user data
         {
           $lookup: {
@@ -103,10 +115,17 @@ export async function GET() {
             bankDetailsData: "$cards.bankDetailsData",
             detailsData: "$cards.detailsData",
             addressDetailsData: "$cards.addressDetailsData",
-            leadStatusId: "$_id",    
+            leadStatusId: "$_id",
             createdAt: "$cards.createdAt",
             color: 1,
-            users: "$users"             
+            users: "$users",
+            documentSubmitted: {
+              $cond: [
+                { $gt: [{ $size: "$docs" }, 0] },
+                "yes",
+                "no"
+              ]
+            }
           }
         }
       ]);
@@ -162,6 +181,18 @@ export async function GET() {
         }
       },
 
+      {
+        $lookup: {
+          from: "documents",
+          let: { cardIdStr: { $toString: "$cards._id" } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$cardId", "$$cardIdStr"] } } },
+            { $project: { _id: 0, cardId: 1 } }
+          ],
+          as: "docs"
+        }
+      },
+
       // 🔥 Final shape of each card
       {
         $project: {
@@ -192,7 +223,14 @@ export async function GET() {
           leadStatusId: "$_id",          // 🔥 LeadStatus ID inside card
           createdAt: "$cards.createdAt",// 🔥 LeadStatus Name inside card
           color: 1,
-          users: "$users"                // 🔥 Assigned users
+          users: "$users",                // 🔥 Assigned users
+          documentSubmitted: {
+            $cond: [
+              { $gt: [{ $size: "$docs" }, 0] },
+              "yes",
+              "no"
+            ]
+          }
         }
       }
     ]);

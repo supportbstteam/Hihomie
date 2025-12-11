@@ -79,7 +79,16 @@ const List = ({
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [users, setUsers] = useState([]);
 
-  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } = selecteFilterData || {};
+  const {
+    gestor,
+    estado,
+    full_name,
+    phone,
+    contacted,
+    contract_signed,
+    bank,
+    document_submitted,
+  } = selecteFilterData || {};
 
   // ✅ Filtering Logic
   const filteredList = leadStatusList.filter((item) => {
@@ -99,11 +108,26 @@ const List = ({
 
     const matchContacted = contacted ? item?.contacted === contacted : true;
 
-    const matchContract_signed = contract_signed ? item?.contract_signed === (contract_signed === "true") : true;
+    const matchContract_signed = contract_signed
+      ? item?.contract_signed === (contract_signed === "true")
+      : true;
 
     const matchBank = bank ? item?.bankDetailsData?.bank_name === bank : true;
 
-    return matchGestor && matchEstado && matchName && matchPhone && matchContacted && matchContract_signed && matchBank;
+    const matchDocumentSubmitted = document_submitted
+      ? item?.documentSubmitted === document_submitted
+      : true;
+
+    return (
+      matchGestor &&
+      matchEstado &&
+      matchName &&
+      matchPhone &&
+      matchContacted &&
+      matchContract_signed &&
+      matchBank &&
+      matchDocumentSubmitted
+    );
   });
 
   // Reset pagination when filters change
@@ -235,7 +259,7 @@ const List = ({
             required
           >
             <option value="" disabled>
-              — { t("select") } { t("manager") } —
+              — {t("select")} {t("manager")} —
             </option>
             {users.map((user) => (
               <option key={user._id} value={user._id}>
@@ -249,7 +273,7 @@ const List = ({
           type="submit"
           className="px-4 py-2 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
         >
-          {t("assign") }
+          {t("assign")}
         </button>
       </form>
 
@@ -330,7 +354,7 @@ const List = ({
                       className="px-2 py-1 rounded-full text-xs font-normal"
                       style={{
                         color: "#000000ff",
-                        backgroundColor: `${item.color}33`, 
+                        backgroundColor: `${item.color}33`,
                       }}
                     >
                       {item.leadStatusname}
