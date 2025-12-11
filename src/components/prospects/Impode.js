@@ -15,6 +15,10 @@ import { X } from "lucide-react";
 import { Button } from "../ui/Button";
 
 const ImportModal = ({ isOpen, setImpodeOpen }) => {
+  const [successRows, setSuccessRows] = useState([]);
+  const [errorRows, setErrorRows] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
   const dispatch = useDispatch();
   const [file, setFile] = useState(null);
 
@@ -43,12 +47,28 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
     // Dispatch upload action
     dispatch(upload_file(file))
       .unwrap() // ensures we can use then/catch
-      .then(() => {
+      .then((payload) => {
+        const results = payload?.results ?? [];
+        const success = [];
+        let errors = [];
+        for (const item of results) {
+          if (item?.errors) {
+            item.errors.map((errorMessage) => {
+              errors.push(`Row ${item.row} ${errorMessage}`);
+            });
+          } else {
+            success.push(item?.message);
+          }
+        }
+        console.log(success, errors);
+        setSuccessRows(success);
+        setErrorRows(errors);
+        setShowResults(true);
         toast.success("File uploaded successfully");
         dispatch(get_leadStatusDataForList());
         dispatch(get_leadStatusData());
         setFile(null);
-        setImpodeOpen(false);
+        // setImpodeOpen(false);
       })
       .catch(() => {
         toast.error("Upload failed. Try again.");
@@ -66,18 +86,12 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
           <motion.div
-            className="bg-white w-[40%] rounded-lg p-6 relative"
+            className="bg-white w-[40%] max-h-[85vh] overflow-y-auto rounded-lg p-6 relative"
             initial={{ y: "-100vh", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "-100vh", opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
           >
-            {/* <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setImpodeOpen(false)}
-            >
-              ✕
-            </button> */}
             <div className="absolute top-4 right-4 ">
               <Icon
                 icon={X}
@@ -135,6 +149,72 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
                 Excel File Sample
               </a>
             </p>
+            {/* RESULTS PANEL */}
+            {
+              showResults && (
+                <div className="mt-4 border-t pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold">
+                      Import Results —{" "}
+                      <span className="text-sm text-gray-600">
+                        {successRows.length} succeeded, {errorRows.length} failed
+                      </span>
+                    </h3>
+
+                    <div className="space-x-2">
+                      <button
+                        onClick={() => {
+                          setSuccessRows([]);
+                          setErrorRows([]);
+                          setShowResults(false);
+                        }}
+                        className="px-3 py-1 bg-red-50 text-red-600 rounded text-sm"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="mb-2 font-medium">Successes</div>
+                      <div className="max-h-48 overflow-auto border rounded p-2 bg-green-50">
+                        {successRows.length === 0 ? (
+                          <div className="text-sm text-gray-600">No successful rows</div>
+                        ) : (
+                          <ul className="text-sm">
+                            {successRows.map((s, i) => (
+                              <li key={i} className="mb-1">
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="mb-2 font-medium">Errors</div>
+                      <div className="max-h-48 overflow-auto border rounded p-2 bg-red-50">
+                        {errorRows.length === 0 ? (
+                          <div className="text-sm text-gray-600">No errors</div>
+                        ) : (
+                          <ul className="text-sm">
+                            {errorRows.map((e, idx) => (
+                              <li key={idx} className="mb-1">
+                                <div>
+                                  {e}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
           </motion.div>
         </motion.div>
       )}

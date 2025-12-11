@@ -142,8 +142,8 @@ const Filter = ({
             value={contract_signed}
             onChange={(e) => setContract_signed(e.target.value)}
             options={[
-              { label: "Yes", value: true },
-              { label: "No", value: false },
+              { label: "Yes", value: "true" },
+              { label: "No", value: "false" },
             ]}
           />
 

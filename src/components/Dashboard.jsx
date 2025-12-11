@@ -37,13 +37,29 @@ import {
   get_notes,
   get_admin_notes,
 } from "@/store/task";
+import { setFilters } from "@/store/filter";
 import useUserFromSession from "@/lib/useUserFromSession";
 import Datepicker from "@/components/ui/Datepicker";
 
-// --- Reusable Chart Color Constants ---
-const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
-const COLORS_SIGNED = ["#22c55e", "#3b82f6"];
-const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
+// --- Reusable Color function ---
+function generateColors(count, variation = "default") {
+  return Array.from({ length: count }, (_, i) => {
+    const hue = Math.floor((360 / count) * i);
+
+    switch (variation) {
+      case "pastel":
+        return `hsl(${hue}, 60%, 75%)`;
+      case "vivid":
+        return `hsl(${hue}, 80%, 50%)`;
+      case "dark":
+        return `hsl(${hue}, 60%, 45%)`;
+      case "neutral":
+        return `hsl(${hue}, 30%, 60%)`;
+      default:
+        return `hsl(${hue}, 70%, 55%)`;
+    }
+  });
+}
 
 const failureReasons = [
   { reason: "Not Contacted", value: "1,43,382" },
@@ -93,7 +109,13 @@ const StatCard = ({ title, value, change, pending, progress }) => (
   </Card>
 );
 
-const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => {
+const DonutChartCard = ({
+  title,
+  data,
+  colors,
+  onClickData,
+  dataKey = "value",
+}) => {
   const router = useRouter();
   return (
     <Card className="h-full">
@@ -118,8 +140,8 @@ const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => {
                   fill={colors[index % colors.length]}
                   cursor="pointer"
                   onClick={() => {
-                    setListComponent(true); 
-                    router.push("/dashboard/lead"); 
+                    if (onClickData) onClickData(entry); // send clicked data to parent
+                    router.push("/dashboard/lead?filter=set");
                   }}
                 />
               ))}
@@ -290,7 +312,12 @@ export function Dashboard() {
                         <td className="py-3 pr-3">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-                              {activity.lead_title.charAt(0).toUpperCase()}
+                              {(() => {
+                                const leadTitle = activity?.lead_title ?? "";
+                                return leadTitle
+                                  ? leadTitle.charAt(0).toUpperCase()
+                                  : "";
+                              })()}
                             </div>
                             <div>
                               <div className="font-medium text-gray-800">
@@ -452,28 +479,46 @@ export function Dashboard() {
           <DonutChartCard
             title="User's Contracts Data"
             data={contractData}
-            colors={COLORS_SIGNED}
+            colors={generateColors(contractData.length, "vivid")}
+            onClickData={(item) => {
+              item.name == "Users Contacted"
+                ? dispatch(setFilters({ contacted: "yes" }))
+                : dispatch(setFilters({ contacted: "no" }));
+            }}
           />
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Contacted vs. Not Contacted Users"
             data={contactedUsers}
-            colors={COLORS_CONTACTED}
+            colors={generateColors(contactedUsers.length, "vivid")}
+            onClickData={(item) => {
+              item.name == "Contract Signed"
+                ? dispatch(setFilters({ contract_signed: "true" }))
+                : dispatch(setFilters({ contract_signed: "false" }));
+            }}
           />
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Document Submitted vs. Not Submitted Users"
             data={documentSubmittedUsers}
-            colors={COLORS_CONTACTED}
+            colors={generateColors(documentSubmittedUsers.length, "vivid")}
+            // onClickData={(item) => {
+            //   item.name == "Documents Submitted Users"
+            //     ? dispatch(setFilters({ contract_signed: "true" }))
+            //     : dispatch(setFilters({ contract_signed: "false" }));
+            // }}
           />
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
             title="Distribution by Bank"
             data={banksData}
-            colors={COLORS_BANK}
+            colors={generateColors(banksData.length, "vivid")}
+            onClickData={(item) => {
+              dispatch(setFilters({ bank: item.name }));
+            }}
           />
         </div>
 

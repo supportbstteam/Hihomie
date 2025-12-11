@@ -1,4 +1,6 @@
 "use client";
+
+import { useSearchParams } from "next/navigation";
 import CustomerAdd from "@/components/prospects/CustomerAdd";
 import EditCard from "@/components/prospects/EditCard";
 import {
@@ -42,11 +44,17 @@ import useUserFromSession from "@/lib/useUserFromSession";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
+  const searchParams = useSearchParams();
+  const filter = searchParams.get("filter");
   const authUser = useUserFromSession();
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(
     (state) => state.setting
   );
+  const { filters } = useSelector((state) => state.filter);
+  useEffect(() => {
+    setSelecteFilterData(filters);
+  }, [filters]);
 
   const [columns, setColumns] = useState({});
   const [draggedCard, setDraggedCard] = useState(null);
@@ -64,7 +72,8 @@ export default function CustomDnD() {
   const [mailDetails, setMailDetails] = useState(null);
 
   const touchPosition = useRef({ x: 0, y: 0 });
-  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } = selecteFilterData || {};
+  const { gestor, estado, full_name, phone, contacted, contract_signed, bank } =
+    selecteFilterData || {};
 
   useEffect(() => {
     if (!listComponent) {
@@ -75,7 +84,6 @@ export default function CustomDnD() {
   }, [dispatch, listComponent]);
 
   useEffect(() => {
-    console.log("filter",selecteFilterData);
     // ✅ Filtering Logic
     const filteredLeadStatus = leadStatus.map((status) => {
       const filteredCards = status.cards?.filter((item) => {
@@ -101,8 +109,9 @@ export default function CustomDnD() {
           ? item?.contract_signed === (contract_signed === "true")
           : true;
 
+        const itemBank = item?.bankDetailsData?.bank_name ?? "unsend"
         const matchBank = bank
-          ? item?.bankDetailsData?.bank_name === bank
+          ? itemBank === bank
           : true;
 
         return (
@@ -121,8 +130,6 @@ export default function CustomDnD() {
         cards: filteredCards,
       };
     });
-
-    console.log(filteredLeadStatus);
 
     if (filteredLeadStatus && filteredLeadStatus.length > 0) {
       const newColumns = filteredLeadStatus.reduce((acc, item) => {

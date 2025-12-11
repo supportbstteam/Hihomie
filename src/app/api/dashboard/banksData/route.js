@@ -32,7 +32,7 @@ export async function GET(req) {
             { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
             {
                 $group: {
-                    _id: "$matchedCard.bankDetailsData.bank_name",
+                    _id: {$ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"]},
                     count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
                 }
             },
@@ -61,7 +61,7 @@ export async function GET(req) {
             { $unwind: "$cards" },
             {
                 $group: {
-                    _id: "$cards.bankDetailsData.bank_name",
+                    _id: {$ifNull: ["$cards.bankDetailsData.bank_name", "unsend"]},
                     totalCardCount: { $sum: 1 }
                 }
             },

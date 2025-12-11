@@ -34,6 +34,24 @@ import {
 const COLORS_BANK = ["#22c55e", "#3b82f6", "#8b5cf6"];
 const COLORS_SIGNED = ["#22c55e", "#3b82f6"];
 const COLORS_CONTACTED = ["#22c55e", "#91a5caff"];
+function generateColors(count, variation = "default") {
+    return Array.from({ length: count }, (_, i) => {
+        const hue = Math.floor((360 / count) * i);
+
+        switch (variation) {
+            case "pastel":
+                return `hsl(${hue}, 60%, 75%)`;
+            case "vivid":
+                return `hsl(${hue}, 80%, 50%)`;
+            case "dark":
+                return `hsl(${hue}, 60%, 45%)`;
+            case "neutral":
+                return `hsl(${hue}, 30%, 60%)`;
+            default:
+                return `hsl(${hue}, 70%, 55%)`;
+        }
+    });
+}
 
 const DonutChartCard = ({ title, data, colors, dataKey = "value" }) => (
     <Card className="h-full">
@@ -137,28 +155,28 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                             <DonutChartCard
                                 title="User's Contracts Data"
                                 data={contractData}
-                                colors={COLORS_SIGNED}
+                                colors={generateColors(contractData.length, "vivid")}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title="Contacted vs. Not Contacted Users"
                                 data={contactedUsers}
-                                colors={COLORS_CONTACTED}
+                                colors={generateColors(contactedUsers.length, "vivid")}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title="Document Submitted vs. Not Submitted Users"
                                 data={documentSubmittedUsers}
-                                colors={COLORS_CONTACTED}
+                                colors={generateColors(documentSubmittedUsers.length, "vivid")}
                             />
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title="Distribution by Bank"
                                 data={banksData}
-                                colors={COLORS_BANK}
+                                colors={generateColors(banksData.length, "vivid")}
                             />
                         </div>
                     </div>

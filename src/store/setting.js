@@ -318,7 +318,6 @@ export const settingReducer = createSlice({
             state.loader = true;
          })
          .addCase(upload_file.fulfilled, (state, { payload }) => {
-            // state.leadStatus = [...state.leadStatus, ...payload.cards];
             state.successMessage = payload?.message;
             state.loader = false;
          })
