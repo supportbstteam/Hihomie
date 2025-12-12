@@ -104,13 +104,13 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
             <h2 className="text-lg font-semibold mb-4">Import Leads</h2>
 
             <div className="flex justify-center space-x-4 mb-4">
-              <div className="flex flex-col items-center p-4 border rounded cursor-pointer hover:bg-gray-100">
+              {/* <div className="flex flex-col items-center p-4 border rounded cursor-pointer hover:bg-gray-100">
                 <FaFileCsv size={40} className="text-gray-500" />
                 <span className="mt-2 text-sm font-medium">CSV</span>
-              </div>
+              </div> */}
               <div className="flex flex-col items-center p-4 border rounded cursor-pointer hover:bg-gray-100">
                 <FaFileExcel size={40} className="text-green-500" />
-                <span className="mt-2 text-sm font-medium">XLSX</span>
+                <span className="mt-2 text-sm font-medium">XLS</span>
               </div>
             </div>
 
@@ -121,7 +121,7 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
               <span>
                 {file
                   ? file.name
-                  : "Drop a single file or click to upload (CSV or XLSX)"}
+                  : "Drop a single file or click to upload (XLS)"}
               </span>
               <input
                 id="file-upload"
@@ -141,10 +141,6 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
 
             <p className="text-xs text-gray-500 mt-4">
               You can download sample importing files below <br />
-              <a href="/csv-sample.csv" className="text-blue-500 underline">
-                CSV Sample
-              </a>{" "}
-              |{" "}
               <a href="/xlsx-sample.xlsx" className="text-blue-500 underline">
                 Excel File Sample
               </a>
