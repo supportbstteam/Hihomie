@@ -13,3 +13,4 @@ const translations = {
 export const t = (key) => {
   return translations[DEFAULT_LANGUAGE]?.[key] || key;
 };
+// testing
