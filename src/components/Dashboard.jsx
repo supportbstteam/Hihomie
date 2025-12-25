@@ -173,6 +173,7 @@ const CustomTooltip = ({ active, payload, total }) => {
 
 export function Dashboard() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const {
     totalLeads,
     totalManager,
@@ -376,7 +377,11 @@ export function Dashboard() {
                         {note.notes_Details.map((note_number) => (
                           <div
                             key={note_number._id}
-                            className={`text-base my-2 ml-4 px-2 ${"bg-green-100 text-gray-800 rounded-sm"}`}
+                            onClick={() => {
+                              dispatch(setFilters({ id: note_number.cardId }));
+                              router.push("/dashboard/lead");
+                            }}
+                            className={`text-base my-2 ml-4 px-2 cursor-pointer ${"bg-green-100 text-gray-800 rounded-sm"}`}
                           >
                             {note_number.due_date_note}
                           </div>
@@ -402,7 +407,14 @@ export function Dashboard() {
                     />
                   </div>
                   {notes.map((note) => (
-                    <div key={note._id} className="flex items-center flex-grow">
+                    <div
+                      key={note._id}
+                      className="flex items-center flex-grow cursor-pointer"
+                      onClick={() => {
+                        dispatch(setFilters({ id: note.cardId }));
+                        router.push("/dashboard/lead");
+                      }}
+                    >
                       <span
                         className={`text-base flex-grow mb-2 px-2 py-1 ${"bg-green-100 text-gray-800 rounded-sm"}`}
                       >

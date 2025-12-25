@@ -4,6 +4,7 @@ const filterSlice = createSlice({
     name: 'filter',
     initialState: {
         filters: {
+            id: "",
             gestor: "",
             estado: "",
             full_name: "",

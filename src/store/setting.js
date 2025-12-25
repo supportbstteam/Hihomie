@@ -236,14 +236,14 @@ export const settingReducer = createSlice({
             state.loader = false;
          })
          .addCase(get_leadStatusCardUpdate.fulfilled, (state, { payload }) => {
-            const { sourceCol, destCol } = payload;
+            // const { sourceCol, destCol } = payload;
 
-            state.leadStatus = state.leadStatus.map(col => {
-               if (col._id === sourceCol._id) return sourceCol;
-               if (col._id === destCol._id) return destCol;
-               return col;
-            });
-            state.loader = false;
+            // state.leadStatus = state.leadStatus.map(col => {
+            //    if (col._id === sourceCol._id) return sourceCol;
+            //    if (col._id === destCol._id) return destCol;
+            //    return col;
+            // });
+            // state.loader = false;
          })
 
          .addCase(get_manager_leadStatusCardUpdate.fulfilled, (state, { payload }) => {

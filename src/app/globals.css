@@ -190,6 +190,9 @@
 
 
 /* scroll bar css start  */
+.custom-scrollbar {
+  scroll-behavior: smooth;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px; /* Width of the scrollbar */
   height: 6px; /* Height of the scrollbar */

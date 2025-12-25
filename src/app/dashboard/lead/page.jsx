@@ -49,9 +49,6 @@ export default function CustomDnD() {
     (state) => state.setting
   );
   const { filters } = useSelector((state) => state.filter);
-  useEffect(() => {
-    setSelecteFilterData(filters);
-  }, [filters]);
 
   const [columns, setColumns] = useState({});
   const [draggedCard, setDraggedCard] = useState(null);
@@ -68,9 +65,56 @@ export default function CustomDnD() {
   const [mailModelOpen, setMailModelOpen] = useState(false);
   const [mailDetails, setMailDetails] = useState(null);
 
+  const boardRef = useRef(null);
+
+  useEffect(() => {
+    setSelecteFilterData(filters);
+  }, [filters]);
+
+  const handleAutoScroll = (clientX) => {
+    const container = boardRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+    const edgeThreshold = 120; // px from edge
+    const maxSpeed = 500; // 🔥 higher = faster
+
+    // RIGHT edge
+    if (clientX > rect.right - edgeThreshold) {
+      const distance = rect.right - clientX; // closer → smaller number
+
+      const speed = ((edgeThreshold - distance) / edgeThreshold) * maxSpeed;
+
+      container.scrollLeft = Math.min(
+        container.scrollLeft + speed,
+        maxScrollLeft
+      );
+    }
+
+    // LEFT edge
+    if (clientX < rect.left + edgeThreshold) {
+      const distance = clientX - rect.left;
+
+      const speed = ((edgeThreshold - distance) / edgeThreshold) * maxSpeed;
+
+      container.scrollLeft = Math.max(container.scrollLeft - speed, 0);
+    }
+  };
+
   const touchPosition = useRef({ x: 0, y: 0 });
-  const { gestor, estado, full_name, phone, contacted, contract_signed, bank, document_submitted } =
-    selecteFilterData || {};
+  const {
+    id,
+    gestor,
+    estado,
+    full_name,
+    phone,
+    contacted,
+    contract_signed,
+    bank,
+    document_submitted,
+  } = selecteFilterData || {};
 
   useEffect(() => {
     if (!listComponent) {
@@ -81,8 +125,6 @@ export default function CustomDnD() {
   }, [dispatch, listComponent]);
 
   useEffect(() => {
-    // ✅ Filtering Logic
-    console.log("hello",document_submitted);
     const filteredLeadStatus = leadStatus.map((status) => {
       const filteredCards = status.cards?.filter((item) => {
         const matchGestor = gestor
@@ -107,14 +149,14 @@ export default function CustomDnD() {
           ? item?.contract_signed === (contract_signed === "true")
           : true;
 
-        const itemBank = item?.bankDetailsData?.bank_name ?? "unsend"
-        const matchBank = bank
-          ? itemBank === bank
-          : true;
-        
+        const itemBank = item?.bankDetailsData?.bank_name ?? "unsend";
+        const matchBank = bank ? itemBank === bank : true;
+
         const matchDocumentSubmitted = document_submitted
           ? item?.documentSubmitted === document_submitted
           : true;
+
+        const matchId = id ? item?._id === id : true;
 
         return (
           matchGestor &&
@@ -124,7 +166,8 @@ export default function CustomDnD() {
           matchContacted &&
           matchContractSigned &&
           matchBank &&
-          matchDocumentSubmitted
+          matchDocumentSubmitted &&
+          matchId
         );
       });
 
@@ -171,6 +214,7 @@ export default function CustomDnD() {
   const handleDragOver = (e, colId) => {
     e.preventDefault();
     setDragOverColId(colId);
+    handleAutoScroll(e.clientX);
   };
 
   const handleDropColumn = (destColId) => {
@@ -246,6 +290,7 @@ export default function CustomDnD() {
   const handleTouchMove = (e) => {
     if (!draggedCard) return;
     const touch = e.touches[0];
+    handleAutoScroll(touch.clientX);
     const element = document.elementFromPoint(touch.clientX, touch.clientY);
     const colElement = element?.closest("[data-col-id]");
     if (colElement) {
@@ -343,7 +388,10 @@ export default function CustomDnD() {
       {/* BOARD */}
       {!listComponent ? (
         <>
-          <div className="flex-1 h-[40vh] p-4 rounded-md w-full grid grid-flow-col auto-cols-[296px] gap-4  overflow-x-auto custom-scrollbar mb-1">
+          <div
+            ref={boardRef}
+            className="flex-1 h-[40vh] p-4 rounded-md w-full grid grid-flow-col auto-cols-[296px] gap-4  overflow-x-auto custom-scrollbar mb-1"
+          >
             {Object.values(columns).map((col) => (
               <div
                 key={col.id}
