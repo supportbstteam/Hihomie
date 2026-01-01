@@ -6,10 +6,27 @@ import CardAssignUser from '@/models/CardAssignUser';
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
+    const fromDate = url.searchParams.get('fromDate');
+    const toDate = url.searchParams.get('toDate');
+
     if (userId !== "68a2eeb6f31c60d58b33191e") {
+        const matchStage = { userId };
+
+        if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
+            matchStage.createdAt = {};
+
+            if (fromDate && fromDate !== "undefined") {
+                matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+            }
+
+            if (toDate && toDate !== "undefined") {
+                matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
+            }
+        }
+
         const result = await CardAssignUser.aggregate([
             {
-                $match: { userId: userId }
+                $match: matchStage
             },
             {
                 $lookup: {
@@ -32,7 +49,7 @@ export async function GET(req) {
             { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
             {
                 $group: {
-                    _id: {$ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"]},
+                    _id: { $ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"] },
                     count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
                 }
             },
@@ -61,7 +78,7 @@ export async function GET(req) {
             { $unwind: "$cards" },
             {
                 $group: {
-                    _id: {$ifNull: ["$cards.bankDetailsData.bank_name", "unsend"]},
+                    _id: { $ifNull: ["$cards.bankDetailsData.bank_name", "unsend"] },
                     totalCardCount: { $sum: 1 }
                 }
             },

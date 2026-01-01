@@ -63,9 +63,9 @@ export const get_total_staff = createAsyncThunk(
 
 export const get_contractData = createAsyncThunk(
     'get_contractData',
-    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contractData?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/contractData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -75,9 +75,9 @@ export const get_contractData = createAsyncThunk(
 
 export const get_contactedUsers = createAsyncThunk(
     'get_contactedUsers',
-    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contactedUsers?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/contactedUsers?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -87,9 +87,9 @@ export const get_contactedUsers = createAsyncThunk(
 
 export const get_documentSubmittedUsers = createAsyncThunk(
     'get_documentSubmittedUsers',
-    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/documentSubmittedUsers?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/documentSubmittedUsers?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -99,9 +99,9 @@ export const get_documentSubmittedUsers = createAsyncThunk(
 
 export const get_mortgageStatusData = createAsyncThunk(
     'get_mortgageStatusData',
-    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/mortgageStatus?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/mortgageStatus?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)
@@ -111,9 +111,9 @@ export const get_mortgageStatusData = createAsyncThunk(
 
 export const get_banksData = createAsyncThunk(
     'get_banksData',
-    async ({userId}, { rejectWithValue, fulfillWithValue }) => {
+    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/banksData?userId=${userId}`, { withCredentials: true })
+            const { data } = await api.get(`/dashboard/banksData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
             return fulfillWithValue(data);
         } catch (error) {
             return rejectWithValue(error.response.data)

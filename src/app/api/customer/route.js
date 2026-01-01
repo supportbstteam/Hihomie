@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser'
+import mongoose from "mongoose";
 
 export async function POST(req) {
 
@@ -98,8 +99,6 @@ export async function GET(req) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
-
-import mongoose from "mongoose";
 
 export async function PUT(req) {
   try {

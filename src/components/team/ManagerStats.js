@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { t } from "@/components/translations";
 import { Card } from "@/components/ui/Card";
+import Datepicker from "@/components/ui/Datepicker";
 import { setFilters } from "@/store/filter";
 import {
     Bar,
@@ -129,20 +130,28 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
         successTag,
     } = useSelector((state) => state.dashboard);
 
+    const [fromDate, setFromDate] = useState();
+    const [toDate, setToDate] = useState();
+
     useEffect(() => {
         if (user?._id) {
-            dispatch(get_total_lead({ userId: user._id }));
-            dispatch(get_total_manager());
-            dispatch(get_total_staff());
-            dispatch(get_newLeadsThisWeek());
-            dispatch(get_latestActivities());
-            dispatch(get_contractData({ userId: user._id }));
-            dispatch(get_contactedUsers({ userId: user._id }));
-            dispatch(get_documentSubmittedUsers({ userId: user._id }));
-            dispatch(get_mortgageStatusData({ userId: user._id }));
-            dispatch(get_banksData({ userId: user._id }));
+            dispatch(get_contractData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
+            dispatch(get_contactedUsers({ userId: user._id, fromDate: fromDate, toDate: toDate }));
+            dispatch(get_documentSubmittedUsers({ userId: user._id, fromDate: fromDate, toDate: toDate }));
+            dispatch(get_mortgageStatusData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
+            dispatch(get_banksData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
         }
-    }, [user?._id]);
+    }, [user?._id, dispatch, fromDate, toDate]);
+
+    const handleDateChange = (e) => {
+        const { name, value } = e.target;
+        if (name === "from_date") {
+            setFromDate(value);
+        } else {
+            setToDate(value);
+        }
+    };
+
     return (
         <AnimatePresence>
             <div className="fixed inset-0 bg-black/40 flex items-start justify-center z-[100] px-4">
@@ -160,9 +169,28 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                         ✕
                     </button>
 
-                    <p className="text-gray-700 text-[20px] mb-6 font-semibold">{t('manager_stats')}</p>
+                    <div className="flex items-center gap-4 mb-6">
+                        <p className="text-gray-700 text-[20px] font-semibold">{t('manager_stats')}</p>
+                        <Datepicker
+                            name="from_date"
+                            value={fromDate}
+                            onChange={handleDateChange}
+                            placeholderText="From"
+                            dateFormat="dd/MM/yyyy"
+                            className="text-light text-sm appearance-none font-normal font-heading w-50 px-2 py-1 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                        <span>to</span>
+                        <Datepicker
+                            name="to_date"
+                            value={toDate}
+                            onChange={handleDateChange}
+                            placeholderText="To"
+                            dateFormat="dd/MM/yyyy"
+                            className="text-light text-sm appearance-none font-normal font-heading w-50 px-2 py-1 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-6">
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title="User's Contracts Data"
@@ -193,9 +221,9 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 data={documentSubmittedUsers}
                                 colors={generateColors(documentSubmittedUsers.length, "vivid")}
                                 onClickData={(item) => {
-                                  item.name == "Documents Submitted Users"
-                                    ? dispatch(setFilters({ document_submitted: "yes", gestor: user._id }))
-                                    : dispatch(setFilters({ document_submitted: "no", gestor: user._id }));
+                                    item.name == "Documents Submitted Users"
+                                        ? dispatch(setFilters({ document_submitted: "yes", gestor: user._id }))
+                                        : dispatch(setFilters({ document_submitted: "no", gestor: user._id }));
                                 }}
                             />
                         </div>

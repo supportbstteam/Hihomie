@@ -6,13 +6,34 @@ import CardAssignUser from '@/models/CardAssignUser';
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
+    const fromDate = url.searchParams.get('fromDate');
+    const toDate = url.searchParams.get('toDate');
+
     if (userId !== "68a2eeb6f31c60d58b33191e") {
-        const totalLeads = await CardAssignUser.find({ userId: userId }).lean();
+
+        const matchStage = { userId };
+
+        if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
+            matchStage.createdAt = {};
+
+            if (fromDate && fromDate !== "undefined") {
+                matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+            }
+
+            if (toDate && toDate !== "undefined") {
+                matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
+            }
+        }
+
+
+        const totalLeads = await CardAssignUser
+            .find(matchStage)
+            .lean();
 
         const result = await CardAssignUser.aggregate([
             // Stage 1: Find the user's assigned card
             {
-                $match: { userId: userId }
+                $match: matchStage
             },
 
             // Stage 2: Use a Pipelined Lookup
@@ -62,7 +83,7 @@ export async function GET(req) {
             },
         ]);
         const totalLeadsCount = totalLeads.length;
-        const user_contacted_count = result[0].contactedCount;
+        const user_contacted_count = result[0]?.contactedCount ?? 0;
         const user_not_contacted_count = totalLeadsCount - user_contacted_count;
         return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
     }
