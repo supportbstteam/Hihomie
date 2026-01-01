@@ -234,7 +234,6 @@ export async function GET() {
         }
       }
     ]);
-    console.log(cards);
     return NextResponse.json({ cards }, { status: 201 })
   } catch (error) {
     console.error("Aggregation Error:", error);
