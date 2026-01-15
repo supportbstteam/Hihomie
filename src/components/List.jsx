@@ -247,16 +247,9 @@ const List = ({
   const getPageNumbers = () => {
     const pages = [];
 
-    let start = Math.max(1, currentPage - 1);
-    let end = Math.min(totalPages, currentPage + 1);
+    let start = Math.max(2, currentPage - 1);
+    let end = Math.min(totalPages - 1, currentPage + 1);
 
-    if (start == 1) {
-      end = 3;
-    } else if (end == totalPages) {
-      start = totalPages - 2;
-    }
-
-    // Make sure exactly 3 pages show (if possible)
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
