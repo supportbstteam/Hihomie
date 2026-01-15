@@ -7,7 +7,7 @@ import User from '@/models/User'
 export async function POST(req, context) {
   try {
     const { params } = context; // ✅ await the context
-    const { colId, cardId } = params;
+    const { colId, cardId } = await params;
 
     const text = await req.text();
 

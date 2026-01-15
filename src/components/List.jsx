@@ -244,6 +244,26 @@ const List = ({
     }
   }, [customerSuccessMessage, dispatch]);
 
+  const getPageNumbers = () => {
+    const pages = [];
+
+    let start = Math.max(1, currentPage - 1);
+    let end = Math.min(totalPages, currentPage + 1);
+
+    if (start == 1) {
+      end = 3;
+    } else if (end == totalPages) {
+      start = totalPages - 2;
+    }
+
+    // Make sure exactly 3 pages show (if possible)
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
   return (
     <div>
       <form
@@ -421,7 +441,7 @@ const List = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-4">
+                <TableCell colSpan={10} className="text-center py-4">
                   No data available
                 </TableCell>
               </TableRow>
@@ -450,20 +470,47 @@ const List = ({
           Prev
         </button>
 
-        <div className="flex gap-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`px-3 py-1 rounded-md transition ${
-                currentPage === index + 1
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+        <div className="flex justify-center items-center gap-2 mt-4">
+          {/* First Page */}
+          <button
+            className="px-3 py-1 bg-gray-200 rounded disabled:bg-green-500"
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          >
+            1
+          </button>
+
+          {/* Left Ellipsis */}
+          {currentPage > 3 && <span className="px-2">...</span>}
+
+          {/* Middle Dynamic Pages */}
+          <div className="flex gap-2">
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-md transition ${
+                  currentPage === page
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Ellipsis */}
+          {currentPage < totalPages - 2 && <span className="px-2">...</span>}
+
+          {/* Last Page */}
+          <button
+            className="px-3 py-1 bg-gray-200 rounded disabled:bg-green-500"
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            {totalPages}
+          </button>
         </div>
 
         <button

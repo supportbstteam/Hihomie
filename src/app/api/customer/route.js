@@ -45,7 +45,15 @@ export async function POST(req) {
 
     // these two lines are used to assign the card to the manager or staff or any user at the time of lead creation
     const newCardId = updatedColumn.cards[updatedColumn.cards.length - 1]._id;
-    await CardAssignUser.create({ userId: assigned, cardId: newCardId, colId: selectedColId })
+    if (!assigned || assigned.trim() === "") {
+      console.log("No user assigned, skipping assignment creation");
+    } else {
+      await CardAssignUser.create({
+        userId: assigned,
+        cardId: newCardId,
+        colId: selectedColId
+      });
+    }
 
     if (!updatedColumn) {
       return NextResponse.json({ error: 'Column not found' }, { status: 404 });
@@ -221,22 +229,4 @@ export async function DELETE(req, { params }) {
   }
 }
 
-// export async function DELETE(req, { params }) {
-//   try {
-//     await dbConnect();
-
-//     const { id } = params; // 👈 capture id from URL
-
-//     const deletedUser = await Customer.findByIdAndDelete(id);
-
-//     if (!deletedUser) {
-//       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
-//     }
-
-//     return NextResponse.json({ message: "Customer deleted successfully" }, { status: 200 });
-//   } catch (error) {
-//     console.error("DELETE Error:", error);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
 

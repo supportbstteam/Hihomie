@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
 import User from '@/models/User'
+import CardAssignUser from '@/models/CardAssignUser'
 import sharp from "sharp";
 import fs from "fs";
 import path from "path";
@@ -179,6 +180,8 @@ export async function DELETE(req) {
     }
 
     const deleted = await User.findByIdAndDelete(id);
+
+    await CardAssignUser.deleteMany({ userId: id });
 
     if (!deleted) {
       return NextResponse.json({ error: "Record not found" }, { status: 404 });
