@@ -39,7 +39,9 @@ const List = ({
   setSelectedUser,
   successMessage,
   setSelectedColId,
+  authUser,
 }) => {
+
   const dispatch = useDispatch();
   const { assignTeam } = useSelector((state) => state.team);
   const { successMessage: customerSuccessMessage } = useSelector(
@@ -314,7 +316,8 @@ const List = ({
               <TableHead>{t("assigned")}</TableHead>
               <TableHead>{t("phone")}</TableHead>
               <TableHead>{t("status")}</TableHead>
-              <TableHead>{t("action")}</TableHead>
+             {authUser?.role != 'external' &&  <TableHead>{t("action")}</TableHead>}
+              
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -378,6 +381,8 @@ const List = ({
                     {item.status ? "Active" : "Inactive"}
                   </Badge>
                 </TableCell> */}
+
+               {authUser?.role != 'external' &&
                   <TableCell className="flex justify-between gap-2 ">
                     <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
                     <Icon
@@ -430,6 +435,7 @@ const List = ({
                       )}
                     </div>
                   </TableCell>
+                }
                 </TableRow>
               ))
             ) : (

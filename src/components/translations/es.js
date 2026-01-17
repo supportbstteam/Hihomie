@@ -241,6 +241,7 @@ const es = {
   manager_stats: "Estadísticas de gestor",
   choose_option: "Escoger opción",
   document_submitted: "Documento enviado",
+  external: "External",
 };
 
 export default es;

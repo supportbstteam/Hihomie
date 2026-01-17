@@ -44,6 +44,7 @@ import useUserFromSession from "@/lib/useUserFromSession";
 
 export default function CustomDnD() {
   const authUser = useUserFromSession();
+
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(
     (state) => state.setting
@@ -414,7 +415,8 @@ export default function CustomDnD() {
                     ></div>
                     <h2 className="font-semibold">{col.title}</h2>
                   </div>
-                  <button
+
+                  {authUser?.role != 'external' && <button
                     onClick={() => {
                       setSelectedColId(col.id);
                       setOpen(true);
@@ -422,7 +424,8 @@ export default function CustomDnD() {
                     className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
                   >
                     <CiCirclePlus />
-                  </button>
+                  </button>}
+                  
                 </div>
                 <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
                   {col.cards.map((card, index) => (
@@ -534,6 +537,7 @@ export default function CustomDnD() {
             setSelectedUser={setSelectedUser}
             successMessage={successMessage}
             setSelectedColId={setSelectedColId}
+            authUser = {authUser}
           />
         </div>
       )}

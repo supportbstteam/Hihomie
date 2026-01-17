@@ -7,6 +7,9 @@ import { Dashboard } from "@/components/Dashboard";
 export default async function DashboardPage() {
   const user = await getUserFromServerSession();
   if (!user) redirect("/login");
+   
+  console.log();
+
   return (
     <>
       {/* <LowerNav className="w-full p-0" /> */}
@@ -19,7 +22,8 @@ export default async function DashboardPage() {
           <span className="font-medium text-primary">{user.role}</span>.
         </p>
       </div> */}
-      <Dashboard />
+      {user?.role != 'external' && <Dashboard />}
+      
     </>
   );
 }

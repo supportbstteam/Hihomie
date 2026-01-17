@@ -23,6 +23,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { t } from "@/components/translations";
 
 const MENU = {
+
   admin: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     {
@@ -71,11 +72,16 @@ const MENU = {
     // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
     // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
   ],
+  external: [
+    { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
+    { href: '/dashboard/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
+  ],
   user: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
     // { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
     // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
   ],
+  
 };
 
 export default function Sidebar() {
@@ -94,6 +100,7 @@ export default function Sidebar() {
   if (!session) return null;
 
   const role = session?.user?.role || "user";
+
   const items = MENU[role] || MENU.user;
 
   return (

@@ -234,6 +234,7 @@ const AddTeam = ({ setOpen }) => {
               options={[
                 { value: "manager", label: t("manager") },
                 { value: "staff", label: t("staff") },
+                { value: "external", label: t("external") },
               ]}
             />
 

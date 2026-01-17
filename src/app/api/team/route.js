@@ -14,6 +14,8 @@ export async function POST(req) {
 
     const formData = await req.formData();
 
+    console.log(formData);
+
     // fields (non-file data)
     const name = formData.get("name");
     const lname = formData.get("lname");
