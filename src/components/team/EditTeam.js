@@ -221,6 +221,7 @@ const EditTeam = ({ user, setUser }) => {
               options={[
                 { value: "manager", label: t("manager") },
                 { value: "staff", label: t("staff") },
+                { value: "external", label: t("external") },
               ]}
             />
 
