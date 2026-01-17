@@ -438,7 +438,7 @@ export default function CustomDnD() {
                       onDragEnd={handleDragEnd}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleDropBetween(col.id, index)}
-                      onClick={() => handleCardClick(col.id, card)}
+                      {...(authUser?.role !== "external" ? { onClick: () => handleCardClick(col.id, card) }: {})}
                       onTouchStart={(e) =>
                         handleTouchStart(e, card._id, col.id, index)
                       }
