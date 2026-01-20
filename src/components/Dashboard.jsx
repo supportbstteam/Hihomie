@@ -489,7 +489,7 @@ export function Dashboard() {
         {/* Row 3 */}
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title="User's Contracts Data"
+            title={t('user_ontracts_data')}
             data={contractData}
             colors={generateColors(contractData.length, "vivid")}
             onClickData={(item) => {
@@ -501,7 +501,7 @@ export function Dashboard() {
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title="Contacted vs. Not Contacted Users"
+            title={t('contacted_contacted_user')}
             data={contactedUsers}
             colors={generateColors(contactedUsers.length, "vivid")}
             onClickData={(item) => {
@@ -513,7 +513,7 @@ export function Dashboard() {
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title="Document Submitted vs. Not Submitted Users"
+            title={t("document_submitted_users")}
             data={documentSubmittedUsers}
             colors={generateColors(documentSubmittedUsers.length, "vivid")}
             onClickData={(item) => {
@@ -525,7 +525,7 @@ export function Dashboard() {
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title="Distribution by Bank"
+            title={t("distribution_by_bank")}
             data={banksData}
             colors={generateColors(banksData.length, "vivid")}
             onClickData={(item) => {
@@ -538,7 +538,7 @@ export function Dashboard() {
         <div className="lg:col-span-4 xl:col-span-6">
           <Card>
             <h3 className="text-lg font-semibold text-gray-700">
-              Mortgage Status
+              {t("mortgage_status")}
             </h3>
             <p className="text-sm text-gray-500">
               User Distribution Across Different Mortgage Process Stages.

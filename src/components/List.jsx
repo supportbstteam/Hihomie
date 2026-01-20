@@ -89,6 +89,7 @@ const List = ({
     contacted,
     contract_signed,
     bank,
+    email,
     document_submitted,
   } = selecteFilterData || {};
 
@@ -120,6 +121,10 @@ const List = ({
       ? item?.documentSubmitted === document_submitted
       : true;
 
+       const matchEmail = email
+        ? item?.email?.toLowerCase().includes(email.toLowerCase())
+        : true;
+
     return (
       matchGestor &&
       matchEstado &&
@@ -128,6 +133,7 @@ const List = ({
       matchContacted &&
       matchContract_signed &&
       matchBank &&
+      matchEmail &&
       matchDocumentSubmitted
     );
   });

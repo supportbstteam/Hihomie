@@ -10,7 +10,7 @@ const es = {
   dashboard: "Tablero",
   category: "Categoría",
   lead: "Prospectos",
-  team: "Usuaria",
+  team: "Usuario",
   manager: "Gerente",
   agent: "Agentes",
   bank: "Banco",
@@ -18,7 +18,7 @@ const es = {
   commission: "Comisión",
   metter: "Importar",
   help_support: "Ayuda y Soporte",
-  setting: "Settings",
+  setting: "Ajustes",
   account: "Cuenta Administrativa",
   control_panel: "Panel De Control",
   complete_view: "Vista completa del rendimiento empresarial",
@@ -242,6 +242,20 @@ const es = {
   choose_option: "Escoger opción",
   document_submitted: "Documento enviado",
   external: "External",
+
+  renta: "Renta",
+  recibos_préstamos: "Recibos préstamos",
+  recibos_hipotecas: "Recibos hipotecas",
+  modelos_de_autónomos: "Modelos de autónomos",
+  movimientos_bancarios: "Movimientos bancarios",
+  nota_simple: "Nota simple",
+  logout : 'Salir',
+
+  user_ontracts_data : "Contratos firmados",
+  contacted_contacted_user : "Contactados y No contactados",
+  document_submitted_users : "Documentación presentada – Documentación pendiente",
+  mortgage_status : "Estado de la hipoteca",
+  distribution_by_bank : "Distribución por bancos",
 };
 
 export default es;

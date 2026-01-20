@@ -174,7 +174,7 @@ export default function Sidebar() {
             }}
             className="flex items-center cursor-pointer gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
           >
-            <MdOutlineLogout className="text-[#84909A]" /> Logout
+            <MdOutlineLogout className="text-[#84909A]" /> {t("logout")}
           </button>
         </nav>
       </aside>

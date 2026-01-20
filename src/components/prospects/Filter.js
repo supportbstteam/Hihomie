@@ -31,6 +31,7 @@ const Filter = ({
   const [document_submitted, setDocument_submitted] = useState("");
   const [bank, setBank] = useState("");
   const authUser = useUserFromSession();
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     dispatch(get_teamData());
@@ -47,6 +48,7 @@ const Filter = ({
       contract_signed: contract_signed,
       document_submitted: document_submitted,
       bank: bank,
+      email: email,
     });
     setFilterOpen(false);
 
@@ -59,6 +61,7 @@ const Filter = ({
     setContract_signed("");
     setDocument_submitted("");
     setBank("");
+    setEmail("");
   };
 
   const handleCancel = () => {
@@ -70,6 +73,7 @@ const Filter = ({
     setContract_signed("");
     setDocument_submitted("");
     setBank("");
+    setEmail("");
     setOpen(false);
   };
   return (
@@ -199,6 +203,17 @@ const Filter = ({
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Buscar por contacto"
           />
+
+          <Input
+            label={t("email")}
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Correo electrónico"
+          />
+
+
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
           <Button onClick={handleCancel} className="py-2 px-4" variant="outline" size="full">

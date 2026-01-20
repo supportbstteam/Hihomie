@@ -826,7 +826,23 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       options={[
                         { value: "CaixaBank", label: "CaixaBank" },
                         { value: "Banco Santander", label: "Banco Santander" },
-                        { value: "BBVA", label: "BBVA" }
+                        { value: "BBVA", label: "BBVA" },
+                        { value: "Abanca", label: "Abanca" },
+                        { value: "Banca Pueyo", label: "Banca Pueyo" },
+                        { value: "Caja Granada", label: "Caja Granada" },
+                        { value: "Caja Rural Granada", label: "Caja Rural Granada" },
+                        { value: "Caja Soria", label: "Caja Soria" },
+                        { value: "Cajamar", label: "Cajamar" },
+                        { value: "Deutsche Bank", label: "Deutsche Bank" },
+                        { value: "Eurocaja Rural", label: "Eurocaja Rural" },
+                        { value: "Globalcaja", label: "Globalcaja" },
+                        { value: "Ibercaja", label: "Ibercaja" },
+                        { value: "ING", label: "ING" },
+                        { value: "Kutxabank", label: "Kutxabank" },
+                        { value: "Laboral Kutxa", label: "Laboral Kutxa" },
+                        { value: "Mediolanum", label: "Mediolanum" },
+                        { value: "Pichincha", label: "Pichincha" },
+                        { value: "Unicaja", label: "Unicaja" },
                       ]}
                     />
                     <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
@@ -850,6 +866,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                         { value: "working_life", label: t("working_life") },
                         { value: "income", label: t("income") },
                         { value: "receipt", label: t("receipt") },
+                        { value: "renta", label: t("renta") },
+                        { value: "recibos_préstamos", label: t("recibos_préstamos") },
+                        { value: "recibos_hipotecas", label: t("recibos_hipotecas") },
+                        { value: "modelos_de_autónomos", label: t("modelos_de_autónomos") },
+                        { value: "movimientos_bancarios", label: t("movimientos_bancarios") },
+                        { value: "nota_simple", label: t("nota_simple") },
                         { value: "other", label: t("other") },
                       ]}
                       error={errors.document_type}

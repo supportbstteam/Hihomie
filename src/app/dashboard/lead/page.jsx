@@ -114,6 +114,7 @@ export default function CustomDnD() {
     contacted,
     contract_signed,
     bank,
+    email,
     document_submitted,
   } = selecteFilterData || {};
 
@@ -159,6 +160,10 @@ export default function CustomDnD() {
 
         const matchId = id ? item?._id === id : true;
 
+         const matchEmail = email
+        ? item?.email?.toLowerCase().includes(email.toLowerCase())
+        : true;
+
         return (
           matchGestor &&
           matchEstado &&
@@ -168,7 +173,8 @@ export default function CustomDnD() {
           matchContractSigned &&
           matchBank &&
           matchDocumentSubmitted &&
-          matchId
+          matchId &&
+          matchEmail
         );
       });
 

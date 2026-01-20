@@ -500,6 +500,7 @@ const MortgageSimulator = () => {
         email: email,
         subject: subject,
         mailContent: mailContent,
+        pdfHtml: mailContent,
       }),
     });
 

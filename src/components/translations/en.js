@@ -241,6 +241,14 @@ const en = {
   manager_stats: "Manager Statistics",
   choose_option: "Choose Option",
   document_submitted: "Document Submitted",
+
+
+  renta: "Renta",
+  recibos_préstamos: "Recibos préstamos",
+  recibos_hipotecas: "Recibos hipotecas",
+  modelos_de_autónomos: "Modelos de autónomos",
+  movimientos_bancarios: "Movimientos bancarios",
+  nota_simple: "Nota simple",
 };
 
 export default en;
