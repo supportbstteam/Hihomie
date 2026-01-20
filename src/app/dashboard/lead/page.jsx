@@ -432,8 +432,10 @@ export default function CustomDnD() {
                     <div
                       key={card._id}
                       draggable={true}
-                      onDragStart={(e) =>
-                        handleDragStart(e, card._id, col.id, index)
+                      onDragStart={
+                        authUser?.role !== "external"
+                          ? (e) => handleDragStart(e, card._id, col.id, index)
+                          : undefined
                       }
                       onDragEnd={handleDragEnd}
                       onDragOver={(e) => e.preventDefault()}
