@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import LeadStatus from "@/models/LeadStatus";
 import dbConnect from "@/lib/db";
+import CardAssignUser from "@/models/CardAssignUser";
 
 export async function POST(req) {
   try {
@@ -25,8 +26,12 @@ export async function POST(req) {
       );
     }
 
+    const allCardIds = leads.map((l) => l.cardId);
+
+    await CardAssignUser.deleteMany({ cardId: { $in: allCardIds } });
+
     return NextResponse.json(
-      { message: "Bulk delete successful" },
+      { message: "Delete successful" },
       { status: 201 }
     );
 
