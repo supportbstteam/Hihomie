@@ -191,6 +191,24 @@ export const upload_file = createAsyncThunk(
    }
 );
 
+export const delete_bulk = createAsyncThunk(
+  "setting/delete_bulk",
+  async ({ leads }, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const { data } = await api.post(
+        `/setting/delete-bulk`,
+        { leads },
+        { withCredentials: true }
+      );
+
+      return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
 
 
 
@@ -352,6 +370,13 @@ export const settingReducer = createSlice({
             state.loader = false;
             state.errorMessage = payload?.message || "Something went wrong";
          })
+
+         .addCase(delete_bulk.fulfilled, (state, action) => {
+            state.successMessage = action.payload.message;
+         })
+         .addCase(delete_bulk.rejected, (state, action) => {
+            state.errorMessage = action.payload;
+         });
    }
 })
 export const { messageClear } = settingReducer.actions

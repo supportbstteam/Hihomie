@@ -15,6 +15,7 @@ import Avatar from "./ui/Avatar";
 import { useDispatch, useSelector } from "react-redux";
 import {
   card_delete_list,
+  delete_bulk,
   get_leadStatusData,
   get_leadStatusDataForList,
 } from "@/store/setting";
@@ -143,7 +144,7 @@ const List = ({
     setCurrentPage(1);
   }, [gestor, estado, full_name, phone]);
 
-  const recordsPerPage = 10;
+  const recordsPerPage = 25;
 
   // Pagination logic
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -265,6 +266,34 @@ const List = ({
     return pages;
   };
 
+  const handleBulkDelete = () => {
+      if (selectedLeads.length === 0) {
+        toast.error("Please select at least one lead");
+        return;
+      }
+
+      // Sirf IDs nikal lo
+      
+       // send in correct format
+      const payload = selectedLeads.map((lead) => ({
+        cardId: lead.id,
+        colId: lead.status,
+      }));
+
+  
+
+      dispatch(delete_bulk({ leads: payload }))
+        .unwrap()
+        .then((res) => {
+          toast.success(res.message || "Delete successful");
+        })
+        .catch((err) => {
+          toast.error(err.message || "Something went wrong");
+        });
+
+    };
+
+
   return (
     <div>
       <form
@@ -298,7 +327,22 @@ const List = ({
         </button>
       </form>
 
-      <div className="overflow-auto custom-scrollbar max-h-[42vh] rounded-md shadow-md ">
+    <div className="flex justify-end">
+        <button
+          className="px-3 py-1 bg-red-500 text-white rounded"
+          onClick={() => {
+            if (confirm("Are you sure you want to delete selected items?")) {
+              handleBulkDelete();
+            }
+          }}
+        >
+          Delete
+        </button>
+      </div>
+
+
+
+      <div className=" rounded-md shadow-md ">
         {/* -----------------------new table starts----------------------- */}
 
         <Table>

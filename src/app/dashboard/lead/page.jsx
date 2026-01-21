@@ -387,10 +387,13 @@ export default function CustomDnD() {
             </div>
           </div>
         </div>
+
+        <Stats leadStatus={leadStatus} />
+
       </aside>
       {/* <LowerNav /> */}
 
-      <Stats leadStatus={leadStatus} />
+      
 
       {/* BOARD */}
       {!listComponent ? (
