@@ -20,7 +20,6 @@ export async function POST(req) {
   }
 }
 
-// ✅ GET - Fetch all customers
 export async function GET() {
   const user = await getUserFromServerSession();
 
@@ -121,6 +120,18 @@ export async function GET() {
           }
         },
 
+        //  SORT CARDS BY createdAt DESC
+        {
+          $addFields: {
+            cards: {
+              $sortArray: {
+                input: "$cards",
+                sortBy: { createdAt: -1 }
+              }
+            }
+          }
+        },
+
         // 5) sort and cleanup if needed
         { $sort: { order: 1 } },
 
@@ -138,61 +149,6 @@ export async function GET() {
   }
 
   try {
-    // const data = await LeadStatus.aggregate([
-    //   {
-    //     $addFields: {
-    //       _cardIdsStr: {
-    //         $map: { input: { $ifNull: ["$cards", []] }, as: "c", in: { $toString: "$$c._id" } }
-    //       }
-    //     }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "cardassignusers",
-    //       let: { cardIds: "$_cardIdsStr" },
-    //       pipeline: [
-    //         { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
-    //         { $project: { _id: 0, cardId: 1, userId: 1 } }
-    //       ],
-    //       as: "assignments"
-    //     }
-    //   },
-    //   {
-    //     $addFields: {
-    //       cards: {
-    //         $map: {
-    //           input: { $ifNull: ["$cards", []] },
-    //           as: "c",
-    //           in: {
-    //             $mergeObjects: [
-    //               "$$c",
-    //               {
-    //                 assignedUsers: {
-    //                   $map: {
-    //                     input: {
-    //                       $filter: {
-    //                         input: "$assignments",
-    //                         as: "a",
-    //                         cond: { $eq: ["$$a.cardId", { $toString: "$$c._id" }] }
-    //                       }
-    //                     },
-    //                     as: "m",
-    //                     in: "$$m.userId"
-    //                   }
-    //                 }
-    //               }
-    //             ]
-    //           }
-    //         }
-    //       }
-    //     }
-    //   },
-    //   {
-    //     $sort: { order: 1 }
-    //   },
-    //   { $project: { _cardIdsStr: 0, assignments: 0 } }
-    // ]);
-
     const data = await LeadStatus.aggregate([
       // 1) build string version of cards' _id for matching
       {
@@ -284,6 +240,18 @@ export async function GET() {
                   }
                 ]
               }
+            }
+          }
+        }
+      },
+
+      // 🔥 SORT CARDS BY createdAt DESC
+      {
+        $addFields: {
+          cards: {
+            $sortArray: {
+              input: "$cards",
+              sortBy: { createdAt: -1 }
             }
           }
         }

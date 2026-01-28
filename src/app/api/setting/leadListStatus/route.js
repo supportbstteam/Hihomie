@@ -127,7 +127,13 @@ export async function GET() {
               ]
             }
           }
+        },
+        {
+          $sort: {
+            createdAt: -1 // latest first
+          }
         }
+
       ]);
       return NextResponse.json({ cards }, { status: 201 })
     } catch (error) {
@@ -220,10 +226,10 @@ export async function GET() {
           bankDetailsData: "$cards.bankDetailsData",
           detailsData: "$cards.detailsData",
           addressDetailsData: "$cards.addressDetailsData",
-          leadStatusId: "$_id",          // 🔥 LeadStatus ID inside card
-          createdAt: "$cards.createdAt",// 🔥 LeadStatus Name inside card
+          leadStatusId: "$_id",          // LeadStatus ID inside card
+          createdAt: "$cards.createdAt",
           color: 1,
-          users: "$users",                // 🔥 Assigned users
+          users: "$users",                // Assigned users
           documentSubmitted: {
             $cond: [
               { $gt: [{ $size: "$docs" }, 0] },
@@ -232,7 +238,13 @@ export async function GET() {
             ]
           }
         }
+      },
+      {
+        $sort: {
+          createdAt: -1 // latest first
+        }
       }
+
     ]);
     return NextResponse.json({ cards }, { status: 201 })
   } catch (error) {
