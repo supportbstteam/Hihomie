@@ -54,7 +54,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const [formData, setFormData] = useState({
     lead_title: "",
-    surname: "Señor.",
+    surname: "",
     first_name: "",
     last_name: "",
     company: "",
@@ -117,10 +117,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     //   newErrors.lead_title = t("leadTitleRequired");
     //   valid = false;
     // }
-    if (!formData.surname) {
-      newErrors.surname = t("prefixRequired");
-      valid = false;
-    }
+    // if (!formData.surname) {
+    //   newErrors.surname = t("prefixRequired");
+    //   valid = false;
+    // }
     if (!formData.first_name.trim()) {
       newErrors.first_name = t("firstNameRequired");
       valid = false;
@@ -463,7 +463,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                       { value: t("mr"), label: t("mr") },
                       { value: t("mrs"), label: t("mrs") }
                     ]}
-                    required
+                    
                   />
 
                   {/* First Name */}
