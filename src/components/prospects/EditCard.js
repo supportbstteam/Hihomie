@@ -113,10 +113,10 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     };
     let valid = true;
 
-    if (!formData.lead_title.trim()) {
-      newErrors.lead_title = t("leadTitleRequired");
-      valid = false;
-    }
+    // if (!formData.lead_title.trim()) {
+    //   newErrors.lead_title = t("leadTitleRequired");
+    //   valid = false;
+    // }
     if (!formData.surname) {
       newErrors.surname = t("prefixRequired");
       valid = false;
@@ -449,7 +449,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     value={formData.lead_title}
                     onChange={handleChange}
                     name="lead_title"
-                    required
+                    
                     error={errors.lead_title}
                   />
                   {/* Status */}

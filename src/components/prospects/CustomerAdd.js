@@ -119,9 +119,9 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
   const validate = (values) => {
     const newErrors = {};
 
-    if (!values.lead_title.trim()) {
-      newErrors.lead_title = t("leadTitleRequired");
-    }
+    // if (!values.lead_title.trim()) {
+    //   newErrors.lead_title = t("leadTitleRequired");
+    // }
     if (!values.surname) {
       newErrors.surname = t("prefixRequired");
     }
@@ -198,8 +198,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                   name="lead_title"
                   value={formData.lead_title}
                   onChange={handleChange}
-                  required
-                  error={errors.lead_title}
                 />
                 <Dropdown
                   label={t("prefix")}
