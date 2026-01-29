@@ -108,15 +108,123 @@ export async function GET(req) {
   }
 }
 
+// export async function PUT(req) {
+//   try {
+
+//     const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, contacted, contract_signed } = await req.json()
+
+//     await dbConnect();
+
+
+//     if (!colId || !id) {
+//       return NextResponse.json({ error: "colId and id are required" }, { status: 400 });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(colId)) {
+//       return NextResponse.json({ error: "Invalid colId" }, { status: 400 });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return NextResponse.json({ error: "Invalid card id" }, { status: 400 });
+//     }
+
+//     const updatedColumn = await LeadStatus.findOneAndUpdate(
+//       { _id: colId, "cards._id": id },
+//       {
+//         $set: {
+//           "cards.$.lead_title": lead_title,
+//           "cards.$.surname": surname,
+//           "cards.$.first_name": first_name,
+//           "cards.$.last_name": last_name,
+//           "cards.$.company": company,
+//           "cards.$.designation": designation,
+//           "cards.$.phone": phone,
+//           "cards.$.email": email,
+//           "cards.$.lead_value": lead_value,
+//           "cards.$.assigned": assigned,
+//           "cards.$.status": status,
+//           "cards.$.type_of_opration": type_of_opration,
+//           "cards.$.customer_situation": customer_situation,
+//           "cards.$.purchase_status": purchase_status,
+//           "cards.$.commercial_notes": commercial_notes,
+//           "cards.$.manager_notes": manager_notes,
+//           "cards.$.detailsData": detailsData,
+//           "cards.$.addressDetailsData": addressDetailsData,
+//           "cards.$.contacted": contacted,
+//           "cards.$.contract_signed": contract_signed,
+//         },
+//       },
+//       { new: true }
+//     );
+
+
+//     if (status != colId) {
+
+//       // 1️⃣ Find source column
+//       const sourceCol = await LeadStatus.findById(colId);
+//       if (!sourceCol) {
+//         return NextResponse.json({ error: "Source column not found" }, { status: 404 });
+//       }
+
+//       // 2️⃣ Find the card inside source
+//       const cardIndex = sourceCol.cards.findIndex(
+//         (c) => c._id.toString() === id
+//       );
+//       if (cardIndex === -1) {
+//         return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
+//       }
+
+//       // 3️⃣ Remove card from source
+//       const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
+//       await sourceCol.save();
+
+//       // 4️⃣ Add card into destination column
+//       const destCol = await LeadStatus.findById(status);
+//       if (!destCol) {
+//         return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
+//       }
+
+//       destCol.cards.push(movedCard);
+//       await destCol.save();
+//     }
+
+
+//     const { password: _, ...userData } = updatedColumn.cards.toObject();
+
+//     if (!updatedColumn) {
+//       return NextResponse.json({ error: "Card not found", customer: userData }, { status: 404 });
+//     }
+
+//     return NextResponse.json({ message: "Card updated successfully", data: updatedColumn }, { status: 200 });
+
+//   } catch (error) {
+//     console.error("Update Error:", error);
+//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+//   }
+// }
+
+
 export async function PUT(req) {
   try {
-
-    const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, contacted, contract_signed } = await req.json()
-
+    const {
+      colId, id,
+      lead_title, surname, first_name, last_name,
+      company, designation, email, phone, lead_value,
+      assigned, status, type_of_opration, customer_situation,
+      purchase_status, commercial_notes, manager_notes,
+      detailsData, addressDetailsData, contacted, contract_signed
+    } = await req.json();
 
     await dbConnect();
 
 
+    console.log(colId);
+    console.log('  ');
+    console.log(id);
+    console.log();
+    console.log(designation);
+
+    // Validation
     if (!colId || !id) {
       return NextResponse.json({ error: "colId and id are required" }, { status: 400 });
     }
@@ -129,6 +237,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Invalid card id" }, { status: 400 });
     }
 
+    // 1️⃣ Update the card in its current column
     const updatedColumn = await LeadStatus.findOneAndUpdate(
       { _id: colId, "cards._id": id },
       {
@@ -159,15 +268,25 @@ export async function PUT(req) {
     );
 
 
+    // If no card updated → card does not exist
+    if (!updatedColumn) {
+      return NextResponse.json({
+        error: "Card not found in this column",
+      }, { status: 404 });
+    }
+
+    // Extract updated card after update
+    const updatedCard = updatedColumn.cards.id(id);
+
+    // 2️⃣ If status changed, move the card
     if (status != colId) {
 
-      // 1️⃣ Find source column
+      // Source column
       const sourceCol = await LeadStatus.findById(colId);
       if (!sourceCol) {
         return NextResponse.json({ error: "Source column not found" }, { status: 404 });
       }
 
-      // 2️⃣ Find the card inside source
       const cardIndex = sourceCol.cards.findIndex(
         (c) => c._id.toString() === id
       );
@@ -175,11 +294,10 @@ export async function PUT(req) {
         return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
       }
 
-      // 3️⃣ Remove card from source
       const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
       await sourceCol.save();
 
-      // 4️⃣ Add card into destination column
+      // Destination column
       const destCol = await LeadStatus.findById(status);
       if (!destCol) {
         return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
@@ -189,20 +307,18 @@ export async function PUT(req) {
       await destCol.save();
     }
 
-
-    const { password: _, ...userData } = updatedColumn.cards.toObject();
-
-    if (!updatedColumn) {
-      return NextResponse.json({ error: "Card not found", customer: userData }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: "Card updated successfully", data: updatedColumn }, { status: 200 });
+    // 3️⃣ Final return
+    return NextResponse.json({
+      message: "Card updated successfully",
+      data: updatedCard,
+    }, { status: 200 });
 
   } catch (error) {
     console.error("Update Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
 
 
 
