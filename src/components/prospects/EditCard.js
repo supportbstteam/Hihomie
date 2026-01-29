@@ -54,7 +54,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
 
   const [formData, setFormData] = useState({
     lead_title: "",
-    surname: "",
+    surname: "Señor.",
     first_name: "",
     last_name: "",
     company: "",
