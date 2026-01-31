@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
 import getUserFromServerSession from '@/lib/getUserFromServerSession'
+import { assign } from 'nodemailer/lib/shared'
+import CardAssignUser from '@/models/CardAssignUser'
 
 export async function POST(req) {
   try {
@@ -275,6 +277,8 @@ export async function PUT(req) {
     await dbConnect();
     const { sourceColId, destColId, cardId } = await req.json();
 
+     const user = await getUserFromServerSession();
+
     if (!sourceColId || !destColId || !cardId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
@@ -307,6 +311,21 @@ export async function PUT(req) {
 
     destCol.cards.push(movedCard);
     await destCol.save();
+
+    if(user.role != 'admin'){
+        await CardAssignUser.findOneAndUpdate(
+          { userId: user.id, cardId: cardId },  // find record
+          { colId: destColId },                 // update field
+          { new: true, upsert: true }           // new doc return + create if not exist
+        );
+    }else{
+
+      await CardAssignUser.updateMany(
+        { cardId: cardId },          // find all records with this cardId
+        { $set: { colId: destColId } }  // update colId in ALL
+      );
+
+    }
 
     // 5️⃣ Return updated columns
     return NextResponse.json(

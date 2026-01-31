@@ -224,7 +224,7 @@ export default function CustomDnD() {
     handleAutoScroll(e.clientX);
   };
 
-  const handleDropColumn = (destColId) => {
+  const handleDropColumn = async (destColId) => {
     if (!draggedCard) return;
     const sourceCol = columns[draggedCard.sourceColId];
     const destCol = columns[destColId];
@@ -246,13 +246,16 @@ export default function CustomDnD() {
     });
 
     handleDragEnd();
-    dispatch(
+   await dispatch(
       get_leadStatusCardUpdate({
         sourceColId: draggedCard.sourceColId,
         destColId: destColId,
         cardId: draggedObj._id || draggedObj.id,
       })
     );
+    
+     dispatch(get_leadStatusData());
+
   };
 
   const handleDropBetween = (destColId, destIndex) => {
@@ -328,6 +331,7 @@ export default function CustomDnD() {
       dispatch(get_leadStatusData());
     }
   }, [successMessage, dispatch]);
+
 
   return (
     <div className="flex flex-col h-full">
