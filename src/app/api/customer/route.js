@@ -12,7 +12,7 @@ export async function POST(req) {
 
   try {
     const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed } = await req.json()
-
+    await dbConnect();
     const newCard = {
       lead_title,
       surname,
