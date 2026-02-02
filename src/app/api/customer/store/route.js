@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
-import Customer from '@/models/Customer'
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser'
 import mongoose from "mongoose";
