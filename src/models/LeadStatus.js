@@ -14,6 +14,7 @@ const CardSchema = new mongoose.Schema({
   assigned: { type: String },
   status: { type: String },
   type_of_opration: { type: String },
+  snake_case: { type: String },
   customer_situation: { type: String },
   purchase_status: { type: String },
   contacted: { type: String },

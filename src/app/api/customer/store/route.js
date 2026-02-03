@@ -1,18 +1,14 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
-import CardAssignUser from '@/models/CardAssignUser'
-import mongoose from "mongoose";
-import getUserFromServerSession from '@/lib/getUserFromServerSession'
+
 
 export async function POST(req) {
 
-
-
   try {
-    const { token,lead_title, surname, first_name, last_name, email, phone,} = await req.json()
+    const { token,lead_title, surname, first_name, last_name, email, phone,snake_case} = await req.json()
      await dbConnect();
-    const leadStatusData = await LeadStatus.findOneAndUpdate({ status_name: "Prioritarios" });
+    const leadStatusData = await LeadStatus.findOneAndUpdate({ status_name: lead_title });
     if(token != '2y:5254polkiju69852tokenther5895sdsd1sd477sd477dslhashdsfoiasdfkcheck'){
        return NextResponse.json({ error: 'You are not authorized' }, { status: 500 })
     }
@@ -24,6 +20,7 @@ export async function POST(req) {
       last_name,
       phone,
       email,
+      snake_case,
       status: leadStatusData._id,
     };
 
@@ -33,18 +30,6 @@ export async function POST(req) {
       { $push: { cards: newCard } },
       { new: true } // return the updated document
     );
-
-    // these two lines are used to assign the card to the manager or staff or any user at the time of lead creation
-    // const newCardId = updatedColumn.cards[updatedColumn.cards.length - 1]._id;
-    // if (!assigned || assigned.trim() === "") {
-    //   console.log("No user assigned, skipping assignment creation");
-    // } else {
-    //   await CardAssignUser.create({
-    //     userId: assigned,
-    //     cardId: newCardId,
-    //     colId: selectedColId
-    //   });
-    // }
 
     if (!updatedColumn) {
       return NextResponse.json({ error: 'Column not found' }, { status: 404 });
