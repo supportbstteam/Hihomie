@@ -8,11 +8,16 @@ export async function POST(req) {
   try {
     const { token,lead_title, surname, first_name, last_name, email, phone,snake_case,operation,reserved_property,price_property,net_earnings,catalonia,monthly_net_earnings,minimum_savings,down_payment,additional_security,paying_any_other_loans,pay_on_other_loans,old_are_you,registry_ASNEF,mortgage,second_monthly_net_earnings,second_paying_any_other_loans,owner_property,campaign} = await req.json()
      await dbConnect();
-    const leadStatusData = await LeadStatus.findOneAndUpdate({ status_name: lead_title });
+
+    // const leadStatusData = await LeadStatus.findOneAndUpdate({ status_name: 'Nuevo lead' });
+
+
     if(token != '2y:5254polkiju69852tokenther5895sdsd1sd477sd477dslhashdsfoiasdfkcheck'){
        return NextResponse.json({ error: 'You are not authorized' }, { status: 500 })
     }
-  
+
+    let lead_status_id = '68c297a3212f4d647f1c1087';
+
     const newCard = {
       lead_title,
       surname,
@@ -39,12 +44,12 @@ export async function POST(req) {
       second_paying_any_other_loans,
       owner_property,
       campaign,
-      status: leadStatusData._id,
+      status: lead_status_id,
     };
 
     // Find the LeadStatus by ID and push the new card
     const updatedColumn = await LeadStatus.findByIdAndUpdate(
-      leadStatusData._id,
+      lead_status_id,
       { $push: { cards: newCard } },
       { new: true } // return the updated document
     );
