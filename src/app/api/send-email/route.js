@@ -1,48 +1,12 @@
 import { sendEmail } from "@/lib/sendEmail";
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
 
 export async function POST(req) {
   try {
-    const { email, subject, mailContent, pdfHtml } = await req.json();
+    const { email, subject, mailContent } = await req.json();
 
     // --------------------
-    // 1️⃣ Generate PDF
-    // --------------------
-   
-     const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--no-zygote",
-        "--single-process",
-      ],
-    });
-
-    const page = await browser.newPage();
-
-    await page.setContent(pdfHtml, {
-      waitUntil: "networkidle0"
-    });
-
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "20px",
-        bottom: "20px",
-        left: "20px",
-        right: "20px"
-      }
-    });
-
-    await browser.close();
-
-    // --------------------
-    // 2️⃣ Email Content
+    //  Email Content
     // --------------------
     const mailOptions = {
       from: `"Hihomie" <${process.env.EMAIL_USER}>`,
@@ -69,7 +33,7 @@ export async function POST(req) {
         <tbody>
           <tr>
             <td valign="middle" style="padding:20px 0; background:#f7f7f7;">
-              <!-- your columns here (unchanged) -->
+              <!-- your columns here -->
             </td>
           </tr>
           <tr>
@@ -80,13 +44,8 @@ export async function POST(req) {
         </tbody>
       </table>
       `,
-      attachments: [
-        {
-          filename: "Simulacion-Hipoteca.pdf",
-          content: pdfBuffer,
-          contentType: "application/pdf",
-        },
-      ],
+      // No PDF attachment now
+      attachments: [],
     };
 
     // Send Email
