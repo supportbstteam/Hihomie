@@ -1,7 +1,6 @@
 import { sendEmail } from "@/lib/sendEmail";
 import { NextResponse } from "next/server";
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 
 export async function POST(req) {
   try {
@@ -14,14 +13,17 @@ export async function POST(req) {
       );
     }
 
-    // ------------------------
-    // 1️⃣ Generate PDF using Puppeteer (Vercel Safe)
-    // ------------------------
+    // 1️⃣ Launch Puppeteer on Linux
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
+      headless: "new",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-zygote",
+        "--single-process"
+      ],
     });
 
     const page = await browser.newPage();
@@ -34,37 +36,12 @@ export async function POST(req) {
 
     await browser.close();
 
-    // ------------------------
-    // 2️⃣ Email Content + PDF attachment
-    // ------------------------
+    // 2️⃣ Email with PDF
     const mailOptions = {
       from: `"HiHomie" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: subject,
-      html: `
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#22b573;">
-          <tr>
-            <td style="padding:20px;">
-              <a href="https://hipoteca.hihomie.es/" target="_blank">
-                <img src="https://hipotecas.hihomie.es/src/inc/assets/template_files/mailing/img/logo-white.png"
-                     alt="HiHomie Logo"
-                     style="width:180px; display:block;" />
-              </a>
-            </td>
-          </tr>
-        </table>
-
-        ${mailContent}
-
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f7f7f7; margin-top:20px;">
-          <tr>
-            <td style="text-align:center; padding:20px 0; color:#999; font-size:13px;">
-              HiHomie 2025 - La mejor hipoteca, gana más por tu piso
-            </td>
-          </tr>
-        </table>
-      `,
-
+      subject,
+      html: mailContent,
       attachments: [
         {
           filename: "document.pdf",
@@ -74,9 +51,6 @@ export async function POST(req) {
       ],
     };
 
-    // ------------------------
-    // 3️⃣ Send Email (with PDF)
-    // ------------------------
     await sendEmail(mailOptions);
 
     return NextResponse.json(
