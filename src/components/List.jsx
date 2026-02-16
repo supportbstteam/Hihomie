@@ -166,13 +166,22 @@ const List = ({
 
   // ✅ Handle Edit Click
   const handleEditClick = (item) => {
-    const updatedUser = {
-      ...item,
-      colId: item.leadStatusId, // assign leadStatusId to colId
-      id: item._id, // assign card _id to id
-    };
-    setSelectedColId(item.leadStatusId);
-    setSelectedUser(updatedUser);
+
+    
+    const url = `/dashboard/lead/edit/${item._id}/${item.status}`;
+    window.open(url, "_blank");  // Opens in new tab
+
+
+    // console.log(item);
+    
+
+    // const updatedUser = {
+    //   ...item,
+    //   colId: item.leadStatusId, // assign leadStatusId to colId
+    //   id: item._id, // assign card _id to id
+    // };
+    // setSelectedColId(item.leadStatusId);
+    // setSelectedUser(updatedUser);
   };
 
   const handleDeleteClick = async (cardId, columId) => {
