@@ -47,7 +47,7 @@ import { useRouter } from "next/navigation";
 export default function CustomDnD() {
   const authUser = useUserFromSession();
 
-    const router = useRouter();
+  const router = useRouter();
 
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(
@@ -141,8 +141,8 @@ export default function CustomDnD() {
 
         const matchName = full_name
           ? `${item.first_name || ""} ${item.last_name || ""}`
-              .toLowerCase()
-              .includes(full_name.toLowerCase())
+            .toLowerCase()
+            .includes(full_name.toLowerCase())
           : true;
 
         const matchPhone = phone
@@ -164,9 +164,9 @@ export default function CustomDnD() {
 
         const matchId = id ? item?._id === id : true;
 
-         const matchEmail = email
-        ? item?.email?.toLowerCase().includes(email.toLowerCase())
-        : true;
+        const matchEmail = email
+          ? item?.email?.toLowerCase().includes(email.toLowerCase())
+          : true;
 
         return (
           matchGestor &&
@@ -250,15 +250,15 @@ export default function CustomDnD() {
     });
 
     handleDragEnd();
-   await dispatch(
+    await dispatch(
       get_leadStatusCardUpdate({
         sourceColId: draggedCard.sourceColId,
         destColId: destColId,
         cardId: draggedObj._id || draggedObj.id,
       })
     );
-    
-     dispatch(get_leadStatusData());
+
+    dispatch(get_leadStatusData());
 
   };
 
@@ -313,21 +313,22 @@ export default function CustomDnD() {
   };
 
   const handleTouchEnd = () => {
-    if (dragOverColId) {  
+    if (dragOverColId) {
       handleDropColumn(dragOverColId);
     }
     handleDragEnd();
   };
 
+  // const handleCardClick = (colId, card) => {
+  //   router.push(`/dashboard/lead/edit/${card._id}/${colId}`); // Navigate to the edit page for the clicked card;
+  // };
+
   const handleCardClick = (colId, card) => {
-
-     router.push(`/dashboard/lead/edit/${card._id}/${colId}`); // Navigate to the edit page for the clicked card;
-
-    // console.log("Card clicked:", card._id); 
-    // console.log("Column ID:", colId);                                                                                                                                                                                                                                                                                                                                                                                                                         
-    // setSelectedColId(colId);  
-    // setSelectedUser(card);
+    const url = `/dashboard/lead/edit/${card._id}/${colId}`;
+    window.open(url, "_blank");  // Opens in new tab
   };
+
+
 
   useEffect(() => {
     if (successMessage) {
@@ -340,8 +341,6 @@ export default function CustomDnD() {
       dispatch(get_leadStatusData());
     }
   }, [successMessage, dispatch]);
-  
-  console.log("LeadStatus for List:", columns);
 
   return (
     <div className="flex flex-col h-full">
@@ -407,7 +406,7 @@ export default function CustomDnD() {
       </aside>
       {/* <LowerNav /> */}
 
-      
+
 
       {/* BOARD */}
       {!listComponent ? (
@@ -421,11 +420,10 @@ export default function CustomDnD() {
                 key={col.id}
                 data-col-id={col.id}
                 className={`p-2 pb-8 flex-1 transition-colors duration-200 overflow-hidden border-t-5 rounded-md
-                                ${
-                                  dragOverColId === col.id
-                                    ? "bg-blue-100"
-                                    : "bg-[#F9F9F9]"
-                                }`}
+                                ${dragOverColId === col.id
+                    ? "bg-blue-100"
+                    : "bg-[#F9F9F9]"
+                  }`}
                 style={{ borderTopColor: col.color }}
                 onDragOver={(e) => handleDragOver(e, col.id)}
                 onDrop={() => handleDropColumn(col.id)}
@@ -448,7 +446,7 @@ export default function CustomDnD() {
                   >
                     <CiCirclePlus />
                   </button>}
-                  
+
                 </div>
                 <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
                   {col.cards.map((card, index) => (
@@ -463,18 +461,17 @@ export default function CustomDnD() {
                       onDragEnd={handleDragEnd}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleDropBetween(col.id, index)}
-                      {...(authUser?.role !== "external" ? { onClick: () => handleCardClick(col.id, card) }: {})}
+                      {...(authUser?.role !== "external" ? { onClick: () => handleCardClick(col.id, card) } : {})}
                       onTouchStart={(e) =>
                         handleTouchStart(e, card._id, col.id, index)
                       }
                       onTouchMove={handleTouchMove}
                       onTouchEnd={handleTouchEnd}
                       className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
-                                        ${
-                                          draggingCardId === card._id
-                                            ? "opacity-60 border-2 border-blue-500"
-                                            : "bg-white "
-                                        }`}
+                                        ${draggingCardId === card._id
+                          ? "opacity-60 border-2 border-blue-500"
+                          : "bg-white "
+                        }`}
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
@@ -482,11 +479,9 @@ export default function CustomDnD() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                            {`${
-                              card.first_name?.charAt(0).toUpperCase() || ""
-                            }${card.first_name?.slice(1) || ""} ${
-                              card.last_name?.charAt(0).toUpperCase() || ""
-                            }${card.last_name?.slice(1) || ""}`}
+                            {`${card.first_name?.charAt(0).toUpperCase() || ""
+                              }${card.first_name?.slice(1) || ""} ${card.last_name?.charAt(0).toUpperCase() || ""
+                              }${card.last_name?.slice(1) || ""}`}
                           </h3>
                         </div>
                       </div>
@@ -504,7 +499,18 @@ export default function CustomDnD() {
                         <span className="flex gap-2">
                           <Calendar size={16} />
                           <p className="text-light pxs">
-                            {card.updatedAt ? new Date(card.updatedAt).toLocaleDateString() : "N/A"}
+                            {card.updatedAt
+                              ? new Date(card.updatedAt).toLocaleString("en-IN", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true
+                              })
+                              : "N/A"
+                            }
+
                           </p>
                         </span>
                         <span className="flex gap-2">
@@ -514,7 +520,7 @@ export default function CustomDnD() {
                           </p>
                         </span>
                       </div>
-                      
+
 
                       <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                         <a
@@ -569,7 +575,7 @@ export default function CustomDnD() {
             setSelectedUser={setSelectedUser}
             successMessage={successMessage}
             setSelectedColId={setSelectedColId}
-            authUser = {authUser}
+            authUser={authUser}
           />
         </div>
       )}

@@ -194,7 +194,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         dispatch(get_leadStatusDataForList());
         dispatch(get_leadStatusData());
         dispatch(messageClear());
-        router.push(`/dashboard/lead`);
+        // router.push(`/dashboard/lead`);
         toast.success(successMessage);
         setSelectedUser(null);
         // setFormData({
