@@ -18,11 +18,16 @@ import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import useUserFromSession from "@/lib/useUserFromSession";
 import Datepicker from "../ui/Datepicker";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import DateTimepicker from "../ui/DateTimepicker";
 
 const date = format(new Date(), "yyyy-MM-dd");
 
 const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const dispatch = useDispatch();
+
+  const router = useRouter();
+
   const { loader, successMessage, errorMessage, comments, dueDate, documents } = useSelector(
     (state) => state.customer
   );
@@ -103,7 +108,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const validateForm = () => {
     let newErrors = {
       surname: '',
-      lead_title: '',
+      // lead_title: '',
       first_name: '',
       last_name: '',
       company: '',
@@ -144,10 +149,15 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
       newErrors.email = t("validEmail");
       valid = false;
     }
-    if (formData.phone && !/^[0-9]{7,15}$/.test(formData.phone)) {
+    // if (formData.phone && !/^[0-9]{7,15}$/.test(formData.phone)) {
+    //   newErrors.phone = t("validPhone");
+    //   valid = false;
+    // }
+    if (formData.phone && !/^(\+?[0-9]{7,15})$/.test(formData.phone)) {
       newErrors.phone = t("validPhone");
       valid = false;
     }
+
     if (!formData.status) {
       newErrors.status = t("statusRequired");
       valid = false;
@@ -167,6 +177,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const handleDelete = (id) => {
     setSelectedUser(null);
     dispatch(cardDelete(id));
+    router.push(`/dashboard/lead`);
   };
 
   useEffect(() => {
@@ -183,6 +194,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         dispatch(get_leadStatusDataForList());
         dispatch(get_leadStatusData());
         dispatch(messageClear());
+        router.push(`/dashboard/lead`);
         toast.success(successMessage);
         setSelectedUser(null);
         // setFormData({
@@ -208,6 +220,9 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         //   id: "",
         //   colId: "", // ✅ keep the current colId
         // });
+
+         
+
       }
     }
   }, [successMessage, errorMessage]);
@@ -416,133 +431,115 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   };
 
   return (
-    <AnimatePresence>
-      {selectedUser && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4">
-          <motion.div
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 20, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-white w-full md:max-w-[70%] mx-auto rounded-radius shadow-2xl p-6 md:p-8 relative overflow-y-auto mt-5 custom-scrollbar"
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedUser(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
-            >
-              ✕
-            </button>
+    <div className="flex items-center justify-start px-4">
 
-            <p className="text-gray-700 text-[20px] mb-6">{t("edit_lead")}</p>
+      {/* Form */}
+      <div className="overflow-y-auto custom-scrollbar max-h-[70vh] grid grid-cols-1 md:grid-cols-12 gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 mb-5 col-span-8"
+        >
+          {/* Lead Title */}
+          <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <Input
+              label={t("lead_title")}
+              value={formData.lead_title}
+              onChange={handleChange}
+              name="lead_title"
+              error={errors.lead_title}
+              disabled
+            />
+            {/* Status */}
 
-            {/* Form */}
-            <div className="overflow-y-auto custom-scrollbar max-h-[70vh] grid grid-cols-1 md:grid-cols-12 gap-4">
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-4 mb-5 col-span-8"
-              >
-                {/* Lead Title */}
-                <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  <Input
-                    label={t("lead_title")}
-                    value={formData.lead_title}
-                    onChange={handleChange}
-                    name="lead_title"
-                    
-                    error={errors.lead_title}
-                  />
-                  {/* Status */}
+            <Dropdown
+              label={t("surname")}
+              value={formData.surname}
+              onChange={handleChange}
+              name="surname"
+              options={[
+                { value: t("mr"), label: t("mr") },
+                { value: t("mrs"), label: t("mrs") }
+              ]}
 
-                  <Dropdown
-                    label={t("surname")}
-                    value={formData.surname}
-                    onChange={handleChange}
-                    name="surname"
-                    options={[
-                      { value: t("mr"), label: t("mr") },
-                      { value: t("mrs"), label: t("mrs") }
-                    ]}
-                    
-                  />
+            />
 
-                  {/* First Name */}
+            {/* First Name */}
 
-                  <Input
-                    label={t("first_name")}
-                    type="text"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    name="first_name"
-                    required
-                    error={errors.first_name}
-                  />
+            <Input
+              label={t("first_name")}
+              type="text"
+              value={formData.first_name}
+              onChange={handleChange}
+              name="first_name"
+              required
+              error={errors.first_name}
+            />
 
-                  {/* Last Name */}
+            {/* Last Name */}
 
-                  <Input
-                    label={t("last_name")}
-                    type="text"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    name="last_name"
-                    required
-                    error={errors.last_name}
-                  />
+            <Input
+              label={t("last_name")}
+              type="text"
+              value={formData.last_name}
+              onChange={handleChange}
+              name="last_name"
+              required
+              error={errors.last_name}
+            />
 
-                  <Input
-                    label={t("referred_by")}
-                    type="text"
-                    value={formData.company}
-                    onChange={handleChange}
-                    name="company"
-                    error={errors.company}
-                  />
-                  <Dropdown
-                    label={t("designation")}
-                    name="designation"
-                    title={t("select_designation")}
-                    value={formData.designation}
-                    onChange={handleChange}
-                    error={errors.designation}
-                    options={[
-                      { value: "ceo", label: t("ceo") },
-                      { value: "marketing_manager", label: t("marketing_manager") },
-                      { value: "hr_executive", label: t("hr_executive") },
-                      { value: "sales_head", label: t("sales_head") },
-                      { value: "owner_founder", label: t("owner_founder") },
-                      { value: "team_lead", label: t("team_lead") },
-                      { value: "agent", label: t("agent") },
-                    ]}
-                  />
+            <Input
+              label={t("referred_by")}
+              type="text"
+              value={formData.company}
+              onChange={handleChange}
+              name="company"
+              error={errors.company}
+            />
+            <Dropdown
+              label={t("designation")}
+              name="designation"
+              title={t("select_designation")}
+              value={formData.designation}
+              onChange={handleChange}
+              error={errors.designation}
+              options={[
+                { value: "ceo", label: t("ceo") },
+                { value: "marketing_manager", label: t("marketing_manager") },
+                { value: "hr_executive", label: t("hr_executive") },
+                { value: "sales_head", label: t("sales_head") },
+                { value: "owner_founder", label: t("owner_founder") },
+                { value: "team_lead", label: t("team_lead") },
+                { value: "agent", label: t("agent") },
+              ]}
+            />
 
-                  <Input
-                    label={t("phone")}
-                    type="text"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    name="phone"
-                    error={errors.phone}
-                  />
-                  <Input
-                    label={t("email")}
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    name="email"
-                    error={errors.email}
-                    required
-                  />
-                  <Input
-                    label={t("lead_amout") + " ($)"}
-                    type="number"
-                    value={formData.lead_value}
-                    onChange={handleChange}
-                    name="lead_value"
-                  />
+            <Input
+              label={t("phone")}
+              type="text"
+              value={formData.phone}
+              onChange={handleChange}
+              name="phone"
+              error={errors.phone}
+            />
+            <Input
+              label={t("email")}
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              name="email"
+              error={errors.email}
+              required
+            />
+            <Input
+              label={t("lead_amout") + " ($)"}
+              type="number"
+              value={formData.lead_value}
+              onChange={handleChange}
+              name="lead_value"
+            />
 
-                  {/* because the assigning process is now done by the assign user module not this dropdown */}
-                  {/* <Dropdown
+            {/* because the assigning process is now done by the assign user module not this dropdown */}
+            {/* <Dropdown
                     label={t("assigned_to")}
                     name="assigned"
                     title={t("select_assigned")}
@@ -555,427 +552,435 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                     }))}
                   /> */}
 
-                  <Dropdown
-                    label={t("status")}
-                    type="text"
-                    value={formData.status}
-                    onChange={handleChange}
-                    name="status"
-                    options={leadStatus.map((item) => ({
-                      value: item._id,
-                      label: item.status_name,
-                    }))}
-                    error={errors.status}
-                  />
-                  <Dropdown
-                    label={t("type_of_operation")}
-                    type="text"
-                    value={formData.type_of_opration}
-                    onChange={handleChange}
-                    name="type_of_opration"
-                    options={[
-                      { value: t("first_house"), label: t("first_house") },
-                      { value: t("second_house"), label: t("second_house") },
-                      { value: t("investment"), label: t("investment") },
-                      { value: t("surrogacy"), label: t("surrogacy") },
-                      { value: t("refinancing"), label: t("refinancing") },
-                    ]}
-                  />
-                  <Dropdown
-                    label={t("customer_situation")}
-                    type="text"
-                    value={formData.customer_situation}
-                    onChange={handleChange}
-                    name="customer_situation"
-                    options={[
-                      { value: t("customer_situation1"), label: t("customer_situation1") },
-                      { value: t("urgent"), label: t("urgent") },
-                      { value: t("evaluating"), label: t("evaluating") },
-                      { value: t("decided"), label: t("decided") },
-                    ]}
-                  />
-                  <Dropdown
-                    label={t("purchase_status")}
-                    type="text"
-                    value={formData.purchase_status}
-                    onChange={handleChange}
-                    name="purchase_status"
-                    options={[
-                      { value: t("still_searching"), label: t("still_searching") },
-                      {
-                        value: t("selected_housing"),
-                        label: t("selected_housing"),
-                      },
-                      { value: t("property"), label: t("property") },
-                    ]}
-                  />
-                  <Dropdown
-                    label={t("contacted")}
-                    name="contacted"
-                    value={formData.contacted}
-                    onChange={handleChange}
-                    error={errors.contacted}
-                    required
-                    options={[
-                      { value: "no", label: "No" },
-                      { value: "yes", label: "Yes" },
-                    ]}
-                  />
-                </section>
-
-                <section className="grid gap-4">
-                  <section className="bg-gray-50 p-4 rounded-md border border-stroke grid gap-4">
-                    <h3 className="text-base font-semibold text-gray-800 mb-4">
-                      {t("note")}
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor="commercial_notes" className="block text-sm font-medium text-gray-700 mb-1">
-                          {t("commerical_note")}
-                        </label>
-                        <textarea
-                          id="commercial_notes"
-                          name="commercial_notes"
-                          rows="4"
-                          className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
-                          placeholder="Escribe tus notas comerciales..."
-                          defaultValue={formData.commercial_notes}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="manager_notes" className="block text-sm font-medium text-gray-700 mb-1">
-                          {t("Managers_notes")}
-                        </label>
-                        <textarea
-                          id="manager_notes"
-                          name="manager_notes"
-                          rows="4"
-                          className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
-                          placeholder="Manager's remarks..."
-                          defaultValue={formData.manager_notes}
-                          onChange={handleChange}
-                        ></textarea>
-                      </div>
-                    </div>
-                  </section>
-
-                  <div className="flex items-center justify-between mt-2 ">
-                    <span className="w-32 font-medium text-gray-700 text-sm">
-                      {t("details")}
-                    </span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        name="details"
-                        checked={details}
-                        onChange={handleToggle}
-                      />
-                      <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                      <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
-                    </label>
-                  </div>
-
-                  {details && (
-                    <Form1
-                      setDetailsData={setDetailsData}
-                      selectedUser={selectedUser.detailsData}
-                    />
-                  )}
-
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="font-medium text-gray-700 text-sm">
-                      {t("address_organization")}
-                    </span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        name="address_details"
-                        checked={address_details}
-                        onChange={handleToggleAddress}
-                      />
-                      <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                      <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
-                    </label>
-                  </div>
-
-                  {address_details && (
-                    <Form2
-                      setAddressDetailsData={setAddressDetailsData}
-                      selectedUser={selectedUser.addressDetailsData}
-                    />
-                  )}
-
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="font-medium text-dark psm">
-                      {t("contract_signed")}
-                    </span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        name="contract_signed"
-                        checked={contract_signed}
-                        onChange={() => setContractSigned(!contract_signed)}
-                      />
-                      <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
-                      <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
-                    </label>
-                  </div>
-
-                  <div className="flex gap-3 justify-end">
-                    <button
-                      onClick={() => setSelectedUser(null)}
-                      type="reset"
-                      className="px-6 cursor-pointer py-2 border border-stroke rounded-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {t("cancel")}
-                    </button>
-                    <button
-                      disabled={loader}
-                      type="submit"
-                      className="px-6 py-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700"
-                    >
-                      {loader ? t("loading") : t("submit")}
-                    </button>
-                  </div>
-                </section>
-              </form>
-              <div className="col-span-4 h-full bg-gray-50">
-                <div className="h-fit bg-primary/20 p-2 mb-2">
-                  <AssignUser colId={colId} cardid={selectedUser._id} />
-                </div>
-                <div>
-                  <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-gray-300">
-                    {dueDate.map((item, index) => (
-                      <div
-                        key={index}
-                        className="p-4 m-2 bg-primary/20 rounded-xl flex flex-col gap-2 shadow-sm"
-                      >
-                        {/* Note Text */}
-                        <div className="text-gray-800 text-sm">
-                          {item.due_date_note}
-                        </div>
-
-                        {/* Footer with Icon + Date + Delete */}
-                        <div className="flex items-center justify-between text-gray-600 text-sm">
-                          <div className="flex items-center gap-2">
-                            <Clock size={20} />
-                            <span>
-                              {new Date(item.due_date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </span>
-                          </div>
-                          <Trash2
-                            onClick={() => handleDeleteDueDate(item._id)}
-                            size={20}
-                            className="cursor-pointer hover:text-red-500 transition"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <form onSubmit={handleDueDateSubmit} className="p-2">
-                    {/* The text input for the note */}
-                    <textarea
-                      name="due_date_note"
-                      value={dueDateForm.due_date_note}
-                      onChange={handleDueDateFormChange}
-                      placeholder="Hello, Enter your note..."
-                      className="w-full p-3 border border-gray-400 rounded-md" // Example styling for the text box
-                    />
-
-                    {/* Flex container for the bottom row */}
-                    <div className="flex items-center gap-2">
-                      {/* Wrapper to make the date picker fill available space */}
-                      <div className="flex-grow">
-                        <Datepicker
-                          name="due_date"
-                          value={dueDateForm.due_date}
-                          onChange={handleDueDateFormChange}
-                          dateFormat="dd/MM/yyyy" // <-- Customize your format here!
-                        />
-                      </div>
-
-                      {/* The schedule button */}
-                      <button
-                        type="submit"
-                        className="px-4 py-2 cursor-pointer bg-green-500 text-white rounded-md hover:bg-green-600"
-                      >
-                        {/* Using "Schedule" to match the image */}
-                        {loader ? t("loading") : "Schedule"}
-                      </button>
-                    </div>
-                  </form>
-
-                </div>
-                <div>
-                  <form onSubmit={handleBankSubmit} className="p-2 mt-2">
-                    <Dropdown
-                      label={t("bank")}
-                      value={bankData?.bank_name}
-                      onChange={handleBankChange}
-                      name="bank_name"
-                      title={t("select_bank")}
-                      options={[
-                        { value: "CaixaBank", label: "CaixaBank" },
-                        { value: "Banco Santander", label: "Banco Santander" },
-                        { value: "BBVA", label: "BBVA" },
-                        { value: "Abanca", label: "Abanca" },
-                        { value: "Banca Pueyo", label: "Banca Pueyo" },
-                        { value: "Caja Granada", label: "Caja Granada" },
-                        { value: "Caja Rural Granada", label: "Caja Rural Granada" },
-                        { value: "Caja Soria", label: "Caja Soria" },
-                        { value: "Cajamar", label: "Cajamar" },
-                        { value: "Deutsche Bank", label: "Deutsche Bank" },
-                        { value: "Eurocaja Rural", label: "Eurocaja Rural" },
-                        { value: "Globalcaja", label: "Globalcaja" },
-                        { value: "Ibercaja", label: "Ibercaja" },
-                        { value: "ING", label: "ING" },
-                        { value: "Kutxabank", label: "Kutxabank" },
-                        { value: "Laboral Kutxa", label: "Laboral Kutxa" },
-                        { value: "Mediolanum", label: "Mediolanum" },
-                        { value: "Pichincha", label: "Pichincha" },
-                        { value: "Unicaja", label: "Unicaja" },
-                      ]}
-                    />
-                    <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
-                      {t("submit")}
-                    </button>
-                  </form>
-                </div>
-                <div>
-                  <form onSubmit={handleDocumentSubmit} className="p-2 mt-2">
-                    <Dropdown
-                      className={"mb-2"}
-                      label={t("document_type")}
-                      value={documentType}
-                      onChange={(e) => setDocumentType(e.target.value)}
-                      name="document_type"
-                      placeholder={t("enter_document_type")}
-                      options={[
-                        { value: "id", label: t("id") },
-                        { value: "employment_contract", label: t("employment_contract") },
-                        { value: "payroll", label: t("payroll") },
-                        { value: "working_life", label: t("working_life") },
-                        { value: "income", label: t("income") },
-                        { value: "receipt", label: t("receipt") },
-                        { value: "renta", label: t("renta") },
-                        { value: "recibos_préstamos", label: t("recibos_préstamos") },
-                        { value: "recibos_hipotecas", label: t("recibos_hipotecas") },
-                        { value: "modelos_de_autónomos", label: t("modelos_de_autónomos") },
-                        { value: "movimientos_bancarios", label: t("movimientos_bancarios") },
-                        { value: "nota_simple", label: t("nota_simple") },
-                        { value: "other", label: t("other") },
-                      ]}
-                      error={errors.document_type}
-                    />
-                    <Input
-                      label={t("document")}
-                      type="file"
-                      name="document"
-                      placeholder={t("upload_document")}
-                      error={errors.document}
-                    />
-                    {documentStatus && <p className="text-green-600 mt-2">{documentStatus}</p>}
-                    <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
-                      {t("submit")}
-                    </button>
-                  </form>
-                  <div className="p-2 mt-2">
-                    <h1 className="text-lg font-semibold mb-4">{t("available_documents")}</h1>
-                    {documents.length === 0 ? (
-                      <p>{t("no_documents_found")}</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {documents.map((doc) => (
-                          <li key={doc._id} className="flex items-center justify-between border py-1 px-2 rounded-sm">
-                            <span>{t(doc.document_type)}</span>
-                            <div className="flex items-center space-x-2">
-                              <a
-                                href={doc.document_path.startsWith("http") ? doc.document_path : `${process.env.NEXT_PUBLIC_BASE_URL}${doc.document_path}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline"
-                              >
-                                <Eye className="w-4 h-4 text-green-600" />
-                              </a>
-                              <button
-                                onClick={() => handleDocDelete(doc._id)}
-                                className="text-red-600 hover:text-red-800"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <div>
-                    <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4 mb-5 col-span-8">
-                <form onSubmit={handleCommentSubmit}>
-                  <Input
-                    label={t("comment")}
-                    value={commentFormData.comment}
-                    onChange={handleCommentChange}
-                    name="comment"
-                    placeholder={t("enter_comment")}
-                    error={errors.comment}
-                  />
-                  <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
-                    {t("submit")}
-                  </button>
-                </form>
-                <div>
-                  <div className="space-y-1 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg shadow-inner">
-                    {comments && comments.map((comment, index) => (
-                      // Comment component
-                      <div key={index} className="relative flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
-                        <p className="text-gray-800 text-sm pr-10">{comment.comment}</p>
-                        {authUser?.role === "admin" ? (
-                          <button
-                            onClick={() => handleCommentDelete(comment._id)}
-                            className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )
-                          : authUser?.id === comment.userId && (
-                            <button
-                              onClick={() => handleCommentDelete(comment._id)}
-                              className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <ConfirmDeleteModal
-              isOpen={deleteConfirmAlert}
-              onClose={() => setDeleteConfirmAlert(false)}
-              onConfirm={() => handleDelete(selectedUser._id)}
+            <Dropdown
+              label={t("status")}
+              type="text"
+              value={formData.status}
+              onChange={handleChange}
+              name="status"
+              options={leadStatus.map((item) => ({
+                value: item._id,
+                label: item.status_name,
+              }))}
+              error={errors.status}
             />
-          </motion.div>
+            <Dropdown
+              label={t("type_of_operation")}
+              type="text"
+              value={formData.type_of_opration}
+              onChange={handleChange}
+              name="type_of_opration"
+              options={[
+                { value: t("first_house"), label: t("first_house") },
+                { value: t("second_house"), label: t("second_house") },
+                { value: t("investment"), label: t("investment") },
+                { value: t("surrogacy"), label: t("surrogacy") },
+                { value: t("refinancing"), label: t("refinancing") },
+              ]}
+            />
+            <Dropdown
+              label={t("customer_situation")}
+              type="text"
+              value={formData.customer_situation}
+              onChange={handleChange}
+              name="customer_situation"
+              options={[
+                { value: t("customer_situation1"), label: t("customer_situation1") },
+                { value: t("urgent"), label: t("urgent") },
+                { value: t("evaluating"), label: t("evaluating") },
+                { value: t("decided"), label: t("decided") },
+              ]}
+            />
+            <Dropdown
+              label={t("purchase_status")}
+              type="text"
+              value={formData.purchase_status}
+              onChange={handleChange}
+              name="purchase_status"
+              options={[
+                { value: t("still_searching"), label: t("still_searching") },
+                {
+                  value: t("selected_housing"),
+                  label: t("selected_housing"),
+                },
+                { value: t("property"), label: t("property") },
+              ]}
+            />
+            <Dropdown
+              label={t("contacted")}
+              name="contacted"
+              value={formData.contacted}
+              onChange={handleChange}
+              error={errors.contacted}
+              required
+              options={[
+                { value: "no", label: "No" },
+                { value: "yes", label: "Yes" },
+              ]}
+            />
+          </section>
+
+          <section className="grid gap-4">
+            <section className="bg-gray-50 p-4 rounded-md border border-stroke grid gap-4">
+              <h3 className="text-base font-semibold text-gray-800 mb-4">
+                {t("note")}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="commercial_notes" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("commerical_note")}
+                  </label>
+                  <textarea
+                    id="commercial_notes"
+                    name="commercial_notes"
+                    rows="4"
+                    className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
+                    placeholder="Escribe tus notas comerciales..."
+                    defaultValue={formData.commercial_notes}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="manager_notes" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("Managers_notes")}
+                  </label>
+                  <textarea
+                    id="manager_notes"
+                    name="manager_notes"
+                    rows="4"
+                    className="w-full p-2 border border-stroke rounded-md focus:ring-1 focus:ring-primary focus:outline-none text-sm"
+                    placeholder="Manager's remarks..."
+                    defaultValue={formData.manager_notes}
+                    onChange={handleChange}
+                  ></textarea>
+                </div>
+              </div>
+            </section>
+
+            <div className="flex items-center justify-between mt-2 ">
+              <span className="w-32 font-medium text-gray-700 text-sm">
+                {t("details")}
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  name="details"
+                  checked={details}
+                  onChange={handleToggle}
+                />
+                <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+              </label>
+            </div>
+
+            {details && (
+              <Form1
+                setDetailsData={setDetailsData}
+                selectedUser={selectedUser.detailsData}
+              />
+            )}
+
+            <div className="flex items-center justify-between mt-2">
+              <span className="font-medium text-gray-700 text-sm">
+                {t("address_organization")}
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  name="address_details"
+                  checked={address_details}
+                  onChange={handleToggleAddress}
+                />
+                <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+              </label>
+            </div>
+
+            {address_details && (
+              <Form2
+                setAddressDetailsData={setAddressDetailsData}
+                selectedUser={selectedUser.addressDetailsData}
+              />
+            )}
+
+            <div className="flex items-center justify-between mt-2">
+              <span className="font-medium text-dark psm">
+                {t("contract_signed")}
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  name="contract_signed"
+                  checked={contract_signed}
+                  onChange={() => setContractSigned(!contract_signed)}
+                />
+                <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+              </label>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setSelectedUser(null)}
+                type="reset"
+                className="px-6 cursor-pointer py-2 border border-stroke rounded-sm text-gray-700 hover:bg-gray-100"
+              >
+                {t("cancel")}
+              </button>
+              <button
+                disabled={loader}
+                type="submit"
+                className="px-6 py-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700"
+              >
+                {loader ? t("loading") : t("submit")}
+              </button>
+            </div>
+          </section>
+        </form>
+        <div className="col-span-4 h-full bg-gray-50">
+          <div className="h-fit bg-primary/20 p-2 mb-2">
+            <AssignUser colId={colId} cardid={selectedUser._id} />
+          </div>
+          <div>
+            <div className="overflow-y-auto custom-scrollbar max-h-[35vh] border-b border-gray-300">
+              {dueDate.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-4 m-2 bg-primary/20 rounded-xl flex flex-col gap-2 shadow-sm"
+                >
+                  {/* Note Text */}
+                  <div className="text-gray-800 text-sm">
+                    {item.due_date_note}
+                  </div>
+
+                  {/* Footer with Icon + Date + Delete */}
+                  <div className="flex items-center justify-between text-gray-600 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Clock size={20} />
+                      <span>
+                        {new Date(item.due_date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+
+                      <span>
+                        {new Date(`${item.due_date}T${item.due_time}`).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+
+
+                    </div>
+                    <Trash2
+                      onClick={() => handleDeleteDueDate(item._id)}
+                      size={20}
+                      className="cursor-pointer hover:text-red-500 transition"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <form onSubmit={handleDueDateSubmit} className="p-2">
+              {/* The text input for the note */}
+              <textarea
+                name="due_date_note"
+                value={dueDateForm.due_date_note}
+                onChange={handleDueDateFormChange}
+                placeholder="Hello, Enter your note..."
+                className="w-full p-3 border border-gray-400 rounded-md" // Example styling for the text box
+              />
+
+              {/* Flex container for the bottom row */}
+              <div className="flex items-center gap-2">
+                {/* Wrapper to make the date picker fill available space */}
+                <div className="flex-grow">
+                  <DateTimepicker
+                    name="due_date"
+                    value={dueDateForm.due_date}
+                    onChange={handleDueDateFormChange}
+                    dateFormat="dd/MM/yyyy HH:mm:ss" // <-- Customize your format here!
+                  />
+                </div>
+
+
+                {/* The schedule button */}
+                <button
+                  type="submit"
+                  className="px-4 py-2 cursor-pointer bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  {/* Using "Schedule" to match the image */}
+                  {loader ? t("loading") : "Schedule"}
+                </button>
+              </div>
+            </form>
+
+          </div>
+          <div>
+            <form onSubmit={handleBankSubmit} className="p-2 mt-2">
+              <Dropdown
+                label={t("bank")}
+                value={bankData?.bank_name}
+                onChange={handleBankChange}
+                name="bank_name"
+                title={t("select_bank")}
+                options={[
+                  { value: "CaixaBank", label: "CaixaBank" },
+                  { value: "Banco Santander", label: "Banco Santander" },
+                  { value: "BBVA", label: "BBVA" },
+                  { value: "Abanca", label: "Abanca" },
+                  { value: "Banca Pueyo", label: "Banca Pueyo" },
+                  { value: "Caja Granada", label: "Caja Granada" },
+                  { value: "Caja Rural Granada", label: "Caja Rural Granada" },
+                  { value: "Caja Soria", label: "Caja Soria" },
+                  { value: "Cajamar", label: "Cajamar" },
+                  { value: "Deutsche Bank", label: "Deutsche Bank" },
+                  { value: "Eurocaja Rural", label: "Eurocaja Rural" },
+                  { value: "Globalcaja", label: "Globalcaja" },
+                  { value: "Ibercaja", label: "Ibercaja" },
+                  { value: "ING", label: "ING" },
+                  { value: "Kutxabank", label: "Kutxabank" },
+                  { value: "Laboral Kutxa", label: "Laboral Kutxa" },
+                  { value: "Mediolanum", label: "Mediolanum" },
+                  { value: "Pichincha", label: "Pichincha" },
+                  { value: "Unicaja", label: "Unicaja" },
+                ]}
+              />
+              <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                {t("submit")}
+              </button>
+            </form>
+          </div>
+          <div>
+            <form onSubmit={handleDocumentSubmit} className="p-2 mt-2">
+              <Dropdown
+                className={"mb-2"}
+                label={t("document_type")}
+                value={documentType}
+                onChange={(e) => setDocumentType(e.target.value)}
+                name="document_type"
+                placeholder={t("enter_document_type")}
+                options={[
+                  { value: "id", label: t("id") },
+                  { value: "employment_contract", label: t("employment_contract") },
+                  { value: "payroll", label: t("payroll") },
+                  { value: "working_life", label: t("working_life") },
+                  { value: "income", label: t("income") },
+                  { value: "receipt", label: t("receipt") },
+                  { value: "renta", label: t("renta") },
+                  { value: "recibos_préstamos", label: t("recibos_préstamos") },
+                  { value: "recibos_hipotecas", label: t("recibos_hipotecas") },
+                  { value: "modelos_de_autónomos", label: t("modelos_de_autónomos") },
+                  { value: "movimientos_bancarios", label: t("movimientos_bancarios") },
+                  { value: "nota_simple", label: t("nota_simple") },
+                  { value: "other", label: t("other") },
+                ]}
+                error={errors.document_type}
+              />
+              <Input
+                label={t("document")}
+                type="file"
+                name="document"
+                placeholder={t("upload_document")}
+                error={errors.document}
+              />
+              {documentStatus && <p className="text-green-600 mt-2">{documentStatus}</p>}
+              <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+                {t("submit")}
+              </button>
+            </form>
+            <div className="p-2 mt-2">
+              <h1 className="text-lg font-semibold mb-4">{t("available_documents")}</h1>
+              {documents.length === 0 ? (
+                <p>{t("no_documents_found")}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {documents.map((doc) => (
+                    <li key={doc._id} className="flex items-center justify-between border py-1 px-2 rounded-sm">
+                      <span>{t(doc.document_type)}</span>
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={doc.document_path.startsWith("http") ? doc.document_path : `${process.env.NEXT_PUBLIC_BASE_URL}${doc.document_path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          <Eye className="w-4 h-4 text-green-600" />
+                        </a>
+                        <button
+                          onClick={() => handleDocDelete(doc._id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div>
+              <Button variant="destructive" onClick={() => setDeleteConfirmAlert(true)}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         </div>
-      )}
-    </AnimatePresence>
+        <div className="space-y-4 mb-5 col-span-8">
+          <form onSubmit={handleCommentSubmit}>
+            <Input
+              label={t("comment")}
+              value={commentFormData.comment}
+              onChange={handleCommentChange}
+              name="comment"
+              placeholder={t("enter_comment")}
+              error={errors.comment}
+            />
+            <button type="submit" className="px-6 py-2 mt-2 cursor-pointer bg-green-600 text-white rounded-sm hover:bg-green-700">
+              {t("submit")}
+            </button>
+          </form>
+          <div>
+            <div className="space-y-1 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg shadow-inner">
+              {comments && comments.map((comment, index) => (
+                // Comment component
+                <div key={index} className="relative flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
+                  <p className="text-gray-800 text-sm pr-10">{comment.comment}</p>
+                  {authUser?.role === "admin" ? (
+                    <button
+                      onClick={() => handleCommentDelete(comment._id)}
+                      className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )
+                    : authUser?.id === comment.userId && (
+                      <button
+                        onClick={() => handleCommentDelete(comment._id)}
+                        className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <ConfirmDeleteModal
+        isOpen={deleteConfirmAlert}
+        onClose={() => setDeleteConfirmAlert(false)}
+        onConfirm={() => handleDelete(selectedUser._id)}
+      />
+
+    </div>
   );
 };
 

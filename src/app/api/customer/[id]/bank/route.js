@@ -27,6 +27,7 @@ export async function PUT(req, context) {
             {
                 $set: {
                     "cards.$.bankDetailsData.bank_name": bank_name,
+                    "cards.$.updatedAt": new Date(),
                 },
             },
             { new: true }

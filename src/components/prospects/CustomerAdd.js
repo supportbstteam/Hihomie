@@ -26,6 +26,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
   const [addressDetailsData, setAddressDetailsData] = useState({});
   const [contract_signed, setContractSigned] = useState(false);
   const { data: session } = useSession(); // 2. Get the session data
+  const [incrementVal, setIncrementVal] = useState(null);
 
   const [formData, setFormData] = useState({
     lead_title: "",
@@ -137,7 +138,10 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
     if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
       newErrors.email = t("validEmail");
     }
-    if (values.phone && !/^[0-9]{7,15}$/.test(values.phone)) {
+    // if (values.phone && !/^[0-9]{7,15}$/.test(values.phone)) {
+    //   newErrors.phone = t("validPhone");
+    // }
+    if (values.phone && !/^\+?[0-9]{7,15}$/.test(values.phone)) {
       newErrors.phone = t("validPhone");
     }
     if (!values.selectedColId) {
@@ -165,6 +169,44 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
       dispatch(messageClear());
     }
   }, [errorMessage, successMessage, dispatch, setOpen]);
+
+
+  useEffect(() => {
+    const runOnLoad = async () => {
+      try {
+        const response = await fetch("/api/customer/store", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        setIncrementVal(data); // ✅ set state
+
+        console.log("API Response inside useEffect:", data); // ✅ works here
+
+      } catch (error) {
+        console.error("API GET Error:", error);
+      }
+    };
+
+    if (open) {
+      runOnLoad();
+    }
+  }, [open]);
+
+  // If you want to log whenever incrementVal changes
+  useEffect(() => {
+    console.log("incrementVal state updated:", incrementVal);
+  }, [incrementVal]);
+
+
+
 
   return (
     <AnimatePresence>
@@ -196,8 +238,9 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
                   label={t("lead_title")}
                   type="text"
                   name="lead_title"
-                  value={formData.lead_title}
+                  value={incrementVal}
                   onChange={handleChange}
+                  disabled
                 />
                 <Dropdown
                   label={t("prefix")}

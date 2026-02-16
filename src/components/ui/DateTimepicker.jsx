@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const Datepicker = ({
+const DateTimepicker = ({
   label,
   value,
   onChange,
@@ -14,17 +14,17 @@ const Datepicker = ({
   error,
   required,
   icon,
-  dateFormat = "dd/MM/yyyy",
+  dateFormat = "dd/MM/yyyy h:mm aa",
   ...props
 }) => {
   const inputId = name || "date-picker";
 
-  // ❗IMPORTANT — value must be converted to Date object
+  // Convert incoming value to Date object
   const selectedDate = value ? new Date(value) : null;
 
   const handleChange = (date) => {
-    // Save full date+time value
-    const formatted = date ? format(date, "yyyy-MM-dd") : "";
+    // Save full date + time
+    const formatted = date ? format(date, "yyyy-MM-dd HH:mm:ss") : "";
 
     onChange({
       target: {
@@ -49,9 +49,12 @@ const Datepicker = ({
         <DatePicker
           id={inputId}
           name={name}
-          selected={selectedDate}     // ✔ Date object only
+          selected={selectedDate}
           onChange={handleChange}
-          dateFormat={dateFormat}      // ✔ Show date + time
+          dateFormat={dateFormat}
+          showTimeSelect                // <-- ENABLE TIME PICKER
+          timeFormat="HH:mm"            // <-- 24hr format (optional)
+          timeIntervals={15}            // <-- Time gap 15 mins
           className={clsx(
             "text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary",
             error ? "border-red-500" : "border-stroke"
@@ -61,6 +64,7 @@ const Datepicker = ({
           {...props}
         />
 
+        {/* Calendar Icon */}
         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
           {icon ? icon : <Calendar />}
         </span>
@@ -71,4 +75,4 @@ const Datepicker = ({
   );
 };
 
-export default Datepicker;
+export default DateTimepicker;

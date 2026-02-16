@@ -77,9 +77,8 @@ const StatCard = ({ title, value, change, pending, progress }) => (
       <div className="text-3xl font-bold">{value}</div>
       {change && (
         <div
-          className={`flex items-center text-sm ${
-            change.startsWith("+") ? "text-green-500" : "text-red-500"
-          }`}
+          className={`flex items-center text-sm ${change.startsWith("+") ? "text-green-500" : "text-red-500"
+            }`}
         >
           {change.startsWith("+") ? (
             <ArrowUp size={16} />
@@ -316,7 +315,7 @@ export function Dashboard() {
                               {(() => {
                                 const leadTitle = activity?.lead_title ?? "";
                                 return leadTitle
-                                  ? leadTitle.charAt(0).toUpperCase()
+                                  ? leadTitle
                                   : "";
                               })()}
                             </div>
@@ -383,7 +382,19 @@ export function Dashboard() {
                             }}
                             className={`text-base my-2 ml-4 px-2 cursor-pointer ${"bg-green-100 text-gray-800 rounded-sm"}`}
                           >
+
+                            <span style={{ marginRight: "6px" }}>
+                              {new Date(`${note_number.due_date}T${note_number.due_time}`).toLocaleTimeString("en-US", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+
                             {note_number.due_date_note}
+
+
+
+
                           </div>
                         ))}
                       </div>
@@ -441,11 +452,10 @@ export function Dashboard() {
                         {task.task_Details.map((task_number) => (
                           <div
                             key={task_number._id}
-                            className={`text-base my-2 ml-4 px-2 ${
-                              task_number.completed
-                                ? "line-through bg-green-100 text-gray-500 rounded-sm"
-                                : "bg-green-100 text-gray-800 rounded-sm"
-                            }`}
+                            className={`text-base my-2 ml-4 px-2 ${task_number.completed
+                              ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                              : "bg-green-100 text-gray-800 rounded-sm"
+                              }`}
                           >
                             {task_number.task}
                           </div>
@@ -470,11 +480,10 @@ export function Dashboard() {
                   )}
                 </span> */}
                       <span
-                        className={`text-base flex-grow mb-2 px-2 py-1 ${
-                          task.completed
-                            ? "line-through bg-green-100 text-gray-500 rounded-sm"
-                            : "bg-green-100 text-gray-800 rounded-sm"
-                        }`}
+                        className={`text-base flex-grow mb-2 px-2 py-1 ${task.completed
+                          ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                          : "bg-green-100 text-gray-800 rounded-sm"
+                          }`}
                       >
                         {task.task}
                       </span>

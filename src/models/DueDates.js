@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const DueDatesSchema = new mongoose.Schema({
     due_date: { type: String },
+    due_time: { type: String },
     due_date_note: { type: String },
     userId : {type : String},
     cardId: { type: String },

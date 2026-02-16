@@ -30,6 +30,7 @@ import {
   ListFilter,
   Download,
   Upload,
+  MapPin,
 } from "lucide-react";
 import Icon from "@/components/ui/Icon";
 import ImportModal from "@/components/prospects/Impode";
@@ -40,10 +41,13 @@ import { messageClear } from "@/store/customer";
 import { messageClear as messageClearSetting } from "@/store/setting";
 import { t } from "@/components/translations";
 import useUserFromSession from "@/lib/useUserFromSession";
+import { useRouter } from "next/navigation";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
   const authUser = useUserFromSession();
+
+    const router = useRouter();
 
   const dispatch = useDispatch();
   const { leadStatus, leadStatusList, successMessage } = useSelector(
@@ -309,15 +313,20 @@ export default function CustomDnD() {
   };
 
   const handleTouchEnd = () => {
-    if (dragOverColId) {
+    if (dragOverColId) {  
       handleDropColumn(dragOverColId);
     }
     handleDragEnd();
   };
 
   const handleCardClick = (colId, card) => {
-    setSelectedColId(colId);
-    setSelectedUser(card);
+
+     router.push(`/dashboard/lead/edit/${card._id}/${colId}`); // Navigate to the edit page for the clicked card;
+
+    // console.log("Card clicked:", card._id); 
+    // console.log("Column ID:", colId);                                                                                                                                                                                                                                                                                                                                                                                                                         
+    // setSelectedColId(colId);  
+    // setSelectedUser(card);
   };
 
   useEffect(() => {
@@ -331,7 +340,8 @@ export default function CustomDnD() {
       dispatch(get_leadStatusData());
     }
   }, [successMessage, dispatch]);
-
+  
+  console.log("LeadStatus for List:", columns);
 
   return (
     <div className="flex flex-col h-full">
@@ -494,10 +504,17 @@ export default function CustomDnD() {
                         <span className="flex gap-2">
                           <Calendar size={16} />
                           <p className="text-light pxs">
-                            {new Date().toLocaleDateString()}
+                            {card.updatedAt ? new Date(card.updatedAt).toLocaleDateString() : "N/A"}
+                          </p>
+                        </span>
+                        <span className="flex gap-2">
+                          <MapPin size={16} />
+                          <p className="text-light pxs">
+                            {card.property_enquiry ? card.property_enquiry : "N/A"}
                           </p>
                         </span>
                       </div>
+                      
 
                       <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                         <a
@@ -567,14 +584,14 @@ export default function CustomDnD() {
         />
       )}
 
-      {selectedUser && (
+      {/* {selectedUser && (
         <EditCard
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
           colId={selectedColId}
           leadStatus={leadStatus}
         />
-      )}
+      )} */}
 
       {impodeOpen && (
         <ImportModal isOpen={impodeOpen} setImpodeOpen={setImpodeOpen} />

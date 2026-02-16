@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import Comments from '@/models/Comments'
+import LeadStatus from '@/models/LeadStatus';
 
 export async function POST(req, { params }) {
     try {
@@ -16,6 +17,12 @@ export async function POST(req, { params }) {
         });
 
         await newComment.save();
+
+
+        await LeadStatus.updateOne(
+            { _id: colId, "cards._id": id },
+            { $set: { "cards.$.updatedAt": new Date() } }
+        );
 
         return NextResponse.json({ message: "Comment added successfully" }, { status: 200 });
     } catch (error) {

@@ -7,14 +7,74 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser'
 import mongoose from "mongoose";
+import Increment from '@/models/Increment'
 
 export async function POST(req) {
 
   try {
     const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed } = await req.json()
     await dbConnect();
+
+
+    // const statuses = await LeadStatus.find();
+
+    // // Step 2: Collect all cards
+    // let allCards = [];
+
+    // statuses.forEach(status => {
+    //   status.cards.forEach(card => {
+    //     allCards.push({
+    //       statusId: status._id,
+    //       cardId: card._id,
+    //       createdAt: card.createdAt,
+    //     });
+    //   });
+    // });
+
+    // // Step 3: Sort cards by createdAt
+    // allCards.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    // // Step 4: Assign global numbering with arrayFilters
+    // let counter = 1;
+
+    // for (let item of allCards) {
+    //   await LeadStatus.updateOne(
+    //     { _id: item.statusId },
+    //     {
+    //       $set: { "cards.$[elem].lead_title": counter }
+    //     },
+    //     {
+    //       arrayFilters: [{ "elem._id": item.cardId }],
+    //       strict: false
+    //     }
+    //   );
+
+    //   counter++;
+    // }
+
+    // console.log("DONE — Updated total:", counter - 1);
+
+    const maxCard = await LeadStatus.aggregate([
+      { $unwind: "$cards" },
+      {
+        $group: {
+          _id: null,
+          maxNumber: { $max: { $toInt: "$cards.lead_title" } }
+        }
+      }
+    ]);
+
+    let maxNumber = maxCard.length > 0 ? maxCard[0].maxNumber : 0;
+
+    if (maxNumber === 0) {
+      maxNumber = 1;
+    } else {
+      maxNumber += 1;
+    }
+
+
     const newCard = {
-      lead_title,
+      lead_title: maxNumber,
       surname,
       first_name,
       last_name,
@@ -34,7 +94,11 @@ export async function POST(req) {
       addressDetailsData,
       contacted,
       contract_signed,
+      property_enquiry: 'In-person',
     };
+
+
+
 
     // Find the LeadStatus by ID and push the new card
     const updatedColumn = await LeadStatus.findByIdAndUpdate(
@@ -108,107 +172,10 @@ export async function GET(req) {
   }
 }
 
-// export async function PUT(req) {
-//   try {
-
-//     const { colId, id, lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, status, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, contacted, contract_signed } = await req.json()
-
-//     await dbConnect();
-
-
-//     if (!colId || !id) {
-//       return NextResponse.json({ error: "colId and id are required" }, { status: 400 });
-//     }
-
-//     if (!mongoose.Types.ObjectId.isValid(colId)) {
-//       return NextResponse.json({ error: "Invalid colId" }, { status: 400 });
-//     }
-
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return NextResponse.json({ error: "Invalid card id" }, { status: 400 });
-//     }
-
-//     const updatedColumn = await LeadStatus.findOneAndUpdate(
-//       { _id: colId, "cards._id": id },
-//       {
-//         $set: {
-//           "cards.$.lead_title": lead_title,
-//           "cards.$.surname": surname,
-//           "cards.$.first_name": first_name,
-//           "cards.$.last_name": last_name,
-//           "cards.$.company": company,
-//           "cards.$.designation": designation,
-//           "cards.$.phone": phone,
-//           "cards.$.email": email,
-//           "cards.$.lead_value": lead_value,
-//           "cards.$.assigned": assigned,
-//           "cards.$.status": status,
-//           "cards.$.type_of_opration": type_of_opration,
-//           "cards.$.customer_situation": customer_situation,
-//           "cards.$.purchase_status": purchase_status,
-//           "cards.$.commercial_notes": commercial_notes,
-//           "cards.$.manager_notes": manager_notes,
-//           "cards.$.detailsData": detailsData,
-//           "cards.$.addressDetailsData": addressDetailsData,
-//           "cards.$.contacted": contacted,
-//           "cards.$.contract_signed": contract_signed,
-//         },
-//       },
-//       { new: true }
-//     );
-
-
-//     if (status != colId) {
-
-//       // 1️⃣ Find source column
-//       const sourceCol = await LeadStatus.findById(colId);
-//       if (!sourceCol) {
-//         return NextResponse.json({ error: "Source column not found" }, { status: 404 });
-//       }
-
-//       // 2️⃣ Find the card inside source
-//       const cardIndex = sourceCol.cards.findIndex(
-//         (c) => c._id.toString() === id
-//       );
-//       if (cardIndex === -1) {
-//         return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
-//       }
-
-//       // 3️⃣ Remove card from source
-//       const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
-//       await sourceCol.save();
-
-//       // 4️⃣ Add card into destination column
-//       const destCol = await LeadStatus.findById(status);
-//       if (!destCol) {
-//         return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
-//       }
-
-//       destCol.cards.push(movedCard);
-//       await destCol.save();
-//     }
-
-
-//     const { password: _, ...userData } = updatedColumn.cards.toObject();
-
-//     if (!updatedColumn) {
-//       return NextResponse.json({ error: "Card not found", customer: userData }, { status: 404 });
-//     }
-
-//     return NextResponse.json({ message: "Card updated successfully", data: updatedColumn }, { status: 200 });
-
-//   } catch (error) {
-//     console.error("Update Error:", error);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
-
-
 export async function PUT(req) {
   try {
     const {
-      colId, id,
-      lead_title, surname, first_name, last_name,
+      colId, id, surname, first_name, last_name,
       company, designation, email, phone, lead_value,
       assigned, status, type_of_opration, customer_situation,
       purchase_status, commercial_notes, manager_notes,
@@ -217,12 +184,6 @@ export async function PUT(req) {
 
     await dbConnect();
 
-
-    console.log(colId);
-    console.log('  ');
-    console.log(id);
-    console.log();
-    console.log(designation);
 
     // Validation
     if (!colId || !id) {
@@ -237,12 +198,13 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Invalid card id" }, { status: 400 });
     }
 
+
     // 1️⃣ Update the card in its current column
     const updatedColumn = await LeadStatus.findOneAndUpdate(
       { _id: colId, "cards._id": id },
       {
         $set: {
-          "cards.$.lead_title": lead_title,
+          // "cards.$.lead_title": lead_title,
           "cards.$.surname": surname,
           "cards.$.first_name": first_name,
           "cards.$.last_name": last_name,

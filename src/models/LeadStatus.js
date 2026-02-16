@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 // Card Schema
 const CardSchema = new mongoose.Schema({
-  lead_title: { type: String },
+  lead_title: { type: Number },
   surname: { type: String },
   first_name: { type: String },
   last_name: { type: String },
@@ -44,6 +44,7 @@ const CardSchema = new mongoose.Schema({
   second_paying_any_other_loans: { type: String },
   owner_property: { type: String },
   campaign: { type: String },
+  property_enquiry: { type: String },
 
 }, { timestamps: true })
 

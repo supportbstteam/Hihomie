@@ -3,6 +3,7 @@ import { join } from "path";
 import { NextResponse } from "next/server";
 import Document from "@/models/Document";
 import dbConnect from "@/lib/db";
+import LeadStatus from "@/models/LeadStatus";
 
 export async function POST(request) {
     const data = await request.formData();
@@ -36,6 +37,12 @@ export async function POST(request) {
             userId,
         });
         await newDocument.save();
+
+
+        await LeadStatus.updateOne(
+            { _id: colId, "cards._id": cardId },
+            { $set: { "cards.$.updatedAt": new Date() } }
+        );
 
         return NextResponse.json({
             success: true,
