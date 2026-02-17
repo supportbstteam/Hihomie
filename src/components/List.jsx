@@ -229,12 +229,13 @@ const List = ({
                 />
               </TableHead>
               <TableHead className="w-[70px] pl-4">Sr. No</TableHead>
-              <TableHead>Name</TableHead>
               <TableHead>Title</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Assigned</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
+              <TableHead>Assigned</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
               {authUser?.role != "external" && <TableHead>Action</TableHead>}
             </TableRow>
           </TableHeader>
@@ -242,7 +243,12 @@ const List = ({
           <TableBody>
             {filteredList.length > 0 ? (
               filteredList.map((item, i) => (
-                <TableRow key={i}>
+                <TableRow
+                  key={i}
+                  className={`hover:bg-gray-200 transition-colors duration-200 ${
+                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
+                >
                   <TableCell className="pl-4">
                     <input
                       type="checkbox"
@@ -251,13 +257,12 @@ const List = ({
                     />
                   </TableCell>
                   <TableCell>{i + 1}</TableCell>
+                     <TableCell>{item.lead_title}</TableCell>
                   <TableCell>
                     {item.first_name} {item.last_name}
                   </TableCell>
-                  <TableCell>{item.lead_title}</TableCell>
-                  <TableCell>
-                    {formatDate(item.createdAt)}
-                  </TableCell>
+                   <TableCell>{item.email}</TableCell>
+                  <TableCell>{item.phone}</TableCell>
                   <TableCell>
                     {item?.users?.slice(0, 3).map((user, p) => (
                       <Avatar
@@ -269,9 +274,11 @@ const List = ({
                       />
                     ))}
                   </TableCell>
-                  <TableCell>{item.phone}</TableCell>
                   <TableCell>{item.leadStatusname}</TableCell>
-
+                  <TableCell>
+                    {formatDate(item.createdAt)}
+                  </TableCell>
+                  
                   {authUser?.role != "external" && (
                     <TableCell className="flex gap-2">
                       <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
