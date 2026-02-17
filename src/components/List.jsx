@@ -229,14 +229,14 @@ const List = ({
                 />
               </TableHead>
               <TableHead className="w-[70px] pl-4">Sr. No</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Assigned</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              {authUser?.role != "external" && <TableHead>Action</TableHead>}
+              <TableHead>{t("title")}</TableHead>
+              <TableHead>{t("full_name")}</TableHead>
+              <TableHead>{t("email")}</TableHead>
+              <TableHead>{t("phone")}</TableHead>
+              <TableHead>{t("assigned")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("created_at")}</TableHead>
+              {authUser?.role != "external" && <TableHead>{t("action")}</TableHead>}
             </TableRow>
           </TableHeader>
 
