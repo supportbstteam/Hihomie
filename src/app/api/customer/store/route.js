@@ -38,7 +38,7 @@ export async function POST(req) {
     let lead_status_id = '68c297a3212f4d647f1c1087';
 
     const newCard = {
-      lead_title: incrementDoc.increment,
+      lead_title: maxNumber,
       surname,
       first_name,
       last_name,
@@ -92,46 +92,6 @@ export async function GET(req) {
   try {
 
      await dbConnect();
-
-    //   const statuses = await LeadStatus.find();
-
-    // // Step 2: Collect all cards
-    // let allCards = [];
-
-    // statuses.forEach(status => {
-    //   status.cards.forEach(card => {
-    //     allCards.push({
-    //       statusId: status._id,
-    //       cardId: card._id,
-    //       createdAt: card.createdAt,
-    //     });
-    //   });
-    // });
-
-    // // Step 3: Sort cards by createdAt
-    // allCards.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-    // // Step 4: Assign global numbering with arrayFilters
-    // let counter = 1;
-
-    // for (let item of allCards) {
-    //   await LeadStatus.updateOne(
-    //     { _id: item.statusId },
-    //     {
-    //       $set: { "cards.$[elem].lead_title": counter }
-    //     },
-    //     {
-    //       arrayFilters: [{ "elem._id": item.cardId }],
-    //       strict: false
-    //     }
-    //   );
-
-    //   counter++;
-    // }
-
-    // console.log("DONE — Updated total:", counter - 1);
-
-
 
     const maxCard = await LeadStatus.aggregate([
       { $unwind: "$cards" },
