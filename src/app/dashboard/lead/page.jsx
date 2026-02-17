@@ -42,6 +42,7 @@ import { messageClear as messageClearSetting } from "@/store/setting";
 import { t } from "@/components/translations";
 import useUserFromSession from "@/lib/useUserFromSession";
 import { useRouter } from "next/navigation";
+import formatDate from "@/lib/formatDate";
 // import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
@@ -499,18 +500,7 @@ export default function CustomDnD() {
                         <span className="flex gap-2">
                           <Calendar size={16} />
                           <p className="text-light pxs">
-                            {card.updatedAt
-                              ? new Date(card.updatedAt).toLocaleString("en-IN", {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true
-                              })
-                              : "N/A"
-                            }
-
+                            {formatDate(card.createdAt)} {/* Assuming createdAt is the date you want to show */}
                           </p>
                         </span>
                         <span className="flex gap-2">

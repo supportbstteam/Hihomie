@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import MailModel from "@/components/prospects/MailModel";
+import formatDate from "@/lib/formatDate";
 
 const List = ({
   leadStatusList,
@@ -256,7 +257,7 @@ const List = ({
                   </TableCell>
                   <TableCell>{item.lead_title}</TableCell>
                   <TableCell>
-                    {new Date(item.createdAt).toLocaleDateString()}
+                    {formatDate(item.createdAt)}
                   </TableCell>
                   <TableCell>{item.lead_value}</TableCell>
                   <TableCell>
