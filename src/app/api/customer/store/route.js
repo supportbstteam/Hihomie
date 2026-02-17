@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
-import Increment from '@/models/Increment';
 
 
 export async function POST(req) {
@@ -36,8 +35,6 @@ export async function POST(req) {
     }
 
     let lead_status_id = '68c297a3212f4d647f1c1087';
-
-    console.log("lead_status_id:", lead_status_id.length);
 
     const newCard = {
       lead_title: maxNumber,
@@ -85,7 +82,8 @@ export async function POST(req) {
 
   } catch (error) {
     console.error(error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    
+    return NextResponse.json({error: true, message: error.message, stack: error.stack},{ status: 500 });
   }
 }
 

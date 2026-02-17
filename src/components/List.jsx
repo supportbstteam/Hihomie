@@ -232,7 +232,6 @@ const List = ({
               <TableHead>Name</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead>Value</TableHead>
               <TableHead>Assigned</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Status</TableHead>
@@ -259,7 +258,6 @@ const List = ({
                   <TableCell>
                     {formatDate(item.createdAt)}
                   </TableCell>
-                  <TableCell>{item.lead_value}</TableCell>
                   <TableCell>
                     {item?.users?.slice(0, 3).map((user, p) => (
                       <Avatar

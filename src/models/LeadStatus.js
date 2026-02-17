@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 // Card Schema
 const CardSchema = new mongoose.Schema({
-  lead_title: { type: Number },
+  lead_title: { type: String },
   surname: { type: String },
   first_name: { type: String },
   last_name: { type: String },
