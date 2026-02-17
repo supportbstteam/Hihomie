@@ -73,6 +73,44 @@ export async function POST(req) {
       { $push: { cards: newCard } },
       { new: true } // return the updated document
     );
+    
+    // 🌐 SEND DATA TO VERCEL CUSTOMER API
+    // try {
+    //   await fetch("http://localhost:3000/api/customer/store", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       surname,
+    //       first_name,
+    //       last_name,
+    //       phone,
+    //       email,
+    //       snake_case,
+    //       operation,
+    //       reserved_property,
+    //       price_property,
+    //       net_earnings,
+    //       catalonia,
+    //       monthly_net_earnings,
+    //       minimum_savings,
+    //       down_payment,
+    //       additional_security,
+    //       paying_any_other_loans,
+    //       pay_on_other_loans,
+    //       old_are_you,
+    //       registry_ASNEF,
+    //       mortgage,
+    //       second_monthly_net_earnings,
+    //       second_paying_any_other_loans,
+    //       owner_property,
+    //       campaign,
+    //     }),
+    //   });
+    // } catch (err) {
+    //   console.log("Vercel API Error:", err);
+    // }
+     
+
 
     if (!updatedColumn) {
       return NextResponse.json({ error: 'Column not found' }, { status: 404 });

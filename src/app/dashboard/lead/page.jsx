@@ -50,7 +50,7 @@ export default function CustomDnD() {
   const router = useRouter();
 
   const dispatch = useDispatch();
-  const { leadStatus, leadStatusList, successMessage } = useSelector(
+  const { leadStatus, leadStatusList, successMessage, total_count, total_pages, page } = useSelector(
     (state) => state.setting
   );
   const { filters } = useSelector((state) => state.filter);
@@ -126,7 +126,7 @@ export default function CustomDnD() {
     if (!listComponent) {
       dispatch(get_leadStatusData());
     } else {
-      dispatch(get_leadStatusDataForList());
+      dispatch(get_leadStatusDataForList(1));
     }
   }, [dispatch, listComponent]);
 
@@ -576,6 +576,9 @@ export default function CustomDnD() {
             successMessage={successMessage}
             setSelectedColId={setSelectedColId}
             authUser={authUser}
+            total_count={total_count}
+            total_pages={total_pages}
+            page={page}
           />
         </div>
       )}

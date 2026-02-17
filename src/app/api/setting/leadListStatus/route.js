@@ -3,11 +3,17 @@ import LeadStatus from "@/models/LeadStatus";
 import dbConnect from "@/lib/db";
 import getUserFromServerSession from '@/lib/getUserFromServerSession';
 
-export async function GET() {
+export async function GET(req) {
   const user = await getUserFromServerSession();
-
   await dbConnect();
 
+  const { searchParams } = new URL(req.url);
+
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = 25;
+  const skip = (page - 1) * limit;
+
+  // ====================== NON-ADMIN ===========================
   if (user.role !== "admin") {
     try {
       const cards = await LeadStatus.aggregate([
@@ -33,9 +39,8 @@ export async function GET() {
             },
           },
         },
-        { $unwind: "$cards" }, // 🔥 Flatten cards from all statuses
+        { $unwind: "$cards" },
 
-        // 🔥 Lookup assigned users by matching cardId (convert _id -> string)
         {
           $lookup: {
             from: "cardassignusers",
@@ -60,7 +65,6 @@ export async function GET() {
           }
         },
 
-        // 🔥 Lookup actual user data
         {
           $lookup: {
             from: "users",
@@ -88,12 +92,11 @@ export async function GET() {
           }
         },
 
-        // 🔥 Final shape of each card
         {
           $project: {
             _id: "$cards._id",
             leadStatusname: "$status_name",
-            name: "$cards.lead_title", // renamed
+            name: "$cards.lead_title",
             surname: "$cards.surname",
             lead_title: "$cards.lead_title",
             first_name: "$cards.first_name",
@@ -128,25 +131,46 @@ export async function GET() {
             }
           }
         },
+
+        { $sort: { createdAt: -1 } },
+
+        // ⭐⭐⭐ Pagination + Count ⭐⭐⭐
         {
-          $sort: {
-            createdAt: -1 // latest first
+          $facet: {
+            data: [
+              { $skip: skip },
+              { $limit: limit }
+            ],
+            totalCount: [
+              { $count: "count" }
+            ]
           }
         }
-
       ]);
-      return NextResponse.json({ cards }, { status: 201 })
+
+      const totalCount = cards[0].totalCount[0]?.count || 0;
+
+      return NextResponse.json(
+        { 
+          cards: cards[0].data, 
+          totalCount,
+          page,
+          totalPages: Math.ceil(totalCount / limit)
+        },
+        { status: 200 }
+      );
+
     } catch (error) {
       console.error("Aggregation Error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }
 
+  // ====================== ADMIN ===========================
   try {
     const cards = await LeadStatus.aggregate([
-      { $unwind: "$cards" }, // 🔥 Flatten cards from all statuses
+      { $unwind: "$cards" },
 
-      // 🔥 Lookup assigned users by matching cardId (convert _id -> string)
       {
         $lookup: {
           from: "cardassignusers",
@@ -159,7 +183,6 @@ export async function GET() {
         }
       },
 
-      // 🔥 Lookup actual user data
       {
         $lookup: {
           from: "users",
@@ -199,12 +222,11 @@ export async function GET() {
         }
       },
 
-      // 🔥 Final shape of each card
       {
         $project: {
           _id: "$cards._id",
           leadStatusname: "$status_name",
-          name: "$cards.lead_title", // renamed
+          name: "$cards.lead_title",
           surname: "$cards.surname",
           lead_title: "$cards.lead_title",
           first_name: "$cards.first_name",
@@ -226,10 +248,10 @@ export async function GET() {
           bankDetailsData: "$cards.bankDetailsData",
           detailsData: "$cards.detailsData",
           addressDetailsData: "$cards.addressDetailsData",
-          leadStatusId: "$_id",          // LeadStatus ID inside card
+          leadStatusId: "$_id",
           createdAt: "$cards.createdAt",
           color: 1,
-          users: "$users",                // Assigned users
+          users: "$users",
           documentSubmitted: {
             $cond: [
               { $gt: [{ $size: "$docs" }, 0] },
@@ -239,19 +261,41 @@ export async function GET() {
           }
         }
       },
+
+      { $sort: { createdAt: -1 } },
+
+      // ⭐⭐⭐ Pagination + Count ⭐⭐⭐
       {
-        $sort: {
-          createdAt: -1 // latest first
+        $facet: {
+          data: [
+            { $skip: skip },
+            { $limit: limit }
+          ],
+          totalCount: [
+            { $count: "count" }
+          ]
         }
       }
-
     ]);
-    return NextResponse.json({ cards }, { status: 201 })
+
+    const totalCount = cards[0].totalCount[0]?.count || 0;
+
+    return NextResponse.json(
+      { 
+        cards: cards[0].data, 
+        totalCount,
+        page,
+        totalPages: Math.ceil(totalCount / limit)
+      },
+      { status: 200 }
+    );
+
   } catch (error) {
     console.error("Aggregation Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 
 export async function DELETE(req) {

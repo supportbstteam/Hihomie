@@ -120,9 +120,12 @@ export const update_statusData = createAsyncThunk(
 
 export const get_leadStatusDataForList = createAsyncThunk(
    "customer/get_leadStatusDataForList",
-   async (_, { rejectWithValue, fulfillWithValue }) => {
+   async (page, { rejectWithValue, fulfillWithValue }) => {
+
+       console.log(page);
+
       try {
-         const { data } = await api.get(`/setting/leadListStatus`, { withCredentials: true });
+         const { data } = await api.get(`/setting/leadListStatus?page=${page}`, { withCredentials: true });
          return fulfillWithValue(data);
       } catch (error) {
          return rejectWithValue(error.response?.data || "Something went wrong");
@@ -220,6 +223,9 @@ export const settingReducer = createSlice({
       loader: false,
       leadStatus: [],
       leadStatusList: [],
+      total_count : 0,
+      total_pages : 0,
+      page : 1,
    },
    reducers: {
 
@@ -313,6 +319,10 @@ export const settingReducer = createSlice({
          })
          .addCase(get_leadStatusDataForList.fulfilled, (state, { payload }) => {
             state.leadStatusList = payload.cards;
+            state.total_count = payload.totalCount;
+            state.total_pages = payload.totalPages;
+            state.page = payload.page;
+          
             state.loader = false;
          })
 

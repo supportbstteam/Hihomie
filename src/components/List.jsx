@@ -8,7 +8,7 @@ import {
   Phone,
   Trash,
 } from "lucide-react";
-import React, { useEffect, useState } from "react"; // ✅ Missing useState import
+import React, { useEffect, useState } from "react";
 import { t } from "@/components/translations";
 import Icon from "./ui/Icon";
 import Avatar from "./ui/Avatar";
@@ -22,11 +22,9 @@ import {
 import { bulk_assignment, messageClear } from "@/store/customer";
 import toast from "react-hot-toast";
 import ConfirmDeleteModal from "./ConfirmAlert";
-
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -41,38 +39,17 @@ const List = ({
   successMessage,
   setSelectedColId,
   authUser,
+  total_count,
+  total_pages,
+  page,
 }) => {
-
   const dispatch = useDispatch();
   const { assignTeam } = useSelector((state) => state.team);
   const { successMessage: customerSuccessMessage } = useSelector(
     (state) => state.customer
   );
 
-  const [onEdit, setOnEdit] = useState({
-    lead_title: "",
-    surname: "",
-    first_name: "",
-    last_name: "",
-    company: "",
-    designation: "",
-    phone: "",
-    email: "",
-    lead_value: "",
-    assigned: "",
-    status: "",
-    type_of_opration: "",
-    customer_situation: "",
-    purchase_status: "",
-    commercial_notes: "",
-    manager_notes: "",
-    detailsData: {},
-    addressDetailsData: {},
-    id: "",
-    colId: "",
-  });
-
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(page || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [columToDelete, setColumToDelete] = useState(null);
@@ -94,7 +71,7 @@ const List = ({
     document_submitted,
   } = selecteFilterData || {};
 
-  // ✅ Filtering Logic
+  // 🔥 Client-side filtering — but pagination stays server-side
   const filteredList = leadStatusList.filter((item) => {
     const matchGestor = gestor
       ? item?.users?.some((user) => user._id === gestor)
@@ -122,9 +99,9 @@ const List = ({
       ? item?.documentSubmitted === document_submitted
       : true;
 
-       const matchEmail = email
-        ? item?.email?.toLowerCase().includes(email.toLowerCase())
-        : true;
+    const matchEmail = email
+      ? item?.email?.toLowerCase().includes(email.toLowerCase())
+      : true;
 
     return (
       matchGestor &&
@@ -139,21 +116,11 @@ const List = ({
     );
   });
 
-  // Reset pagination when filters change
+  // 🔥 Filter change → reset to page 1 but do NOT slice
   useEffect(() => {
     setCurrentPage(1);
-  }, [gestor, estado, full_name, phone]);
-
-  const recordsPerPage = 25;
-
-  // Pagination logic
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredList.slice(
-    indexOfFirstRecord,
-    indexOfLastRecord
-  );
-  const totalPages = Math.ceil(filteredList.length / recordsPerPage);
+    dispatch(get_leadStatusDataForList(1));
+  }, [gestor, estado, full_name, phone, contacted, contract_signed, bank, email, document_submitted]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -164,44 +131,8 @@ const List = ({
     fetchUsers();
   }, []);
 
-  // ✅ Handle Edit Click
   const handleEditClick = (item) => {
-
-    
-    const url = `/dashboard/lead/edit/${item._id}/${item.status}`;
-    window.open(url, "_blank");  // Opens in new tab
-
-
-    // console.log(item);
-    
-
-    // const updatedUser = {
-    //   ...item,
-    //   colId: item.leadStatusId, // assign leadStatusId to colId
-    //   id: item._id, // assign card _id to id
-    // };
-    // setSelectedColId(item.leadStatusId);
-    // setSelectedUser(updatedUser);
-  };
-
-  const handleDeleteClick = async (cardId, columId) => {
-    try {
-      // Dispatch deletion and wait for success
-      await dispatch(card_delete_list({ cardId, columId })).unwrap();
-
-      // Close modal
-      setIsModalOpen(false);
-      setCardToDelete(null);
-      setColumToDelete(null);
-
-      // Refresh list
-      dispatch(get_leadStatusDataForList());
-
-      // Show success toast directly
-      toast.success("Card deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete card");
-    }
+    window.open(`/dashboard/lead/edit/${item._id}/${item.status}`, "_blank");
   };
 
   const openDeleteModal = (catId, columId) => {
@@ -210,20 +141,37 @@ const List = ({
     setIsModalOpen(true);
   };
 
+  const handleDeleteClick = async (cardId, columId) => {
+    try {
+      await dispatch(card_delete_list({ cardId, columId })).unwrap();
+      setIsModalOpen(false);
+      dispatch(get_leadStatusDataForList(currentPage));
+      toast.success("Card deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete card");
+    }
+  };
+
   useEffect(() => {
     if (successMessage) {
       dispatch(messageClear());
-      setIsModalOpen(false);
+      dispatch(get_leadStatusDataForList(currentPage));
     }
-    dispatch(get_leadStatusDataForList());
-    dispatch(get_leadStatusData());
-  }, [successMessage, dispatch, assignTeam]);
+  }, [successMessage, dispatch]);
+
+  const toggleLead = (id, status) => {
+    if (selectedLeads.some((lead) => lead.id === id)) {
+      setSelectedLeads(selectedLeads.filter((lead) => lead.id !== id));
+    } else {
+      setSelectedLeads([...selectedLeads, { id, status }]);
+    }
+  };
 
   const toggleAllLeads = () => {
-    if (selectedLeads.length === currentRecords.length) {
+    if (selectedLeads.length === filteredList.length) {
       setSelectedLeads([]);
     } else {
-      const allLeads = currentRecords.map((lead) => ({
+      const allLeads = filteredList.map((lead) => ({
         id: lead._id,
         status: lead.status,
       }));
@@ -231,174 +179,78 @@ const List = ({
     }
   };
 
-  const toggleLead = (id, status) => {
-    if (selectedLeads.some((lead) => lead.id === id)) {
-      setSelectedLeads(selectedLeads.filter((lead) => lead.id !== id));
-    } else {
-      setSelectedLeads([...selectedLeads, { id: id, status: status }]);
+  const handleBulkDelete = () => {
+    if (selectedLeads.length === 0) {
+      toast.error("Please select at least one lead");
+      return;
     }
-  };
-
-  const handleAssignment = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const manager = formData.get("manager");
-    const leads = selectedLeads?.map((lead) => ({
-      userId: manager,
+    const payload = selectedLeads.map((lead) => ({
       cardId: lead.id,
       colId: lead.status,
     }));
 
-    dispatch(bulk_assignment(leads));
+    dispatch(delete_bulk({ leads: payload }))
+      .unwrap()
+      .then((res) => {
+        toast.success(res.message || "Delete successful");
+        dispatch(get_leadStatusDataForList(currentPage));
+      })
+      .catch(() => toast.error("Something went wrong"));
   };
 
-  useEffect(() => {
-    if (customerSuccessMessage) {
-      toast.success(customerSuccessMessage);
-      dispatch(messageClear());
-      dispatch(get_leadStatusDataForList());
-      dispatch(get_leadStatusData());
-    }
-  }, [customerSuccessMessage, dispatch]);
-
-  const getPageNumbers = () => {
-    const pages = [];
-
-    let start = Math.max(2, currentPage - 1);
-    let end = Math.min(totalPages - 1, currentPage + 1);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
+  const handlePageChange = (pageNo) => {
+    setCurrentPage(pageNo);
+    dispatch(get_leadStatusDataForList(pageNo));
   };
-
-  const handleBulkDelete = () => {
-      if (selectedLeads.length === 0) {
-        toast.error("Please select at least one lead");
-        return;
-      }
-
-      // Sirf IDs nikal lo
-      
-       // send in correct format
-      const payload = selectedLeads.map((lead) => ({
-        cardId: lead.id,
-        colId: lead.status,
-      }));
-
-  
-
-      dispatch(delete_bulk({ leads: payload }))
-        .unwrap()
-        .then((res) => {
-          toast.success(res.message || "Delete successful");
-        })
-        .catch((err) => {
-          toast.error(err.message || "Something went wrong");
-        });
-
-    };
-
 
   return (
     <div>
-      <form
-        onSubmit={handleAssignment}
-        className="flex flex-col md:flex-row md:items-center gap-3 mb-4"
-      >
-        <div className="w-full md:w-64">
-          <select
-            name="manager"
-            id="manager"
-            defaultValue=""
-            className="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            required
-          >
-            <option value="" disabled>
-              — {t("select")} {t("manager")} —
-            </option>
-            {users.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          type="submit"
-          className="px-4 py-2 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
-        >
-          {t("assign")}
-        </button>
-      </form>
-
-    <div className="flex justify-end">
+      {/* DELETE BUTTON */}
+      <div className="flex justify-end">
         <button
           className="px-3 py-1 bg-red-500 text-white rounded"
-          onClick={() => {
-            if (confirm("Are you sure you want to delete selected items?")) {
-              handleBulkDelete();
-            }
-          }}
+          onClick={() => confirm("Are you sure?") && handleBulkDelete()}
         >
           Delete
         </button>
       </div>
 
-
-
-      <div className=" rounded-md shadow-md ">
-        {/* -----------------------new table starts----------------------- */}
-
+      {/* TABLE */}
+      <div className="rounded-md shadow-md">
         <Table>
-          {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[70px] pl-4">
-                {" "}
                 <input
                   type="checkbox"
-                  checked={selectedLeads.length === currentRecords.length}
+                  checked={selectedLeads.length === filteredList.length}
                   onChange={toggleAllLeads}
-                  className="w-4 h-4 accent-emerald-600"
                 />
               </TableHead>
-              <TableHead className="w-[70px] pl-4">{t("Sr. No")}</TableHead>
-              <TableHead className="w-[180px]">{t("full_name")}</TableHead>
-              <TableHead className="w-[150px]">{t("title")}</TableHead>
-              <TableHead>{t("created_at")}</TableHead>
-              <TableHead>{t("value")}</TableHead>
-              <TableHead>{t("assigned")}</TableHead>
-              <TableHead>{t("phone")}</TableHead>
-              <TableHead>{t("status")}</TableHead>
-             {authUser?.role != 'external' &&  <TableHead>{t("action")}</TableHead>}
-              
+              <TableHead className="w-[70px] pl-4">Sr. No</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Value</TableHead>
+              <TableHead>Assigned</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Status</TableHead>
+              {authUser?.role != "external" && <TableHead>Action</TableHead>}
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {currentRecords.length > 0 ? (
-              currentRecords.map((item, i) => (
-                <TableRow
-                  key={i}
-                  className={`hover:bg-gray-50 transition-colors duration-200 ${
-                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
+            {filteredList.length > 0 ? (
+              filteredList.map((item, i) => (
+                <TableRow key={i}>
                   <TableCell className="pl-4">
                     <input
                       type="checkbox"
-                      checked={selectedLeads.some(
-                        (lead) => lead.id === item._id
-                      )}
+                      checked={selectedLeads.some((lead) => lead.id === item._id)}
                       onChange={() => toggleLead(item._id, item.status)}
-                      className="w-4 h-4 accent-emerald-600"
                     />
                   </TableCell>
-                  <TableCell className="pl-4">{i + 1}</TableCell>
+                  <TableCell>{i + 1}</TableCell>
                   <TableCell>
                     {item.first_name} {item.last_name}
                   </TableCell>
@@ -407,94 +259,50 @@ const List = ({
                     {new Date(item.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>{item.lead_value}</TableCell>
-                  <TableCell className="text-right flex gap-1">
+                  <TableCell>
                     {item?.users?.slice(0, 3).map((user, p) => (
                       <Avatar
                         key={p}
-                        src={user.image ? user.image : "default.jpg"}
+                        src={user.image ?? "default.jpg"}
                         alt={user?.name}
                         size="xs"
                         title={user?.name}
                       />
                     ))}
-                    {item?.users?.length > 3 && (
-                      <span className="w-8 h-8 rounded-full inline-flex items-center justify-center bg-gray-300 text-sm font-bold -ml-2 border-2 border-white">
-                        +{item?.users?.length - 3}
-                      </span>
-                    )}
                   </TableCell>
                   <TableCell>{item.phone}</TableCell>
-                  <TableCell>
-                    <span
-                      className="px-2 py-1 rounded-full text-xs font-normal"
-                      style={{
-                        color: "#000000ff",
-                        backgroundColor: `${item.color}33`,
-                      }}
-                    >
-                      {item.leadStatusname}
-                    </span>
-                  </TableCell>
-                  {/* <TableCell>
-                  <Badge variant={item.status ? "active" : "inactive"}>
-                    {item.status ? "Active" : "Inactive"}
-                  </Badge>
-                </TableCell> */}
+                  <TableCell>{item.leadStatusname}</TableCell>
 
-               {authUser?.role != 'external' &&
-                  <TableCell className="flex justify-between gap-2 ">
-                    <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
-                    <Icon
-                      icon={MessageSquareText}
-                      size={20}
-                      href={`https://wa.me/${item.phone}`}
-                    />
-                    <Icon
-                      icon={Mail}
-                      size={20}
-                      onClick={() => {
-                        setMailDetails(item);
-                        setMailModelOpen(true);
-                      }}
-                    />
-                    {/* <Icon icon={Mail} size={20} href={`mailto:${item.email}`} onClick={() => {
-                      setMailDetails(item);
-                      setMailModelOpen(true);
-                    }} /> */}
-                    <div
-                      className="relative inline-block"
-                      onMouseEnter={() => setIconOpen(item._id)}
-                      onMouseLeave={() => setIconOpen(null)}
-                    >
-                      {/* Ellipsis always visible */}
+                  {authUser?.role != "external" && (
+                    <TableCell className="flex gap-2">
+                      <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />
                       <Icon
-                        icon={EllipsisVertical}
+                        icon={MessageSquareText}
+                        size={20}
+                        href={`https://wa.me/${item.phone}`}
+                      />
+                      <Icon
+                        icon={Mail}
+                        size={20}
+                        onClick={() => {
+                          setMailDetails(item);
+                          setMailModelOpen(true);
+                        }}
+                      />
+                      <Icon
+                        icon={Pencil}
+                        size={20}
+                        onClick={() => handleEditClick(item)}
+                      />
+                      <Icon
+                        icon={Trash}
                         size={20}
                         onClick={() =>
-                          setIconOpen(iconOpen === item._id ? null : item._id)
+                          openDeleteModal(item._id, item.leadStatusId)
                         }
                       />
-
-                      {/* Actions visible on hover */}
-                      {iconOpen === item._id && (
-                        <div className="absolute w-24 right-4 top-0 mt-[-8px] flex justify-evenly gap-2 bg-background shadow-md p-2 rounded-lg z-10">
-                          <Icon
-                            icon={Trash}
-                            size={20}
-                            onClick={() =>
-                              openDeleteModal(item._id, item.leadStatusId)
-                            }
-                          />
-                          <Icon
-                            icon={Pencil}
-                            size={20}
-                            onClick={() => handleEditClick(item)}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                }
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
@@ -507,8 +315,7 @@ const List = ({
           </TableBody>
         </Table>
 
-        {/* -----------------------new table ends----------------------- */}
-
+        {/* DELETE CONFIRM MODAL */}
         {isModalOpen && (
           <ConfirmDeleteModal
             isOpen={isModalOpen}
@@ -518,67 +325,41 @@ const List = ({
         )}
       </div>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-between items-center mt-4">
         <button
           className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => prev - 1)}
           disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
         >
           Prev
         </button>
 
-        <div className="flex justify-center items-center gap-2 mt-4">
-          {/* First Page */}
-          <button
-            className="px-3 py-1 bg-gray-200 rounded disabled:bg-green-500"
-            onClick={() => setCurrentPage(1)}
-            disabled={currentPage === 1}
-          >
-            1
-          </button>
-
-          {/* Left Ellipsis */}
-          {currentPage > 3 && <span className="px-2">...</span>}
-
-          {/* Middle Dynamic Pages */}
-          <div className="flex gap-2">
-            {getPageNumbers().map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1 rounded-md transition ${
-                  currentPage === page
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-
-          {/* Right Ellipsis */}
-          {currentPage < totalPages - 2 && <span className="px-2">...</span>}
-
-          {/* Last Page */}
-          <button
-            className="px-3 py-1 bg-gray-200 rounded disabled:bg-green-500"
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages}
-          >
-            {totalPages}
-          </button>
+        <div className="flex items-center gap-2">
+          {Array.from({ length: total_pages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => handlePageChange(i + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === i + 1
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
         </div>
 
         <button
           className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === total_pages}
+          onClick={() => handlePageChange(currentPage + 1)}
         >
           Next
         </button>
       </div>
+
       {mailModelOpen && (
         <MailModel
           isOpen={mailModelOpen}
