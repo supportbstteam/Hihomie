@@ -228,7 +228,7 @@ const List = ({
                   onChange={toggleAllLeads}
                 />
               </TableHead>
-              <TableHead className="w-[70px] pl-4">Sr. No</TableHead>
+              <TableHead className="w-[70px]">Sr. No</TableHead>
               <TableHead>{t("title")}</TableHead>
               <TableHead>{t("full_name")}</TableHead>
               <TableHead>{t("email")}</TableHead>
