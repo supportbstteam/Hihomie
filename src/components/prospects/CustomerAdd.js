@@ -174,7 +174,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
   useEffect(() => {
     const runOnLoad = async () => {
       try {
-        const response = await fetch("/api/customer/store", {
+        const response = await fetch("/api/customer/increment", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
