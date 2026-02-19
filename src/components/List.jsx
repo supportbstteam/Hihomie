@@ -47,7 +47,7 @@ const List = ({
   const dispatch = useDispatch();
   const { assignTeam } = useSelector((state) => state.team);
   const { successMessage: customerSuccessMessage } = useSelector(
-    (state) => state.customer
+    (state) => state.customer,
   );
 
   const [currentPage, setCurrentPage] = useState(page || 1);
@@ -121,7 +121,17 @@ const List = ({
   useEffect(() => {
     setCurrentPage(1);
     dispatch(get_leadStatusDataForList(1));
-  }, [gestor, estado, full_name, phone, contacted, contract_signed, bank, email, document_submitted]);
+  }, [
+    gestor,
+    estado,
+    full_name,
+    phone,
+    contacted,
+    contract_signed,
+    bank,
+    email,
+    document_submitted,
+  ]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -180,6 +190,20 @@ const List = ({
     }
   };
 
+  const handleAssignment = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const manager = formData.get("manager");
+    const leads = selectedLeads?.map((lead) => ({
+      userId: manager,
+      cardId: lead.id,
+      colId: lead.status,
+    }));
+
+    dispatch(bulk_assignment(leads));
+  };
+
   const handleBulkDelete = () => {
     if (selectedLeads.length === 0) {
       toast.error("Please select at least one lead");
@@ -206,10 +230,43 @@ const List = ({
 
   return (
     <div>
-      {/* DELETE BUTTON */}
-      <div className="flex justify-end">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        {/* ASSIGN FORM */}
+        <form
+          onSubmit={handleAssignment}
+          className="flex flex-col md:flex-row md:items-center gap-3"
+        >
+          <div className="w-full md:w-64">
+            <select
+              name="manager"
+              id="manager"
+              defaultValue=""
+              className="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            >
+              <option value="" disabled>
+                — {t("select")} {t("manager")} —
+              </option>
+
+              {users.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
+          >
+            {t("assign")}
+          </button>
+        </form>
+
+        {/* DELETE BUTTON */}
         <button
-          className="px-3 py-1 bg-red-500 text-white rounded"
+          className="px-3 py-2 bg-red-500 text-white rounded-lg h-fit"
           onClick={() => confirm("Are you sure?") && handleBulkDelete()}
         >
           Delete
@@ -236,7 +293,9 @@ const List = ({
               <TableHead>{t("assigned")}</TableHead>
               <TableHead>{t("status")}</TableHead>
               <TableHead>{t("created_at")}</TableHead>
-              {authUser?.role != "external" && <TableHead>{t("action")}</TableHead>}
+              {authUser?.role != "external" && (
+                <TableHead>{t("action")}</TableHead>
+              )}
             </TableRow>
           </TableHeader>
 
@@ -252,16 +311,18 @@ const List = ({
                   <TableCell className="pl-4">
                     <input
                       type="checkbox"
-                      checked={selectedLeads.some((lead) => lead.id === item._id)}
+                      checked={selectedLeads.some(
+                        (lead) => lead.id === item._id,
+                      )}
                       onChange={() => toggleLead(item._id, item.status)}
                     />
                   </TableCell>
                   <TableCell>{i + 1}</TableCell>
-                     <TableCell>{item.lead_title}</TableCell>
+                  <TableCell>{item.lead_title}</TableCell>
                   <TableCell>
                     {item.first_name} {item.last_name}
                   </TableCell>
-                   <TableCell>{item.email}</TableCell>
+                  <TableCell>{item.email}</TableCell>
                   <TableCell>{item.phone}</TableCell>
                   <TableCell>
                     {item?.users?.slice(0, 3).map((user, p) => (
@@ -275,10 +336,8 @@ const List = ({
                     ))}
                   </TableCell>
                   <TableCell>{item.leadStatusname}</TableCell>
-                  <TableCell>
-                    {formatDate(item.createdAt)}
-                  </TableCell>
-                  
+                  <TableCell>{formatDate(item.createdAt)}</TableCell>
+
                   {authUser?.role != "external" && (
                     <TableCell className="flex gap-2">
                       <Icon icon={Phone} size={20} href={`tel:${item.phone}`} />

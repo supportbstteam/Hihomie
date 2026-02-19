@@ -122,8 +122,6 @@ export const get_leadStatusDataForList = createAsyncThunk(
    "customer/get_leadStatusDataForList",
    async (page, { rejectWithValue, fulfillWithValue }) => {
 
-       console.log(page);
-
       try {
          const { data } = await api.get(`/setting/leadListStatus?page=${page}`, { withCredentials: true });
          return fulfillWithValue(data);
