@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import LeadStatus from "@/models/LeadStatus";
 import dbConnect from "@/lib/db";
 import getUserFromServerSession from '@/lib/getUserFromServerSession';
+import mongoose from 'mongoose';
+
 
 export async function GET(req) {
   const user = await getUserFromServerSession();
@@ -10,6 +12,69 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
 
   const page = parseInt(searchParams.get("page")) || 1;
+  const gestor = searchParams.get("gestor");
+  const estado = searchParams.get("estado");
+  const full_name = searchParams.get("full_name");
+  const phone = searchParams.get("phone");
+  const contacted = searchParams.get("contacted");
+  const contract_signed = searchParams.get("contract_signed");
+  const bank = searchParams.get("bank");
+  const email = searchParams.get("email");
+  const document_submitted = searchParams.get("document_submitted");
+
+  const matchConditions = {};
+
+  // gestor → users.some(user._id === gestor)
+  if (gestor) {
+    matchConditions["users._id"] = new mongoose.Types.ObjectId(gestor);
+  }
+
+  // estado → leadStatusId === estado
+  if (estado) {
+    matchConditions.leadStatusId = new mongoose.Types.ObjectId(estado);
+  }
+
+  // full name search
+  if (full_name) {
+    matchConditions.$expr = {
+      $regexMatch: {
+        input: { $concat: ["$first_name", " ", "$last_name"] },
+        regex: full_name,
+        options: "i"
+      }
+    };
+  }
+
+  // phone includes
+  if (phone) {
+    matchConditions.phone = { $regex: phone, $options: "i" };
+  }
+
+  // contacted ===
+  if (contacted) {
+    matchConditions.contacted = contacted;
+  }
+
+  // contract_signed === boolean
+  if (contract_signed) {
+    matchConditions.contract_signed = contract_signed === "true";
+  }
+
+  // bank ===
+  if (bank) {
+    matchConditions["bankDetailsData.bank_name"] = bank;
+  }
+
+  // documentSubmitted ===
+  if (document_submitted) {
+    matchConditions.documentSubmitted = document_submitted;
+  }
+
+  // email includes
+  if (email) {
+    matchConditions.email = { $regex: email, $options: "i" };
+  }
+
   const limit = 25;
   const skip = (page - 1) * limit;
 
@@ -132,6 +197,11 @@ export async function GET(req) {
           }
         },
 
+        // ⭐ SERVER SIDE FILTER HERE
+        ...(Object.keys(matchConditions).length
+          ? [{ $match: matchConditions }]
+          : []),
+
         { $sort: { createdAt: -1 } },
 
         // ⭐⭐⭐ Pagination + Count ⭐⭐⭐
@@ -151,8 +221,8 @@ export async function GET(req) {
       const totalCount = cards[0].totalCount[0]?.count || 0;
 
       return NextResponse.json(
-        { 
-          cards: cards[0].data, 
+        {
+          cards: cards[0].data,
           totalCount,
           page,
           totalPages: Math.ceil(totalCount / limit)
@@ -262,6 +332,11 @@ export async function GET(req) {
         }
       },
 
+      // ⭐ SERVER SIDE FILTER HERE
+      ...(Object.keys(matchConditions).length
+        ? [{ $match: matchConditions }]
+        : []),
+
       { $sort: { createdAt: -1 } },
 
       // ⭐⭐⭐ Pagination + Count ⭐⭐⭐
@@ -281,8 +356,8 @@ export async function GET(req) {
     const totalCount = cards[0].totalCount[0]?.count || 0;
 
     return NextResponse.json(
-      { 
-        cards: cards[0].data, 
+      {
+        cards: cards[0].data,
         totalCount,
         page,
         totalPages: Math.ceil(totalCount / limit)

@@ -73,54 +73,55 @@ const List = ({
   } = selecteFilterData || {};
 
   // 🔥 Client-side filtering — but pagination stays server-side
-  const filteredList = leadStatusList.filter((item) => {
-    const matchGestor = gestor
-      ? item?.users?.some((user) => user._id === gestor)
-      : true;
+  // const filteredList = leadStatusList.filter((item) => {
+  //   const matchGestor = gestor
+  //     ? item?.users?.some((user) => user._id === gestor)
+  //     : true;
 
-    const matchEstado = estado ? item?.leadStatusId === estado : true;
+  //   const matchEstado = estado ? item?.leadStatusId === estado : true;
 
-    const matchName = full_name
-      ? `${item.first_name || ""} ${item.last_name || ""}`
-          .toLowerCase()
-          .includes(full_name.toLowerCase())
-      : true;
+  //   const matchName = full_name
+  //     ? `${item.first_name || ""} ${item.last_name || ""}`
+  //         .toLowerCase()
+  //         .includes(full_name.toLowerCase())
+  //     : true;
 
-    const matchPhone = phone ? item?.phone?.toString().includes(phone) : true;
+  //   const matchPhone = phone ? item?.phone?.toString().includes(phone) : true;
 
-    const matchContacted = contacted ? item?.contacted === contacted : true;
+  //   const matchContacted = contacted ? item?.contacted === contacted : true;
 
-    const matchContract_signed = contract_signed
-      ? item?.contract_signed === (contract_signed === "true")
-      : true;
+  //   const matchContract_signed = contract_signed
+  //     ? item?.contract_signed === (contract_signed === "true")
+  //     : true;
 
-    const matchBank = bank ? item?.bankDetailsData?.bank_name === bank : true;
+  //   const matchBank = bank ? item?.bankDetailsData?.bank_name === bank : true;
 
-    const matchDocumentSubmitted = document_submitted
-      ? item?.documentSubmitted === document_submitted
-      : true;
+  //   const matchDocumentSubmitted = document_submitted
+  //     ? item?.documentSubmitted === document_submitted
+  //     : true;
 
-    const matchEmail = email
-      ? item?.email?.toLowerCase().includes(email.toLowerCase())
-      : true;
+  //   const matchEmail = email
+  //     ? item?.email?.toLowerCase().includes(email.toLowerCase())
+  //     : true;
 
-    return (
-      matchGestor &&
-      matchEstado &&
-      matchName &&
-      matchPhone &&
-      matchContacted &&
-      matchContract_signed &&
-      matchBank &&
-      matchEmail &&
-      matchDocumentSubmitted
-    );
-  });
+  //   return (
+  //     matchGestor &&
+  //     matchEstado &&
+  //     matchName &&
+  //     matchPhone &&
+  //     matchContacted &&
+  //     matchContract_signed &&
+  //     matchBank &&
+  //     matchEmail &&
+  //     matchDocumentSubmitted
+  //   );
+  // });
 
   // 🔥 Filter change → reset to page 1 but do NOT slice
   useEffect(() => {
     setCurrentPage(1);
-    dispatch(get_leadStatusDataForList(1));
+    dispatch(get_leadStatusDataForList({ page: 1, ...selecteFilterData }));
+
   }, [
     gestor,
     estado,
@@ -179,10 +180,10 @@ const List = ({
   };
 
   const toggleAllLeads = () => {
-    if (selectedLeads.length === filteredList.length) {
+    if (selectedLeads.length === leadStatusList.length) {
       setSelectedLeads([]);
     } else {
-      const allLeads = filteredList.map((lead) => ({
+      const allLeads = leadStatusList.map((lead) => ({
         id: lead._id,
         status: lead.status,
       }));
@@ -225,7 +226,7 @@ const List = ({
 
   const handlePageChange = (pageNo) => {
     setCurrentPage(pageNo);
-    dispatch(get_leadStatusDataForList(pageNo));
+    dispatch(get_leadStatusDataForList({ page: pageNo, ...selecteFilterData }));
   };
 
   return (
@@ -241,7 +242,7 @@ const List = ({
               name="manager"
               id="manager"
               defaultValue=""
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="block w-full px-3 py-1 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             >
               <option value="" disabled>
@@ -258,7 +259,7 @@ const List = ({
 
           <button
             type="submit"
-            className="px-4 py-2 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
+            className="px-4 py-1 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
           >
             {t("assign")}
           </button>
@@ -266,7 +267,7 @@ const List = ({
 
         {/* DELETE BUTTON */}
         <button
-          className="px-3 py-2 bg-red-500 text-white rounded-lg h-fit"
+          className="px-3 py-1 bg-red-500 text-white rounded-lg h-fit"
           onClick={() => confirm("Are you sure?") && handleBulkDelete()}
         >
           Delete
@@ -281,7 +282,7 @@ const List = ({
               <TableHead className="w-[70px] pl-4">
                 <input
                   type="checkbox"
-                  checked={selectedLeads.length === filteredList.length}
+                  checked={selectedLeads.length === leadStatusList.length}
                   onChange={toggleAllLeads}
                 />
               </TableHead>
@@ -300,8 +301,8 @@ const List = ({
           </TableHeader>
 
           <TableBody>
-            {filteredList.length > 0 ? (
-              filteredList.map((item, i) => (
+            {leadStatusList.length > 0 ? (
+              leadStatusList.map((item, i) => (
                 <TableRow
                   key={i}
                   className={`hover:bg-gray-200 transition-colors duration-200 ${

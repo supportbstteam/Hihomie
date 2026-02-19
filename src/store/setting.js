@@ -118,15 +118,45 @@ export const update_statusData = createAsyncThunk(
    }
 );
 
+// export const get_leadStatusDataForList = createAsyncThunk(
+//    "customer/get_leadStatusDataForList",
+//    async (page, { rejectWithValue, fulfillWithValue }) => {
+
+//       try {
+//          const { data } = await api.get(`/setting/leadListStatus?page=${page}`, { withCredentials: true });
+//          return fulfillWithValue(data);
+//       } catch (error) {
+//          return rejectWithValue(error.response?.data || "Something went wrong");
+//       }
+//    }
+// );
+
 export const get_leadStatusDataForList = createAsyncThunk(
    "customer/get_leadStatusDataForList",
-   async (page, { rejectWithValue, fulfillWithValue }) => {
-
+   async (payload = {}, { rejectWithValue, fulfillWithValue }) => {
       try {
-         const { data } = await api.get(`/setting/leadListStatus?page=${page}`, { withCredentials: true });
+         const { page = 1, ...filters } = payload;
+
+         // remove empty / undefined values
+         const cleanFilters = Object.fromEntries(
+            Object.entries(filters).filter(
+               ([_, value]) => value !== "" && value !== null && value !== undefined
+            )
+         );
+
+         const { data } = await api.get("/setting/leadListStatus", {
+            params: {
+               page,
+               ...cleanFilters,
+            },
+            withCredentials: true,
+         });
+
          return fulfillWithValue(data);
       } catch (error) {
-         return rejectWithValue(error.response?.data || "Something went wrong");
+         return rejectWithValue(
+            error.response?.data || "Something went wrong"
+         );
       }
    }
 );
@@ -192,20 +222,20 @@ export const upload_file = createAsyncThunk(
 );
 
 export const delete_bulk = createAsyncThunk(
-  "setting/delete_bulk",
-  async ({ leads }, { rejectWithValue, fulfillWithValue }) => {
-    try {
-      const { data } = await api.post(
-        `/setting/delete-bulk`,
-        { leads },
-        { withCredentials: true }
-      );
+   "setting/delete_bulk",
+   async ({ leads }, { rejectWithValue, fulfillWithValue }) => {
+      try {
+         const { data } = await api.post(
+            `/setting/delete-bulk`,
+            { leads },
+            { withCredentials: true }
+         );
 
-      return fulfillWithValue(data);
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Something went wrong");
-    }
-  }
+         return fulfillWithValue(data);
+      } catch (error) {
+         return rejectWithValue(error.response?.data || "Something went wrong");
+      }
+   }
 );
 
 
@@ -221,9 +251,9 @@ export const settingReducer = createSlice({
       loader: false,
       leadStatus: [],
       leadStatusList: [],
-      total_count : 0,
-      total_pages : 0,
-      page : 1,
+      total_count: 0,
+      total_pages: 0,
+      page: 1,
    },
    reducers: {
 
@@ -320,7 +350,7 @@ export const settingReducer = createSlice({
             state.total_count = payload.totalCount;
             state.total_pages = payload.totalPages;
             state.page = payload.page;
-          
+
             state.loader = false;
          })
 
@@ -367,11 +397,11 @@ export const settingReducer = createSlice({
             state.loader = false;
          })
 
-         .addCase(cardDelete.pending, (state, { payload }) => { 
+         .addCase(cardDelete.pending, (state, { payload }) => {
             state.loader = true;
          })
          .addCase(cardDelete.fulfilled, (state, { payload }) => {
-            state.successMessage = payload.message; 
+            state.successMessage = payload.message;
          })
          .addCase(cardDelete.rejected, (state, { payload }) => {
             state.loader = false;
