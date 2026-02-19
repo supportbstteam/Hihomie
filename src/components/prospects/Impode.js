@@ -65,7 +65,7 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
         setErrorRows(errors);
         setShowResults(true);
         toast.success("File uploaded successfully");
-        dispatch(get_leadStatusDataForList());
+        dispatch(get_leadStatusDataForList({page: 1}));
         dispatch(get_leadStatusData());
         setFile(null);
         // setImpodeOpen(false);

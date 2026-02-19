@@ -127,7 +127,7 @@ export default function CustomDnD() {
     if (!listComponent) {
       dispatch(get_leadStatusData());
     } else {
-      dispatch(get_leadStatusDataForList(1));
+      dispatch(get_leadStatusDataForList({page: 1}));
     }
   }, [dispatch, listComponent]);
 
@@ -208,7 +208,7 @@ export default function CustomDnD() {
     dispatch(messageClear());
 
     dispatch(get_leadStatusData());
-    dispatch(get_leadStatusDataForList());
+    dispatch(get_leadStatusDataForList({page: 1}));
   };
 
   const handleDragStart = (e, cardId, sourceColId, index) => {
@@ -338,7 +338,7 @@ export default function CustomDnD() {
       }
       dispatch(messageClear());
       dispatch(messageClearSetting());
-      dispatch(get_leadStatusDataForList());
+      dispatch(get_leadStatusDataForList({page: 1}));
       dispatch(get_leadStatusData());
     }
   }, [successMessage, dispatch]);

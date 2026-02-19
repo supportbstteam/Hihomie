@@ -157,7 +157,7 @@ const List = ({
     try {
       await dispatch(card_delete_list({ cardId, columId })).unwrap();
       setIsModalOpen(false);
-      dispatch(get_leadStatusDataForList(currentPage));
+      dispatch(get_leadStatusDataForList({ page: currentPage }));
       toast.success("Card deleted successfully");
     } catch (error) {
       toast.error("Failed to delete card");
@@ -167,7 +167,7 @@ const List = ({
   useEffect(() => {
     if (successMessage) {
       dispatch(messageClear());
-      dispatch(get_leadStatusDataForList(currentPage));
+      dispatch(get_leadStatusDataForList({ page: currentPage }));
     }
   }, [successMessage, dispatch]);
 
@@ -219,7 +219,7 @@ const List = ({
       .unwrap()
       .then((res) => {
         toast.success(res.message || "Delete successful");
-        dispatch(get_leadStatusDataForList(currentPage));
+        dispatch(get_leadStatusDataForList({ page: currentPage }));
       })
       .catch(() => toast.error("Something went wrong"));
   };

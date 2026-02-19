@@ -191,7 +191,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         setSelectedUser(null);
       }
       else {
-        dispatch(get_leadStatusDataForList());
+        dispatch(get_leadStatusDataForList({page: 1}));
         dispatch(get_leadStatusData());
         dispatch(messageClear());
         // router.push(`/dashboard/lead`);
