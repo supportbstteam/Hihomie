@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/table";
 import MailModel from "@/components/prospects/MailModel";
 import formatDate from "@/lib/formatDate";
+import getThreePages from "@/lib/pagination";
+
+
 
 const List = ({
   leadStatusList,
@@ -305,9 +308,8 @@ const List = ({
               leadStatusList.map((item, i) => (
                 <TableRow
                   key={i}
-                  className={`hover:bg-gray-200 transition-colors duration-200 ${
-                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
+                  className={`hover:bg-gray-200 transition-colors duration-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
                 >
                   <TableCell className="pl-4">
                     <input
@@ -392,7 +394,7 @@ const List = ({
       </div>
 
       {/* PAGINATION */}
-      <div className="flex justify-between items-center mt-4">
+      {/* <div className="flex justify-between items-center mt-4">
         <button
           className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
           disabled={currentPage === 1}
@@ -424,6 +426,43 @@ const List = ({
         >
           Next
         </button>
+      </div> */}
+
+      <div className="flex justify-between items-center mt-4 w-full">
+
+        {/* PREV LEFT SIDE */}
+        <button
+          className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Prev
+        </button>
+
+        {/* CENTER THREE BUTTONS */}
+        <div className="flex items-center justify-center gap-2 w-full">
+          {getThreePages(currentPage, total_pages).map((page, i) => (
+            <button
+              key={i}
+              onClick={() => handlePageChange(page)}
+              className={`px-3 py-1 rounded transition 
+          ${currentPage === page ? "bg-green-600 text-white" : "bg-gray-200"}
+        `}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+
+        {/* NEXT RIGHT SIDE */}
+        <button
+          disabled={currentPage === total_pages}
+          className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Next
+        </button>
+
       </div>
 
       {mailModelOpen && (
