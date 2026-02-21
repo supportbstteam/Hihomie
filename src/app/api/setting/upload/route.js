@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import dbConnect from '@/lib/db';
+import dbConnect from "@/lib/db";
 import Status from "@/models/LeadStatus";
 import getUserFromServerSession from "@/lib/getUserFromServerSession";
 const Joi = require("joi");
@@ -13,14 +13,12 @@ const requiredString = (field) =>
     "string.empty": `${field} cannot be empty`,
   });
 
-
-// row schema
+// ROW SCHEMA
 const rowSchema = Joi.object({
   status_name: Joi.string().trim().required().messages({
     "any.required": "status_name is required",
     "string.empty": "status_name cannot be empty",
   }),
-  lead_title: requiredString("lead_title"),
   surname: requiredString("surname"),
   first_name: requiredString("first_name"),
   last_name: requiredString("last_name"),
@@ -47,19 +45,18 @@ const rowSchema = Joi.object({
     "string.pattern.base": "zip_code contains invalid characters",
   }),
   country: optString(),
+}).unknown(true);
 
-  // allow other properties (cardData props) — validate if needed
-}).unknown(true); // keep unknown true so cardData fields pass through
 
 export const POST = async (req) => {
   await dbConnect();
   let assigned = "";
   const user = await getUserFromServerSession();
+
   if (user.role !== "admin") {
     assigned = user.id;
-  } else {
-    assigned = "";
   }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file");
@@ -68,76 +65,111 @@ export const POST = async (req) => {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
+    const buffer = Buffer.from(await file.arrayBuffer());
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
     const errorData = [];
     const validSaves = [];
 
-    // assuming 'data' is array and you want row numbers:
+    // 🔥 FETCH STATUS ONLY ONCE
+    let lead_status_id = "68c297a3212f4d647f1c1087";
+    const status = await Status.findById(lead_status_id).exec();
+
+    if (!status) {
+      return NextResponse.json({ error: "Invalid status ID" }, { status: 400 });
+    }
+
+    // 🔥 CALCULATE MAX NUMBER ONLY ONE TIME (OUTSIDE LOOP)
+    const maxCard = await Status.aggregate([
+      { $unwind: "$cards" },
+      {
+        $group: {
+          _id: null,
+          maxNumber: { $max: { $toInt: "$cards.lead_title" } },
+        },
+      },
+    ]);
+
+    let nextLeadNumber = maxCard.length > 0 ? maxCard[0].maxNumber + 1 : 1;
+
+    // 🔥 PROCESS EACH ROW
     for (let i = 0; i < data.length; i++) {
       const row = data[i];
-      const rowNum = i + 2; // if Excel header on row 1, row 2 is first data row
+      const rowNum = i + 2;
 
-      // 1) Validate row schema
       const { error, value: validRow } = rowSchema.validate(row, {
         abortEarly: false,
-        convert: true, // allow coercion (e.g., dates)
+        convert: true,
       });
 
       if (error) {
         errorData.push({
           row: rowNum,
-          errors: error.details.map(d => d.message),
+          errors: error.details.map((d) => d.message),
         });
         continue;
       }
 
-      // destructure validated fields (use validRow to avoid original raw values)
-      const { status_name, notes, source, category, tag, last_connected, company_name, street, city, state, zip_code, country, website, ...cardData } = validRow;
+      const {
+        status_name,
+        notes,
+        source,
+        category,
+        tag,
+        last_connected,
+        company_name,
+        street,
+        city,
+        state,
+        zip_code,
+        country,
+        website,
+        ...cardData
+      } = validRow;
 
-      // 2) lookup status (do this after validation)
-      const status = await Status.findOne({ status_name }).exec();
-
-      if (!status) {
-        errorData.push({
-          row: rowNum,
-          error: `Status "${status_name}" not found`,
-          card: { ...cardData, status_name }
-        });
-        continue;
-      }
-
-      // 3) Compose details and address objects
-      const detailsData = { source, category, tag, last_connected, notes };
-      const addressDetailsData = {
-        company_name, street, city, state, zip_code, country, website
+      // 🔥 ADD DETAILS
+      cardData.detailsData = { source, category, tag, last_connected, notes };
+      cardData.addressDetailsData = {
+        company_name,
+        street,
+        city,
+        state,
+        zip_code,
+        country,
+        website,
       };
-
-      cardData.detailsData = detailsData;
-      cardData.addressDetailsData = addressDetailsData;
       cardData.assigned = assigned;
       cardData.status = status._id;
 
-      status.cards.push(cardData);
-      await status.save();
+      // 🔥 UNIQUE LEAD TITLE FOR EACH ROW
+      cardData.lead_title = nextLeadNumber.toString();
+      nextLeadNumber++;
 
-      validSaves.push({ row: rowNum, message: `Row ${rowNum} added successfully` });
+      // 🔥 PUSH INTO CARDS ARRAY
+      status.cards.push(cardData);
+
+      validSaves.push({
+        row: rowNum,
+        message: `Row ${rowNum} added successfully`,
+      });
     }
+
+    // 🔥 SAVE ONLY ONCE (SUPER FAST)
+    await status.save();
 
     const results = [...validSaves, ...errorData];
 
     return NextResponse.json(
-      { message: "Data Uploaded", results: results },
+      { message: "Data Uploaded", results },
       { status: 200 }
     );
-
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to process file" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to process file", details: error.message },
+      { status: 500 }
+    );
   }
 };
-
