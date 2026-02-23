@@ -443,7 +443,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
           <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             <Input
               label={t("lead_title")}
-              value={formData.lead_title}
+              value={formData.lead_title ?? ""}
               onChange={handleChange}
               name="lead_title"
               error={errors.lead_title}
@@ -468,7 +468,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("first_name")}
               type="text"
-              value={formData.first_name}
+              value={formData.first_name ?? ""}
               onChange={handleChange}
               name="first_name"
               required
@@ -480,7 +480,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("last_name")}
               type="text"
-              value={formData.last_name}
+              value={formData.last_name ?? ""}
               onChange={handleChange}
               name="last_name"
               required

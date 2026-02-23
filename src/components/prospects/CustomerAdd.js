@@ -26,7 +26,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
   const [addressDetailsData, setAddressDetailsData] = useState({});
   const [contract_signed, setContractSigned] = useState(false);
   const { data: session } = useSession(); // 2. Get the session data
-  const [incrementVal, setIncrementVal] = useState(null);
+  const [incrementVal, setIncrementVal] = useState(0);
 
   const [formData, setFormData] = useState({
     lead_title: "",
