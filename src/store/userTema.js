@@ -148,7 +148,6 @@ export const userTeamReducer = createSlice({
             state.loader = true;
          })
          .addCase(assign_to_team.rejected, (state, { payload }) => {
-
             state.loader = false;
             state.errorMessage = payload.error;
          })

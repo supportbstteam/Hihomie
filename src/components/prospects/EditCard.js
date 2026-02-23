@@ -490,7 +490,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("referred_by")}
               type="text"
-              value={formData.company}
+              value={formData.company ?? ""}
               onChange={handleChange}
               name="company"
               error={errors.company}
@@ -516,7 +516,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("phone")}
               type="text"
-              value={formData.phone}
+              value={formData.phone ?? ""}
               onChange={handleChange}
               name="phone"
               error={errors.phone}
@@ -524,7 +524,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("email")}
               type="email"
-              value={formData.email}
+              value={formData.email ?? ""}
               onChange={handleChange}
               name="email"
               error={errors.email}
@@ -533,7 +533,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <Input
               label={t("lead_amout") + " ($)"}
               type="number"
-              value={formData.lead_value}
+              value={formData.lead_value ?? ""}
               onChange={handleChange}
               name="lead_value"
             />

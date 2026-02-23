@@ -6,11 +6,10 @@ import EditCard from "@/components/prospects/EditCard";
 import { get_leadStatusData } from "@/store/setting";
 import formatDateTime from "@/lib/formatDateTime";
 
-
 export default function LeadEditPage({ params }) {
-//   const { cardId, colId } = params;  destructure both dynamic segments
+  //   const { cardId, colId } = params;  destructure both dynamic segments
 
-   const { cardId, colId } = React.use(params);
+  const { cardId, colId } = React.use(params);
 
   const dispatch = useDispatch();
   const { leadStatus } = useSelector((state) => state.setting);
@@ -39,7 +38,10 @@ export default function LeadEditPage({ params }) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Editar cliente potencial {selectedUser ? formatDateTime(selectedUser.updatedAt) : "N/A"}</h1>
+      <h1 className="text-2xl font-semibold mb-4">
+        Editar cliente potencial{" "}
+        {selectedUser ? formatDateTime(selectedUser.updatedAt) : "N/A"}
+      </h1>
       <EditCard
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}

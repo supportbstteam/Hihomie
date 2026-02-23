@@ -1,10 +1,11 @@
-'use clint'
-import { assign_to_team, get_assignTeam, get_teamData } from '@/store/userTema';
+'use client'
+import { assign_to_team, get_assignTeam, get_teamData, messageClear} from '@/store/userTema';
 import React, { useEffect, useState } from 'react'
 import { BsPlusCircleDotted } from 'react-icons/bs'
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 import useUserFromSession from '@/lib/useUserFromSession';
+import toast from 'react-hot-toast';
 import { t } from '@/components/translations';
 
 const AssignUser = ({ colId, cardid }) => {
@@ -46,6 +47,7 @@ const AssignUser = ({ colId, cardid }) => {
 
     useEffect(() => {
         if (successMessage) {
+            toast.success(successMessage);
             setAssigneUser(false)
 
             setSelectedUsers([])
@@ -55,7 +57,11 @@ const AssignUser = ({ colId, cardid }) => {
             }
 
         }
-    }, [dispatch, cardid, colId, successMessage])
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(messageClear());
+        }
+    }, [dispatch, cardid, colId, successMessage, errorMessage])
 
     return (
         <>

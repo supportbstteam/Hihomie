@@ -180,6 +180,11 @@ export async function DELETE(req) {
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
+    const assignedLeads = await CardAssignUser.find({ userId: id });
+    if (assignedLeads.length > 0) { 
+      // return NextResponse.json({ message: "This user cannot be deleted as there are leads assigned to their account. Kindly reassign or remove those leads first, and then try again." }, {status: 400})
+      return NextResponse.json({ message: "No se puede eliminar a este usuario porque hay clientes potenciales asignados a su cuenta. Por favor, reasígnelos o elimínelos primero y vuelva a intentarlo." }, {status: 400})
+    };
 
     const deleted = await User.findByIdAndDelete(id);
 

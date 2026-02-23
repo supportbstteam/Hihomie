@@ -19,7 +19,7 @@ export async function POST(req, context) {
     }
 
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-      return NextResponse.json({ error: "No user data provided" }, { status: 400 });
+      return NextResponse.json({ error: "Please select at least one user to assign this lead." }, { status: 400 });
     }
 
     await CardAssignUser.deleteMany({ cardId });
@@ -34,7 +34,7 @@ export async function POST(req, context) {
     );
 
     return NextResponse.json({
-      message: "Data received successfully",
+      message: "Lead Assigned successfully",
       colId,
       cardId,
       data: users,
