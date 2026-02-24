@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
+import CardAssignUser from '@/models/CardAssignUser';
 
 export async function DELETE(req, { params }) {
   // return NextResponse.json({ message: "Lead Deleted successfully"}, { status: 200 });
@@ -9,12 +10,14 @@ export async function DELETE(req, { params }) {
 
     const { id } = await params; // 👈 capture id from URL
 
-    const deletedUser = await LeadStatus.findOneAndUpdate(
+    await CardAssignUser.deleteMany({ cardId: id });
+
+    const deletedLead = await LeadStatus.findOneAndUpdate(
       { "cards._id": id },
       { $pull: { cards: { _id: id } } }
     );
 
-    if (!deletedUser) {
+    if (!deletedLead) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
