@@ -380,7 +380,7 @@ export async function DELETE(req) {
 
     const { cardId, columId } = await req.json();
 
-    await CardAssignUser.deleteMany({ cardId: id });
+    await CardAssignUser.deleteMany({ cardId: cardId });
 
     const updatedStatus = await LeadStatus.findByIdAndUpdate(
       columId,
