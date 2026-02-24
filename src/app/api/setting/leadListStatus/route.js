@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import LeadStatus from "@/models/LeadStatus";
+import CardAssignUser from '@/models/CardAssignUser';
 import dbConnect from "@/lib/db";
 import getUserFromServerSession from '@/lib/getUserFromServerSession';
 import mongoose from 'mongoose';
@@ -377,7 +378,9 @@ export async function DELETE(req) {
   try {
     await dbConnect();
 
-    const { cardId, columId } = await req.json()// comes from URL
+    const { cardId, columId } = await req.json();
+
+    await CardAssignUser.deleteMany({ cardId: id });
 
     const updatedStatus = await LeadStatus.findByIdAndUpdate(
       columId,

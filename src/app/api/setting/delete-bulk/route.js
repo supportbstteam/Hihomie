@@ -9,8 +9,6 @@ export async function POST(req) {
 
     const { leads } = await req.json();
 
-    console.log("Received:", leads);
-
     if (!leads || leads.length === 0) {
       return NextResponse.json(
         { message: "Lead data is required" },

@@ -10,8 +10,6 @@ export async function POST(req, { params }) {
         const { due_date, due_date_note, userId, colId } = await req.json();
 
 
-        console.log("Received due date data:", { due_date, due_date_note, userId, colId, cardId: id });
-
         const [date, time] = due_date.split(" ");
 
         await dbConnect();

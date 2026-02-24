@@ -14,8 +14,6 @@ export async function POST(req) {
 
     const formData = await req.formData();
 
-    console.log(formData);
-
     // fields (non-file data)
     const name = formData.get("name");
     const lname = formData.get("lname");
@@ -181,8 +179,6 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
     const assignedLeads = await CardAssignUser.find({ userId: id });
-
-    // console.log("dsfsdf",assignedLeads);
 
     if (assignedLeads.length > 0) { 
       // return NextResponse.json({ message: "This user cannot be deleted as there are leads assigned to their account. Kindly reassign or remove those leads first, and then try again." }, {status: 400})

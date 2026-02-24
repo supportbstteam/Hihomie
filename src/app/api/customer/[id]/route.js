@@ -8,7 +8,7 @@ export async function DELETE(req, { params }) {
     await dbConnect();
 
     const { id } = await params; // 👈 capture id from URL
-
+    
     await CardAssignUser.deleteMany({ cardId: id });
 
     const deletedLead = await LeadStatus.findOneAndUpdate(
@@ -20,7 +20,7 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Lead Deleted successfully"}, { status: 200 });
+    return NextResponse.json({ message: "Lead Deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

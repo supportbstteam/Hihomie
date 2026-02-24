@@ -7,8 +7,6 @@ import { Dashboard } from "@/components/Dashboard";
 export default async function DashboardPage() {
   const user = await getUserFromServerSession();
   if (!user) redirect("/login");
-   
-  console.log();
 
   return (
     <>
