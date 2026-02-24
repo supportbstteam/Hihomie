@@ -4,7 +4,6 @@ import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser';
 
 export async function DELETE(req, { params }) {
-  // return NextResponse.json({ message: "Lead Deleted successfully"}, { status: 200 });
   try {
     await dbConnect();
 
