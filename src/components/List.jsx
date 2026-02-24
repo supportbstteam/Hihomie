@@ -285,19 +285,19 @@ const List = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[70px] pl-4">
+              <TableHead className="w-[60px] pl-4">
                 <input
                   type="checkbox"
                   checked={selectedLeads.length === leadStatusList.length}
                   onChange={toggleAllLeads}
                 />
               </TableHead>
-              <TableHead className="w-[70px]">Sr. No</TableHead>
+              <TableHead className="w-[60px]">Sr. No</TableHead>
               <TableHead>{t("title")}</TableHead>
               <TableHead>{t("full_name")}</TableHead>
               <TableHead>{t("email")}</TableHead>
               <TableHead>{t("phone")}</TableHead>
-              <TableHead>{t("assigned")}</TableHead>
+              <TableHead className="w-[100px]">{t("assigned")}</TableHead>
               <TableHead>{t("status")}</TableHead>
               <TableHead>{t("created_at")}</TableHead>
               {authUser?.role != "external" && (
@@ -332,15 +332,37 @@ const List = ({
                   <TableCell>{item.email}</TableCell>
                   <TableCell>{item.phone}</TableCell>
                   <TableCell>
-                    {item?.users?.slice(0, 3).map((user, p) => (
-                      <Avatar
-                        key={p}
-                        src={user.image ?? "default.jpg"}
-                        alt={user?.name}
-                        size="xs"
-                        title={user?.name}
-                      />
-                    ))}
+                    {/* <div className="flex gap-1">
+                      {item?.users?.slice(0, 3).map((user, p) => (
+                        <Avatar
+                          key={p}
+                          src={user.image ?? "default.jpg"}
+                          alt={user?.name}
+                          size="xs"
+                          title={user?.name}
+                        />
+                      ))}
+                    </div> */}
+                    <div className="flex flex-col gap-1">
+                      {Array.from(
+                        { length: Math.ceil((item?.users?.length || 0) / 3) },
+                        (_, rowIndex) => (
+                          <div key={rowIndex} className="flex gap-1">
+                            {item?.users
+                              ?.slice(rowIndex * 3, rowIndex * 3 + 3)
+                              .map((user, index) => (
+                                <Avatar
+                                  key={user.id || index}
+                                  src={user.image ?? "default.jpg"}
+                                  alt={user?.name}
+                                  size="xs"
+                                  title={user?.name}
+                                />
+                              ))}
+                          </div>
+                        ),
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>{item.leadStatusname}</TableCell>
                   <TableCell>{formatDate(item.createdAt)}</TableCell>

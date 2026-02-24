@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DropDown from "@/components/ui/DropDown";
 import { t } from "@/components/translations";
+import toast from "react-hot-toast";
+import { set } from "mongoose";
 
 const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
 
@@ -150,6 +152,7 @@ const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
 
   const [mailType, setMailType] = useState("pre_approved");
   const [mailContent, setMailContent] = useState(preApprovedContent);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (mailType === "pre_approved") {
@@ -164,8 +167,10 @@ const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
   }, [mailType]);
 
   const handleClick = async () => {
+    setLoading(true);
+
     let subject;
-    switch(mailType) {
+    switch (mailType) {
       case "pre_approved":
         subject = "	HiHomie - Hipoteca Preaprobada";
         break;
@@ -187,7 +192,11 @@ const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
     });
 
     if (!res.ok) {
+      toast.error("Failed to send email");
       throw new Error("Failed to send email");
+    } else {
+      setLoading(false);
+      toast.success("Email sent successfully");
     }
   };
 
@@ -236,7 +245,7 @@ const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
 
               <div className="prose max-w-none text-gray-800" dangerouslySetInnerHTML={{ __html: mailContent }} />
 
-              <button type="button" onClick={handleClick} className="bg-green-500 text-white px-4 py-1 mt-4 rounded hover:bg-green-600 float-right">Send</button>
+              <button type="button" onClick={handleClick} className="bg-green-500 text-white px-4 py-1 mt-4 rounded hover:bg-green-600 float-right cursor-pointer">{ loading ? "Sending..." : "Send" }</button>
             </div>
           </motion.div>
         </div>
