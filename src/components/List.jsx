@@ -34,8 +34,6 @@ import MailModel from "@/components/prospects/MailModel";
 import formatDate from "@/lib/formatDate";
 import getThreePages from "@/lib/pagination";
 
-
-
 const List = ({
   leadStatusList,
   selecteFilterData,
@@ -124,7 +122,6 @@ const List = ({
   useEffect(() => {
     setCurrentPage(1);
     dispatch(get_leadStatusDataForList({ page: 1, ...selecteFilterData }));
-
   }, [
     gestor,
     estado,
@@ -205,7 +202,13 @@ const List = ({
       colId: lead.status,
     }));
 
-    dispatch(bulk_assignment(leads));
+    dispatch(bulk_assignment(leads))
+      .unwrap()
+      .then((res) => {
+        toast.success(res.message || "Assignment successful");
+        dispatch(get_leadStatusDataForList({ page: currentPage }));
+      })
+      .catch(() => toast.error("Something went wrong"));
   };
 
   const handleBulkDelete = () => {
@@ -308,8 +311,9 @@ const List = ({
               leadStatusList.map((item, i) => (
                 <TableRow
                   key={i}
-                  className={`hover:bg-gray-200 transition-colors duration-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    }`}
+                  className={`hover:bg-gray-200 transition-colors duration-200 ${
+                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
                 >
                   <TableCell className="pl-4">
                     <input
@@ -429,7 +433,6 @@ const List = ({
       </div> */}
 
       <div className="flex justify-between items-center mt-4 w-full">
-
         {/* PREV LEFT SIDE */}
         <button
           className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
@@ -462,7 +465,6 @@ const List = ({
         >
           Next
         </button>
-
       </div>
 
       {mailModelOpen && (

@@ -122,7 +122,7 @@ const AssignUser = ({ colId, cardid }) => {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="mt-4 w-full bg-[#21B573] hover:bg-green-600 text-white py-2 rounded"
+                                    className="mt-4 w-full bg-[#21B573] hover:bg-green-600 text-white py-2 rounded cursor-pointer"
                                 >
                                     Update
                                 </button>
