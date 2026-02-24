@@ -10,14 +10,14 @@ export default async function TopNav() {
 
   return (
     <aside className="w-full shrink-0 border-b border-stock bg-white p-2 h-full flex items-center justify-between relative">
-      
+
       {/* Logo */}
       <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
-         <img
-        src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
-        alt="Logo"
-       className="w-20 sm:w-28 md:w-36 lg:w-40"
-      />
+        <img
+          src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
+          alt="Logo"
+          className="w-20 sm:w-28 md:w-36 lg:w-40"
+        />
 
       </div>
 
@@ -34,14 +34,17 @@ export default async function TopNav() {
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-gray-300"
             />
           </li>
-          <li className="hidden sm:flex flex-col leading-tight">
-            <span className="text-sm sm:text-base font-semibold text-gray-800">
-              {session.user.name}
-            </span>
-            <span className="text-xs sm:text-sm text-gray-500 truncate max-w-[140px]">
-              {session.user.email}
-            </span>
-          </li>
+          <Link
+            href={'/dashboard/manager/profile'}>
+            <li className="hidden sm:flex flex-col leading-tight">
+              <span className="text-sm sm:text-base font-semibold text-gray-800">
+                {session.user.name}
+              </span>
+              <span className="text-xs sm:text-sm text-gray-500 truncate max-w-[140px]">
+                {session.user.email}
+              </span>
+            </li>
+          </Link>
         </ul>
       </div>
     </aside>
