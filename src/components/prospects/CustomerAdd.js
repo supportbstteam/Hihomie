@@ -48,6 +48,7 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
     detailsData: {},
     addressDetailsData: {},
     selectedColId: selectedColId || "",
+    origin: "In-person",
   });
   const [errors, setErrors] = useState({});
 

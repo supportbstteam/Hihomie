@@ -12,7 +12,10 @@ import Increment from '@/models/Increment'
 export async function POST(req) {
 
   try {
-    const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed } = await req.json()
+    const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed, origin } = await req.json()
+    
+    let final_origin = origin || "online";
+
     await dbConnect();
 
     const maxCard = await LeadStatus.aggregate([
@@ -55,7 +58,7 @@ export async function POST(req) {
       addressDetailsData,
       contacted,
       contract_signed,
-      property_enquiry: 'In-person',
+      property_enquiry: final_origin,
     };
 
 
