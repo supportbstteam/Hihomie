@@ -60,6 +60,7 @@ const List = ({
   const [mailDetails, setMailDetails] = useState(null);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [users, setUsers] = useState([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   const {
     gestor,
@@ -202,6 +203,11 @@ const List = ({
       colId: lead.status,
     }));
 
+    if (leads.length === 0) {
+      toast.error(t("please_select_at_least_one_lead"));
+      return;
+    }
+
     dispatch(bulk_assignment(leads))
       .unwrap()
       .then((res) => {
@@ -213,7 +219,8 @@ const List = ({
 
   const handleBulkDelete = () => {
     if (selectedLeads.length === 0) {
-      toast.error("Please select at least one lead");
+      setIsBulkDeleteModalOpen(false);
+      toast.error(t("please_select_at_least_one_lead"));
       return;
     }
     const payload = selectedLeads.map((lead) => ({
@@ -224,6 +231,7 @@ const List = ({
     dispatch(delete_bulk({ leads: payload }))
       .unwrap()
       .then((res) => {
+        setIsBulkDeleteModalOpen(false);
         toast.success(res.message || "Delete successful");
         dispatch(get_leadStatusDataForList({ page: currentPage }));
       })
@@ -274,7 +282,8 @@ const List = ({
         {/* DELETE BUTTON */}
         <button
           className="px-3 py-1 bg-red-500 text-white rounded-lg h-fit"
-          onClick={() => confirm("Are you sure?") && handleBulkDelete()}
+          onClick={() => setIsBulkDeleteModalOpen(true)}
+          // onClick={() => confirm("Are you sure?") && handleBulkDelete()}
         >
           Delete
         </button>
@@ -324,7 +333,7 @@ const List = ({
                       onChange={() => toggleLead(item._id, item.status)}
                     />
                   </TableCell>
-                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{(currentPage - 1) * 25 + (i + 1)}</TableCell>
                   <TableCell>{item.lead_title}</TableCell>
                   <TableCell>
                     {item.first_name} {item.last_name}
@@ -417,6 +426,13 @@ const List = ({
             onConfirm={() => handleDeleteClick(cardToDelete, columToDelete)}
           />
         )}
+        {isBulkDeleteModalOpen && (
+          <ConfirmDeleteModal
+            isOpen={isBulkDeleteModalOpen}
+            onClose={() => setIsBulkDeleteModalOpen(false)}
+            onConfirm={() => handleBulkDelete()}
+          />
+        )}
       </div>
 
       {/* PAGINATION */}
@@ -466,6 +482,13 @@ const List = ({
 
         {/* CENTER THREE BUTTONS */}
         <div className="flex items-center justify-center gap-2 w-full">
+          <button
+            className="px-3 py-1 bg-gray-200 rounded"
+            onClick={() => handlePageChange(1)}
+          >
+            1
+          </button>
+          <div>...</div>
           {getThreePages(currentPage, total_pages).map((page, i) => (
             <button
               key={i}
@@ -477,6 +500,13 @@ const List = ({
               {page}
             </button>
           ))}
+          <div>...</div>
+          <button
+            className="px-3 py-1 bg-gray-200 rounded"
+            onClick={() => handlePageChange(total_pages)}
+          >
+            {total_pages}
+          </button>
         </div>
 
         {/* NEXT RIGHT SIDE */}

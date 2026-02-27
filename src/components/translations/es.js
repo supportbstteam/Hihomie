@@ -255,7 +255,10 @@ const es = {
   contacted_contacted_user : "Contactados y No contactados",
   document_submitted_users : "Documentación presentada – Documentación pendiente",
   mortgage_status : "Estado de la hipoteca",
-  distribution_by_bank : "Distribución por bancos",
+  distribution_by_bank: "Distribución por bancos",
+  
+  please_select_at_least_one_lead: "Por favor, seleccione al menos un cliente potencial.",
+
 };
 
 export default es;
