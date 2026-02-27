@@ -273,7 +273,7 @@ const List = ({
 
           <button
             type="submit"
-            className="px-4 py-1 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
+            className="cursor-pointer px-4 py-1 bg-primary hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
           >
             {t("assign")}
           </button>
@@ -281,7 +281,7 @@ const List = ({
 
         {/* DELETE BUTTON */}
         <button
-          className="px-3 py-1 bg-red-500 text-white rounded-lg h-fit"
+          className="cursor-pointer px-3 py-1 bg-red-500 text-white rounded-lg h-fit"
           onClick={() => {
             if (selectedLeads.length === 0) {
               toast.error(t("please_select_at_least_one_lead"));
@@ -478,7 +478,7 @@ const List = ({
       <div className="flex justify-between items-center mt-4 w-full">
         {/* PREV LEFT SIDE */}
         <button
-          className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
@@ -488,7 +488,7 @@ const List = ({
         {/* CENTER THREE BUTTONS */}
         <div className="flex items-center justify-center gap-2 w-full">
           <button
-            className="px-3 py-1 bg-gray-200 rounded"
+            className="cursor-pointer px-3 py-1 bg-gray-200 rounded"
             onClick={() => handlePageChange(1)}
           >
             1
@@ -498,7 +498,7 @@ const List = ({
             <button
               key={i}
               onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 rounded transition 
+              className={`cursor-pointer px-3 py-1 rounded transition 
           ${currentPage === page ? "bg-green-600 text-white" : "bg-gray-200"}
         `}
             >
@@ -507,7 +507,7 @@ const List = ({
           ))}
           <div>...</div>
           <button
-            className="px-3 py-1 bg-gray-200 rounded"
+            className="cursor-pointer px-3 py-1 bg-gray-200 rounded"
             onClick={() => handlePageChange(total_pages)}
           >
             {total_pages}
@@ -517,7 +517,7 @@ const List = ({
         {/* NEXT RIGHT SIDE */}
         <button
           disabled={currentPage === total_pages}
-          className="px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
           onClick={() => handlePageChange(currentPage + 1)}
         >
           Next
