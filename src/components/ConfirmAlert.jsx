@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa"; // ✅ Import trash icon
+import { t } from "@/components/translations";
 
 const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
   return (
@@ -16,8 +17,16 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
           <motion.div
             className="bg-white p-6 rounded-2xl shadow-lg max-w-md w-full text-center relative" // ✅ Wider modal
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } }}
-            exit={{ scale: 0.8, opacity: 0, transition: { duration: 0.3, ease: "easeIn" } }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              transition: { duration: 0.3, ease: "easeOut" },
+            }}
+            exit={{
+              scale: 0.8,
+              opacity: 0,
+              transition: { duration: 0.3, ease: "easeIn" },
+            }}
           >
             {/* ✅ Delete icon at top center */}
             <div className="flex justify-center mb-4">
@@ -27,24 +36,22 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
             </div>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-3">
-              Are you sure?
+              {t("are_you_sure")}
             </h2>
-            <p className="text-gray-600 mb-6">
-              You want to delete this
-            </p>
+            <p className="text-gray-600 mb-6">{t("you_want_to_delete_this")}</p>
 
             <div className="flex justify-center gap-4">
               <button
                 onClick={onClose}
                 className="px-4 py-2 cursor-pointer rounded-xl bg-gray-300 text-gray-800 hover:bg-gray-400 transition"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={onConfirm}
                 className="px-4 py-2 cursor-pointer rounded-xl bg-red-600 text-white hover:bg-red-700 transition"
               >
-                Delete
+                {t("delete")}
               </button>
             </div>
           </motion.div>

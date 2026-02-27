@@ -259,6 +259,9 @@ const en = {
   distribution_by_bank: "Distribución por bancos",
 
   please_select_at_least_one_lead: "Please select at least one lead",
+  are_you_sure: "Are you sure?",
+  you_want_to_delete_this: "You want to delete this",
+  delete: "Delete",
 };
 
 export default en;

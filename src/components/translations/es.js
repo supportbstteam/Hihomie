@@ -249,15 +249,18 @@ const es = {
   modelos_de_autónomos: "Modelos de autónomos",
   movimientos_bancarios: "Movimientos bancarios",
   nota_simple: "Nota simple",
-  logout : 'Salir',
+  logout: 'Salir',
 
-  user_ontracts_data : "Contratos firmados",
-  contacted_contacted_user : "Contactados y No contactados",
-  document_submitted_users : "Documentación presentada – Documentación pendiente",
-  mortgage_status : "Estado de la hipoteca",
+  user_ontracts_data: "Contratos firmados",
+  contacted_contacted_user: "Contactados y No contactados",
+  document_submitted_users: "Documentación presentada – Documentación pendiente",
+  mortgage_status: "Estado de la hipoteca",
   distribution_by_bank: "Distribución por bancos",
-  
-  please_select_at_least_one_lead: "Por favor, seleccione al menos un cliente potencial.",
+
+  please_select_at_least_one_lead: "Por favor, seleccione al menos un cliente potencial",
+  are_you_sure: "Estas seguro?",
+  you_want_to_delete_this: "Quieres eliminar esto",
+  delete: "Borrar",
 
 };
 

@@ -282,8 +282,13 @@ const List = ({
         {/* DELETE BUTTON */}
         <button
           className="px-3 py-1 bg-red-500 text-white rounded-lg h-fit"
-          onClick={() => setIsBulkDeleteModalOpen(true)}
-          // onClick={() => confirm("Are you sure?") && handleBulkDelete()}
+          onClick={() => {
+            if (selectedLeads.length === 0) {
+              toast.error(t("please_select_at_least_one_lead"));
+              return;
+            }
+            setIsBulkDeleteModalOpen(true);
+          }}
         >
           Delete
         </button>
