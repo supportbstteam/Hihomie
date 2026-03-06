@@ -9,6 +9,7 @@ import calculatorReducer from './calculator'
 import taskReducer from './task'
 import mailerReducer from './mailer'
 import filterReducer from './filter'
+import estateReducer from './estate'
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     task: taskReducer,
     mailer: mailerReducer,
     filter: filterReducer,
+    estate: estateReducer,
   },
 })
 
