@@ -1,14 +1,45 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
+import path from "path";
+import fs from "fs/promises";
 
 export async function POST(request) {
     try {
         await dbConnect();
 
         // 1. Use formData() instead of json()
-        const data = await request.formData();
-        
+        // const data = await request.formData();
+
+        // // Define upload directory (inside public folder)
+        // const uploadDir = path.join(process.cwd(), "public", "estate", "uploads", "documents");
+
+        // // Ensure the directory exists
+        // try {
+        //     await fs.access(uploadDir);
+        // } catch {
+        //     await fs.mkdir(uploadDir, { recursive: true });
+        // }
+
+        // // Helper function to save file
+        // const saveFile = async (file) => {
+        //     if (!file || typeof file === 'string') return null;
+
+        //     const bytes = await file.arrayBuffer();
+        //     const buffer = Buffer.from(bytes);
+
+        //     // Create a unique filename to avoid overwrites
+        //     const uniqueName = `${Date.now()}-${file.name.replaceAll(" ", "_")}`;
+        //     const filePath = path.join(uploadDir, uniqueName);
+
+        //     await fs.writeFile(filePath, buffer);
+        //     return `/uploads/properties/${uniqueName}`; // Return the public URL path
+        // };
+
+        // // Process Files
+        // const energyCertPath = await saveFile(data.get('energy_certificate'));
+        // const emissionCertPath = await saveFile(data.get('emission_certificate'));
+
         // 2. Extract text fields into an object
         const propertyData = {
             province: data.get('province'),
@@ -57,11 +88,11 @@ export async function POST(request) {
         const newProperty = await Property.create(propertyData);
 
         return NextResponse.json(
-            { 
-                success: true, 
-                message: "Property created successfully", 
-                data: newProperty 
-            }, 
+            {
+                success: true,
+                message: "Property created successfully",
+                data: newProperty
+            },
             { status: 201 }
         );
 
