@@ -9,7 +9,7 @@ export async function POST(request) {
         await dbConnect();
 
         // 1. Use formData() instead of json()
-        // const data = await request.formData();
+        const data = await request.formData();
 
         // // Define upload directory (inside public folder)
         // const uploadDir = path.join(process.cwd(), "public", "estate", "uploads", "documents");
