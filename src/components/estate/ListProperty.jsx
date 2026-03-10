@@ -1,0 +1,141 @@
+"use client"
+
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Link from 'next/link';
+// import { get_properties } from '@/store/estate'; // Uncomment and implement your fetch action
+
+const ListProperty = () => {
+  const dispatch = useDispatch();
+  
+  // Assuming your Redux state has a 'properties' array alongside loader/messages
+  const { properties, loader } = useSelector(state => state.estate);
+
+  useEffect(() => {
+    // Dispatch your fetch action here when the component mounts
+    // dispatch(get_properties());
+  }, [dispatch]);
+
+  // Fallback dummy data for visual testing before your API is hooked up
+  const displayProperties = properties?.length > 0 ? properties : [
+    {
+      _id: '1',
+      reference: 'REF-001',
+      transaction_type: 'sale',
+      city: 'Madrid',
+      street: 'Gran Vía',
+      rooms: 3,
+      bathrooms: 2,
+      surface: 120,
+      guy: 'John Agent',
+    },
+  ];
+
+  const thStyle = "py-4 px-6 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700 uppercase tracking-wider";
+  const tdStyle = "py-4 px-6 border-b border-gray-100 text-sm text-gray-800";
+
+  return (
+    <div className="w-full bg-gray-50 min-h-screen">
+      
+      {/* Header Section */}
+      <div className="bg-white border-b border-gray-200 p-8 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Properties</h2>
+          <p className="text-sm text-gray-500 mt-1">Manage all your real estate listings</p>
+        </div>
+        <Link 
+          href="/estate" // Adjust this route to match your Next.js setup
+          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all transform active:scale-95"
+        >
+          + Add Property
+        </Link>
+      </div>
+
+      {/* Main Card Container - No padding and full width */}
+      <div className="w-full bg-white mt-4 border-t border-b border-gray-200 p-0">
+        
+        {loader ? (
+          <div className="p-8 text-center text-gray-500 font-medium">Loading properties...</div>
+        ) : (
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr>
+                  <th className={thStyle}>Reference</th>
+                  <th className={thStyle}>Location</th>
+                  <th className={thStyle}>Type</th>
+                  <th className={thStyle}>Details</th>
+                  <th className={thStyle}>Agent</th>
+                  <th className={`${thStyle} text-right`}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayProperties.map((property) => (
+                  <tr key={property._id} className="hover:bg-gray-50 transition-colors">
+                    
+                    {/* Reference */}
+                    <td className={`${tdStyle} font-medium text-gray-900`}>
+                      {property.reference}
+                    </td>
+
+                    {/* Location */}
+                    <td className={tdStyle}>
+                      <div className="font-medium">{property.city}</div>
+                      <div className="text-gray-500 text-xs">{property.street}</div>
+                    </td>
+
+                    {/* Transaction Type */}
+                    <td className={tdStyle}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                        property.transaction_type === 'sale' 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {property.transaction_type}
+                      </span>
+                    </td>
+
+                    {/* Details (Rooms/Baths/Surface) */}
+                    <td className={tdStyle}>
+                      <div className="flex items-center gap-3 text-gray-600">
+                        <span title="Rooms">🛏️ {property.rooms || '-'}</span>
+                        <span title="Bathrooms">🚿 {property.bathrooms || '-'}</span>
+                        <span title="Surface Area">📐 {property.surface ? `${property.surface}m²` : '-'}</span>
+                      </div>
+                    </td>
+
+                    {/* Agent / Guy */}
+                    <td className={tdStyle}>
+                      {property.guy || 'Unassigned'}
+                    </td>
+
+                    {/* Actions */}
+                    <td className={`${tdStyle} text-right space-x-3`}>
+                      <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                        Edit
+                      </button>
+                      <button className="text-red-600 hover:text-red-800 font-medium transition-colors">
+                        Delete
+                      </button>
+                    </td>
+                    
+                  </tr>
+                ))}
+                
+                {displayProperties.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="py-8 text-center text-gray-500">
+                      No properties found. Click "Add Property" to create one.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ListProperty;
