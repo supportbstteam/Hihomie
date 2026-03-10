@@ -262,6 +262,7 @@ const en = {
   are_you_sure: "Are you sure?",
   you_want_to_delete_this: "You want to delete this",
   delete: "Delete",
+  chart_warning: "No sufficient data provided for the chart",
 };
 
 export default en;

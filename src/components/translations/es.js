@@ -261,6 +261,7 @@ const es = {
   are_you_sure: "Estas seguro?",
   you_want_to_delete_this: "Quieres eliminar esto",
   delete: "Borrar",
+  chart_warning: "No se proporcionan suficientes datos para el gráfico",
 
 };
 

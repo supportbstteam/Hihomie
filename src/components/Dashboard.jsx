@@ -108,6 +108,51 @@ const StatCard = ({ title, value, change, pending, progress }) => (
   </Card>
 );
 
+// const DonutChartCard = ({
+//   title,
+//   data,
+//   colors,
+//   onClickData,
+//   dataKey = "value",
+// }) => {
+//   const router = useRouter();
+//   return (
+//     <Card className="h-full">
+//       <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+//       <div className="h-72 mt-4">
+//         <ResponsiveContainer width="100%" height="100%">
+//           <PieChart>
+//             <Pie
+//               data={data}
+//               innerRadius={60}
+//               outerRadius={80}
+//               fill="#8884d8"
+//               paddingAngle={5}
+//               dataKey={dataKey}
+//               labelLine={true}
+//               label={true}
+//               // label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
+//             >
+//               {data.map((entry, index) => (
+//                 <Cell
+//                   key={`cell-${index}`}
+//                   fill={colors[index % colors.length]}
+//                   cursor="pointer"
+//                   onClick={() => {
+//                     if (onClickData) onClickData(entry); // send clicked data to parent
+//                     router.push("/dashboard/lead");
+//                   }}
+//                 />
+//               ))}
+//             </Pie>
+//             <Legend iconType="circle" />
+//           </PieChart>
+//         </ResponsiveContainer>
+//       </div>
+//     </Card>
+//   );
+// };
+
 const DonutChartCard = ({
   title,
   data,
@@ -116,38 +161,50 @@ const DonutChartCard = ({
   dataKey = "value",
 }) => {
   const router = useRouter();
+
+  // 1. Check if data exists and has a positive sum
+  const hasData = data && data.length > 0;
+  const totalValue = hasData ? data.reduce((acc, curr) => acc + (curr[dataKey] || 0), 0) : 0;
+  const isSufficient = hasData && totalValue > 0;
+
   return (
     <Card className="h-full">
       <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-      <div className="h-72 mt-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              innerRadius={60}
-              outerRadius={80}
-              fill="#8884d8"
-              paddingAngle={5}
-              dataKey={dataKey}
-              labelLine={true}
-              // label={true}
-              label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                  cursor="pointer"
-                  onClick={() => {
-                    if (onClickData) onClickData(entry); // send clicked data to parent
-                    router.push("/dashboard/lead");
-                  }}
-                />
-              ))}
-            </Pie>
-            <Legend iconType="circle" />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="h-72 mt-4 flex items-center justify-center">
+        {isSufficient ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                innerRadius={60}
+                outerRadius={80}
+                fill="#8884d8"
+                paddingAngle={5}
+                dataKey={dataKey}
+                labelLine={true}
+                label={true}
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colors[index % colors.length]}
+                    cursor="pointer"
+                    onClick={() => {
+                      if (onClickData) onClickData(entry);
+                      router.push("/dashboard/lead");
+                    }}
+                  />
+                ))}
+              </Pie>
+              <Legend iconType="circle" />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          // 2. Default clause for empty or zero data
+          <div className="text-center">
+            <p className="text-gray-400 font-medium">{t("chart_warning")}</p>
+          </div>
+        )}
       </div>
     </Card>
   );
