@@ -449,9 +449,6 @@ export function Dashboard() {
 
                             {note_number.due_date_note}
 
-
-
-
                           </div>
                         ))}
                       </div>

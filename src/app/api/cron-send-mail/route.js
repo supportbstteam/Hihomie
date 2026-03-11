@@ -7,6 +7,7 @@ import CardAssignUser from '@/models/CardAssignUser';
 import DueDates from '@/models/DueDates';
 import nodemailer from "nodemailer";
 import User from '@/models/User';
+import { t } from "@/components/translations";
 
 export async function GET(request) {
 
@@ -129,6 +130,6 @@ export async function GET(request) {
 
   return NextResponse.json({
     status: "success",
-    message: "Mail Sedn With cron job",
+    message: t("tm7"),
   });
 }

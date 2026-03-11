@@ -191,7 +191,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         setSelectedUser(null);
       }
       else {
-        dispatch(get_leadStatusDataForList({page: 1}));
+        dispatch(get_leadStatusDataForList({ page: 1 }));
         dispatch(get_leadStatusData());
         dispatch(messageClear());
         // router.push(`/dashboard/lead`);
@@ -221,7 +221,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         //   colId: "", // ✅ keep the current colId
         // });
 
-         
+
 
       }
     }
@@ -290,7 +290,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (!commentFormData.comment) {
-      toast.error("Please enter a comment.");
+      toast.error(t("tm1"));
       return;
     }
     dispatch(add_customer_comments({ commentFormData, cardId: selectedUser._id }));
@@ -752,12 +752,12 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                   className="p-4 m-2 bg-primary/20 rounded-xl flex flex-col gap-2 shadow-sm"
                 >
                   {/* Note Text */}
-                  <div className="text-gray-800 text-sm">
+                  <div className="text-gray-700 text-sm">
                     {item.due_date_note}
                   </div>
 
                   {/* Footer with Icon + Date + Delete */}
-                  <div className="flex items-center justify-between text-gray-600 text-sm">
+                  <div className="flex items-center justify-between text-black text-sm">
                     <div className="flex items-center gap-2">
                       <Clock size={20} />
                       <span>
@@ -774,13 +774,27 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
                           minute: "2-digit",
                         })}
                       </span>
+                    </div>
+                  </div>
 
-
+                  <div className="flex items-center justify-between text-gray-500 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span>Added At</span>
+                      <span className="uppercase">
+                        {new Date(item.createdAt).toLocaleString("en-IN", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true
+                        })}
+                      </span>
                     </div>
                     <Trash2
                       onClick={() => handleDeleteDueDate(item._id)}
                       size={20}
-                      className="cursor-pointer hover:text-red-500 transition"
+                      className="cursor-pointer text-red-400 hover:text-red-600 transition"
                     />
                   </div>
                 </div>
@@ -950,24 +964,43 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
             <div className="space-y-1 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded-lg shadow-inner">
               {comments && comments.map((comment, index) => (
                 // Comment component
-                <div key={index} className="relative flex items-center justify-between bg-white p-2 rounded-md shadow-sm border border-gray-200">
-                  <p className="text-gray-800 text-sm pr-10">{comment.comment}</p>
-                  {authUser?.role === "admin" ? (
-                    <button
-                      onClick={() => handleCommentDelete(comment._id)}
-                      className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )
-                    : authUser?.id === comment.userId && (
+                <div
+                  key={index}
+                  className="grid grid-cols-[1fr_auto_25px] gap-4 items-center bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:border-gray-300 transition-colors"
+                >
+                  {/* Comment Text - Takes up all available space */}
+                  <div className="min-w-0">
+                    <p className="text-gray-800 text-sm break-words leading-relaxed">
+                      {comment.comment}
+                    </p>
+                  </div>
+
+                  {/* Date/Time - Fixed width for consistency */}
+                  <div className="w-32 text-right shrink-0">
+                    <p className="text-gray-400 text-[11px] font-medium tracking-tight uppercase">
+                      {new Date(comment.createdAt).toLocaleString("en-IN", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true
+                      })}
+                    </p>
+                  </div>
+
+                  {/* Actions - Admin or Owner */}
+                  <div className="flex justify-end">
+                    {(authUser?.role === "admin" || authUser?.id === comment.userId) && (
                       <button
                         onClick={() => handleCommentDelete(comment._id)}
-                        className="absolute top-1 right-1 p-1 text-red-500 hover:text-red-700"
+                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-all"
+                        title="Delete Comment"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
+                  </div>
                 </div>
               ))}
             </div>

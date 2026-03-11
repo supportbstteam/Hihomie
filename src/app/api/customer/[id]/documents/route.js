@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import Document from '@/models/Document'
+import { t } from "@/components/translations";
 
 export async function GET(req, context) {
     const { id } = await context.params;
@@ -11,7 +12,7 @@ export async function GET(req, context) {
 
         return NextResponse.json({ documents }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 }
 
@@ -23,11 +24,11 @@ export async function DELETE(req, context) {
         const deletedDocument = await Document.findByIdAndDelete(id);
 
         if (!deletedDocument) {
-            return NextResponse.json({ error: "Document not found" }, { status: 404 });
+            return NextResponse.json({ error: t("tm5") }, { status: 404 });
         }
 
-        return NextResponse.json({ message: "Document deleted successfully" }, { status: 200 });
+        return NextResponse.json({ message: t("tm6") }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 }
