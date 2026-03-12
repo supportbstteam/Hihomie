@@ -35,42 +35,27 @@ const MENU = {
     { href: "/dashboard/team", label: t("team"), icon: <MdOutlineDiversity3 /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: "/dashboard/mailer", label: t("mailer"), icon: <FaRegPaperPlane /> },
-    // { href: '#', label: t('manager'), icon: <MdOutlineHandshake /> },
-    // { href: '#', label: t('agent'), icon: <MdOutlineRealEstateAgent /> },
-    // { href: '#', label: t('bank'), icon: <MdOutlineAssuredWorkload /> },
-    // { href: '#', label: t('calculator'), icon: <MdOutlineCalculate /> },
-    // { href: '#', label: t('commission'), icon: <MdOutlineHandshake /> },
-    // { href: '#', label: t('metter'), icon: <SiConvertio /> },
-    // { href: '#', label: t('help_support'), icon: <MdOutlineHeadphones /> },
-    {
-      href: "/dashboard/setting",
-      label: t("setting"),
-      icon: <IoSettingsOutline />,
-    },
+    // {
+    //   href: "/dashboard/setting",
+    //   label: t("setting"),
+    //   icon: <IoSettingsOutline />,
+    // },
   ],
   manager: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    // { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     { href: "/dashboard/mailer", label: t("mailer"), icon: <FaRegPaperPlane /> },
-    // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
-    // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
-    // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
   ],
   staff: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    // { href: '/dashboard/manager/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: '/dashboard/lead', label: t("lead"), icon: <MdOutlineContactPhone /> },
     { href: "/dashboard/calculator", label: t("calculator"), icon: <MdOutlineCalculate /> },
     { href: '/dashboard/manager/profile', label: t("profile"), icon: <FaRegUser /> },
     { href: '/dashboard/manager/agenda', label: t("agenda"), icon: <FaTasks /> },
     { href: "/dashboard/mailer", label: t("mailer"), icon: <FaRegPaperPlane /> },
-    // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
-    // { href: '#', label: 'Agentes', icon: <MdOutlineRealEstateAgent /> },
-    // { href: '#', label: 'Banco', icon: <MdOutlineAssuredWorkload /> },
   ],
   external: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
@@ -78,8 +63,6 @@ const MENU = {
   ],
   user: [
     { href: "/dashboard", label: t("dashboard"), icon: <MdOutlineDashboard /> },
-    // { href: '#', label: 'Prospectos', icon: <MdOutlineCalculate /> },
-    // { href: '#', label: 'Gerente', icon: <MdOutlineHandshake /> },
   ],
   
 };
@@ -167,7 +150,7 @@ export default function Sidebar() {
 
 
           {/* Logout Button */}
-          <button
+          {/* <button
             onClick={() => {
               setOpen(false);
               signOut({ callbackUrl: "/" });
@@ -175,7 +158,7 @@ export default function Sidebar() {
             className="flex items-center cursor-pointer gap-2 w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100"
           >
             <MdOutlineLogout className="text-[#84909A]" /> {t("logout")}
-          </button>
+          </button> */}
         </nav>
       </aside>
     </>

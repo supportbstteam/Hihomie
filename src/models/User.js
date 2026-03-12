@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   image : {type : String},
   role: { type: String, enum: ["manager", "staff","external"], default: "staff" },
   additionalInfo: { type: String },
+  access: { type: String, enum: ["mortgage", "estate"], default: "mortgage" },
 }, { timestamps: true })
 
 export default mongoose.models.User || mongoose.model('User', UserSchema)

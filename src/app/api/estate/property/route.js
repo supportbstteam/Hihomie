@@ -11,34 +11,34 @@ export async function POST(request) {
         // 1. Use formData() instead of json()
         const data = await request.formData();
 
-        // // Define upload directory (inside public folder)
-        // const uploadDir = path.join(process.cwd(), "public", "estate", "uploads", "documents");
+        // Define upload directory (inside public folder)
+        const uploadDir = path.join(process.cwd(), "public", "estate", "uploads", "documents");
 
-        // // Ensure the directory exists
-        // try {
-        //     await fs.access(uploadDir);
-        // } catch {
-        //     await fs.mkdir(uploadDir, { recursive: true });
-        // }
+        // Ensure the directory exists
+        try {
+            await fs.access(uploadDir);
+        } catch {
+            await fs.mkdir(uploadDir, { recursive: true });
+        }
 
-        // // Helper function to save file
-        // const saveFile = async (file) => {
-        //     if (!file || typeof file === 'string') return null;
+        // Helper function to save file
+        const saveFile = async (file) => {
+            if (!file || typeof file === 'string') return null;
 
-        //     const bytes = await file.arrayBuffer();
-        //     const buffer = Buffer.from(bytes);
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
 
-        //     // Create a unique filename to avoid overwrites
-        //     const uniqueName = `${Date.now()}-${file.name.replaceAll(" ", "_")}`;
-        //     const filePath = path.join(uploadDir, uniqueName);
+            // Create a unique filename to avoid overwrites
+            const uniqueName = `${Date.now()}-${file.name.replaceAll(" ", "_")}`;
+            const filePath = path.join(uploadDir, uniqueName);
 
-        //     await fs.writeFile(filePath, buffer);
-        //     return `/uploads/properties/${uniqueName}`; // Return the public URL path
-        // };
+            await fs.writeFile(filePath, buffer);
+            return `/uploads/properties/${uniqueName}`; // Return the public URL path
+        };
 
-        // // Process Files
-        // const energyCertPath = await saveFile(data.get('energy_certificate'));
-        // const emissionCertPath = await saveFile(data.get('emission_certificate'));
+        // Process Files
+        const energyCertPath = await saveFile(data.get('energy_certificate'));
+        const emissionCertPath = await saveFile(data.get('emission_certificate'));
 
         // 2. Extract text fields into an object
         const propertyData = {
@@ -52,7 +52,7 @@ export async function POST(request) {
             area: data.get('area'),
             state: data.get('state'),
             reference: data.get('reference'),
-            guy: data.get('guy'),
+            type: data.get('type'),
             plant: data.get('plant'),
             rooms: Number(data.get('rooms')),
             bathrooms: Number(data.get('bathrooms')),
@@ -65,16 +65,6 @@ export async function POST(request) {
             energy_consumption: data.get('energy_consumption'),
             co2_emissions: data.get('co2_emissions'),
         };
-
-        // 3. Handle Files
-        const energyFile = data.get('energy_certificate'); // This is a File object
-        const emissionFile = data.get('emission_certificate'); // This is a File object
-
-        // LOGIC PREVIEW: If you wanted to save the file name to the DB:
-        if (energyFile && typeof energyFile !== 'string') {
-            // propertyData.energy_certificate_url = energyFile.name; 
-            // propertyData.emisson_certificate_url = emissionFile.name; 
-        }
 
         // 4. Validation
         if (!propertyData.reference || !propertyData.street) {
@@ -106,6 +96,86 @@ export async function POST(request) {
             );
         }
 
+        return NextResponse.json(
+            { message: "Internal Server Error", error: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+export async function GET() {
+    try {
+        // 1. Connect to the database
+        await dbConnect();
+
+        // 2. Fetch all properties from the database
+        const properties = await Property.find({}).sort({ createdAt: -1 });
+
+        // 3. Check if properties exist
+        if (!properties || properties.length === 0) {
+            return NextResponse.json(
+                { success: true, message: "No properties found", data: [] },
+                { status: 200 }
+            );
+        }
+
+        // 4. Return the data
+        return NextResponse.json(
+            {
+                success: true,
+                data: properties,
+            },
+            { status: 200 }
+        );
+
+    } catch (error) {
+        
+        return NextResponse.json(
+            { 
+                success: false, 
+                message: "Internal Server Error", 
+                error: error.message 
+            },
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        await dbConnect();
+
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json(
+                { message: "Property ID is required" },
+                { status: 400 }
+            );
+        }
+
+        // 2. Delete the property from MongoDB
+        const deletedProperty = await Property.findByIdAndDelete(id);
+
+        if (!deletedProperty) {
+            return NextResponse.json(
+                { message: "Property not found" },
+                { status: 404 }
+            );
+        }
+
+        // 3. Return success response to trigger the .fulfilled case in Redux
+        return NextResponse.json(
+            { 
+                success: true, 
+                message: "Property deleted successfully!",
+            },
+            { status: 200 }
+        );
+
+    } catch (error) {
+        console.error("Property Deletion Error:", error);
         return NextResponse.json(
             { message: "Internal Server Error", error: error.message },
             { status: 500 }

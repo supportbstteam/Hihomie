@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../lib/api/api";
+import { get } from "mongoose";
 
 export const create_property = createAsyncThunk(
     'create_property',
@@ -13,10 +14,39 @@ export const create_property = createAsyncThunk(
     }
 );
 
+export const get_properties = createAsyncThunk(
+    'get_properties',
+    async (_, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/property`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const delete_property = createAsyncThunk(
+    'delete_property',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            // Using params object in Axios
+            const { data } = await api.delete('/estate/property', {
+                params: { id },
+                withCredentials: true
+            });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
 export const estateReducer = createSlice({
     name: "estate",
     initialState: {
-        loader: false, // Added loader state
+        loader: false, 
         successMessage: '',
         errorMessage: '',
         successTag: '',
@@ -50,6 +80,32 @@ export const estateReducer = createSlice({
                 state.loader = false;
                 // Use optional chaining to safely access payload
                 state.errorMessage = payload?.message || "Failed to create property";
+                state.successTag = "";
+            })
+
+            .addCase(get_properties.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_properties.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.properties = payload.data;
+            })
+            .addCase(get_properties.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch properties";
+            })
+
+            .addCase(delete_property.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(delete_property.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Property deleted successfully!";
+                state.successTag = "PROPERTY_DELETED";
+            })
+            .addCase(delete_property.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to delete property";
                 state.successTag = "";
             });
     }

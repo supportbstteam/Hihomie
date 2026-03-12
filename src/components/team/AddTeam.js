@@ -29,6 +29,7 @@ const AddTeam = ({ setOpen }) => {
     password: "",
     status: true,
     image: null,
+    access: "",
   });
 
   const [errors, setErrors] = useState({
@@ -39,6 +40,7 @@ const AddTeam = ({ setOpen }) => {
     jobTitle: "",
     role: "",
     password: "",
+    access: "",
   });
 
   // Handle input change
@@ -68,6 +70,7 @@ const AddTeam = ({ setOpen }) => {
       jobTitle: "",
       role: "",
       password: "",
+      access: "",
     };
     let valid = true;
 
@@ -118,6 +121,11 @@ const AddTeam = ({ setOpen }) => {
 
     if (!formData.password) {
       newErrors.password = t("passwordRequired");
+      valid = false;
+    }
+
+    if (!formData.access) {
+      newErrors.access = t("accessRequired");
       valid = false;
     }
 
@@ -255,6 +263,21 @@ const AddTeam = ({ setOpen }) => {
               onChange={handleChange}
               required
               error={errors.password}
+            />
+
+            <Dropdown
+              label={t("access")}
+              name="access"
+              title={t("select_access")}
+              value={formData.access}
+              onChange={handleChange}
+              error={errors.access}
+              required
+              options={[
+                { value: "mortgage", label: "Mortgage" },
+                { value: "estate", label: "Estate" },
+                // { value: "insurance", label: "insurance" },
+              ]}
             />
 
             {/* Status */}

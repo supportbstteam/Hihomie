@@ -1,8 +1,9 @@
-import Link from 'next/link'
+import Link from 'next/link';
 import { LuBellDot } from "react-icons/lu";
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ProfileDropdown from '@/components/ProfileDropdown';
 
 export default async function TopNav() {
   const session = await getServerSession(authOptions)
@@ -22,7 +23,7 @@ export default async function TopNav() {
       </div>
 
       {/* Notification + Profile */}
-      <div className="ml-auto">
+      {/* <div className="ml-auto">
         <ul className="flex items-center gap-3 sm:gap-5">
           <li>
             <LuBellDot className="text-xl sm:text-2xl text-gray-500 cursor-pointer hover:text-green-600 transition" />
@@ -46,6 +47,20 @@ export default async function TopNav() {
             </li>
           </Link>
         </ul>
+      </div> */}
+      <div className="ml-auto flex items-center gap-3 sm:gap-5">
+        <LuBellDot className="text-xl sm:text-2xl text-gray-500 cursor-pointer hover:text-green-600 transition" />
+        
+        <div className="flex items-center gap-3">
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_URL}/admin.png`}
+            alt="Admin"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-gray-200"
+          />
+          
+          {/* ✅ Integrated Client Dropdown */}
+          <ProfileDropdown user={session.user} />
+        </div>
       </div>
     </aside>
   )

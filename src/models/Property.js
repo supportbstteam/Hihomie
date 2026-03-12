@@ -12,10 +12,10 @@ const PropertySchema = new mongoose.Schema({
     area: { type: String },
 
     // Property Features
-    state: { type: String },
+    status: { type: String },
     reference: { type: String },
-    guy: { type: String },
-    plant: { type: String },
+    type: { type: String },
+    floor: { type: String },
     rooms: { type: Number }, 
     bathrooms: { type: Number }, 
     surface: { type: Number }, 

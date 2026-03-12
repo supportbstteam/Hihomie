@@ -262,6 +262,9 @@ const en = {
   are_you_sure: "Are you sure?",
   you_want_to_delete_this: "You want to delete this",
   delete: "Delete",
+  access: "Access",
+  select_access: "Select Access",
+  accessRequired: "Access is required",
 };
 
 export default en;

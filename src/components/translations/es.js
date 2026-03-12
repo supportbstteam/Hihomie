@@ -261,6 +261,9 @@ const es = {
   are_you_sure: "Estas seguro?",
   you_want_to_delete_this: "Quieres eliminar esto",
   delete: "Borrar",
+  access: "Acceso",
+  select_access: "Seleccionar Acceso",
+  accessRequired: "Se requiere acceso",
 
 };
 
