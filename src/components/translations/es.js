@@ -284,6 +284,9 @@ const es = {
   tm19: "Tarjeta no encontrada en la columna de origen",
   tm20: "Columna de destino no encontrada",
   tm21: "Tarjeta actualizada correctamente",
+  access: "Acceso",
+  select_access: "Seleccionar Acceso",
+  accessRequired: "Se requiere acceso",
 
 };
 

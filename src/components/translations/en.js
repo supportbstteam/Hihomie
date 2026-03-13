@@ -288,6 +288,9 @@ const en = {
   tm22: "",
   tm23: "",
   tm24: "",
+  access: "Access",
+  select_access: "Select Access",
+  accessRequired: "Access is required",
 };
 
 export default en;
