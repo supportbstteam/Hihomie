@@ -118,7 +118,7 @@ export async function GET(req) {
         ]);
 
         const totalLeads = result[0].totalItemCount;
-        const contract_signed_leads = leadsAttended[0].totalCardCount;
+        const contract_signed_leads = leadsAttended[0]?.totalCardCount ?? 0;
         const contract_not_signed_leads = totalLeads - contract_signed_leads;
 
         return NextResponse.json({ message: 'Total Leads fetched successfully', data: [{ name: "Contract Signed", value: contract_signed_leads }, { name: "Contract Not Signed", value: contract_not_signed_leads }], successTag: "get_contract_signed_lead" }, { status: 200 })

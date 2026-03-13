@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
 import mongoose from 'mongoose'
+import { t } from "@/components/translations";
 
 export async function PUT(req, context) {
     const { id } = await context.params;
@@ -35,14 +36,14 @@ export async function PUT(req, context) {
 
 
         if (!updatedColumn) {
-            return NextResponse.json({ error: "Card not found" }, { status: 404 });
+            return NextResponse.json({ error: t("tm13") }, { status: 404 });
         }
 
-        return NextResponse.json({ message: "Bank updated successfully", data: updatedColumn }, { status: 200 });
+        return NextResponse.json({ message: t("tm14"), data: updatedColumn }, { status: 200 });
 
     } catch (error) {
         console.error("Update Error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 
 }

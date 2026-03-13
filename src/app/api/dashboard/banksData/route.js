@@ -29,6 +29,11 @@ export async function GET(req) {
                 $match: matchStage
             },
             {
+                $match: {
+                    "cards.contract_signed": { $eq: true }
+                },
+            },
+            {
                 $lookup: {
                     from: "leadstatuses",
                     let: { lookupCardId: "$cardId" },
@@ -76,6 +81,11 @@ export async function GET(req) {
 
         const result = await LeadStatus.aggregate([
             { $unwind: "$cards" },
+            {
+                $match: {
+                    "cards.contract_signed": { $eq: true }
+                },
+            },
             {
                 $group: {
                     _id: { $ifNull: ["$cards.bankDetailsData.bank_name", "unsend"] },

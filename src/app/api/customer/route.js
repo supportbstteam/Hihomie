@@ -8,6 +8,7 @@ import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser'
 import mongoose from "mongoose";
 import Increment from '@/models/Increment'
+import { t } from "@/components/translations";
 
 export async function POST(req) {
 
@@ -62,8 +63,6 @@ export async function POST(req) {
     };
 
 
-
-
     // Find the LeadStatus by ID and push the new card
     const updatedColumn = await LeadStatus.findByIdAndUpdate(
       selectedColId,
@@ -84,14 +83,14 @@ export async function POST(req) {
     }
 
     if (!updatedColumn) {
-      return NextResponse.json({ error: 'Column not found' }, { status: 404 });
+      return NextResponse.json({ error: t('tm15') }, { status: 404 });
     }
 
-    return NextResponse.json({ message: 'Card added successfully', data: updatedColumn }, { status: 200 });
+    return NextResponse.json({ message: t('tm16'), data: updatedColumn }, { status: 200 });
 
   } catch (error) {
     console.error(error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ error: t("internal_se") }, { status: 500 })
   }
 }
 
@@ -132,7 +131,7 @@ export async function GET(req) {
     return NextResponse.json(users, { status: 201 })
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: t("internal_se") }, { status: 500 });
   }
 }
 
@@ -197,7 +196,7 @@ export async function PUT(req) {
     // If no card updated → card does not exist
     if (!updatedColumn) {
       return NextResponse.json({
-        error: "Card not found in this column",
+        error: t('tm17'),
       }, { status: 404 });
     }
 
@@ -210,14 +209,14 @@ export async function PUT(req) {
       // Source column
       const sourceCol = await LeadStatus.findById(colId);
       if (!sourceCol) {
-        return NextResponse.json({ error: "Source column not found" }, { status: 404 });
+        return NextResponse.json({ error: t('tm18') }, { status: 404 });
       }
 
       const cardIndex = sourceCol.cards.findIndex(
         (c) => c._id.toString() === id
       );
       if (cardIndex === -1) {
-        return NextResponse.json({ error: "Card not found in source column" }, { status: 404 });
+        return NextResponse.json({ error: t('tm19') }, { status: 404 });
       }
 
       const [movedCard] = sourceCol.cards.splice(cardIndex, 1);
@@ -226,7 +225,7 @@ export async function PUT(req) {
       // Destination column
       const destCol = await LeadStatus.findById(status);
       if (!destCol) {
-        return NextResponse.json({ error: "Destination column not found" }, { status: 404 });
+        return NextResponse.json({ error: t('tm20') }, { status: 404 });
       }
 
       destCol.cards.push(movedCard);
@@ -235,19 +234,15 @@ export async function PUT(req) {
 
     // 3️⃣ Final return
     return NextResponse.json({
-      message: "Card updated successfully",
+      message: t('tm21'),
       data: updatedCard,
     }, { status: 200 });
 
   } catch (error) {
     console.error("Update Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: t("internal_se") }, { status: 500 });
   }
 }
-
-
-
-
 
 export async function DELETE(req, { params }) {
   try {
@@ -261,13 +256,13 @@ export async function DELETE(req, { params }) {
     );
 
     if (!deletedUser) {
-      return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+      return NextResponse.json({ error: t('tm13') }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Customer deleted successfully" }, { status: 200 });
+    return NextResponse.json({ message: t("tm9") }, { status: 200 });
   } catch (error) {
     console.error("DELETE Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: t("internal_se") }, { status: 500 });
   }
 }
 

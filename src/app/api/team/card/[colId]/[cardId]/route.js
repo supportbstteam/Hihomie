@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import CardAssignUser from '@/models/CardAssignUser'
 import User from '@/models/User'
-
+import { t } from "@/components/translations";
 
 export async function POST(req, context) {
   try {
@@ -70,6 +70,6 @@ export async function GET(req, context) {
     return NextResponse.json({ data: users }, { status: 200 });
   } catch (error) {
     console.error("GET Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: t("internal_se") }, { status: 500 });
   }
 }

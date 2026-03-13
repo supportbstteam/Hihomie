@@ -3,6 +3,7 @@ import dbConnect from '@/lib/db'
 import Comments from '@/models/Comments'
 import DueDates from '@/models/DueDates'
 import LeadStatus from '@/models/LeadStatus';
+import { t } from "@/components/translations";
 
 export async function POST(req, { params }) {
     try {
@@ -31,9 +32,9 @@ export async function POST(req, { params }) {
             { $set: { "cards.$.updatedAt": new Date() } }
         );
 
-        return NextResponse.json({ message: "Due date added successfully" }, { status: 200 });
+        return NextResponse.json({ message: t("tm2") }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 }
 
@@ -46,7 +47,7 @@ export async function GET(req, context) {
 
         return NextResponse.json({ dueDates }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 }
 
@@ -59,11 +60,11 @@ export async function DELETE(req, context) {
         const deletedDueDate = await DueDates.findByIdAndDelete(id);
 
         if (!deletedDueDate) {
-            return NextResponse.json({ error: "Due date not found" }, { status: 404 });
+            return NextResponse.json({ error: t("tm3") }, { status: 404 });
         }
 
-        return NextResponse.json({ message: "Due date deleted successfully" }, { status: 200 });
+        return NextResponse.json({ message: t("tm4") }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: t("internal_se") }, { status: 500 });
     }
 }
