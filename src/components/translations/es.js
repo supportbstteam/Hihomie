@@ -262,6 +262,9 @@ const es = {
   you_want_to_delete_this: "Quieres eliminar esto",
   delete: "Borrar",
   chart_warning: "No se proporcionan suficientes datos para el gráfico",
+  access: "Acceso",
+  select_access: "Seleccionar Acceso",
+  accessRequired: "Se requiere acceso",
   internal_se: "Error Interno del Servidor",
   tm1: "Por favor ingrese un comentario.",
   tm2: "Fecha de vencimiento agregada exitosamente",
@@ -284,9 +287,9 @@ const es = {
   tm19: "Tarjeta no encontrada en la columna de origen",
   tm20: "Columna de destino no encontrada",
   tm21: "Tarjeta actualizada correctamente",
-  access: "Acceso",
-  select_access: "Seleccionar Acceso",
-  accessRequired: "Se requiere acceso",
+  tm22: "Correo no encontrado",
+  tm23: "Credenciales inválidas",
+  tm24: "login exitoso",
 
 };
 

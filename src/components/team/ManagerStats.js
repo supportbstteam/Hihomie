@@ -74,8 +74,8 @@ const DonutChartCard = ({
                             paddingAngle={5}
                             dataKey={dataKey}
                             labelLine={true}
-                            // label={true}
-                            label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
+                            label={true}
+                            // label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
                         >
                             {data.map((entry, index) => (
                                 <Cell

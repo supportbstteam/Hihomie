@@ -24,6 +24,8 @@ export async function POST(req) {
     const role = formData.get("role");
     const status = formData.get("status") === "true";
     const additionalInfo = formData.get("additionalInfo");
+    const access = formData.getAll("access"); 
+
 
     const check_email = await User.findOne({ email });
     if (check_email) {
@@ -65,6 +67,7 @@ export async function POST(req) {
       status,
       password: hashedPassword,
       additionalInfo,
+      access,
       ...(imagePath && { image: imagePath }) // only add image if exists
     });
 

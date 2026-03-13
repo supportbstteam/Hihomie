@@ -263,6 +263,9 @@ const en = {
   you_want_to_delete_this: "You want to delete this",
   delete: "Delete",
   chart_warning: "No sufficient data provided for the chart",
+  access: "Access",
+  select_access: "Select Access",
+  accessRequired: "Access is required",
   internal_se: "Internal Server Error",
   tm1: "Please enter a comment.",
   tm2: "Due date added successfully",
@@ -285,12 +288,10 @@ const en = {
   tm19: "Card not found in source column",
   tm20: "Destination column not found",
   tm21: "Card updated successfully",
-  tm22: "",
-  tm23: "",
-  tm24: "",
-  access: "Access",
-  select_access: "Select Access",
-  accessRequired: "Access is required",
+  tm22: "Email not found",
+  tm23: "Invalid credentials",
+  tm24: "Login success",
+
 };
 
 export default en;

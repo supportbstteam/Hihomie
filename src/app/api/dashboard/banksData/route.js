@@ -76,6 +76,10 @@ export async function GET(req) {
         ]);
         return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
     }
+
+
+
+    
     try {
         await dbConnect()
 

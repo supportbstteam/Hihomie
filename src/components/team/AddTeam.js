@@ -29,7 +29,7 @@ const AddTeam = ({ setOpen }) => {
     password: "",
     status: true,
     image: null,
-    access: "",
+    access: [],
   });
 
   const [errors, setErrors] = useState({
@@ -58,6 +58,26 @@ const AddTeam = ({ setOpen }) => {
       ...prev,
       image: e.target.files[0],
     }));
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    const currentAccess = formData.access || []; // Ensure it's an array
+
+    let updatedAccess;
+    if (checked) {
+      // Add value if checked
+      updatedAccess = [...currentAccess, value];
+    } else {
+      // Remove value if unchecked
+      updatedAccess = currentAccess.filter((item) => item !== value);
+    }
+
+    // Use your existing setState logic
+    setFormData({
+      ...formData,
+      access: updatedAccess,
+    });
   };
 
   // Validation
@@ -124,7 +144,7 @@ const AddTeam = ({ setOpen }) => {
       valid = false;
     }
 
-    if (!formData.access) {
+    if (formData.access.length < 1) {
       newErrors.access = t("accessRequired");
       valid = false;
     }
@@ -231,6 +251,52 @@ const AddTeam = ({ setOpen }) => {
               error={errors.jobTitle}
             />
 
+            {/* <Dropdown
+              label={t("access")}
+              name="access"
+              title={t("select_access")}
+              value={formData.access}
+              onChange={handleChange}
+              error={errors.access}
+              required
+              options={[
+                { value: "mortgage", label: "Mortgage" },
+                { value: "estate", label: "Estate" },
+                // { value: "insurance", label: "insurance" },
+              ]}
+            /> */}
+
+            <div className="space-y-2">
+              <label className="block font-medium text-gray-700">
+                {t("access")} <span className="text-red-500">*</span>
+              </label>
+
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: "mortgage", label: "Mortgage" },
+                  { value: "estate", label: "Estate" },
+                ].map((option) => (
+                  <label key={option.value} className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="access"
+                      value={option.value}
+                      checked={formData.access.includes(option.value)}
+                      onChange={handleCheckboxChange}
+                      className="sr-only peer"
+                    />
+                    <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                    <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                    <span className="text-sm text-gray-900 ml-2">{option.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              {errors.access && (
+                <p className="text-red-500 text-xs mt-1">{errors.access}</p>
+              )}
+            </div>
+
             <Dropdown
               label={t("role")}
               name="role"
@@ -263,21 +329,6 @@ const AddTeam = ({ setOpen }) => {
               onChange={handleChange}
               required
               error={errors.password}
-            />
-
-            <Dropdown
-              label={t("access")}
-              name="access"
-              title={t("select_access")}
-              value={formData.access}
-              onChange={handleChange}
-              error={errors.access}
-              required
-              options={[
-                { value: "mortgage", label: "Mortgage" },
-                { value: "estate", label: "Estate" },
-                // { value: "insurance", label: "insurance" },
-              ]}
             />
 
             {/* Status */}

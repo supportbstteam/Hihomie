@@ -77,8 +77,9 @@ const StatCard = ({ title, value, change, pending, progress }) => (
       <div className="text-3xl font-bold">{value}</div>
       {change && (
         <div
-          className={`flex items-center text-sm ${change.startsWith("+") ? "text-green-500" : "text-red-500"
-            }`}
+          className={`flex items-center text-sm ${
+            change.startsWith("+") ? "text-green-500" : "text-red-500"
+          }`}
         >
           {change.startsWith("+") ? (
             <ArrowUp size={16} />
@@ -164,7 +165,9 @@ const DonutChartCard = ({
 
   // 1. Check if data exists and has a positive sum
   const hasData = data && data.length > 0;
-  const totalValue = hasData ? data.reduce((acc, curr) => acc + (curr[dataKey] || 0), 0) : 0;
+  const totalValue = hasData
+    ? data.reduce((acc, curr) => acc + (curr[dataKey] || 0), 0)
+    : 0;
   const isSufficient = hasData && totalValue > 0;
 
   return (
@@ -244,7 +247,7 @@ export function Dashboard() {
     successTag,
   } = useSelector((state) => state.dashboard);
   const { tasks, admin_tasks, notes, admin_notes } = useSelector(
-    (state) => state.task
+    (state) => state.task,
   );
   const user = useUserFromSession();
   const [noteDate, setNoteDate] = useState(new Date());
@@ -271,7 +274,7 @@ export function Dashboard() {
         get_tasks({
           date: new Date().toISOString().split("T")[0],
           manager_id: user.id,
-        })
+        }),
       );
       dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
       dispatch(get_contractData({ userId: user.id }));
@@ -283,7 +286,7 @@ export function Dashboard() {
         get_notes({
           date: new Date().toISOString().split("T")[0],
           userId: user.id,
-        })
+        }),
       );
       dispatch(get_admin_notes(new Date().toISOString().split("T")[0]));
     }
@@ -371,9 +374,7 @@ export function Dashboard() {
                             <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
                               {(() => {
                                 const leadTitle = activity?.lead_title ?? "";
-                                return leadTitle
-                                  ? leadTitle
-                                  : "";
+                                return leadTitle ? leadTitle : "";
                               })()}
                             </div>
                             <div>
@@ -382,7 +383,7 @@ export function Dashboard() {
                               </div>
                               <div className="text-gray-500">
                                 {new Date(
-                                  activity.createdAt
+                                  activity.createdAt,
                                 ).toLocaleDateString("en-US", {
                                   month: "short",
                                   day: "numeric",
@@ -439,16 +440,16 @@ export function Dashboard() {
                             }}
                             className={`text-base my-2 ml-4 px-2 cursor-pointer ${"bg-green-100 text-gray-800 rounded-sm"}`}
                           >
-
                             <span style={{ marginRight: "6px" }}>
-                              {new Date(`${note_number.due_date}T${note_number.due_time}`).toLocaleTimeString("en-US", {
+                              {new Date(
+                                `${note_number.due_date}T${note_number.due_time}`,
+                              ).toLocaleTimeString("en-US", {
                                 hour: "2-digit",
                                 minute: "2-digit",
                               })}
                             </span>
 
                             {note_number.due_date_note}
-
                           </div>
                         ))}
                       </div>
@@ -474,17 +475,21 @@ export function Dashboard() {
                   {notes.map((note) => (
                     <div
                       key={note._id}
-                      className="flex items-center flex-grow cursor-pointer"
+                      className={`text-base my-2 ml-4 px-2 py-1 cursor-pointer ${"bg-green-100 text-gray-800 rounded-sm"}`}
                       onClick={() => {
                         dispatch(setFilters({ id: note.cardId }));
                         router.push("/dashboard/lead");
                       }}
                     >
-                      <span
-                        className={`text-base flex-grow mb-2 px-2 py-1 ${"bg-green-100 text-gray-800 rounded-sm"}`}
-                      >
-                        {note.due_date_note}
+                      <span style={{ marginRight: "6px" }}>
+                        {new Date(
+                          `${note.due_date}T${note.due_time}`,
+                        ).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </span>
+                        {note.due_date_note}
                     </div>
                   ))}
                 </Card>
@@ -506,10 +511,11 @@ export function Dashboard() {
                         {task.task_Details.map((task_number) => (
                           <div
                             key={task_number._id}
-                            className={`text-base my-2 ml-4 px-2 ${task_number.completed
-                              ? "line-through bg-green-100 text-gray-500 rounded-sm"
-                              : "bg-green-100 text-gray-800 rounded-sm"
-                              }`}
+                            className={`text-base my-2 ml-4 px-2 ${
+                              task_number.completed
+                                ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                                : "bg-green-100 text-gray-800 rounded-sm"
+                            }`}
                           >
                             {task_number.task}
                           </div>
@@ -534,10 +540,11 @@ export function Dashboard() {
                   )}
                 </span> */}
                       <span
-                        className={`text-base flex-grow mb-2 px-2 py-1 ${task.completed
-                          ? "line-through bg-green-100 text-gray-500 rounded-sm"
-                          : "bg-green-100 text-gray-800 rounded-sm"
-                          }`}
+                        className={`text-base flex-grow mb-2 px-2 py-1 ${
+                          task.completed
+                            ? "line-through bg-green-100 text-gray-500 rounded-sm"
+                            : "bg-green-100 text-gray-800 rounded-sm"
+                        }`}
                       >
                         {task.task}
                       </span>
@@ -552,7 +559,7 @@ export function Dashboard() {
         {/* Row 3 */}
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title={t('user_ontracts_data')}
+            title={t("user_ontracts_data")}
             data={contractData}
             colors={generateColors(contractData.length, "vivid")}
             onClickData={(item) => {
@@ -564,7 +571,7 @@ export function Dashboard() {
         </div>
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title={t('contacted_contacted_user')}
+            title={t("contacted_contacted_user")}
             data={contactedUsers}
             colors={generateColors(contactedUsers.length, "vivid")}
             onClickData={(item) => {
@@ -631,7 +638,7 @@ export function Dashboard() {
                       <CustomTooltip
                         total={mortgageStatusData.reduce(
                           (sum, d) => sum + d.value,
-                          0
+                          0,
                         )}
                       />
                     }

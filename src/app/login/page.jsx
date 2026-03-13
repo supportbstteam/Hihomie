@@ -8,6 +8,7 @@ import toast from "react-hot-toast"
 import { CiMail, CiLock } from "react-icons/ci";
 import Spinner from '@/components/Spinner'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { t } from '@/components/translations'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -25,10 +26,10 @@ export default function LoginPage() {
     const res = await signIn('credentials', { redirect: false, email, password })
     dispatch(setLoading(false))
     if (res?.ok) {
-      toast.success("Login success")
+      toast.success(t("tm24"))
       router.push('/dashboard')
     } else {
-      toast.error("Invalid credentials")
+      toast.error(t("tm23"))
     }
   }
 
