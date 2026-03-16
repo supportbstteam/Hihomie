@@ -3,104 +3,201 @@ import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser';
 
+// export async function GET(req) {
+//     const url = new URL(req.url);
+//     const userId = url.searchParams.get('userId');
+//     const fromDate = url.searchParams.get('fromDate');
+//     const toDate = url.searchParams.get('toDate');
+
+//     if (userId !== "68a2eeb6f31c60d58b33191e") {
+//         const matchStage = { userId };
+
+//         if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
+//             matchStage.createdAt = {};
+
+//             if (fromDate && fromDate !== "undefined") {
+//                 matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+//             }
+
+//             if (toDate && toDate !== "undefined") {
+//                 matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
+//             }
+//         }
+
+//         const result = await CardAssignUser.aggregate([
+//             {
+//                 $match: matchStage
+//             },
+//             {
+//                 $match: {
+//                     "cards.contract_signed": { $eq: true }
+//                 },
+//             },
+//             {
+//                 $lookup: {
+//                     from: "leadstatuses",
+//                     let: { lookupCardId: "$cardId" },
+//                     pipeline: [
+//                         { $unwind: "$cards" },
+//                         {
+//                             $match: {
+//                                 $expr: {
+//                                     $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"]
+//                                 }
+//                             }
+//                         },
+//                         { $replaceRoot: { newRoot: "$cards" } }
+//                     ],
+//                     as: "matchedCard"
+//                 }
+//             },
+//             { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
+//             {
+//                 $group: {
+//                     _id: { $ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"] },
+//                     count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
+//                 }
+//             },
+//             {
+//                 $addFields: {
+//                     _sortKey: { $toLower: "$_id" }
+//                 }
+//             },
+//             {
+//                 $sort: { _sortKey: 1 }
+//             },
+//             {
+//                 $project: {
+//                     name: "$_id",
+//                     value: "$count",
+//                     _id: 0
+//                 }
+//             }
+//         ]);
+//         return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
+//     }
+
+
+
+    
+//     try {
+//         await dbConnect()
+
+//         const result = await LeadStatus.aggregate([
+//             { $unwind: "$cards" },
+//             {
+//                 $match: {
+//                     "cards.contract_signed": { $eq: true }
+//                 },
+//             },
+//             {
+//                 $group: {
+//                     _id: { $ifNull: ["$cards.bankDetailsData.bank_name", "unsend"] },
+//                     totalCardCount: { $sum: 1 }
+//                 }
+//             },
+//             {
+//                 $addFields: {
+//                     _sortKey: { $toLower: "$_id" }
+//                 }
+//             },
+//             { $sort: { _sortKey: 1 } },
+//             {
+//                 $project: {
+//                     name: "$_id",
+//                     value: "$totalCardCount",
+//                     _id: 0
+//                 }
+//             }
+//         ]);
+
+//         return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
+//     } catch (error) {
+//         return NextResponse.json({ error: error.message }, { status: 500 })
+//     }
+// }
+
 export async function GET(req) {
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
     const fromDate = url.searchParams.get('fromDate');
     const toDate = url.searchParams.get('toDate');
+    const leadType = url.searchParams.get('leadType');
+    const status = url.searchParams.get('status');
 
-    if (userId !== "68a2eeb6f31c60d58b33191e") {
-        const matchStage = { userId };
+    try {
+        await dbConnect();
 
-        if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
-            matchStage.createdAt = {};
+        // 1. Handle "Manager/Staff" view (Filtered by userId)
+        if (userId !== "68a2eeb6f31c60d58b33191e") {
+            const matchStage = { userId };
 
-            if (fromDate && fromDate !== "undefined") {
-                matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+            // Date Filters
+            if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
+                matchStage.createdAt = {};
+                if (fromDate && fromDate !== "undefined") matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+                if (toDate && toDate !== "undefined") matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
             }
 
-            if (toDate && toDate !== "undefined") {
-                matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
-            }
+            const result = await CardAssignUser.aggregate([
+                { $match: matchStage },
+                {
+                    $lookup: {
+                        from: "leadstatuses",
+                        let: { lookupCardId: "$cardId" },
+                        pipeline: [
+                            { $unwind: "$cards" },
+                            {
+                                $match: {
+                                    $expr: { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
+                                    "cards.contract_signed": true,
+                                    // Apply Lead Type and Status filters inside the lookup if they exist
+                                    ...(leadType && { "cards.property_enquiry": leadType }), 
+                                    ...(status && { "cards.status": status })
+                                }
+                            },
+                            { $replaceRoot: { newRoot: "$cards" } }
+                        ],
+                        as: "matchedCard"
+                    }
+                },
+                { $unwind: "$matchedCard" }, // Removed preserveNullAndEmptyArrays to act as a hard filter
+                {
+                    $group: {
+                        _id: { $ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"] },
+                        count: { $sum: 1 }
+                    }
+                },
+                { $addFields: { _sortKey: { $toLower: "$_id" } } },
+                { $sort: { _sortKey: 1 } },
+                {
+                    $project: {
+                        name: "$_id",
+                        value: "$count",
+                        _id: 0
+                    }
+                }
+            ]);
+            return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 });
         }
 
-        const result = await CardAssignUser.aggregate([
-            {
-                $match: matchStage
-            },
-            {
-                $match: {
-                    "cards.contract_signed": { $eq: true }
-                },
-            },
-            {
-                $lookup: {
-                    from: "leadstatuses",
-                    let: { lookupCardId: "$cardId" },
-                    pipeline: [
-                        { $unwind: "$cards" },
-                        {
-                            $match: {
-                                $expr: {
-                                    $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"]
-                                }
-                            }
-                        },
-                        { $replaceRoot: { newRoot: "$cards" } }
-                    ],
-                    as: "matchedCard"
-                }
-            },
-            { $unwind: { path: "$matchedCard", preserveNullAndEmptyArrays: true } },
-            {
-                $group: {
-                    _id: { $ifNull: ["$matchedCard.bankDetailsData.bank_name", "unsend"] },
-                    count: { $sum: { $cond: [{ $ifNull: ["$matchedCard", false] }, 1, 0] } }
-                }
-            },
-            {
-                $addFields: {
-                    _sortKey: { $toLower: "$_id" }
-                }
-            },
-            {
-                $sort: { _sortKey: 1 }
-            },
-            {
-                $project: {
-                    name: "$_id",
-                    value: "$count",
-                    _id: 0
-                }
-            }
-        ]);
-        return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
-    }
-
-
-
-    
-    try {
-        await dbConnect()
+        // 2. Handle "Admin/Global" view
+        const globalMatch = {
+            "cards.contract_signed": true,
+            ...(leadType && { "cards.property_enquiry": leadType }),
+            ...(status && { "cards.status": status })
+        };
 
         const result = await LeadStatus.aggregate([
             { $unwind: "$cards" },
-            {
-                $match: {
-                    "cards.contract_signed": { $eq: true }
-                },
-            },
+            { $match: globalMatch },
             {
                 $group: {
                     _id: { $ifNull: ["$cards.bankDetailsData.bank_name", "unsend"] },
                     totalCardCount: { $sum: 1 }
                 }
             },
-            {
-                $addFields: {
-                    _sortKey: { $toLower: "$_id" }
-                }
-            },
+            { $addFields: { _sortKey: { $toLower: "$_id" } } },
             { $sort: { _sortKey: 1 } },
             {
                 $project: {
@@ -111,8 +208,9 @@ export async function GET(req) {
             }
         ]);
 
-        return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 })
+        return NextResponse.json({ message: 'Bank Data fetched successfully', data: result, successTag: "get_banksData" }, { status: 200 });
+
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

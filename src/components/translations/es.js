@@ -251,9 +251,9 @@ const es = {
   nota_simple: "Nota simple",
   logout: 'Salir',
 
-  user_ontracts_data: "Contratos firmados",
-  contacted_contacted_user: "Contactados y No contactados",
-  document_submitted_users: "Documentación presentada – Documentación pendiente",
+  user_contracts_data: "Datos de contratos",
+  contacted_contacted_user: "Usuarios contactados frente a no contactados",
+  document_submitted_users: "Datos de documentos",
   mortgage_status: "Estado de la hipoteca",
   distribution_by_bank: "Distribución por bancos",
 
@@ -266,6 +266,7 @@ const es = {
   select_access: "Seleccionar Acceso",
   accessRequired: "Se requiere acceso",
   internal_se: "Error Interno del Servidor",
+  str1: "Distribución de usuarios en las diferentes etapas del proceso hipotecario.",
   tm1: "Por favor ingrese un comentario.",
   tm2: "Fecha de vencimiento agregada exitosamente",
   tm3: "Fecha de vencimiento no encontrada",

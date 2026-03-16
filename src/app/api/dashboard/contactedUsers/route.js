@@ -1,3 +1,135 @@
+// import { NextResponse } from 'next/server'
+// import dbConnect from '@/lib/db'
+// import LeadStatus from '@/models/LeadStatus'
+// import CardAssignUser from '@/models/CardAssignUser';
+
+// export async function GET(req) {
+//     const url = new URL(req.url);
+//     const userId = url.searchParams.get('userId');
+//     const fromDate = url.searchParams.get('fromDate');
+//     const toDate = url.searchParams.get('toDate');
+
+//     if (userId !== "68a2eeb6f31c60d58b33191e") {
+
+//         const matchStage = { userId };
+
+//         if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
+//             matchStage.createdAt = {};
+
+//             if (fromDate && fromDate !== "undefined") {
+//                 matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+//             }
+
+//             if (toDate && toDate !== "undefined") {
+//                 matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
+//             }
+//         }
+
+
+//         const totalLeads = await CardAssignUser
+//             .find(matchStage)
+//             .lean();
+
+//         const result = await CardAssignUser.aggregate([
+//             // Stage 1: Find the user's assigned card
+//             {
+//                 $match: matchStage
+//             },
+
+//             // Stage 2: Use a Pipelined Lookup
+//             {
+//                 $lookup: {
+//                     from: "leadstatuses",
+//                     let: { lookupCardId: "$cardId" },
+//                     pipeline: [
+//                         { $unwind: "$cards" },
+//                         {
+//                             $match: {
+//                                 $expr: {
+//                                     $and: [
+//                                         { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
+//                                         { $eq: ["$cards.contacted", "yes"] }
+//                                     ]
+//                                 }
+//                             }
+//                         },
+//                         { $project: { _id: 0, matched: "true" } }
+//                     ],
+//                     as: "contacted"
+//                 }
+//             },
+//             {
+//                 $unwind: {
+//                     path: '$contacted',
+//                     preserveNullAndEmptyArrays: true
+//                 }
+//             },
+//             {
+//                 $addFields: {
+//                     contactedb: {
+//                         $cond: {
+//                             if: { $eq: ["$contacted.matched", "true"] },
+//                             then: true,
+//                             else: false
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 $group: {
+//                     _id: null,
+//                     contactedCount: { $sum: { $cond: { if: "$contactedb", then: 1, else: 0 } } }
+//                 }
+//             },
+//         ]);
+//         const totalLeadsCount = totalLeads.length;
+//         const user_contacted_count = result[0]?.contactedCount ?? 0;
+//         const user_not_contacted_count = totalLeadsCount - user_contacted_count;
+//         return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
+//     }
+//     try {
+//         await dbConnect()
+
+//         const result = await LeadStatus.aggregate([
+//             {
+//                 $group: {
+//                     _id: null, // Group all documents into a single bucket
+//                     totalItemCount: { $sum: { $size: "$cards" } }, // Sum up the size of the 'cards' array for each doc
+//                 },
+//             },
+//         ]);
+
+//         const leadsAttended = await LeadStatus.aggregate([
+//             {
+//                 // 1. Deconstruct the 'cards' array field
+//                 $unwind: "$cards",
+//             },
+//             {
+//                 // 2. Filter the resulting documents to include only those
+//                 //    where the unwound card's status matches the target
+//                 $match: {
+//                     "cards.contacted": { $eq: "yes" }
+//                 },
+//             },
+//             {
+//                 // 3. Group all matching cards into a single bucket
+//                 $group: {
+//                     _id: null,
+//                     totalCardCount: { $sum: 1 }, // Count the number of documents (which are now individual cards)
+//                 },
+//             },
+//         ]);
+
+//         const totalLeads = result[0].totalItemCount;
+//         const contacted_leads = leadsAttended[0].totalCardCount;
+//         const non_contacted_leads = totalLeads - contacted_leads;
+
+//         return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: contacted_leads }, { name: "Users Not Contacted", value: non_contacted_leads }], successTag: "get_contacted_lead" }, { status: 200 })
+//     } catch (error) {
+//         return NextResponse.json({ error: error.message }, { status: 500 })
+//     }
+// }
+
 import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/db'
 import LeadStatus from '@/models/LeadStatus'
@@ -8,35 +140,21 @@ export async function GET(req) {
     const userId = url.searchParams.get('userId');
     const fromDate = url.searchParams.get('fromDate');
     const toDate = url.searchParams.get('toDate');
+    // New Params
+    const leadType = url.searchParams.get('leadType');
+    const status = url.searchParams.get('status');
 
     if (userId !== "68a2eeb6f31c60d58b33191e") {
-
         const matchStage = { userId };
 
         if ((fromDate && fromDate !== "undefined") || (toDate && toDate !== "undefined")) {
             matchStage.createdAt = {};
-
-            if (fromDate && fromDate !== "undefined") {
-                matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
-            }
-
-            if (toDate && toDate !== "undefined") {
-                matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
-            }
+            if (fromDate && fromDate !== "undefined") matchStage.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
+            if (toDate && toDate !== "undefined") matchStage.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
         }
 
-
-        const totalLeads = await CardAssignUser
-            .find(matchStage)
-            .lean();
-
         const result = await CardAssignUser.aggregate([
-            // Stage 1: Find the user's assigned card
-            {
-                $match: matchStage
-            },
-
-            // Stage 2: Use a Pipelined Lookup
+            { $match: matchStage },
             {
                 $lookup: {
                     from: "leadstatuses",
@@ -48,7 +166,10 @@ export async function GET(req) {
                                 $expr: {
                                     $and: [
                                         { $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] },
-                                        { $eq: ["$cards.contacted", "yes"] }
+                                        { $eq: ["$cards.contacted", "yes"] },
+                                        // Filter by property enquiry and status
+                                        ...(leadType ? [{ $eq: ["$cards.property_enquiry", leadType] }] : []),
+                                        ...(status ? [{ $eq: ["$cards.status", status] }] : [])
                                     ]
                                 }
                             }
@@ -58,21 +179,10 @@ export async function GET(req) {
                     as: "contacted"
                 }
             },
-            {
-                $unwind: {
-                    path: '$contacted',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
+            { $unwind: { path: '$contacted', preserveNullAndEmptyArrays: true } },
             {
                 $addFields: {
-                    contactedb: {
-                        $cond: {
-                            if: { $eq: ["$contacted.matched", "true"] },
-                            then: true,
-                            else: false
-                        }
-                    }
+                    contactedb: { $cond: { if: { $eq: ["$contacted.matched", "true"] }, then: true, else: false } }
                 }
             },
             {
@@ -82,49 +192,87 @@ export async function GET(req) {
                 }
             },
         ]);
-        const totalLeadsCount = totalLeads.length;
+
+        // Replacement for the User's Total Leads Count
+        const totalLeadsFiltered = await CardAssignUser.aggregate([
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "leadstatuses",
+                    let: { lookupCardId: "$cardId" },
+                    pipeline: [
+                        { $unwind: "$cards" },
+                        {
+                            $match: {
+                                $expr: { $and: [{ $eq: [{ $toObjectId: "$$lookupCardId" }, "$cards._id"] }] },
+                                ...(leadType && { "cards.property_enquiry": leadType }),
+                                ...(status && { "cards.status": status })
+                            }
+                        }
+                    ],
+                    as: "filteredLead"
+                }
+            },
+            { $unwind: "$filteredLead" }, // This removes assignments that don't match your dropdowns
+            { $count: "total" }
+        ]);
+
+        const totalLeadsCount = totalLeadsFiltered[0]?.total ?? 0;
         const user_contacted_count = result[0]?.contactedCount ?? 0;
         const user_not_contacted_count = totalLeadsCount - user_contacted_count;
-        return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }], successTag: "get_contacted_lead" }, { status: 200 })
+
+        return NextResponse.json({
+            message: 'Contacted Leads fetched successfully',
+            data: [{ name: "Users Contacted", value: user_contacted_count }, { name: "Users Not Contacted", value: user_not_contacted_count }],
+            successTag: "get_contacted_lead"
+        }, { status: 200 })
     }
+
     try {
-        await dbConnect()
+        await dbConnect();
+
+        // Global filter for admin view
+        const globalMatch = {
+            ...(leadType && { "cards.property_enquiry": leadType }),
+            ...(status && { "cards.status": status })
+        };
 
         const result = await LeadStatus.aggregate([
+            { $unwind: "$cards" },
+            { $match: globalMatch },
             {
                 $group: {
-                    _id: null, // Group all documents into a single bucket
-                    totalItemCount: { $sum: { $size: "$cards" } }, // Sum up the size of the 'cards' array for each doc
+                    _id: null,
+                    totalItemCount: { $sum: 1 },
                 },
             },
         ]);
 
         const leadsAttended = await LeadStatus.aggregate([
+            { $unwind: "$cards" },
             {
-                // 1. Deconstruct the 'cards' array field
-                $unwind: "$cards",
-            },
-            {
-                // 2. Filter the resulting documents to include only those
-                //    where the unwound card's status matches the target
                 $match: {
-                    "cards.contacted": { $eq: "yes" }
+                    ...globalMatch,
+                    "cards.contacted": "yes"
                 },
             },
             {
-                // 3. Group all matching cards into a single bucket
                 $group: {
                     _id: null,
-                    totalCardCount: { $sum: 1 }, // Count the number of documents (which are now individual cards)
+                    totalCardCount: { $sum: 1 },
                 },
             },
         ]);
 
-        const totalLeads = result[0].totalItemCount;
-        const contacted_leads = leadsAttended[0].totalCardCount;
-        const non_contacted_leads = totalLeads - contacted_leads;
+        const totalLeadsCount = result[0]?.totalItemCount ?? 0;
+        const contacted_leads = leadsAttended[0]?.totalCardCount ?? 0;
+        const non_contacted_leads = totalLeadsCount - contacted_leads;
 
-        return NextResponse.json({ message: 'Contacted Leads fetched successfully', data: [{ name: "Users Contacted", value: contacted_leads }, { name: "Users Not Contacted", value: non_contacted_leads }], successTag: "get_contacted_lead" }, { status: 200 })
+        return NextResponse.json({
+            message: 'Contacted Leads fetched successfully',
+            data: [{ name: "Users Contacted", value: contacted_leads }, { name: "Users Not Contacted", value: non_contacted_leads }],
+            successTag: "get_contacted_lead"
+        }, { status: 200 })
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }

@@ -61,65 +61,178 @@ export const get_total_staff = createAsyncThunk(
     }
 )
 
+// export const get_contractData = createAsyncThunk(
+//     'get_contractData',
+//     async ({ userId, fromDate, toDate, leadType, status}, { rejectWithValue, fulfillWithValue }) => {
+//         try {
+//             const { data } = await api.get(`/dashboard/contractData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}&leadType=${leadType}&status=${status}`, { withCredentials: true })
+//             return fulfillWithValue(data);
+//         } catch (error) {
+//             return rejectWithValue(error.response.data)
+//         }
+//     }
+// )
+
 export const get_contractData = createAsyncThunk(
     'get_contractData',
-    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+    async (filter_payload, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contractData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+            // Create an object with only the defined values
+            const params = {
+                userId: filter_payload.userId,
+                ...(filter_payload.fromDate && { fromDate: filter_payload.fromDate }),
+                ...(filter_payload.toDate && { toDate: filter_payload.toDate }),
+                ...(filter_payload.leadType && { leadType: filter_payload.leadType }),
+                ...(filter_payload.status && { status: filter_payload.status }),
+            };
+
+            const { data } = await api.get('/dashboard/contractData', {
+                params,
+                withCredentials: true 
+            });
+
             return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || "Something went wrong");
         }
     }
 )
+
+// export const get_contactedUsers = createAsyncThunk(
+//     'get_contactedUsers',
+//     async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+//         try {
+//             const { data } = await api.get(`/dashboard/contactedUsers?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+//             return fulfillWithValue(data);
+//         } catch (error) {
+//             return rejectWithValue(error.response.data)
+//         }
+//     }
+// )
 
 export const get_contactedUsers = createAsyncThunk(
     'get_contactedUsers',
-    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+    async (filter_payload, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/contactedUsers?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+            // Create an object with only the defined values
+            const params = {
+                userId: filter_payload.userId,
+                ...(filter_payload.fromDate && { fromDate: filter_payload.fromDate }),
+                ...(filter_payload.toDate && { toDate: filter_payload.toDate }),
+                ...(filter_payload.leadType && { leadType: filter_payload.leadType }),
+                ...(filter_payload.status && { status: filter_payload.status }),
+            };
+
+            const { data } = await api.get('/dashboard/contactedUsers', {
+                params,
+                withCredentials: true 
+            });
+
             return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || "Something went wrong");
         }
     }
-)
+);
 
 export const get_documentSubmittedUsers = createAsyncThunk(
     'get_documentSubmittedUsers',
-    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+    async (filter_payload, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/documentSubmittedUsers?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+            // Create an object with only the defined values
+            const params = {
+                userId: filter_payload.userId,
+                ...(filter_payload.fromDate && { fromDate: filter_payload.fromDate }),
+                ...(filter_payload.toDate && { toDate: filter_payload.toDate }),
+                ...(filter_payload.leadType && { leadType: filter_payload.leadType }),
+                ...(filter_payload.status && { status: filter_payload.status }),
+            };
+
+            const { data } = await api.get('/dashboard/documentSubmittedUsers', {
+                params,
+                withCredentials: true
+            });
+
             return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || "Something went wrong");
         }
     }
-)
+);
+
+// export const get_mortgageStatusData = createAsyncThunk(
+//     'get_mortgageStatusData',
+//     async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+//         try {
+//             const { data } = await api.get(`/dashboard/mortgageStatus?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+//             return fulfillWithValue(data);
+//         } catch (error) {
+//             return rejectWithValue(error.response.data)
+//         }
+//     }
+// )
 
 export const get_mortgageStatusData = createAsyncThunk(
     'get_mortgageStatusData',
-    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+    async (filter_payload, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/mortgageStatus?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+            // Mapping values from the payload to a clean params object
+            const params = {
+                userId: filter_payload.userId,
+                ...(filter_payload.fromDate && { fromDate: filter_payload.fromDate }),
+                ...(filter_payload.toDate && { toDate: filter_payload.toDate }),
+                ...(filter_payload.leadType && { leadType: filter_payload.leadType }),
+                ...(filter_payload.status && { status: filter_payload.status }),
+            };
+
+            const { data } = await api.get('/dashboard/mortgageStatus', {
+                params,
+                withCredentials: true 
+            });
+
             return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || "Something went wrong");
         }
     }
-)
+);
+
+// export const get_banksData = createAsyncThunk(
+//     'get_banksData',
+//     async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+//         try {
+//             const { data } = await api.get(`/dashboard/banksData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+//             return fulfillWithValue(data);
+//         } catch (error) {
+//             return rejectWithValue(error.response.data)
+//         }
+//     }
+// )
 
 export const get_banksData = createAsyncThunk(
     'get_banksData',
-    async ({ userId, fromDate, toDate }, { rejectWithValue, fulfillWithValue }) => {
+    async (filter_payload, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/dashboard/banksData?userId=${userId}&fromDate=${fromDate}&toDate=${toDate}`, { withCredentials: true })
+            // Constructing dynamic params object
+            const params = {
+                userId: filter_payload.userId,
+                ...(filter_payload.fromDate && { fromDate: filter_payload.fromDate }),
+                ...(filter_payload.toDate && { toDate: filter_payload.toDate }),
+                ...(filter_payload.leadType && { leadType: filter_payload.leadType }),
+                ...(filter_payload.status && { status: filter_payload.status }),
+            };
+
+            const { data } = await api.get('/dashboard/banksData', {
+                params,
+                withCredentials: true 
+            });
+
             return fulfillWithValue(data);
         } catch (error) {
-            return rejectWithValue(error.response.data)
+            return rejectWithValue(error.response?.data || "Something went wrong");
         }
     }
-)
+);
 
 export const dashboardReducer = createSlice({
     name: 'dashboard',

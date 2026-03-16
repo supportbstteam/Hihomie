@@ -40,6 +40,7 @@ import {
 import { setFilters } from "@/store/filter";
 import useUserFromSession from "@/lib/useUserFromSession";
 import Datepicker from "@/components/ui/Datepicker";
+import { filter } from "../../headers";
 
 // --- Reusable Color function ---
 function generateColors(count, variation = "default") {
@@ -186,6 +187,7 @@ const DonutChartCard = ({
                 dataKey={dataKey}
                 labelLine={true}
                 label={true}
+                // label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
               >
                 {data.map((entry, index) => (
                   <Cell
@@ -265,6 +267,13 @@ export function Dashboard() {
 
   useEffect(() => {
     if (user?.id) {
+      const filter_payload = {
+        userId: user.id,
+        fromDate: "",
+        toDate: "",
+        leadType: "",
+        status: "",
+      };
       dispatch(get_total_lead({ userId: user.id }));
       dispatch(get_total_manager());
       dispatch(get_total_staff());
@@ -277,11 +286,11 @@ export function Dashboard() {
         }),
       );
       dispatch(get_admin_tasks(new Date().toISOString().split("T")[0]));
-      dispatch(get_contractData({ userId: user.id }));
-      dispatch(get_contactedUsers({ userId: user.id }));
-      dispatch(get_documentSubmittedUsers({ userId: user.id }));
-      dispatch(get_mortgageStatusData({ userId: user.id }));
-      dispatch(get_banksData({ userId: user.id }));
+      dispatch(get_contractData(filter_payload));
+      dispatch(get_contactedUsers(filter_payload));
+      dispatch(get_documentSubmittedUsers(filter_payload));
+      dispatch(get_mortgageStatusData(filter_payload));
+      dispatch(get_banksData(filter_payload));
       dispatch(
         get_notes({
           date: new Date().toISOString().split("T")[0],
@@ -489,7 +498,7 @@ export function Dashboard() {
                           minute: "2-digit",
                         })}
                       </span>
-                        {note.due_date_note}
+                      {note.due_date_note}
                     </div>
                   ))}
                 </Card>
@@ -559,7 +568,7 @@ export function Dashboard() {
         {/* Row 3 */}
         <div className="lg:col-span-1 xl:col-span-2">
           <DonutChartCard
-            title={t("user_ontracts_data")}
+            title={t("user_contracts_data")}
             data={contractData}
             colors={generateColors(contractData.length, "vivid")}
             onClickData={(item) => {
@@ -611,7 +620,7 @@ export function Dashboard() {
               {t("mortgage_status")}
             </h3>
             <p className="text-sm text-gray-500">
-              User Distribution Across Different Mortgage Process Stages.
+              {t("str1")}
             </p>
             <div className="h-64 mt-4">
               <ResponsiveContainer width="100%" height="100%">

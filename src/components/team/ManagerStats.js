@@ -60,38 +60,52 @@ const DonutChartCard = ({
     dataKey = "value",
 }) => {
     const router = useRouter();
+
+    // 1. Check if data exists and has a positive sum
+    const hasData = data && data.length > 0;
+    const totalValue = hasData
+        ? data.reduce((acc, curr) => acc + (curr[dataKey] || 0), 0)
+        : 0;
+    const isSufficient = hasData && totalValue > 0;
+
     return (
         <Card className="h-full">
             <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-            <div className="h-72 mt-4">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={data}
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            paddingAngle={5}
-                            dataKey={dataKey}
-                            labelLine={true}
-                            label={true}
-                            // label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
-                        >
-                            {data.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={colors[index % colors.length]}
-                                    cursor="pointer"
-                                    onClick={() => {
-                                        if (onClickData) onClickData(entry); // send clicked data to parent
-                                        router.push("/dashboard/lead");
-                                    }}
-                                />
-                            ))}
-                        </Pie>
-                        <Legend iconType="circle" />
-                    </PieChart>
-                </ResponsiveContainer>
+            <div className="h-72 mt-4 flex items-center justify-center">
+                {isSufficient ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={data}
+                                innerRadius={60}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                paddingAngle={5}
+                                dataKey={dataKey}
+                                labelLine={true}
+                                label={true}
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={colors[index % colors.length]}
+                                        cursor="pointer"
+                                        onClick={() => {
+                                            if (onClickData) onClickData(entry);
+                                            router.push("/dashboard/lead");
+                                        }}
+                                    />
+                                ))}
+                            </Pie>
+                            <Legend iconType="circle" />
+                        </PieChart>
+                    </ResponsiveContainer>
+                ) : (
+                    // 2. Default clause for empty or zero data
+                    <div className="text-center">
+                        <p className="text-gray-400 font-medium">{t("chart_warning")}</p>
+                    </div>
+                )}
             </div>
         </Card>
     );
@@ -132,16 +146,46 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
 
     const [fromDate, setFromDate] = useState();
     const [toDate, setToDate] = useState();
+    const [leadType, setLeadType] = useState("");
+    const [status, setStatus] = useState("");
+    const [leadStatus, setLeadStatus] = useState([]);
+
+    useEffect(() => {
+        const fetchLeadStatus = async () => {
+            try {
+                const response = await fetch("/api/setting/leadStatus");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch lead statuses");
+                }
+                const result = await response.json();
+
+                setLeadStatus(result.data || result);
+
+            } catch (error) {
+                console.error("Error fetching lead status:", error);
+            }
+        };
+
+        fetchLeadStatus();
+    }, []);
+
 
     useEffect(() => {
         if (user?._id) {
-            dispatch(get_contractData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
-            dispatch(get_contactedUsers({ userId: user._id, fromDate: fromDate, toDate: toDate }));
-            dispatch(get_documentSubmittedUsers({ userId: user._id, fromDate: fromDate, toDate: toDate }));
-            dispatch(get_mortgageStatusData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
-            dispatch(get_banksData({ userId: user._id, fromDate: fromDate, toDate: toDate }));
+            const filter_payload = {
+                userId: user._id,
+                fromDate,
+                toDate,
+                leadType,
+                status
+            };
+            dispatch(get_contractData(filter_payload));
+            dispatch(get_contactedUsers(filter_payload));
+            dispatch(get_documentSubmittedUsers(filter_payload));
+            dispatch(get_mortgageStatusData(filter_payload));
+            dispatch(get_banksData(filter_payload));
         }
-    }, [user?._id, dispatch, fromDate, toDate]);
+    }, [user?._id, dispatch, fromDate, toDate, leadType, status]);
 
     const handleDateChange = (e) => {
         const { name, value } = e.target;
@@ -188,12 +232,34 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                             dateFormat="dd/MM/yyyy"
                             className="text-light text-sm appearance-none font-normal font-heading w-50 px-2 py-1 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
                         />
+                        <select
+                            value={leadType}
+                            onChange={(e) => setLeadType(e.target.value)}
+                            className="text-sm font-normal px-3 py-1 border border-gray-400 rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-white min-w-[140px]"
+                        >
+                            <option value="">All Lead Types</option>
+                            <option value="In-person">In Person</option>
+                            <option value="online">Online</option>
+                        </select>
+
+                        {/* Status Filter */}
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="text-sm font-normal px-3 py-1 border border-gray-400 rounded-md focus:outline-none focus:ring-1 focus:ring-primary bg-white min-w-[206px]"
+                        >
+                            <option value="">All Statuses</option>
+                            {leadStatus.map((item, i) => (
+                                <option key={item._id} value={item._id}>
+                                    {item.status_name}
+                                </option>))}
+                        </select>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-6">
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
-                                title="User's Contracts Data"
+                                title={t("user_contracts_data")}
                                 data={contractData}
                                 colors={generateColors(contractData.length, "vivid")}
                                 onClickData={(item) => {
@@ -205,7 +271,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
-                                title="Contacted vs. Not Contacted Users"
+                                title={t("contacted_contacted_user")}
                                 data={contactedUsers}
                                 colors={generateColors(contactedUsers.length, "vivid")}
                                 onClickData={(item) => {
@@ -217,7 +283,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
-                                title="Document Submitted vs. Not Submitted Users"
+                                title={t("document_submitted_users")}
                                 data={documentSubmittedUsers}
                                 colors={generateColors(documentSubmittedUsers.length, "vivid")}
                                 onClickData={(item) => {
@@ -229,7 +295,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                         </div>
                         <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
-                                title="Distribution by Bank"
+                                title={t("distribution_by_bank")}
                                 data={banksData}
                                 colors={generateColors(banksData.length, "vivid")}
                                 onClickData={(item) => {
@@ -241,10 +307,10 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                     <div className="lg:col-span-4 xl:col-span-6">
                         <Card>
                             <h3 className="text-lg font-semibold text-gray-700">
-                                Mortgage Status
+                                {t("mortgage_status")}
                             </h3>
                             <p className="text-sm text-gray-500">
-                                User Distribution Across Different Mortgage Process Stages.
+                                {t("str1")}
                             </p>
                             <div className="h-64 mt-4">
                                 <ResponsiveContainer width="100%" height="100%">
