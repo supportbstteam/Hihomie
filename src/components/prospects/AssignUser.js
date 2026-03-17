@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 import useUserFromSession from '@/lib/useUserFromSession';
 import toast from 'react-hot-toast';
+import formatDate from "@/lib/formatDate";
 import { t } from '@/components/translations';
 
 const AssignUser = ({ colId, cardid }) => {
@@ -73,7 +74,8 @@ const AssignUser = ({ colId, cardid }) => {
                             key={index}
                             src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.image ? item.image : 'default.jpg'}`}
                             alt={item.name}
-                            title={item.name}
+                            // title={item.name}
+                            title={`${item.name} - ${formatDate(item.assignedAt)}`}
                             className="w-8 h-8 rounded-full"
                         />
                     ))}

@@ -55,7 +55,7 @@ export async function GET(req, context) {
 
     const userIds = await CardAssignUser.find(
       { cardId },
-      { userId: 1, _id: 0 } // only return userId, exclude _id
+      { userId: 1, createdAt: 1, _id: 0 } // only return userId, exclude _id
     ).lean();
 
     // Extract only userId values as an array
@@ -65,7 +65,12 @@ export async function GET(req, context) {
     const users = await User.find(
       { _id: { $in: ids } },
       { password: 0 } // exclude password
-    );
+    ).lean();
+
+    users.map((user) => {
+      user.assignedAt = userIds.find(u => u.userId.toString() === user._id.toString())?.createdAt || null;
+      return user;
+    });
 
     return NextResponse.json({ data: users }, { status: 200 });
   } catch (error) {
