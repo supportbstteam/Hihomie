@@ -51,9 +51,14 @@ export default function CustomDnD() {
   const router = useRouter();
 
   const dispatch = useDispatch();
-  const { leadStatus, leadStatusList, successMessage, total_count, total_pages, page } = useSelector(
-    (state) => state.setting
-  );
+  const {
+    leadStatus,
+    leadStatusList,
+    successMessage,
+    total_count,
+    total_pages,
+    page,
+  } = useSelector((state) => state.setting);
   const { filters } = useSelector((state) => state.filter);
 
   const [columns, setColumns] = useState({});
@@ -95,7 +100,7 @@ export default function CustomDnD() {
 
       container.scrollLeft = Math.min(
         container.scrollLeft + speed,
-        maxScrollLeft
+        maxScrollLeft,
       );
     }
 
@@ -121,13 +126,16 @@ export default function CustomDnD() {
     bank,
     email,
     document_submitted,
+    lead_type,
+    from_date,
+    to_date,
   } = selecteFilterData || {};
 
   useEffect(() => {
     if (!listComponent) {
       dispatch(get_leadStatusData());
     } else {
-      dispatch(get_leadStatusDataForList({page: 1}));
+      dispatch(get_leadStatusDataForList({ page: 1 }));
     }
   }, [dispatch, listComponent]);
 
@@ -135,15 +143,15 @@ export default function CustomDnD() {
     const filteredLeadStatus = leadStatus.map((status) => {
       const filteredCards = status.cards?.filter((item) => {
         const matchGestor = gestor
-          ? item?.assignedUsers?.some((user) => user === gestor)
+          ? item?.assignedUsers?.some((user) => user.userId === gestor)
           : true;
 
         const matchEstado = estado ? item?.status === estado : true;
 
         const matchName = full_name
           ? `${item.first_name || ""} ${item.last_name || ""}`
-            .toLowerCase()
-            .includes(full_name.toLowerCase())
+              .toLowerCase()
+              .includes(full_name.toLowerCase())
           : true;
 
         const matchPhone = phone
@@ -169,6 +177,31 @@ export default function CustomDnD() {
           ? item?.email?.toLowerCase().includes(email.toLowerCase())
           : true;
 
+        const matchLeadType = lead_type
+          ? item?.property_enquiry === lead_type
+          : true;
+
+        const matchFromDate = from_date
+          ? item?.assignedUsers?.some((user) => {
+              const isCorrectUser = gestor ? user.userId === gestor : true;
+              return (
+                isCorrectUser &&
+                new Date(user.assignedAt) >= new Date(from_date)
+              );
+            })
+          : true;
+
+        const matchToDate = to_date
+          ? item?.assignedUsers?.some((user) => {
+              const isCorrectUser = gestor ? user.userId === gestor : true;
+              const endOfToDate = new Date(to_date).setHours(23, 59, 59, 999);
+              return (
+                isCorrectUser &&
+                new Date(user.assignedAt) <= new Date(endOfToDate)
+              );
+            })
+          : true;
+
         return (
           matchGestor &&
           matchEstado &&
@@ -179,7 +212,10 @@ export default function CustomDnD() {
           matchBank &&
           matchDocumentSubmitted &&
           matchId &&
-          matchEmail
+          matchEmail &&
+          matchLeadType &&
+          matchFromDate &&
+          matchToDate
         );
       });
 
@@ -208,7 +244,7 @@ export default function CustomDnD() {
     dispatch(messageClear());
 
     dispatch(get_leadStatusData());
-    dispatch(get_leadStatusDataForList({page: 1}));
+    dispatch(get_leadStatusDataForList({ page: 1 }));
   };
 
   const handleDragStart = (e, cardId, sourceColId, index) => {
@@ -256,11 +292,10 @@ export default function CustomDnD() {
         sourceColId: draggedCard.sourceColId,
         destColId: destColId,
         cardId: draggedObj._id || draggedObj.id,
-      })
+      }),
     );
 
     dispatch(get_leadStatusData());
-
   };
 
   const handleDropBetween = (destColId, destIndex) => {
@@ -326,10 +361,8 @@ export default function CustomDnD() {
 
   const handleCardClick = (colId, card) => {
     const url = `/dashboard/lead/edit/${card._id}/${colId}`;
-    window.open(url, "_blank");  // Opens in new tab
+    window.open(url, "_blank"); // Opens in new tab
   };
-
-
 
   useEffect(() => {
     if (successMessage) {
@@ -338,7 +371,7 @@ export default function CustomDnD() {
       }
       dispatch(messageClear());
       dispatch(messageClearSetting());
-      dispatch(get_leadStatusDataForList({page: 1}));
+      dispatch(get_leadStatusDataForList({ page: 1 }));
       dispatch(get_leadStatusData());
     }
   }, [successMessage, dispatch]);
@@ -403,11 +436,8 @@ export default function CustomDnD() {
         </div>
 
         <Stats leadStatus={leadStatus} />
-
       </aside>
       {/* <LowerNav /> */}
-
-
 
       {/* BOARD */}
       {!listComponent ? (
@@ -421,10 +451,11 @@ export default function CustomDnD() {
                 key={col.id}
                 data-col-id={col.id}
                 className={`p-2 pb-8 flex-1 transition-colors duration-200 overflow-hidden border-t-5 rounded-md
-                                ${dragOverColId === col.id
-                    ? "bg-blue-100"
-                    : "bg-[#F9F9F9]"
-                  }`}
+                                ${
+                                  dragOverColId === col.id
+                                    ? "bg-blue-100"
+                                    : "bg-[#F9F9F9]"
+                                }`}
                 style={{ borderTopColor: col.color }}
                 onDragOver={(e) => handleDragOver(e, col.id)}
                 onDrop={() => handleDropColumn(col.id)}
@@ -438,16 +469,17 @@ export default function CustomDnD() {
                     <h2 className="font-semibold">{col.title}</h2>
                   </div>
 
-                  {authUser?.role != 'external' && <button
-                    onClick={() => {
-                      setSelectedColId(col.id);
-                      setOpen(true);
-                    }}
-                    className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
-                  >
-                    <CiCirclePlus />
-                  </button>}
-
+                  {authUser?.role != "external" && (
+                    <button
+                      onClick={() => {
+                        setSelectedColId(col.id);
+                        setOpen(true);
+                      }}
+                      className="text-[#67778880] cursor-pointer text-3xl hover:text-gray-700"
+                    >
+                      <CiCirclePlus />
+                    </button>
+                  )}
                 </div>
                 <div className="overflow-y-scroll scrollbar-hide h-full pr-1 custom-scrollbar">
                   {col.cards.map((card, index) => (
@@ -462,17 +494,20 @@ export default function CustomDnD() {
                       onDragEnd={handleDragEnd}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleDropBetween(col.id, index)}
-                      {...(authUser?.role !== "external" ? { onClick: () => handleCardClick(col.id, card) } : {})}
+                      {...(authUser?.role !== "external"
+                        ? { onClick: () => handleCardClick(col.id, card) }
+                        : {})}
                       onTouchStart={(e) =>
                         handleTouchStart(e, card._id, col.id, index)
                       }
                       onTouchMove={handleTouchMove}
                       onTouchEnd={handleTouchEnd}
                       className={`shadow-md rounded-md p-4 mb-3 cursor-grab transition 
-                                        ${draggingCardId === card._id
-                          ? "opacity-60 border-2 border-blue-500"
-                          : "bg-white "
-                        }`}
+                                        ${
+                                          draggingCardId === card._id
+                                            ? "opacity-60 border-2 border-blue-500"
+                                            : "bg-white "
+                                        }`}
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
@@ -480,9 +515,11 @@ export default function CustomDnD() {
                         </div>
                         <div>
                           <h3 className="font-semibold text-gray-800 text-sm sm:text-base">
-                            {`${card.first_name?.charAt(0).toUpperCase() || ""
-                              }${card.first_name?.slice(1) || ""} ${card.last_name?.charAt(0).toUpperCase() || ""
-                              }${card.last_name?.slice(1) || ""}`}
+                            {`${
+                              card.first_name?.charAt(0).toUpperCase() || ""
+                            }${card.first_name?.slice(1) || ""} ${
+                              card.last_name?.charAt(0).toUpperCase() || ""
+                            }${card.last_name?.slice(1) || ""}`}
                           </h3>
                         </div>
                       </div>
@@ -500,17 +537,19 @@ export default function CustomDnD() {
                         <span className="flex gap-2">
                           <Calendar size={16} />
                           <p className="text-light pxs">
-                            {formatDate(card.createdAt)} {/* Assuming createdAt is the date you want to show */}
+                            {formatDate(card.createdAt)}{" "}
+                            {/* Assuming createdAt is the date you want to show */}
                           </p>
                         </span>
                         <span className="flex gap-2">
                           <MapPin size={16} />
                           <p className="text-light pxs">
-                            {card.property_enquiry ? card.property_enquiry : "N/A"}
+                            {card.property_enquiry
+                              ? card.property_enquiry
+                              : "N/A"}
                           </p>
                         </span>
                       </div>
-
 
                       <div className=" w-3/5 m-auto grid grid-cols-3 text-light">
                         <a

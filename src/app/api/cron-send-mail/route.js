@@ -50,8 +50,6 @@ export async function GET(request) {
 
     const card = dbClient.cards[0];
 
-    console.log("client", card);
-
     if (due && dbUser) {
       const mailOptions = {
         from: process.env.SMTP_USER,
@@ -90,7 +88,11 @@ export async function GET(request) {
 
       <tr>
         <td style="padding:10px; background:#fafafa; border:1px solid #eee; font-weight:bold;">Fecha de vencimiento</td>
-        <td style="padding:10px; background:#fafafa; border:1px solid #eee;">${new Date(due.due_date).toLocaleDateString()}</td>
+        <td style="padding:10px; background:#fafafa; border:1px solid #eee;">${new Date(due.due_date).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        })}</td>
       </tr>
       <tr>
         <td style="padding:10px; background:#fafafa; border:1px solid #eee; font-weight:bold;">Tiempo debido</td>
@@ -119,6 +121,7 @@ export async function GET(request) {
       };
 
       try {
+        console.log(due.due_date, due.due_time);
         await transporter.sendMail(mailOptions);
         console.log(`Email sent to ${dbUser.email}`);
       } catch (error) {

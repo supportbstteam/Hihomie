@@ -172,7 +172,7 @@ export async function GET() {
           let: { cardIds: "$_cardIdsStr" },
           pipeline: [
             { $match: { $expr: { $in: ["$cardId", "$$cardIds"] } } },
-            { $project: { _id: 0, cardId: 1, userId: 1 } }
+            { $project: { _id: 0, cardId: 1, userId: 1, assignedAt: "$createdAt" } }
           ],
           as: "assignments"
         }
@@ -215,7 +215,10 @@ export async function GET() {
                           }
                         },
                         as: "m",
-                        in: "$$m.userId"
+                        in: {
+                          userId: "$$m.userId",
+                          assignedAt: "$$m.assignedAt"
+                        }
                       }
                     },
                     // documentSubmitted: "Yes" if any matching doc exists, otherwise "No"
@@ -277,7 +280,7 @@ export async function PUT(req) {
     await dbConnect();
     const { sourceColId, destColId, cardId } = await req.json();
 
-     const user = await getUserFromServerSession();
+    const user = await getUserFromServerSession();
 
     if (!sourceColId || !destColId || !cardId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -312,13 +315,13 @@ export async function PUT(req) {
     destCol.cards.push(movedCard);
     await destCol.save();
 
-    if(user.role != 'admin'){
-        await CardAssignUser.findOneAndUpdate(
-          { userId: user.id, cardId: cardId },  // find record
-          { colId: destColId },                 // update field
-          { new: true, upsert: true }           // new doc return + create if not exist
-        );
-    }else{
+    if (user.role != 'admin') {
+      await CardAssignUser.findOneAndUpdate(
+        { userId: user.id, cardId: cardId },  // find record
+        { colId: destColId },                 // update field
+        { new: true, upsert: true }           // new doc return + create if not exist
+      );
+    } else {
 
       await CardAssignUser.updateMany(
         { cardId: cardId },          // find all records with this cardId

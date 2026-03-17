@@ -13,6 +13,9 @@ const filterSlice = createSlice({
             contract_signed: "",
             document_submitted: "",
             bank: "",
+            lead_type: "",
+            from_date: "",
+            to_date: "",
         }
     },
     reducers: {

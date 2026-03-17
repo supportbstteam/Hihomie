@@ -257,7 +257,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-6">
-                        <div className="lg:col-span-1 xl:col-span-2">
+                        {/* <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title={t("user_contracts_data")}
                                 data={contractData}
@@ -268,8 +268,34 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                         : dispatch(setFilters({ contract_signed: "false", gestor: user._id }));
                                 }}
                             />
-                        </div>
+                        </div> */}
                         <div className="lg:col-span-1 xl:col-span-2">
+                            <DonutChartCard
+                                title={t("user_contracts_data")}
+                                data={contractData}
+                                colors={generateColors(contractData.length, "vivid")}
+                                onClickData={(item) => {
+                                    let filter_payload = {
+                                        gestor: user._id,
+                                        contract_signed: item.name === "Contract Signed" ? "true" : "false"
+                                    };
+                                    if (status) {
+                                        filter_payload.estado = status;
+                                    }
+                                    if (leadType) {
+                                        filter_payload.lead_type = leadType;
+                                    }
+                                    if(fromDate) {
+                                        filter_payload.from_date = fromDate;
+                                    }
+                                    if(toDate) {
+                                        filter_payload.to_date = toDate;
+                                    }
+                                    dispatch(setFilters(filter_payload));
+                                }}
+                            />
+                        </div>
+                        {/* <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title={t("contacted_contacted_user")}
                                 data={contactedUsers}
@@ -280,8 +306,34 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                         : dispatch(setFilters({ contacted: "no", gestor: user._id }));
                                 }}
                             />
-                        </div>
+                        </div> */}
                         <div className="lg:col-span-1 xl:col-span-2">
+                            <DonutChartCard
+                                title={t("contacted_contacted_user")}
+                                data={contactedUsers}
+                                colors={generateColors(contactedUsers.length, "vivid")}
+                                onClickData={(item) => {
+                                    let filter_payload = {
+                                        gestor: user._id,
+                                        contacted: item.name === "Users Contacted" ? "yes" : "no"
+                                    };
+                                    if (status) {
+                                        filter_payload.estado = status;
+                                    }
+                                    if (leadType) {
+                                        filter_payload.lead_type = leadType;
+                                    }
+                                    if(fromDate) {
+                                        filter_payload.from_date = fromDate;
+                                    }
+                                    if(toDate) {
+                                        filter_payload.to_date = toDate;
+                                    }
+                                    dispatch(setFilters(filter_payload));
+                                }}
+                            />
+                        </div>
+                        {/* <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title={t("document_submitted_users")}
                                 data={documentSubmittedUsers}
@@ -292,14 +344,67 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                         : dispatch(setFilters({ document_submitted: "no", gestor: user._id }));
                                 }}
                             />
-                        </div>
+                        </div> */}
                         <div className="lg:col-span-1 xl:col-span-2">
+                            <DonutChartCard
+                                title={t("document_submitted_users")}
+                                data={documentSubmittedUsers}
+                                colors={generateColors(documentSubmittedUsers.length, "vivid")}
+                                onClickData={(item) => {
+                                    let filter_payload = {
+                                        gestor: user._id,
+                                        document_submitted: item.name === "Documents Submitted Users" ? "yes" : "no"
+                                    };
+                                    if (status) {
+                                        filter_payload.estado = status;
+                                    }
+                                    if (leadType) {
+                                        filter_payload.lead_type = leadType;
+                                    }
+                                    if(fromDate) {
+                                        filter_payload.from_date = fromDate;
+                                    }
+                                    if(toDate) {
+                                        filter_payload.to_date = toDate;
+                                    }
+                                    dispatch(setFilters(filter_payload));
+                                }}
+                            />
+                        </div>
+                        {/* <div className="lg:col-span-1 xl:col-span-2">
                             <DonutChartCard
                                 title={t("distribution_by_bank")}
                                 data={banksData}
                                 colors={generateColors(banksData.length, "vivid")}
                                 onClickData={(item) => {
                                     dispatch(setFilters({ bank: item.name, gestor: user._id, contract_signed: "true" }));
+                                }}
+                            />
+                        </div> */}
+                        <div className="lg:col-span-1 xl:col-span-2">
+                            <DonutChartCard
+                                title={t("distribution_by_bank")}
+                                data={banksData}
+                                colors={generateColors(banksData.length, "vivid")}
+                                onClickData={(item) => {
+                                    let filter_payload = {
+                                        gestor: user._id,
+                                        bank: item.name,
+                                        contract_signed: "true"
+                                    };
+                                    if (status) {
+                                        filter_payload.estado = status;
+                                    }
+                                    if (leadType) {
+                                        filter_payload.lead_type = leadType;
+                                    }
+                                    if(fromDate) {
+                                        filter_payload.from_date = fromDate;
+                                    }
+                                    if(toDate) {
+                                        filter_payload.to_date = toDate;
+                                    }
+                                    dispatch(setFilters(filter_payload));
                                 }}
                             />
                         </div>
