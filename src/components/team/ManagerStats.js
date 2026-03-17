@@ -299,7 +299,7 @@ const ManagerStats = ({ setOpen, manager: user, setManager }) => {
                                 data={banksData}
                                 colors={generateColors(banksData.length, "vivid")}
                                 onClickData={(item) => {
-                                    dispatch(setFilters({ bank: item.name, gestor: user._id }));
+                                    dispatch(setFilters({ bank: item.name, gestor: user._id, contract_signed: "true" }));
                                 }}
                             />
                         </div>

@@ -370,7 +370,7 @@ const List = ({
                                   src={user.image ?? "default.jpg"}
                                   alt={user?.name}
                                   size="xs"
-                                  title={user?.name}
+                                  title={`${user?.name} - ${formatDate(user?.assignedAt)}`}
                                 />
                               ))}
                           </div>

@@ -113,7 +113,8 @@ export async function GET(req) {
             let: { cardIdStr: { $toString: "$cards._id" } },
             pipeline: [
               { $match: { $expr: { $eq: ["$cardId", "$$cardIdStr"] } } },
-              { $project: { userId: 1, _id: 0 } }
+              // { $project: { userId: 1, _id: 0 } }
+              { $project: { userId: 1, assignedAt: "$createdAt", _id: 0 } }
             ],
             as: "assignedUsers"
           }
@@ -131,32 +132,81 @@ export async function GET(req) {
           }
         },
 
-        {
-          $lookup: {
-            from: "users",
-            let: { userIds: "$assignedUsers.userId" },
-            pipeline: [
               {
-                $match: {
-                  $expr: {
-                    $in: [
-                      "$_id",
-                      {
-                        $map: {
-                          input: "$$userIds",
-                          as: "uid",
-                          in: { $toObjectId: "$$uid" }
-                        }
+        $lookup: {
+          from: "users",
+          let: { assignedData: "$assignedUsers" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    "$_id",
+                    {
+                      $map: {
+                        input: "$$assignedData",
+                        as: "ad",
+                        in: { $toObjectId: "$$ad.userId" }
                       }
-                    ]
-                  }
+                    }
+                  ]
                 }
-              },
-              { $project: { password: 0 } }
-            ],
-            as: "users"
-          }
-        },
+              }
+            },
+            { $project: { password: 0 } },
+            // Merge the assignedAt date from the variable into the user object
+            {
+              $addFields: {
+                assignedAt: {
+                  $arrayElemAt: [
+                    {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: "$$assignedData",
+                            as: "f",
+                            cond: { $eq: ["$$f.userId", { $toString: "$_id" }] }
+                          }
+                        },
+                        in: "$$this.assignedAt"
+                      }
+                    },
+                    0
+                  ]
+                }
+              }
+            }
+          ],
+          as: "users"
+        }
+      },
+
+        // {
+        //   $lookup: {
+        //     from: "users",
+        //     let: { userIds: "$assignedUsers.userId" },
+        //     pipeline: [
+        //       {
+        //         $match: {
+        //           $expr: {
+        //             $in: [
+        //               "$_id",
+        //               {
+        //                 $map: {
+        //                   input: "$$userIds",
+        //                   as: "uid",
+        //                   in: { $toObjectId: "$$uid" }
+        //                 }
+        //               }
+        //             ]
+        //           }
+        //         }
+        //       },
+        //       { $project: { password: 0 } }
+        //     ],
+        //     as: "users"
+        //   }
+        // },
 
         {
           $project: {
@@ -248,7 +298,8 @@ export async function GET(req) {
           let: { cardIdStr: { $toString: "$cards._id" } },
           pipeline: [
             { $match: { $expr: { $eq: ["$cardId", "$$cardIdStr"] } } },
-            { $project: { userId: 1, _id: 0 } }
+            // { $project: { userId: 1, _id: 0 } }
+            { $project: { userId: 1, assignedAt: "$createdAt", _id: 0 } }
           ],
           as: "assignedUsers"
         }
@@ -257,7 +308,7 @@ export async function GET(req) {
       {
         $lookup: {
           from: "users",
-          let: { userIds: "$assignedUsers.userId" },
+          let: { assignedData: "$assignedUsers" },
           pipeline: [
             {
               $match: {
@@ -266,20 +317,69 @@ export async function GET(req) {
                     "$_id",
                     {
                       $map: {
-                        input: "$$userIds",
-                        as: "uid",
-                        in: { $toObjectId: "$$uid" }
+                        input: "$$assignedData",
+                        as: "ad",
+                        in: { $toObjectId: "$$ad.userId" }
                       }
                     }
                   ]
                 }
               }
             },
-            { $project: { password: 0 } }
+            { $project: { password: 0 } },
+            // Merge the assignedAt date from the variable into the user object
+            {
+              $addFields: {
+                assignedAt: {
+                  $arrayElemAt: [
+                    {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: "$$assignedData",
+                            as: "f",
+                            cond: { $eq: ["$$f.userId", { $toString: "$_id" }] }
+                          }
+                        },
+                        in: "$$this.assignedAt"
+                      }
+                    },
+                    0
+                  ]
+                }
+              }
+            }
           ],
           as: "users"
         }
       },
+
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     let: { userIds: "$assignedUsers.userId" },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: {
+      //             $in: [
+      //               "$_id",
+      //               {
+      //                 $map: {
+      //                   input: "$$userIds",
+      //                   as: "uid",
+      //                   in: { $toObjectId: "$$uid" }
+      //                 }
+      //               }
+      //             ]
+      //           }
+      //         }
+      //       },
+      //       { $project: { password: 0 } }
+      //     ],
+      //     as: "users"
+      //   }
+      // },
 
       {
         $lookup: {

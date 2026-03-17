@@ -608,7 +608,7 @@ export function Dashboard() {
             data={banksData}
             colors={generateColors(banksData.length, "vivid")}
             onClickData={(item) => {
-              dispatch(setFilters({ bank: item.name }));
+              dispatch(setFilters({ contract_signed: "true", bank: item.name }));
             }}
           />
         </div>
