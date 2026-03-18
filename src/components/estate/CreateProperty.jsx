@@ -1,11 +1,11 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { create_property, messageClear } from "@/store/estate";
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/DropDown";
 import Input from "@/components/ui/Input";
+import AddressMiniMap from "@/components/Map";
 
 const CreateProperty = () => {
   const dispatch = useDispatch();
@@ -178,91 +178,112 @@ const CreateProperty = () => {
     dispatch(create_property(data));
   };
 
-  const labelStyle = "block text-sm font-medium text-gray-700 mb-1";
+  const fullAddress = `${formData.street} ${formData.street_number}, ${formData.city}, ${formData.province}`;
 
   return (
-    <div className="w-full bg-gray-50 min-h-screen">
-      <form onSubmit={handleSubmit} className="p-0">
-        {/* BLOCK 1: Location Details */}
-        <div className="bg-white border-b border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="w-full bg-white min-h-screen pb-24">
+      <form onSubmit={handleSubmit} className="space-y-10">
+        {/* SECTION 1: LOCATION DETAILS */}
+        <section className="p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
             Location Details
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Input
-              label="Province"
-              name="province"
-              value={formData.province}
-              onChange={handleChange}
-            />
-            <Input
-              label="Postal Code"
-              name="postal_code"
-              value={formData.postal_code}
-              onChange={handleChange}
-            />
-            <Input
-              label="City"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-            />
-            <Input
-              label="District"
-              name="district"
-              value={formData.district}
-              onChange={handleChange}
-            />
-
-            <Dropdown
-              label="Area"
-              name="area"
-              title="Select Area"
-              options={areaOptions}
-              value={formData.area}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Street"
-              name="street"
-              value={formData.street}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              label="Street Number"
-              name="street_number"
-              value={formData.street_number}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Public Address"
-              name="public_address"
-              title="Select Option"
-              options={[
-                { label: "See all", value: "See all" },
-                { label: "Hide street number", value: "Hide street number" },
-                { label: "Hide street", value: "Hide street" },
-                { label: "Hide everything", value: "Hide everything" },
-              ]}
-              value={formData.public_address}
-              onChange={handleChange}
-            />
+          <div className="flex flex-col lg:flex-row gap-10">
+            {/* Left Column (Inputs) */}
+            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+              <Input
+                label="Province"
+                name="province"
+                value={formData.province}
+                onChange={handleChange}
+              />
+              <Input
+                label="Postal Code"
+                name="postal_code"
+                value={formData.postal_code}
+                onChange={handleChange}
+                required
+              />
+              <div className="md:col-span-2">
+                <Input
+                  label="City"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <Input
+                label="Street"
+                name="street"
+                value={formData.street}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                label="Street Number"
+                name="street_number"
+                value={formData.street_number}
+                onChange={handleChange}
+                required
+              />
+              <div className="md:col-span-2">
+                <Dropdown
+                  label="Public Address*"
+                  name="public_address"
+                  title="Select Option"
+                  value={formData.public_address}
+                  onChange={handleChange}
+                  options={[
+                    { label: "See all", value: "See all" },
+                    {
+                      label: "Hide street number",
+                      value: "Hide street number",
+                    },
+                    { label: "Hide street", value: "Hide street" },
+                    { label: "Hide everything", value: "Hide everything" },
+                  ]}
+                />
+              </div>
+              <Input
+                label="District"
+                name="district"
+                value={formData.district}
+                onChange={handleChange}
+              />
+              <Dropdown
+                label="Zone"
+                name="area"
+                title="Select Zone/Area"
+                value={formData.area}
+                onChange={handleChange}
+                options={areaOptions}
+              />
+            </div>
+            {/* Right Column (Map) */}
+            <div className="w-full lg:w-1/2">
+              <AddressMiniMap address={fullAddress} />
+              <p className="text-xs text-blue-600 mt-2 text-right cursor-pointer">
+                Click here to manually adjust location
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* BLOCK 2: Property Features */}
-        <div className="bg-white p-8 mt-4 border-t border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        {/* SECTION 2: PROPERTY FEATURES */}
+        <section className="p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
             Property Features
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            <Dropdown
-              label="Status"
-              name="status"
-              title="Select Status"
-              options={[
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+              <Dropdown
+                label="Status"
+                name="status"
+                title="Select Status"
+                value={formData.status}
+                onChange={handleChange}
+                options={[
                 { label: "Prospectus", value: "prospectus" },
                 { label: "Available", value: "available" },
                 { label: "Reserved", value: "reserved" },
@@ -270,178 +291,119 @@ const CreateProperty = () => {
                 { label: "Sold", value: "sold" },
                 { label: "Inactive", value: "inactive" },
               ]}
-              value={formData.status}
-              onChange={handleChange}
-            />
-            <Input
-              label="Reference"
-              name="reference"
-              value={formData.reference}
-              onChange={handleChange}
-              required
-            />
-            <Dropdown
-              label="Type"
-              name="type"
-              title="Select Type"
-              options={typeOptions}
-              value={formData.type}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Floor"
-              name="floor"
-              title="Select Floor"
-              options={floorOptions}
-              value={formData.floor}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Rooms"
-              name="rooms"
-              title="Select rooms"
-              options={Array.from({ length: 31 }, (_, i) => ({
-                label: i.toString(),
-                value: i.toString(),
-              }))}
-              value={formData.rooms}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Bathrooms"
-              name="bathrooms"
-              title="Select Bathrooms"
-              options={Array.from({ length: 31 }, (_, i) => ({
-                label: i.toString(),
-                value: i.toString(),
-              }))}
-              value={formData.rooms}
-              onChange={handleChange}
-            />
-            <Input
-              label="Surface m²"
-              type="number"
-              name="surface"
-              value={formData.surface}
-              onChange={handleChange}
-            />
-            <Input
-              label="Usable Surface m²"
-              type="number"
-              name="usable_surface"
-              value={formData.usable_surface}
-              onChange={handleChange}
-            />
-            <Input
-              label="Year of Construction"
-              type="number"
-              name="year_of_construction"
-              value={formData.year_of_construction}
-              onChange={handleChange}
-            />
-            <Input
-              label="Community Expenses"
-              type="number"
-              name="community_expenses"
-              value={formData.community_expenses}
-              onChange={handleChange}
-            />
-
-            <div className="md:col-span-3 lg:col-span-5">
-              <label className={labelStyle}>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="4"
-                className="w-full border border-gray-400 rounded-md p-2 focus:ring-1 focus:ring-primary focus:outline-none transition-all"
-                placeholder="Describe the property highlights..."
               />
-            </div>
-            <div className="md:col-span-3 lg:col-span-5">
               <Input
-                label="Labels / Tags"
-                name="labels"
-                value={formData.labels}
+                label="Reference"
+                name="reference"
+                value={formData.reference}
                 onChange={handleChange}
-                placeholder="e.g. Luxury, Sea View, Investment (comma separated)"
+                required
               />
-            </div>
-          </div>
-
-          {/* Transaction Type & Toggle */}
-          <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap items-center gap-10">
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer font-medium">
-                <input
-                  type="radio"
-                  name="transaction_type"
-                  value="sale"
-                  checked={formData.transaction_type === "sale"}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-green-600"
-                />{" "}
-                Sale
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer font-medium">
-                <input
-                  type="radio"
-                  name="transaction_type"
-                  value="rent"
-                  checked={formData.transaction_type === "rent"}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-green-600"
-                />{" "}
-                Rent
-              </label>
-            </div>
-            <label className="flex items-center gap-2 cursor-pointer font-medium bg-gray-100 px-4 py-2 rounded-lg">
-              <input
-                type="checkbox"
-                name="show_price_tags"
-                checked={formData.show_price_tags}
-                onChange={handleChange}
-                className="w-4 h-4 rounded border-gray-300"
-              />
-              Show Price Tags
-            </label>
-          </div>
-
-          {/* Energy Section */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-green-50 p-6 rounded-xl border border-green-100">
-            <div>
               <Dropdown
-                label="Energy Certificate Type"
+                label="Type"
+                name="type"
+                title="Select Type"
+                value={formData.type}
+                onChange={handleChange}
+                options={typeOptions}
+              />
+              <Dropdown
+                label="Floor"
+                name="floor"
+                title="Select Floor"
+                value={formData.floor}
+                onChange={handleChange}
+                options={floorOptions}
+              />
+              <Dropdown
+                label="Rooms"
+                name="rooms"
+                title="Select number of rooms"
+                value={formData.rooms}
+                onChange={handleChange}
+                options={Array.from({ length: 31 }, (_, i) => ({
+                  label: i.toString(),
+                  value: i.toString(),
+                }))}
+              />
+              <Dropdown
+                label="Bathrooms"
+                name="bathrooms"
+                title="Select number of bathrooms"
+                value={formData.bathrooms}
+                onChange={handleChange}
+                options={Array.from({ length: 31 }, (_, i) => ({
+                  label: i.toString(),
+                  value: i.toString(),
+                }))}
+              />
+              <Input
+                label="Surface m²"
+                type="number"
+                name="surface"
+                value={formData.surface}
+                onChange={handleChange}
+              />
+              <Input
+                label="Usable Surface m²"
+                type="number"
+                name="usable_surface"
+                value={formData.usable_surface}
+                onChange={handleChange}
+              />
+              <Input
+                label="Year of Construction"
+                type="number"
+                name="year_of_construction"
+                value={formData.year_of_construction}
+                onChange={handleChange}
+              />
+              <Input
+                label="Community Expenses"
+                type="number"
+                name="community_expenses"
+                value={formData.community_expenses}
+                onChange={handleChange}
+              />
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="3"
+                  className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Input
+                  label="Labels / Tags"
+                  name="labels"
+                  placeholder="e.g. Luxury, Sea View, Investment (comma separated)"
+                  value={formData.labels}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2"></div>
+          </div>
+        </section>
+
+        {/* SECTION 3: ENERGY (ADDED) */}
+        <section className="p-6 bg-green-50/30">
+          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
+            Energy Certificate
+          </h2>
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Dropdown
+                label="Energy Type"
                 name="energy_certificate_type"
                 title="Select energy certificate type"
-                options={[
-                  { label: "A", value: "A" },
-                  { label: "B", value: "B" },
-                  { label: "C", value: "C" },
-                  { label: "D", value: "D" },
-                  { label: "E", value: "E" },
-                  { label: "F", value: "F" },
-                  { label: "G", value: "G" },
-                  { label: "Not specified", value: "not_specified" },
-                  { label: "In process", value: "pending" },
-                  { label: "Exempt", value: "exempt" },
-                ]}
                 value={formData.energy_certificate_type}
                 onChange={handleChange}
-              />
-              {/* <label className={labelStyle}>Energy Certificate</label>
-              <input
-                type="file"
-                name="energy_certificate"
-                onChange={handleChange}
-                className="text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700"
-              /> */}
-            </div>
-            <div>
-              <Dropdown
-                label="Emission Certificate Type"
-                name="emission_certificate_type"
-                title="Select emission certificate type"
                 options={[
                   { label: "A", value: "A" },
                   { label: "B", value: "B" },
@@ -454,93 +416,104 @@ const CreateProperty = () => {
                   { label: "In process", value: "pending" },
                   { label: "Exempt", value: "exempt" },
                 ]}
+              />
+              <Dropdown
+                label="Emission Type"
+                name="emission_certificate_type"
+                title="Select emission certificate type"
                 value={formData.emission_certificate_type}
                 onChange={handleChange}
+                options={[
+                  { label: "A", value: "A" },
+                  { label: "B", value: "B" },
+                  { label: "C", value: "C" },
+                  { label: "D", value: "D" },
+                  { label: "E", value: "E" },
+                  { label: "F", value: "F" },
+                  { label: "G", value: "G" },
+                  { label: "Not specified", value: "not_specified" },
+                  { label: "In process", value: "pending" },
+                  { label: "Exempt", value: "exempt" },
+                ]}
               />
-              {/* <label className={labelStyle}>Emission Certificate</label>
-              <input
-                type="file"
-                name="emission_certificate"
+              <Input
+                label="Consumption kWh/m²"
+                type="number"
+                name="energy_consumption"
+                value={formData.energy_consumption}
                 onChange={handleChange}
-                className="text-sm block w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700"
-              /> */}
+              />
+              <Input
+                label="CO2 Emission kg/m²"
+                type="number"
+                name="co2_emissions"
+                value={formData.co2_emissions}
+                onChange={handleChange}
+              />
             </div>
-            <Input
-              label="Energy Consumption kWh/m²"
-              type="number"
-              name="energy_consumption"
-              value={formData.energy_consumption}
-              onChange={handleChange}
-            />
-            <Input
-              label="CO2 Emission kgCO₂/m²"
-              type="number"
-              name="co2_emissions"
-              value={formData.co2_emissions}
-              onChange={handleChange}
-            />
+            <div className="w-full lg:w-1/2"></div>
           </div>
-        </div>
+        </section>
 
-        <div className="bg-white p-8 mt-4 border-t border-b border-gray-200">
-          <div className="flex items-center gap-2 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Private Data</h2>
-            <span className="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded">
-              (Optional)
-            </span>
+        {/* SECTION 4: PRIVATE DATA (ADDED) */}
+        <section className="p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
+            Private Data
+          </h2>
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Dropdown
+                label="Owner 1"
+                name="owner_1"
+                title="select owner 1"
+                value={formData.owner_1}
+                onChange={handleChange}
+                options={[]}
+              />
+              <Dropdown
+                label="Owner 2"
+                name="owner_2"
+                title="select owner 2"
+                value={formData.owner_2}
+                onChange={handleChange}
+                options={[]}
+              />
+              <Dropdown
+                label="Owner 3"
+                name="owner_3"
+                title="select owner 3"
+                value={formData.owner_3}
+                onChange={handleChange}
+                options={[]}
+              />
+              <Dropdown
+                label="Capturer"
+                name="capturer"
+                title="select capturer"
+                value={formData.capturer}
+                onChange={handleChange}
+                options={[]}
+              />
+              <Dropdown
+                label="Commercial Manager"
+                name="commercial_manager"
+                title="select commercial manager"
+                value={formData.commercial_manager}
+                onChange={handleChange}
+                options={[]}
+              />
+            </div>
+            <div className="w-full lg:w-1/2"></div>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Dropdown
-              label="First Owner"
-              name="owner_1"
-              title="Search/Select Owner"
-              options={[]} // This would be populated by your API search
-              value={formData.owner_1}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Second Owner"
-              name="owner_2"
-              title="Search/Select Owner"
-              options={[]}
-              value={formData.owner_2}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Third Owner"
-              name="owner_3"
-              title="Search/Select Owner"
-              options={[]}
-              value={formData.owner_3}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Capturer"
-              name="capturer"
-              title="Search/Select Capturer"
-              options={[]}
-              value={formData.capturer}
-              onChange={handleChange}
-            />
-            <Dropdown
-              label="Commercial Manager"
-              name="commercial_manager"
-              title="Search/Select Manager"
-              options={[]}
-              value={formData.commercial_manager}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="p-8">
+        {/* SAVE BAR */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-center shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50">
           <button
-            disabled={loader}
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white text-lg font-bold py-2 px-6 rounded-lg shadow-lg transition-all transform active:scale-95 disabled:bg-gray-400"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-24 py-2 rounded font-bold transition-all"
           >
-            {loader ? "Saving..." : "Save Property Listing"}
+            Save
           </button>
         </div>
       </form>

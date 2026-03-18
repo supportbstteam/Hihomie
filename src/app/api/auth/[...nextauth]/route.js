@@ -35,7 +35,8 @@ export const authOptions = {
           id: user._id,
           name: user.name,
           email: user.email,
-          role: user.role,
+          role: user?.role,
+          access: user?.access || []
         };
       }
     })
@@ -48,6 +49,7 @@ export const authOptions = {
   callbacks: {
     async session({ session, token }) {
       if (token?.role) {
+        session.user.access = token.access;
         session.user.role = token.role;
         session.user.id = token.id;
       }
@@ -55,6 +57,7 @@ export const authOptions = {
     },
     async jwt({ token, user }) {
       if (user?.role) {
+        token.access = user.access;
         token.role = user.role;
         token.id = user.id;
       }

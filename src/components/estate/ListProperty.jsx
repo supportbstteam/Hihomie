@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { get_properties, delete_property, messageClear } from "@/store/estate"; 
+import { get_properties, delete_property, messageClear } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 
 const ListProperty = () => {
   const dispatch = useDispatch();
 
-  // Assuming your Redux state has a 'properties' array alongside loader/messages
   const { properties, loader, successMessage, errorMessage } = useSelector(
     (state) => state.estate,
   );
@@ -21,8 +20,6 @@ const ListProperty = () => {
   useEffect(() => {
     dispatch(get_properties());
   }, [dispatch]);
-
-  console.log(properties);
 
   useEffect(() => {
     if (successMessage) {
@@ -38,7 +35,7 @@ const ListProperty = () => {
     }
   }, [successMessage, errorMessage, dispatch]);
 
-  // 4. Modal Handlers
+  // Modal Handlers
   const openDeleteModal = (id) => {
     setPropertyToDelete(id);
     setIsModalOpen(true);
@@ -50,7 +47,7 @@ const ListProperty = () => {
     }
   };
 
-  // Fallback dummy data for visual testing before your API is hooked up
+  // Fallback dummy data
   const displayProperties =
     properties?.length > 0
       ? properties
@@ -74,7 +71,6 @@ const ListProperty = () => {
 
   return (
     <div className="w-full bg-gray-50 min-h-screen">
-      {/* ✅ Use your custom ConfirmDeleteModal */}
       <ConfirmDeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -90,14 +86,14 @@ const ListProperty = () => {
           </p>
         </div>
         <Link
-          href="/estate" // Adjust this route to match your Next.js setup
+          href="/estate/create" // Check if this is your correct create route
           className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all transform active:scale-95"
         >
           + Add Property
         </Link>
       </div>
 
-      {/* Main Card Container - No padding and full width */}
+      {/* Main Card Container */}
       <div className="w-full bg-white mt-4 border-t border-b border-gray-200 p-0">
         {loader ? (
           <div className="p-8 text-center text-gray-500 font-medium">
@@ -122,12 +118,10 @@ const ListProperty = () => {
                     key={property._id}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    {/* Reference */}
                     <td className={`${tdStyle} font-medium text-gray-900`}>
                       {property.reference}
                     </td>
 
-                    {/* Location */}
                     <td className={tdStyle}>
                       <div className="font-medium">{property.city}</div>
                       <div className="text-gray-500 text-xs">
@@ -135,7 +129,6 @@ const ListProperty = () => {
                       </div>
                     </td>
 
-                    {/* Transaction Type */}
                     <td className={tdStyle}>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
@@ -148,7 +141,6 @@ const ListProperty = () => {
                       </span>
                     </td>
 
-                    {/* Details (Rooms/Baths/Surface) */}
                     <td className={tdStyle}>
                       <div className="flex items-center gap-3 text-gray-600">
                         <span title="Rooms">🛏️ {property.rooms || "-"}</span>
@@ -161,19 +153,20 @@ const ListProperty = () => {
                       </div>
                     </td>
 
-                    {/* Agent / Guy */}
                     <td className={tdStyle}>
                       {property.type || "Not Defined"}
                     </td>
 
                     {/* Actions */}
                     <td className={`${tdStyle} text-right space-x-3`}>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                      {/* ✅ Replaced button with Link component */}
+                      <Link 
+                        href={`/estate/edit/${property._id}`} 
+                        className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      >
                         Edit
-                      </button>
-                      {/* <button className="text-red-600 hover:text-red-800 font-medium transition-colors">
-                        Delete
-                      </button> */}
+                      </Link>
+                      
                       <button
                         onClick={() => openDeleteModal(property._id)}
                         className="text-red-600 hover:text-red-800 font-medium"
