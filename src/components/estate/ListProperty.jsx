@@ -161,7 +161,7 @@ const ListProperty = () => {
                     <td className={`${tdStyle} text-right space-x-3`}>
                       {/* ✅ Replaced button with Link component */}
                       <Link 
-                        href={`/estate/edit/${property._id}`} 
+                        href={`/estate/property/edit/${property._id}`} 
                         className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                       >
                         Edit

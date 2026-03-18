@@ -10,7 +10,8 @@ import AddressMiniMap from "@/components/Map";
 
 const EditProperty = ({ id }) => {
   const dispatch = useDispatch();
-  const router = useRouter();
+    const router = useRouter();
+    console.log(id);
 
   // Assuming your Redux state holds the fetched property in 'property'
   const { loader, successMessage, errorMessage, property } = useSelector(
@@ -30,7 +31,7 @@ const EditProperty = ({ id }) => {
   // 1. Fetch property data when component mounts
   useEffect(() => {
     if (id) {
-      dispatch(get_property(id));
+    //   dispatch(get_property(id));
     }
   }, [id, dispatch]);
 
@@ -113,7 +114,7 @@ const EditProperty = ({ id }) => {
 
     // Dispatch the update action instead of create
     // Make sure your update_property action knows which ID to update
-    dispatch(update_property({ id, data })); 
+    // dispatch(update_property({ id, data })); 
   };
 
   const fullAddress = `${formData.street} ${formData.street_number}, ${formData.city}, ${formData.province}`;
