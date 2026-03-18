@@ -45,6 +45,7 @@ const CreateProperty = () => {
     owner_3: "",
     capturer: "",
     commercial_manager: "",
+    video_link: "",
   });
 
   const areaOptions = [
@@ -202,7 +203,6 @@ const CreateProperty = () => {
                 name="postal_code"
                 value={formData.postal_code}
                 onChange={handleChange}
-                required
               />
               <div className="md:col-span-2">
                 <Input
@@ -210,7 +210,6 @@ const CreateProperty = () => {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  required
                 />
               </div>
               <Input
@@ -225,11 +224,10 @@ const CreateProperty = () => {
                 name="street_number"
                 value={formData.street_number}
                 onChange={handleChange}
-                required
               />
               <div className="md:col-span-2">
                 <Dropdown
-                  label="Public Address*"
+                  label="Public Address"
                   name="public_address"
                   title="Select Option"
                   value={formData.public_address}
@@ -271,7 +269,7 @@ const CreateProperty = () => {
         </section>
 
         {/* SECTION 2: PROPERTY FEATURES */}
-        <section className="p-6">
+        {/* <section className="p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
             Property Features
           </h2>
@@ -284,13 +282,13 @@ const CreateProperty = () => {
                 value={formData.status}
                 onChange={handleChange}
                 options={[
-                { label: "Prospectus", value: "prospectus" },
-                { label: "Available", value: "available" },
-                { label: "Reserved", value: "reserved" },
-                { label: "Rented", value: "rented" },
-                { label: "Sold", value: "sold" },
-                { label: "Inactive", value: "inactive" },
-              ]}
+                  { label: "Prospectus", value: "prospectus" },
+                  { label: "Available", value: "available" },
+                  { label: "Reserved", value: "reserved" },
+                  { label: "Rented", value: "rented" },
+                  { label: "Sold", value: "sold" },
+                  { label: "Inactive", value: "inactive" },
+                ]}
               />
               <Input
                 label="Reference"
@@ -389,15 +387,111 @@ const CreateProperty = () => {
             </div>
             <div className="w-full lg:w-1/2"></div>
           </div>
-        </section>
-
-        {/* SECTION 3: ENERGY (ADDED) */}
-        <section className="p-6 bg-green-50/30">
+        </section> */}
+        <section className="p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
-            Energy Certificate
+            Property Features
           </h2>
           <div className="flex flex-col lg:flex-row gap-10">
-            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* LEFT COLUMN */}
+            <div className="w-full lg:w-1/2 grid grid-cols-2 gap-x-4 gap-y-4">
+              <div className="col-span-2">
+                <Dropdown
+                  label="Status" // Represents "State" in the image
+                  name="status"
+                  title="Select Status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  options={[
+                    { label: "Prospectus", value: "prospectus" },
+                    { label: "Available", value: "available" },
+                    { label: "Reserved", value: "reserved" },
+                    { label: "Rented", value: "rented" },
+                    { label: "Sold", value: "sold" },
+                    { label: "Inactive", value: "inactive" },
+                  ]}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Input
+                  label="Reference"
+                  name="reference"
+                  value={formData.reference}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <Dropdown
+                label="Type"
+                name="type"
+                title="Select Type"
+                value={formData.type}
+                onChange={handleChange}
+                options={typeOptions}
+              />
+              <Dropdown
+                label="Floor" // Represents "Plant" in the image
+                name="floor"
+                title="Select Floor"
+                value={formData.floor}
+                onChange={handleChange}
+                options={floorOptions}
+              />
+
+              <Dropdown
+                label="Rooms"
+                name="rooms"
+                title="Select number of rooms"
+                value={formData.rooms}
+                onChange={handleChange}
+                options={Array.from({ length: 31 }, (_, i) => ({
+                  label: i.toString(),
+                  value: i.toString(),
+                }))}
+              />
+              <Dropdown
+                label="Bathrooms"
+                name="bathrooms"
+                title="Select number of bathrooms"
+                value={formData.bathrooms}
+                onChange={handleChange}
+                options={Array.from({ length: 31 }, (_, i) => ({
+                  label: i.toString(),
+                  value: i.toString(),
+                }))}
+              />
+
+              <Input
+                label="Surface m²"
+                type="number"
+                name="surface"
+                value={formData.surface}
+                onChange={handleChange}
+              />
+              <Input
+                label="Usable Surface m²"
+                type="number"
+                name="usable_surface"
+                value={formData.usable_surface}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Year of Construction"
+                type="number"
+                name="year_of_construction"
+                value={formData.year_of_construction}
+                onChange={handleChange}
+              />
+              <Input
+                label="Community Expenses"
+                type="number"
+                name="community_expenses"
+                value={formData.community_expenses}
+                onChange={handleChange}
+              />
               <Dropdown
                 label="Energy Type"
                 name="energy_certificate_type"
@@ -451,7 +545,41 @@ const CreateProperty = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="w-full lg:w-1/2"></div>
+
+            {/* RIGHT COLUMN */}
+            <div className="w-full lg:w-1/2 flex flex-col gap-y-6">
+              <div>
+                <Input
+                  label="Labels / Tags"
+                  name="labels"
+                  placeholder="e.g. Luxury, Sea View, Investment (comma separated)"
+                  value={formData.labels}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="flex-1 mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="15" 
+                  className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
+                />
+              </div>
+              <div>
+                <Input
+                  label="Link to video"
+                  name="video_link"
+                  placeholder="e.g. https://example.com/video"
+                  value={formData.video_link}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -506,12 +634,10 @@ const CreateProperty = () => {
             <div className="w-full lg:w-1/2"></div>
           </div>
         </section>
-
-        {/* SAVE BAR */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-center shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50">
+        <div className="flex flex-col items-center justify-center">
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-24 py-2 rounded font-bold transition-all"
+            className="bg-green-600 hover:bg-green-700 text-white px-24 py-2 rounded font-bold transition-all"
           >
             Save
           </button>

@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import { get_properties, delete_property, messageClear } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
+import Icon from "@/components/ui/Icon";
+import { Plus } from "lucide-react";
+// Added icons for the action column to match the reference design
+import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 
 const ListProperty = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const { properties, loader, successMessage, errorMessage } = useSelector(
@@ -65,130 +71,141 @@ const ListProperty = () => {
           },
         ];
 
-  const thStyle =
-    "py-4 px-6 bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-700 uppercase tracking-wider";
-  const tdStyle = "py-4 px-6 border-b border-gray-100 text-sm text-gray-800";
-
   return (
-    <div className="w-full bg-gray-50 min-h-screen">
+    <div className="grid w-full">
+      {/* Header aligned with reference layout */}
+      <aside className="w-full bg-white sticky top-0 z-50">
+        <div className="flex items-center justify-between p-4">
+          <div className="hidden sm:flex flex-col">
+            <h2 className="text-xl font-bold text-gray-900">Properties</h2>
+            <p className="text-sm text-gray-500">
+              Manage all your real estate listings
+            </p>
+          </div>
+
+          <div className="flex w-full sm:w-auto justify-end">
+            <Icon
+              icon={Plus}
+              variant="outline"
+              size={16}
+              color="#99A1B7"
+              onClick={() => router.push("/estate/property")}
+            />
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Card Container wrapped in bg-background-secondary */}
+      <div className="p-4 bg-background-secondary">
+        {loader ? (
+          <div className="p-8 text-center text-gray-500 font-medium bg-white rounded-lg shadow-md">
+            Loading properties...
+          </div>
+        ) : (
+          <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                  Reference
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                  Location
+                </th>
+                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
+                  For
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                  Details
+                </th>
+                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
+                  Type
+                </th>
+                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {displayProperties.map((property, i) => (
+                <tr
+                  key={property._id}
+                  className={`hover:bg-gray-50 transition-colors duration-200 ${
+                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
+                >
+                  <td className="py-3 px-4 text-sm font-medium text-gray-800">
+                    {property.reference}
+                  </td>
+
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    <div className="font-medium">{property.city}</div>
+                    <div className="text-gray-500 text-xs">
+                      {property.street}
+                    </div>
+                  </td>
+
+                  <td className="py-3 px-4 text-sm text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                        property.transaction_type === "sale"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-purple-100 text-purple-800"
+                      }`}
+                    >
+                      {property.transaction_type}
+                    </span>
+                  </td>
+
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    <div className="flex items-center gap-3 text-gray-600">
+                      <span title="Rooms">🛏️ {property.rooms || "-"}</span>
+                      <span title="Bathrooms">
+                        🚿 {property.bathrooms || "-"}
+                      </span>
+                      <span title="Surface Area">
+                        📐 {property.surface ? `${property.surface}m²` : "-"}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    {property.type || "Not Defined"}
+                  </td>
+
+                  {/* Actions matching reference style */}
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex justify-center gap-3 text-lg">
+                      <Link href={`/estate/property/edit/${property._id}`}>
+                        <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition-transform" />
+                      </Link>
+
+                      <FaRegTrashAlt
+                        onClick={() => openDeleteModal(property._id)}
+                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {displayProperties.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="py-8 text-center text-gray-500">
+                    No properties found. Click the + icon to create one.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Modals placed at the bottom */}
       <ConfirmDeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
       />
-
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 p-8 flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Properties</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage all your real estate listings
-          </p>
-        </div>
-        <Link
-          href="/estate/property" // Check if this is your correct create route
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all transform active:scale-95"
-        >
-          +
-        </Link>
-      </div>
-
-      {/* Main Card Container */}
-      <div className="w-full bg-white mt-4 border-t border-b border-gray-200 p-0">
-        {loader ? (
-          <div className="p-8 text-center text-gray-500 font-medium">
-            Loading properties...
-          </div>
-        ) : (
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr>
-                  <th className={thStyle}>Reference</th>
-                  <th className={thStyle}>Location</th>
-                  <th className={thStyle}>For</th>
-                  <th className={thStyle}>Details</th>
-                  <th className={thStyle}>Type</th>
-                  <th className={`${thStyle} text-right`}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayProperties.map((property) => (
-                  <tr
-                    key={property._id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className={`${tdStyle} font-medium text-gray-900`}>
-                      {property.reference}
-                    </td>
-
-                    <td className={tdStyle}>
-                      <div className="font-medium">{property.city}</div>
-                      <div className="text-gray-500 text-xs">
-                        {property.street}
-                      </div>
-                    </td>
-
-                    <td className={tdStyle}>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                          property.transaction_type === "sale"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-purple-100 text-purple-800"
-                        }`}
-                      >
-                        {property.transaction_type}
-                      </span>
-                    </td>
-
-                    <td className={tdStyle}>
-                      <div className="flex items-center gap-3 text-gray-600">
-                        <span title="Rooms">🛏️ {property.rooms || "-"}</span>
-                        <span title="Bathrooms">
-                          🚿 {property.bathrooms || "-"}
-                        </span>
-                        <span title="Surface Area">
-                          📐 {property.surface ? `${property.surface}m²` : "-"}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className={tdStyle}>
-                      {property.type || "Not Defined"}
-                    </td>
-
-                    {/* Actions */}
-                    <td className={`${tdStyle} text-right space-x-3`}>
-                      {/* ✅ Replaced button with Link component */}
-                      <Link 
-                        href={`/estate/property/edit/${property._id}`} 
-                        className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                      >
-                        Edit
-                      </Link>
-                      
-                      <button
-                        onClick={() => openDeleteModal(property._id)}
-                        className="text-red-600 hover:text-red-800 font-medium"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-
-                {displayProperties.length === 0 && (
-                  <tr>
-                    <td colSpan="6" className="py-8 text-center text-gray-500">
-                      No properties found. Click "Add Property" to create one.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
