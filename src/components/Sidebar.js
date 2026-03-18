@@ -270,15 +270,15 @@ const MENU = {
 const ESTATE_MENU = {
 
   admin: [
-    { href: "/estate/property", label: "Property List", icon: <MdOutlineDashboard /> },
-    { href: "/estate", label: "Add Property", icon: <MdOutlineDashboard /> },
+    { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
+    { href: "/estate/property", label: "Add Property", icon: <MdOutlineDashboard /> },
   ],
   manager: [
-    { href: "/estate/property", label: "Property List", icon: <MdOutlineDashboard /> },
-    { href: "/estate", label: "Add Property", icon: <MdOutlineDashboard /> },
+    { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
+    { href: "/estate/property", label: "Add Property", icon: <MdOutlineDashboard /> },
   ],
   user: [
-    { href: "/estate/property", label: "Property List", icon: <MdOutlineDashboard /> },
+    { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
   ],
 
 };

@@ -24,7 +24,11 @@ export async function POST(req) {
     const role = formData.get("role");
     const status = formData.get("status") === "true";
     const additionalInfo = formData.get("additionalInfo");
-    const access = formData.getAll("access"); 
+    const rawAccess = formData.getAll("access");
+    const access = rawAccess
+      .flatMap((item) => item.split(","))
+      .map((item) => item.trim())
+      .filter(Boolean);
 
 
     const check_email = await User.findOne({ email });
@@ -114,6 +118,11 @@ export async function PUT(req) {
     const role = formData.get("role");
     const status = formData.get("status") === "true";
     const additionalInfo = formData.get("additionalInfo");
+    const rawAccess = formData.getAll("access");
+    const access = rawAccess
+      .flatMap((item) => item.split(","))
+      .map((item) => item.trim())
+      .filter(Boolean);
 
     if (!id) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
@@ -143,7 +152,7 @@ export async function PUT(req) {
 
     await dbConnect(); // Connect to DB
 
-    let updateData = { name, lname, email, phone, jobTitle, status, role, additionalInfo, ...(imagePath && { image: imagePath }) };
+    let updateData = { name, lname, email, phone, jobTitle, status, role, additionalInfo, access, ...(imagePath && { image: imagePath }) };
 
     if (password) {
       const saltRounds = 10;
@@ -183,9 +192,9 @@ export async function DELETE(req) {
     }
     const assignedLeads = await CardAssignUser.find({ userId: id });
 
-    if (assignedLeads.length > 0) { 
+    if (assignedLeads.length > 0) {
       // return NextResponse.json({ message: "This user cannot be deleted as there are leads assigned to their account. Kindly reassign or remove those leads first, and then try again." }, {status: 400})
-      return NextResponse.json({ message: "No se puede eliminar a este usuario porque hay clientes potenciales asignados a su cuenta. Por favor, reasígnelos o elimínelos primero y vuelva a intentarlo." }, {status: 400})
+      return NextResponse.json({ message: "No se puede eliminar a este usuario porque hay clientes potenciales asignados a su cuenta. Por favor, reasígnelos o elimínelos primero y vuelva a intentarlo." }, { status: 400 })
     };
 
     const deleted = await User.findByIdAndDelete(id);

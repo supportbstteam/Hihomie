@@ -23,6 +23,7 @@ const EditTeam = ({ user, setUser }) => {
     password: "",
     id: "",
     image: null,
+    additionalInfo: "",
     access: [],
   };
 
@@ -163,7 +164,6 @@ const EditTeam = ({ user, setUser }) => {
     }
 
     dispatch(update_team(data));
-    // dispatch(update_team(formData));
   };
 
   // ✅ Helper for red border

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import getUserFromServerSession from "@/lib/getUserFromServerSession";
-import CreateProperty from "@/components/estate/CreateProperty";
+import ListProperty from "@/components/estate/ListProperty";
 
 export default async function DashboardPage() {
   const user = await getUserFromServerSession();
@@ -8,7 +8,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <CreateProperty />
+      <ListProperty />
     </>
   );
 }

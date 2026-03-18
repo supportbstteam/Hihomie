@@ -89,7 +89,7 @@ const ListProperty = () => {
           href="/estate/property" // Check if this is your correct create route
           className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-all transform active:scale-95"
         >
-          + Add Property
+          +
         </Link>
       </div>
 
