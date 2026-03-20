@@ -66,7 +66,7 @@ export async function POST(request) {
             emission_certificate_type: data.get('emission_certificate_type'),
             energy_consumption: data.get('energy_consumption'),
             co2_emissions: data.get('co2_emissions'),
-            labels: data.get('labels') ? data.get('labels').split(',').map(label => label.trim()) : [],
+            labels: data.getAll('labels'),
             description: data.get('description'),
             owner_1: data.get('owner_1'),
             owner_2: data.get('owner_2'),

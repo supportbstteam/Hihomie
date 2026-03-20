@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { create_property, messageClear } from "@/store/estate";
+import { create_property, get_tags, messageClear } from "@/store/estate";
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/DropDown";
 import Input from "@/components/ui/Input";
 import AddressMiniMap from "@/components/Map";
+import { set } from "mongoose";
 
 const CreateProperty = () => {
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage } = useSelector(
+  const { loader, successMessage, errorMessage, tags } = useSelector(
     (state) => state.estate,
   );
 
@@ -39,7 +40,7 @@ const CreateProperty = () => {
     energy_certificate_type: "",
     emission_certificate_type: "",
     description: "",
-    labels: "",
+    labels: [],
     owner_1: "",
     owner_2: "",
     owner_3: "",
@@ -142,6 +143,10 @@ const CreateProperty = () => {
   ];
 
   useEffect(() => {
+    dispatch(get_tags());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
       dispatch(messageClear());
@@ -171,12 +176,37 @@ const CreateProperty = () => {
     if (formData.street.trim() === "") return toast.error("street is required");
 
     const data = new FormData();
+
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
-        data.append(key, formData[key]);
+        // 1. Check if the value is an array (like your labels)
+        if (Array.isArray(formData[key])) {
+          // 2. Loop through the array and append each item using the same key
+          formData[key].forEach((item) => {
+            data.append(key, item);
+          });
+        } else {
+          // 3. Handle regular strings, numbers, or files normally
+          data.append(key, formData[key]);
+        }
       }
     });
+
     dispatch(create_property(data));
+  };
+
+  const handleTagToggle = (tag) => {
+    let updatedTags = [...formData.labels];
+
+    if (updatedTags.includes(tag)) {
+      // If tag is already selected, remove it
+      updatedTags = updatedTags.filter((t) => t !== tag);
+    } else {
+      // Otherwise, add it
+      updatedTags.push(tag);
+    }
+
+    setFormData((prev) => ({ ...prev, labels: updatedTags }));
   };
 
   const fullAddress = `${formData.street} ${formData.street_number}, ${formData.city}, ${formData.province}`;
@@ -269,125 +299,6 @@ const CreateProperty = () => {
         </section>
 
         {/* SECTION 2: PROPERTY FEATURES */}
-        {/* <section className="p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
-            Property Features
-          </h2>
-          <div className="flex flex-col lg:flex-row gap-10">
-            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-              <Dropdown
-                label="Status"
-                name="status"
-                title="Select Status"
-                value={formData.status}
-                onChange={handleChange}
-                options={[
-                  { label: "Prospectus", value: "prospectus" },
-                  { label: "Available", value: "available" },
-                  { label: "Reserved", value: "reserved" },
-                  { label: "Rented", value: "rented" },
-                  { label: "Sold", value: "sold" },
-                  { label: "Inactive", value: "inactive" },
-                ]}
-              />
-              <Input
-                label="Reference"
-                name="reference"
-                value={formData.reference}
-                onChange={handleChange}
-                required
-              />
-              <Dropdown
-                label="Type"
-                name="type"
-                title="Select Type"
-                value={formData.type}
-                onChange={handleChange}
-                options={typeOptions}
-              />
-              <Dropdown
-                label="Floor"
-                name="floor"
-                title="Select Floor"
-                value={formData.floor}
-                onChange={handleChange}
-                options={floorOptions}
-              />
-              <Dropdown
-                label="Rooms"
-                name="rooms"
-                title="Select number of rooms"
-                value={formData.rooms}
-                onChange={handleChange}
-                options={Array.from({ length: 31 }, (_, i) => ({
-                  label: i.toString(),
-                  value: i.toString(),
-                }))}
-              />
-              <Dropdown
-                label="Bathrooms"
-                name="bathrooms"
-                title="Select number of bathrooms"
-                value={formData.bathrooms}
-                onChange={handleChange}
-                options={Array.from({ length: 31 }, (_, i) => ({
-                  label: i.toString(),
-                  value: i.toString(),
-                }))}
-              />
-              <Input
-                label="Surface m²"
-                type="number"
-                name="surface"
-                value={formData.surface}
-                onChange={handleChange}
-              />
-              <Input
-                label="Usable Surface m²"
-                type="number"
-                name="usable_surface"
-                value={formData.usable_surface}
-                onChange={handleChange}
-              />
-              <Input
-                label="Year of Construction"
-                type="number"
-                name="year_of_construction"
-                value={formData.year_of_construction}
-                onChange={handleChange}
-              />
-              <Input
-                label="Community Expenses"
-                type="number"
-                name="community_expenses"
-                value={formData.community_expenses}
-                onChange={handleChange}
-              />
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Input
-                  label="Labels / Tags"
-                  name="labels"
-                  placeholder="e.g. Luxury, Sea View, Investment (comma separated)"
-                  value={formData.labels}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="w-full lg:w-1/2"></div>
-          </div>
-        </section> */}
         <section className="p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
             Property Features
@@ -432,7 +343,7 @@ const CreateProperty = () => {
                 options={typeOptions}
               />
               <Dropdown
-                label="Floor" // Represents "Plant" in the image
+                label="Floor"
                 name="floor"
                 title="Select Floor"
                 value={formData.floor}
@@ -548,12 +459,67 @@ const CreateProperty = () => {
 
             {/* RIGHT COLUMN */}
             <div className="w-full lg:w-1/2 flex flex-col gap-y-6">
+              <div className="flex flex-col gap-2 w-full">
+                <label className="text-sm font-medium text-gray-700">
+                  Labels / Tags
+                </label>
+
+                {/* Top "Big Box": Displays the selected tags */}
+                <div className="min-h-[100px] w-full border border-gray-300 rounded-md p-3 flex flex-wrap content-start gap-2 bg-white">
+                  {formData.labels && formData.labels.length > 0 ? (
+                    formData.labels.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-green-100 text-green-800 px-3 py-1 rounded-md text-sm flex items-center gap-2"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleTagToggle(tag)}
+                          className="text-green-500 hover:text-green-800 font-bold leading-none"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-gray-400 text-sm">
+                      Select tags from below...
+                    </span>
+                  )}
+                </div>
+
+                {/* Bottom Box: Displays all available tags to choose from */}
+                <div className="w-full border border-gray-200 bg-gray-50 rounded-md p-3 flex flex-wrap gap-2">
+                  <span className="text-xs text-gray-500 w-full mb-1 block">
+                    Available Tags:
+                  </span>
+                  {tags.map((tag, index) => {
+                    const isSelected = formData.labels.includes(tag.name);
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => handleTagToggle(tag.name)}
+                        className={`px-3 py-1 text-sm rounded-md border transition-colors ${
+                          isSelected
+                            ? "bg-green-500 text-white border-green-500" // Styling for selected tags
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100" // Styling for unselected tags
+                        }`}
+                      >
+                        {tag.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div>
                 <Input
-                  label="Labels / Tags"
-                  name="labels"
-                  placeholder="e.g. Luxury, Sea View, Investment (comma separated)"
-                  value={formData.labels}
+                  label="Property Title"
+                  name="title"
+                  placeholder="Enter property title"
+                  value={formData.title}
                   onChange={handleChange}
                 />
               </div>
@@ -566,7 +532,7 @@ const CreateProperty = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  rows="15" 
+                  rows="10"
                   className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
                 />
               </div>
@@ -590,50 +556,93 @@ const CreateProperty = () => {
           </h2>
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Dropdown
+              <Input
                 label="Owner 1"
                 name="owner_1"
-                title="select owner 1"
+                placeholder="Enter owner 1"
                 value={formData.owner_1}
                 onChange={handleChange}
-                options={[]}
               />
-              <Dropdown
+              <Input
                 label="Owner 2"
                 name="owner_2"
-                title="select owner 2"
+                placeholder="Enter owner 2"
                 value={formData.owner_2}
                 onChange={handleChange}
-                options={[]}
               />
-              <Dropdown
+              <Input
                 label="Owner 3"
                 name="owner_3"
-                title="select owner 3"
+                placeholder="Enter owner 3"
                 value={formData.owner_3}
                 onChange={handleChange}
-                options={[]}
               />
-              <Dropdown
+              <Input
                 label="Capturer"
                 name="capturer"
-                title="select capturer"
+                placeholder="Enter capturer"
                 value={formData.capturer}
                 onChange={handleChange}
-                options={[]}
               />
-              <Dropdown
+              <Input
                 label="Commercial Manager"
                 name="commercial_manager"
-                title="select commercial manager"
+                placeholder="Enter commercial manager"
                 value={formData.commercial_manager}
                 onChange={handleChange}
-                options={[]}
               />
             </div>
             <div className="w-full lg:w-1/2"></div>
           </div>
         </section>
+
+        {/* SECTION 4: PRIVATE DATA (ADDED) */}
+        <section className="p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">
+            Agreement (optional)
+          </h2>
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Type of aggreement"
+                name="agreement_type"
+                placeholder="E"
+                value={formData.owner_1}
+                onChange={handleChange}
+              />
+              <Input
+                label="Agreement valid from"
+                name="agreement_valid_from"
+                placeholder="Enter Date"
+                value={formData.owner_2}
+                onChange={handleChange}
+              />
+              <Input
+                label="Agreement valid until"
+                name="agreement_valid_until"
+                placeholder="Enter Date"
+                value={formData.owner_3}
+                onChange={handleChange}
+              />
+              <Input
+                label="Commision percentage"
+                name="commission_percentage"
+                placeholder="Enter commission percentage"
+                value={formData.commission_percentage}
+                onChange={handleChange}
+              />
+              <Input
+                label="Commision value"
+                name="commission_value"
+                placeholder="Enter commission value"
+                value={formData.commission_value}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full lg:w-1/2"></div>
+          </div>
+        </section>
+
         <div className="flex flex-col items-center justify-center">
           <button
             type="submit"

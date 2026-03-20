@@ -42,15 +42,28 @@ export const delete_property = createAsyncThunk(
     }
 );
 
+export const get_tags = createAsyncThunk(
+    'get_tags',
+    async (_, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/tags`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 export const estateReducer = createSlice({
     name: "estate",
     initialState: {
-        loader: false, 
+        loader: false,
         successMessage: '',
         errorMessage: '',
         successTag: '',
-        properties: [], // Optional: To store the list of properties
+        properties: [],
+        tags: [],   
     },
     reducers: {
         messageClear: (state) => {
@@ -107,6 +120,18 @@ export const estateReducer = createSlice({
                 state.loader = false;
                 state.errorMessage = payload?.message || "Failed to delete property";
                 state.successTag = "";
+            })
+            
+            .addCase(get_tags.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_tags.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.tags = payload.data;
+            })
+            .addCase(get_tags.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch tags";
             });
     }
 });

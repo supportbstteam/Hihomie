@@ -1,68 +1,85 @@
 "use client";
 import { useState, useEffect } from "react";
-import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import {
+  APIProvider,
+  Map,
+  Marker,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
 
-const containerStyle = {
-  width: "100%",
-  height: "500px", // "Short view" height
-  borderRadius: "8px",
-};
-
-export default function AddressMiniMap({ address }) {
-  // Removed TS Type annotation
+// 1. Inner component handles the map logic once the API is loaded
+function MapContent({ address }) {
   const [coords, setCoords] = useState(null);
-
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Officially recommended way to load the Geocoder in React
+  const geocodingLibrary = useMapsLibrary("geocoding");
 
   useEffect(() => {
-    if (!address || !isLoaded) return;
+    if (!address) {
+      setIsLoading(false);
+      setCoords(null);
+      return;
+    }
 
-    const fetchCoords = async () => {
-      try {
-        const res = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            address
-          )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-        );
-        const data = await res.json();
-        
-        if (data.results && data.results.length > 0) {
-          const { lat, lng } = data.results[0].geometry.location;
-          setCoords({ lat, lng });
-        } else {
-          setCoords(null);
-        }
-      } catch (error) {
-        console.error("Geocoding failed:", error);
+    // Wait until the geocoding library is fully loaded by the APIProvider
+    if (!geocodingLibrary) return;
+
+    const geocoder = new geocodingLibrary.Geocoder();
+
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK" && results?.[0]) {
+        // results[0].geometry.location automatically handles the lat/lng coordinates
+        setCoords(results[0].geometry.location);
+      } else {
+        console.error("Geocoding failed:", status);
         setCoords(null);
       }
-    };
+      setIsLoading(false);
+    });
+  }, [address, geocodingLibrary]);
 
-    fetchCoords();
-  }, [address, isLoaded]);
+  // Loading State
+  if (isLoading || !geocodingLibrary) {
+    return (
+      <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+        <p className="text-sm text-gray-500">Loading Map...</p>
+      </div>
+    );
+  }
 
-  if (!isLoaded) return <div>Loading Map...</div>;
+  // Error / Not Found State
+  if (!coords) {
+    return (
+      <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+        <p className="text-sm text-gray-500">
+          {address ? "Address not found" : "No address provided"}
+        </p>
+      </div>
+    );
+  }
 
-  return coords ? (
-    <GoogleMap 
-        mapContainerStyle={containerStyle} 
-        center={coords} 
-        zoom={15}
-        options={{
-            disableDefaultUI: true, 
-            zoomControl: true,
-        }}
+  // Success State: Render the Map
+  return (
+    <Map
+      center={coords}
+      defaultZoom={15}
+      disableDefaultUI={true}
+      zoomControl={true}
     >
       <Marker position={coords} />
-    </GoogleMap>
-  ) : (
-    <div className="h-[500px] bg-gray-100 flex items-center justify-center rounded-lg">
-      <p className="text-sm text-gray-500">
-        {address ? "Address not found" : "No address provided"}
-      </p>
+    </Map>
+  );
+}
+
+// 2. Outer component provides the Google Maps context
+export default function AddressMiniMap({ address }) {
+  return (
+    // The container needs strict dimensions for the map to render correctly
+    <div className="w-full h-[500px] overflow-hidden rounded-lg bg-gray-50">
+      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+        <MapContent address={address} />
+      </APIProvider>
     </div>
   );
 }

@@ -242,8 +242,7 @@ const en = {
   choose_option: "Choose Option",
   document_submitted: "Document Submitted",
   external: "External",
-
-
+  
   renta: "Rent",
   recibos_préstamos: "Loan Receipts",
   recibos_hipotecas: "Mortgage Receipts",
@@ -251,7 +250,7 @@ const en = {
   movimientos_bancarios: "Bank Transactions",
   nota_simple: "Property Registry Extract",
   logout: 'Logout',
-
+  
   user_contracts_data: "Contracts Data",
   contacted_contacted_user: "Contacted vs Not Contacted Users",
   document_submitted_users: "Documents Data",
