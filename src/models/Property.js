@@ -44,6 +44,50 @@ const PropertySchema = new mongoose.Schema({
     capturer: { type: String },
     commercial_manager: { type: String },
 
+    full_address: { type: String },
+    urbanization: { type: String },
+    block: { type: String },
+    portal: { type: String },
+    gate: { type: String },
+
+    // Core Property Info
+    property_title: { type: String },
+    video_link: { type: String },
+    short_description: { type: String },
+    
+    // Pricing & Listing Options
+    is_for_rent: { type: Boolean, default: false },
+    rent_price: { type: Number },
+    payment_frequency: { type: String },
+    bail: { type: Number },
+    guarantee: { type: Number },
+    real_estate_fee: { type: Number },
+    rental_price_reference_index: { type: Number },
+    
+    is_for_sale: { type: Boolean, default: false },
+    sale_price: { type: Number },
+    show_price: { type: Boolean, default: true },
+    
+    // Agreements & Commissions
+    agreement_type: { type: String },
+    agreement_valid_from: { type: String },
+    agreement_valid_until: { type: String },
+    commission_percentage: { type: Number },
+    commission_value: { type: Number },
+    shared_commission_percentage: { type: Number },
+    
+    // Additional Surfaces
+    registration_surface: { type: Number },
+    terrace_surface: { type: Number },
+    garage_surface: { type: Number },
+    garage_space_price: { type: Number },
+    
+    // Additional References
+    cadastral_reference: { type: String },
+    keychain_reference: { type: String },
+    supplier_reference: { type: String },
+    collaborator: { type: String }
+
 }, { timestamps: true });
 
 export default mongoose.models.Property || mongoose.model("Property", PropertySchema);

@@ -3,80 +3,75 @@ import { useState, useEffect } from "react";
 import {
   APIProvider,
   Map,
-  Marker,
+  AdvancedMarker, // Using the new marker
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 
-// 1. Inner component handles the map logic once the API is loaded
 function MapContent({ address }) {
-  const [coords, setCoords] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [coords, setCoords] = useState({ lat: 40.4168, lng: -3.7038 }); // Default Spain
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Officially recommended way to load the Geocoder in React
   const geocodingLibrary = useMapsLibrary("geocoding");
 
   useEffect(() => {
-    if (!address) {
-      setIsLoading(false);
-      setCoords(null);
-      return;
+    if (!address || address.trim() === "") {
+      setCoords({ lat: 40.4168, lng: -3.7038 }); // Reset to Spain if input is cleared
+      return; 
     }
 
-    // Wait until the geocoding library is fully loaded by the APIProvider
     if (!geocodingLibrary) return;
 
-    const geocoder = new geocodingLibrary.Geocoder();
+    setIsLoading(true);
 
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === "OK" && results?.[0]) {
-        // results[0].geometry.location automatically handles the lat/lng coordinates
-        setCoords(results[0].geometry.location);
-      } else {
-        console.error("Geocoding failed:", status);
-        setCoords(null);
-      }
-      setIsLoading(false);
-    });
+    // 1. Set a timer to wait 800ms after the user stops typing
+    const delayDebounceFn = setTimeout(() => {
+      const geocoder = new geocodingLibrary.Geocoder();
+
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === "OK" && results?.[0]) {
+          const location = results[0].geometry.location;
+          setCoords({
+            lat: location.lat(),
+            lng: location.lng(),
+          });
+        } else {
+          // Silently fail in the UI, keep the map where it is, but log it for dev
+          console.log(`Geocoding paused: No exact match for "${address}" yet.`);
+        }
+        setIsLoading(false);
+      });
+    }, 800); // 800 milliseconds delay
+
+    // 2. Cleanup function: If the user types another letter before 800ms, cancel the previous timer
+    return () => clearTimeout(delayDebounceFn);
+
   }, [address, geocodingLibrary]);
 
-  // Loading State
-  if (isLoading || !geocodingLibrary) {
+  if (isLoading) {
     return (
       <div className="h-full w-full bg-gray-100 flex items-center justify-center">
-        <p className="text-sm text-gray-500">Loading Map...</p>
+        <p className="text-sm text-gray-500">Locating...</p>
       </div>
     );
   }
 
-  // Error / Not Found State
-  if (!coords) {
-    return (
-      <div className="h-full w-full bg-gray-100 flex items-center justify-center">
-        <p className="text-sm text-gray-500">
-          {address ? "Address not found" : "No address provided"}
-        </p>
-      </div>
-    );
-  }
-
-  // Success State: Render the Map
   return (
     <Map
+      style={{ width: "100%", height: "100%" }} // Required for map to show
       center={coords}
-      defaultZoom={15}
+      defaultZoom={address ? 15 : 6} 
       disableDefaultUI={true}
       zoomControl={true}
+      mapId="DEMO_MAP_ID" // Required for AdvancedMarker
     >
-      <Marker position={coords} />
+      <AdvancedMarker position={coords} />
     </Map>
   );
 }
 
-// 2. Outer component provides the Google Maps context
 export default function AddressMiniMap({ address }) {
   return (
-    // The container needs strict dimensions for the map to render correctly
-    <div className="w-full h-[500px] overflow-hidden rounded-lg bg-gray-50">
+    <div className="w-full h-[500px] overflow-hidden rounded-lg bg-gray-50 border border-gray-200">
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
         <MapContent address={address} />
       </APIProvider>
