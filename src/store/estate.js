@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../lib/api/api";
-import { get } from "mongoose";
 
 export const create_property = createAsyncThunk(
     'create_property',
@@ -22,6 +21,30 @@ export const get_properties = createAsyncThunk(
             return fulfillWithValue(data);
         } catch (error) {
             rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const get_property = createAsyncThunk(
+    'get_property',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/property/${id}`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const update_property = createAsyncThunk(
+    'update_property',
+    async ({ id, object }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.put(`/estate/property/${id}`, object, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
         }
     }
 );
@@ -63,7 +86,8 @@ export const estateReducer = createSlice({
         errorMessage: '',
         successTag: '',
         properties: [],
-        tags: [],   
+        property: {},
+        tags: [],
     },
     reducers: {
         messageClear: (state) => {
@@ -108,6 +132,32 @@ export const estateReducer = createSlice({
                 state.errorMessage = payload?.message || "Failed to fetch properties";
             })
 
+            .addCase(get_property.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_property.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.property = payload.data;
+            })
+            .addCase(get_property.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch property";
+            })
+
+            .addCase(update_property.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(update_property.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Property updated successfully!";
+                state.successTag = "PROPERTY_UPDATED";
+            })
+            .addCase(update_property.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to update property";
+                state.successTag = "";
+            })
+
             .addCase(delete_property.pending, (state) => {
                 state.loader = true;
             })
@@ -121,7 +171,7 @@ export const estateReducer = createSlice({
                 state.errorMessage = payload?.message || "Failed to delete property";
                 state.successTag = "";
             })
-            
+
             .addCase(get_tags.pending, (state) => {
                 state.loader = true;
             })

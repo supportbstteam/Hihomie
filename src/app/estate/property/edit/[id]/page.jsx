@@ -3,7 +3,7 @@ import getUserFromServerSession from "@/lib/getUserFromServerSession";
 import EditProperty from "@/components/estate/EditProperty";
 
 export default async function EditPropertyPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const user = await getUserFromServerSession();
   if (!user) redirect("/login");
 

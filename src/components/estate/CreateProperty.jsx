@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { create_property, get_tags, messageClear } from "@/store/estate";
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/DropDown";
 import Input from "@/components/ui/Input";
 import AddressMiniMap from "@/components/Map";
-import DateTimepicker from "../ui/DateTimepicker";
 import Datepicker from "../ui/Datepicker";
 import { format } from "date-fns";
 import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
@@ -122,8 +122,9 @@ const PlaceAutocompleteInput = ({
 // --- END SUB-COMPONENT ---
 
 const CreateProperty = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage, tags } = useSelector(
+  const { loader, successMessage, errorMessage, successTag, tags } = useSelector(
     (state) => state.estate,
   );
 
@@ -295,6 +296,9 @@ const CreateProperty = () => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
+      if (successTag === "PROPERTY_CREATED") { 
+        router.push("/estate");
+      }
       dispatch(messageClear());
     }
     if (errorMessage) {
