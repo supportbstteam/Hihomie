@@ -1,80 +1,60 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  APIProvider,
   Map,
-  AdvancedMarker, // Using the new marker
+  AdvancedMarker,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 
-function MapContent({ address }) {
-  const [coords, setCoords] = useState({ lat: 40.4168, lng: -3.7038 }); // Default Spain
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const geocodingLibrary = useMapsLibrary("geocoding");
+export default function AddressMiniMap({ address, manualLocation }) {
+  // Default coordinates (e.g., Madrid)
+  const [coords, setCoords] = useState({ lat: 40.4168, lng: -3.7038 });
+  const geocodingLib = useMapsLibrary("geocoding");
 
+  // Priority 1: If user selects a specific place from the Autocomplete dropdown
   useEffect(() => {
-    if (!address || address.trim() === "") {
-      setCoords({ lat: 40.4168, lng: -3.7038 }); // Reset to Spain if input is cleared
-      return; 
-    }
-
-    if (!geocodingLibrary) return;
-
-    setIsLoading(true);
-
-    // 1. Set a timer to wait 800ms after the user stops typing
-    const delayDebounceFn = setTimeout(() => {
-      const geocoder = new geocodingLibrary.Geocoder();
-
-      geocoder.geocode({ address }, (results, status) => {
-        if (status === "OK" && results?.[0]) {
-          const location = results[0].geometry.location;
-          setCoords({
-            lat: location.lat(),
-            lng: location.lng(),
-          });
-        } else {
-          // Silently fail in the UI, keep the map where it is, but log it for dev
-          console.log(`Geocoding paused: No exact match for "${address}" yet.`);
-        }
-        setIsLoading(false);
+    if (manualLocation) {
+      setCoords({
+        // Handle both Google Maps class methods and plain objects just in case
+        lat: typeof manualLocation.lat === 'function' ? manualLocation.lat() : manualLocation.lat,
+        lng: typeof manualLocation.lng === 'function' ? manualLocation.lng() : manualLocation.lng,
       });
-    }, 800); // 800 milliseconds delay
+    }
+  }, [manualLocation]);
 
-    // 2. Cleanup function: If the user types another letter before 800ms, cancel the previous timer
-    return () => clearTimeout(delayDebounceFn);
+  // Priority 2: If the user manually types an address without selecting a suggestion
+  useEffect(() => {
+    // Skip if there's no address text or library hasn't loaded yet
+    if (!address || !geocodingLib) return;
 
-  }, [address, geocodingLibrary]);
+    // Debounce the geocoding request by 800ms so we don't spam the API on every keystroke
+    const timer = setTimeout(() => {
+      const geocoder = new geocodingLib.Geocoder();
+      
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          const loc = results[0].geometry.location;
+          setCoords({ lat: loc.lat(), lng: loc.lng() });
+        }
+      });
+    }, 800);
 
-  if (isLoading) {
-    return (
-      <div className="h-full w-full bg-gray-100 flex items-center justify-center">
-        <p className="text-sm text-gray-500">Locating...</p>
-      </div>
-    );
-  }
+    return () => clearTimeout(timer);
+  }, [address, geocodingLib]);
 
   return (
-    <Map
-      style={{ width: "100%", height: "100%" }} // Required for map to show
-      center={coords}
-      defaultZoom={address ? 15 : 6} 
-      disableDefaultUI={true}
-      zoomControl={true}
-      mapId="DEMO_MAP_ID" // Required for AdvancedMarker
-    >
-      <AdvancedMarker position={coords} />
-    </Map>
-  );
-}
-
-export default function AddressMiniMap({ address }) {
-  return (
-    <div className="w-full h-[500px] overflow-hidden rounded-lg bg-gray-50 border border-gray-200">
-      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
-        <MapContent address={address} />
-      </APIProvider>
+    <div className="relative w-full h-[500px] overflow-hidden rounded-lg bg-gray-50 border border-gray-200">
+      <Map
+        style={{ width: "100%", height: "100%" }}
+        center={coords}
+        // Dynamically zoom in closer if an address or location is provided
+        zoom={address || manualLocation ? 16 : 6} 
+        mapId="DEMO_MAP_ID" // Required to use AdvancedMarker
+        disableDefaultUI={true}
+        zoomControl={true}
+      >
+        <AdvancedMarker position={coords} />
+      </Map>
     </div>
   );
 }
