@@ -90,7 +90,7 @@ const PlaceAutocompleteInput = ({
         autoComplete="off"
         className={
           className ||
-          "w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          "w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
         }
       />
 
@@ -103,7 +103,7 @@ const PlaceAutocompleteInput = ({
               <li
                 key={p.placeId || index}
                 onClick={() => handleSelect(p)}
-                className="p-3 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-none text-sm transition-colors"
+                className="p-3 cursor-pointer hover:bg-green-50 border-b border-gray-100 last:border-none text-sm transition-colors"
               >
                 <span className="font-semibold block text-gray-800">
                   {p.structuredFormat?.mainText?.text || p.text?.text}
@@ -524,7 +524,7 @@ const CreateProperty = () => {
                   address={formData.full_address}
                   manualLocation={mapCoords}
                 />
-                <p className="text-xs text-blue-600 mt-2 text-right cursor-pointer">
+                <p className="text-xs text-green-600 mt-2 text-right cursor-pointer">
                   Click here to manually adjust location
                 </p>
               </div>
@@ -645,13 +645,13 @@ const CreateProperty = () => {
 
                   {/* 1. RENT INTERACTIVE CARD */}
                   <div
-                    className={`transition-all duration-300 rounded-xl border-2 ${formData.is_for_rent ? "border-blue-500 bg-blue-50/30 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
+                    className={`transition-all duration-300 rounded-xl border-2 ${formData.is_for_rent ? "border-green-500 bg-green-50/30 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
                   >
                     <div className="p-2 sm:p-3">
                       <label className="flex items-center gap-3 cursor-pointer group">
                         <input
                           type="checkbox"
-                          className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors cursor-pointer"
+                          className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500 transition-colors cursor-pointer"
                           checked={formData.is_for_rent}
                           onChange={(e) =>
                             handleChange({
@@ -663,7 +663,7 @@ const CreateProperty = () => {
                           }
                         />
                         <span
-                          className={`text-base font-semibold ${formData.is_for_rent ? "text-blue-900" : "text-gray-700 group-hover:text-gray-900"}`}
+                          className={`text-base font-semibold ${formData.is_for_rent ? "text-green-900" : "text-gray-700 group-hover:text-gray-900"}`}
                         >
                           Rent
                         </span>
@@ -672,7 +672,7 @@ const CreateProperty = () => {
 
                     {/* Expanded Rent Form */}
                     {formData.is_for_rent && (
-                      <div className="px-5 pb-6 border-t border-blue-100 pt-5 grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5 animate-in fade-in slide-in-from-top-2">
+                      <div className="px-5 pb-6 border-t border-green-100 pt-5 grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5 animate-in fade-in slide-in-from-top-2">
                         <Input
                           label="Rental Price (€)"
                           name="rent_price"
@@ -1094,7 +1094,7 @@ const CreateProperty = () => {
                   name="short_description"
                   rows={8}
                   placeholder="Enter a short description..."
-                  className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                   value={formData.short_description || ""}
                   onChange={handleChange}
                 ></textarea>
