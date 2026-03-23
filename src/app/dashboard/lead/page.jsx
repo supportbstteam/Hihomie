@@ -10,21 +10,16 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { CiCirclePlus, CiMail } from "react-icons/ci";
 import { useSelector, useDispatch } from "react-redux";
-import { SlCalender } from "react-icons/sl";
-import { LuPhone, LuPhoneCall } from "react-icons/lu";
-import { FaListUl, FaPlus, FaWhatsapp } from "react-icons/fa";
-import { MdFilterList } from "react-icons/md";
+import { LuPhoneCall } from "react-icons/lu";
+import { FaWhatsapp } from "react-icons/fa";
 import Filter from "@/components/prospects/Filter";
 import List from "@/components/List";
 import Stats from "@/components/Stats";
-import { CiImport } from "react-icons/ci";
 import {
   Calendar,
-  ChartSpline,
   Mail,
   Percent,
   Phone,
-  PiggyBank,
   Plus,
   List as ListIcon,
   ListFilter,
@@ -43,7 +38,6 @@ import { t } from "@/components/translations";
 import useUserFromSession from "@/lib/useUserFromSession";
 import { useRouter } from "next/navigation";
 import formatDate from "@/lib/formatDate";
-// import LowerNav from "@/components/LowerNav";
 
 export default function CustomDnD() {
   const authUser = useUserFromSession();

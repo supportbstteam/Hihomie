@@ -8,11 +8,13 @@ import { useRouter } from "next/navigation";
 import { get_properties, delete_property, messageClear } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
-import { Plus } from "lucide-react";
-// Added icons for the action column to match the reference design
+import { Plus, Upload } from "lucide-react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import PropertiesImportModal from "@/components/estate/ImportProperties";
+import useUserFromSession from "@/lib/useUserFromSession";
 
 const ListProperty = () => {
+  const user = useUserFromSession();
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -22,6 +24,7 @@ const ListProperty = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     dispatch(get_properties());
@@ -83,13 +86,21 @@ const ListProperty = () => {
             </p>
           </div>
 
-          <div className="flex w-full sm:w-auto justify-end">
+          <div className="flex w-full sm:w-auto justify-end gap-4">
             <Icon
               icon={Plus}
               variant="outline"
               size={16}
               color="#99A1B7"
               onClick={() => router.push("/estate/property")}
+            />
+            <Icon
+              variant="outline"
+              title="Upload"
+              icon={Upload}
+              size={16}
+              color="#99A1B7"
+              onClick={() => setImportOpen(true)}
             />
           </div>
         </div>
@@ -179,10 +190,12 @@ const ListProperty = () => {
                         <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition-transform" />
                       </Link>
 
-                      <FaRegTrashAlt
-                        onClick={() => openDeleteModal(property._id)}
-                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                      />
+                      {user?.role === "admin" && (
+                        <FaRegTrashAlt
+                          onClick={() => openDeleteModal(property._id)}
+                          className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -206,6 +219,12 @@ const ListProperty = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
       />
+      {importOpen && (
+        <PropertiesImportModal
+          isOpen={importOpen}
+          setImportOpen={setImportOpen}
+        />
+      )}
     </div>
   );
 };

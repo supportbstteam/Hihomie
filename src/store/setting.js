@@ -118,19 +118,6 @@ export const update_statusData = createAsyncThunk(
    }
 );
 
-// export const get_leadStatusDataForList = createAsyncThunk(
-//    "customer/get_leadStatusDataForList",
-//    async (page, { rejectWithValue, fulfillWithValue }) => {
-
-//       try {
-//          const { data } = await api.get(`/setting/leadListStatus?page=${page}`, { withCredentials: true });
-//          return fulfillWithValue(data);
-//       } catch (error) {
-//          return rejectWithValue(error.response?.data || "Something went wrong");
-//       }
-//    }
-// );
-
 export const get_leadStatusDataForList = createAsyncThunk(
    "customer/get_leadStatusDataForList",
    async (payload = {}, { rejectWithValue, fulfillWithValue }) => {

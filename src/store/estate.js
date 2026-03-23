@@ -77,6 +77,27 @@ export const get_tags = createAsyncThunk(
     }
 );
 
+export const upload_property_file = createAsyncThunk(
+    "customer/upload_property_file",
+    async (file, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const { data } = await api.post("/estate/property/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            });
+
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Something went wrong");
+        }
+    }
+);
+
 
 export const estateReducer = createSlice({
     name: "estate",
@@ -182,6 +203,17 @@ export const estateReducer = createSlice({
             .addCase(get_tags.rejected, (state, { payload }) => {
                 state.loader = false;
                 state.errorMessage = payload?.message || "Failed to fetch tags";
+            })
+            .addCase(upload_property_file.pending, (state, { payload }) => {
+                state.loader = true;
+            })
+            .addCase(upload_property_file.fulfilled, (state, { payload }) => {
+                state.successMessage = payload?.message;
+                state.loader = false;
+            })
+            .addCase(upload_property_file.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Something went wrong";
             });
     }
 });
