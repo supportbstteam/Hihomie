@@ -131,7 +131,7 @@ const ImportProperties = ({ isOpen, setImportOpen }) => {
 
             <p className="text-xs text-gray-500 mt-4">
               You can download sample importing files below <br />
-              <a href="/xlsx-sample.xlsx" className="text-blue-500 underline">
+              <a href="estate/sample_properties.xlsx" className="text-blue-500 underline">
                 Excel File Sample
               </a>
             </p>
