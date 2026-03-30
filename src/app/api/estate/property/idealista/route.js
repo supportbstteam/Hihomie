@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         // 1. Encode credentials correctly using Buffer
-        const credentials = Buffer.from('info@hihomie.es:Myhomie').toString('base64');
+        // const credentials = Buffer.from('info@hihomie.es:Myhomie').toString('base64');
+        const credentials = Buffer.from('testDocu:dc4haw4JmASg2CZG').toString('base64');
 
         // 2. Idealista OAuth usually requires the grant_type in the BODY, not just the URL
         const details = {
