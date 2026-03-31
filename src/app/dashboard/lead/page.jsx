@@ -519,18 +519,6 @@ export default function CustomDnD() {
                       </div>
 
                       <div className=" grid gap-2 mb-4 text-light">
-                        {/* <span className="flex gap-2">
-                          <Mail size={16} />
-
-                          <p className="text-light max-w-[10px] wrapped-text pxs">
-                            {card.email}{" "}
-                            {card.duplicateCount && (
-                              <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded-full">
-                                {card.duplicateCount}
-                              </span>
-                            )}
-                          </p>
-                        </span> */}
                         <div className="flex items-center gap-2 w-[250px]">
                           {/* Shrink-0 prevents the icon from squishing if the email is very long */}
                           <Mail size={16} className="shrink-0" />
