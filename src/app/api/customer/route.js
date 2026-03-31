@@ -1,23 +1,77 @@
 import { NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db'
-import Customer from '@/models/Customer'
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import LeadStatus from '@/models/LeadStatus'
 import CardAssignUser from '@/models/CardAssignUser'
 import mongoose from "mongoose";
-import Increment from '@/models/Increment'
 import { t } from "@/components/translations";
+import { sendEmail } from "@/lib/sendEmail";
 
 export async function POST(req) {
 
   try {
     const { lead_title, surname, first_name, last_name, company, designation, email, phone, lead_value, assigned, type_of_opration, customer_situation, purchase_status, commercial_notes, manager_notes, detailsData, addressDetailsData, selectedColId, contacted, contract_signed, origin } = await req.json()
-    
+
     let final_origin = origin || "online";
 
     await dbConnect();
+
+    if (email) {
+      // Searches all LeadStatus documents to see if any of their 'cards' array contains this email
+      const existingLead = await LeadStatus.findOne({ "cards.email": email });
+
+      if (existingLead) {
+
+        const mailContent = `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+  
+  <div style="background-color: #f39c12; color: white; padding: 15px 20px; text-align: center;">
+    <h2 style="margin: 0; font-size: 20px;">⚠️ Alerta de Lead Duplicado</h2>
+  </div>
+
+  <div style="padding: 20px; color: #333333; line-height: 1.6;">
+    <p>Hola Admin,</p>
+    <p>Se acaba de recibir un nuevo formulario, pero la dirección de correo electrónico ya está asociada a una tarjeta existente en el sistema.</p>
+
+    <h3 style="border-bottom: 2px solid #eeeeee; padding-bottom: 5px; color: #2c3e50; margin-top: 25px;">Detalles de la Nueva Solicitud:</h3>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold; width: 120px; color: #555;">Nombre:</td>
+        <td style="padding: 8px 0;">${first_name || ''} ${last_name || ''}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold; color: #555;">Email:</td>
+        <td style="padding: 8px 0;"><a href="mailto:${email}" style="color: #3498db;">${email}</a></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; font-weight: bold; color: #555;">Origen:</td>
+        <td style="padding: 8px 0;">${final_origin}</td>
+      </tr>
+    </table>
+
+    <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #f39c12; font-size: 14px; margin-top: 20px;">
+      <strong>Acción Tomada por el Sistema:</strong> La nueva tarjeta se generó y guardó en el sistema de todos modos. Por favor, revise el pipeline para determinar si estos registros deben fusionarse o si el cliente está solicitando un servicio nuevo e independiente.
+    </div>
+
+  </div>
+
+  <div style="background-color: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #777777;">
+    Esta es una notificación automática del sistema de la API de HiHomie.
+  </div>
+
+</div>
+`;
+
+        const mailOptions = {
+          from: `"HiHomie" <${process.env.EMAIL_USER}>`,
+          to: 'bstteam106@gmail.com',
+          subject: "Alerta de Cliente Potencial Duplicado",
+          html: mailContent,
+        };
+
+        await sendEmail(mailOptions);
+      }
+    }
 
     const maxCard = await LeadStatus.aggregate([
       { $unwind: "$cards" },
