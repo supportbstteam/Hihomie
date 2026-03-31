@@ -5,6 +5,8 @@ import CardAssignUser from '@/models/CardAssignUser'
 import mongoose from "mongoose";
 import { t } from "@/components/translations";
 import { sendEmail } from "@/lib/sendEmail";
+import User from '@/models/User';
+
 
 export async function POST(req) {
 
@@ -14,6 +16,11 @@ export async function POST(req) {
     let final_origin = origin || "online";
 
     await dbConnect();
+
+    const admin = await User.findOne({
+      role: "admin",
+      name: "Super Admin"
+    }).lean();
 
     if (email) {
       // Searches all LeadStatus documents to see if any of their 'cards' array contains this email
@@ -44,6 +51,10 @@ export async function POST(req) {
         <td style="padding: 8px 0;"><a href="mailto:${email}" style="color: #3498db;">${email}</a></td>
       </tr>
       <tr>
+        <td style="padding: 8px 0; font-weight: bold; color: #555;">Teléfono:</td>
+        <td style="padding: 8px 0;">${phone || 'N/D'}</td>
+      </tr>
+      <tr>
         <td style="padding: 8px 0; font-weight: bold; color: #555;">Origen:</td>
         <td style="padding: 8px 0;">${final_origin}</td>
       </tr>
@@ -64,7 +75,7 @@ export async function POST(req) {
 
         const mailOptions = {
           from: `"HiHomie" <${process.env.EMAIL_USER}>`,
-          to: 'bstteam106@gmail.com',
+          to: admin.email,
           subject: "Alerta de Cliente Potencial Duplicado",
           html: mailContent,
         };

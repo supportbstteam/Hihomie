@@ -109,6 +109,29 @@ export async function GET(req) {
 
         {
           $lookup: {
+            from: "leadstatuses",
+            let: { currentEmail: "$cards.email" },
+            pipeline: [
+              { $unwind: "$cards" },
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$cards.email", "$$currentEmail"] },
+                      { $ne: ["$$currentEmail", null] },
+                      { $ne: ["$$currentEmail", ""] }
+                    ]
+                  }
+                }
+              },
+              { $count: "count" }
+            ],
+            as: "duplicateData"
+          }
+        },
+
+        {
+          $lookup: {
             from: "cardassignusers",
             let: { cardIdStr: { $toString: "$cards._id" } },
             pipeline: [
@@ -132,81 +155,54 @@ export async function GET(req) {
           }
         },
 
+        {
+          $lookup: {
+            from: "users",
+            let: { assignedData: "$assignedUsers" },
+            pipeline: [
               {
-        $lookup: {
-          from: "users",
-          let: { assignedData: "$assignedUsers" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: [
-                    "$_id",
-                    {
-                      $map: {
-                        input: "$$assignedData",
-                        as: "ad",
-                        in: { $toObjectId: "$$ad.userId" }
+                $match: {
+                  $expr: {
+                    $in: [
+                      "$_id",
+                      {
+                        $map: {
+                          input: "$$assignedData",
+                          as: "ad",
+                          in: { $toObjectId: "$$ad.userId" }
+                        }
                       }
-                    }
-                  ]
+                    ]
+                  }
+                }
+              },
+              { $project: { password: 0 } },
+              // Merge the assignedAt date from the variable into the user object
+              {
+                $addFields: {
+                  assignedAt: {
+                    $arrayElemAt: [
+                      {
+                        $map: {
+                          input: {
+                            $filter: {
+                              input: "$$assignedData",
+                              as: "f",
+                              cond: { $eq: ["$$f.userId", { $toString: "$_id" }] }
+                            }
+                          },
+                          in: "$$this.assignedAt"
+                        }
+                      },
+                      0
+                    ]
+                  }
                 }
               }
-            },
-            { $project: { password: 0 } },
-            // Merge the assignedAt date from the variable into the user object
-            {
-              $addFields: {
-                assignedAt: {
-                  $arrayElemAt: [
-                    {
-                      $map: {
-                        input: {
-                          $filter: {
-                            input: "$$assignedData",
-                            as: "f",
-                            cond: { $eq: ["$$f.userId", { $toString: "$_id" }] }
-                          }
-                        },
-                        in: "$$this.assignedAt"
-                      }
-                    },
-                    0
-                  ]
-                }
-              }
-            }
-          ],
-          as: "users"
-        }
-      },
-
-        // {
-        //   $lookup: {
-        //     from: "users",
-        //     let: { userIds: "$assignedUsers.userId" },
-        //     pipeline: [
-        //       {
-        //         $match: {
-        //           $expr: {
-        //             $in: [
-        //               "$_id",
-        //               {
-        //                 $map: {
-        //                   input: "$$userIds",
-        //                   as: "uid",
-        //                   in: { $toObjectId: "$$uid" }
-        //                 }
-        //               }
-        //             ]
-        //           }
-        //         }
-        //       },
-        //       { $project: { password: 0 } }
-        //     ],
-        //     as: "users"
-        //   }
-        // },
+            ],
+            as: "users"
+          }
+        },
 
         {
           $project: {
@@ -244,6 +240,12 @@ export async function GET(req) {
                 "yes",
                 "no"
               ]
+            },
+            duplicateCount: {
+              $let: {
+                vars: { dupObj: { $arrayElemAt: ["$duplicateData", 0] } },
+                in: { $ifNull: ["$$dupObj.count", 1] }
+              }
             }
           }
         },
@@ -291,6 +293,29 @@ export async function GET(req) {
   try {
     const cards = await LeadStatus.aggregate([
       { $unwind: "$cards" },
+
+      {
+        $lookup: {
+          from: "leadstatuses",
+          let: { currentEmail: "$cards.email" },
+          pipeline: [
+            { $unwind: "$cards" },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$cards.email", "$$currentEmail"] },
+                    { $ne: ["$$currentEmail", null] },
+                    { $ne: ["$$currentEmail", ""] }
+                  ]
+                }
+              }
+            },
+            { $count: "count" }
+          ],
+          as: "duplicateData"
+        }
+      },
 
       {
         $lookup: {
@@ -354,33 +379,6 @@ export async function GET(req) {
         }
       },
 
-      // {
-      //   $lookup: {
-      //     from: "users",
-      //     let: { userIds: "$assignedUsers.userId" },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $in: [
-      //               "$_id",
-      //               {
-      //                 $map: {
-      //                   input: "$$userIds",
-      //                   as: "uid",
-      //                   in: { $toObjectId: "$$uid" }
-      //                 }
-      //               }
-      //             ]
-      //           }
-      //         }
-      //       },
-      //       { $project: { password: 0 } }
-      //     ],
-      //     as: "users"
-      //   }
-      // },
-
       {
         $lookup: {
           from: "documents",
@@ -429,6 +427,12 @@ export async function GET(req) {
               "yes",
               "no"
             ]
+          },
+          duplicateCount: {
+            $let: {
+              vars: { dupObj: { $arrayElemAt: ["$duplicateData", 0] } },
+              in: { $ifNull: ["$$dupObj.count", 1] }
+            }
           }
         }
       },

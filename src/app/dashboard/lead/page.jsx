@@ -519,11 +519,42 @@ export default function CustomDnD() {
                       </div>
 
                       <div className=" grid gap-2 mb-4 text-light">
-                        <span className="flex gap-2">
+                        {/* <span className="flex gap-2">
                           <Mail size={16} />
 
-                          <p className="text-light pxs">{card.email}</p>
-                        </span>
+                          <p className="text-light max-w-[10px] wrapped-text pxs">
+                            {card.email}{" "}
+                            {card.duplicateCount && (
+                              <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded-full">
+                                {card.duplicateCount}
+                              </span>
+                            )}
+                          </p>
+                        </span> */}
+                        <div className="flex items-center gap-2 w-[250px]">
+                          {/* Shrink-0 prevents the icon from squishing if the email is very long */}
+                          <Mail size={16} className="shrink-0" />
+
+                          {/* flex-1 and min-w-0 are required for 'truncate' to work inside a flex container */}
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <p
+                              className="text-sm text-gray-600 truncate py-1"
+                              title={card.email} // Shows full email on hover if it gets truncated
+                            >
+                              {card.email}
+                            </p>
+
+                            {/* Only show the badge if there are actual duplicates (count > 1) */}
+                            {card.duplicateCount && (
+                              <span
+                                className="shrink-0 inline-flex items-center justify-center bg-red-100 text-red-800 text-[10px] leading-none font-bold px-2 py-1 rounded-full"
+                                title={`${card.duplicateCount} total submissions found`}
+                              >
+                                {card.duplicateCount}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                         <span className="flex gap-2">
                           <Phone size={16} />
                           <p className="text-light pxs">{card.phone}</p>

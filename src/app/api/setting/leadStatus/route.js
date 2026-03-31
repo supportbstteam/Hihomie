@@ -43,6 +43,18 @@ export async function GET() {
           }
         },
 
+        {
+          $lookup: {
+            from: "leadstatuses", // Make sure this matches your exact MongoDB collection name for LeadStatus
+            pipeline: [
+              { $unwind: "$cards" },
+              { $match: { "cards.email": { $exists: true, $ne: null, $ne: "" } } },
+              { $group: { _id: "$cards.email", duplicateCount: { $sum: 1 } } }
+            ],
+            as: "globalEmailCounts"
+          }
+        },
+
         // 2) lookup assignments for this user (your original lookup, unchanged)
         {
           $lookup: {
@@ -94,6 +106,26 @@ export async function GET() {
                   $mergeObjects: [
                     "$$card",
                     {
+                      duplicateCount: {
+                        $let: {
+                          vars: {
+                            matchedEmail: {
+                              $arrayElemAt: [
+                                {
+                                  $filter: {
+                                    input: "$globalEmailCounts",
+                                    as: "gec",
+                                    cond: { $eq: ["$$gec._id", "$$card.email"] }
+                                  }
+                                },
+                                0
+                              ]
+                            }
+                          },
+                          // Default to 1 if no email is found (meaning it's the only one)
+                          in: { $ifNull: ["$$matchedEmail.duplicateCount", 1] }
+                        }
+                      },
                       documentSubmitted: {
                         $cond: [
                           {
@@ -138,7 +170,7 @@ export async function GET() {
         { $sort: { order: 1 } },
 
         // remove temporary arrays from the output
-        { $project: { _cardIdsStr: 0, assignedCards: 0, docs: 0 } }
+        { $project: { _cardIdsStr: 0, assignedCards: 0, docs: 0, globalEmailCounts: 0 } }
       ];
 
       const data = await LeadStatus.aggregate(pipeline);
@@ -165,7 +197,20 @@ export async function GET() {
         }
       },
 
-      // 2) lookup assignments (you already had this)
+      // 🔥 NEW: 1.5) Lookup global email counts
+      {
+        $lookup: {
+          from: "leadstatuses", // Collection name (usually lowercase plural of model)
+          pipeline: [
+            { $unwind: "$cards" },
+            { $match: { "cards.email": { $exists: true, $ne: null, $ne: "" } } },
+            { $group: { _id: "$cards.email", duplicateCount: { $sum: 1 } } }
+          ],
+          as: "globalEmailCounts"
+        }
+      },
+
+      // 2) lookup assignments 
       {
         $lookup: {
           from: "cardassignusers",
@@ -204,7 +249,26 @@ export async function GET() {
                 $mergeObjects: [
                   "$$c",
                   {
-                    // assignedUsers as before
+                    duplicateCount: {
+                      $let: {
+                        vars: {
+                          matchedEmail: {
+                            $arrayElemAt: [
+                              {
+                                $filter: {
+                                  input: "$globalEmailCounts",
+                                  as: "gec",
+                                  cond: { $eq: ["$$gec._id", "$$c.email"] }
+                                }
+                              },
+                              0
+                            ]
+                          }
+                        },
+                        in: { $ifNull: ["$$matchedEmail.duplicateCount", 1] }
+                      }
+                    },
+
                     assignedUsers: {
                       $map: {
                         input: {
@@ -264,7 +328,7 @@ export async function GET() {
 
       // 5) sort + cleanup temporaries
       { $sort: { order: 1 } },
-      { $project: { _cardIdsStr: 0, assignments: 0, docs: 0 } }
+      { $project: { _cardIdsStr: 0, assignments: 0, docs: 0, globalEmailCounts: 0 } }
     ]);
 
     return NextResponse.json({ data }, { status: 201 })

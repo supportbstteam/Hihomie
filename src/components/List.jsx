@@ -343,7 +343,18 @@ const List = ({
                   <TableCell>
                     {item.first_name} {item.last_name}
                   </TableCell>
-                  <TableCell>{item.email}</TableCell>
+                  <TableCell>
+                    <>
+                      <div className="flex items-center gap-2">
+                        {item.email}
+                        {item.duplicateCount && (
+                          <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded-full">
+                            {item.duplicateCount}
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  </TableCell>
                   <TableCell>{item.phone}</TableCell>
                   <TableCell>
                     {/* <div className="flex gap-1">
