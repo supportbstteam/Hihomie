@@ -22,11 +22,18 @@ export async function POST(req) {
       name: "Super Admin"
     }).lean();
 
+    let assignedExisting = null;
+
     if (email) {
       // Searches all LeadStatus documents to see if any of their 'cards' array contains this email
       const existingLead = await LeadStatus.findOne({ "cards.email": email });
 
       if (existingLead) {
+
+        const targetCard = existingLead.cards.find(c => c.email === email);
+        if (targetCard) {
+          assignedExisting = await CardAssignUser.findOne({ cardId: targetCard._id }).lean();
+        }
 
         const mailContent = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -75,7 +82,8 @@ export async function POST(req) {
 
         const mailOptions = {
           from: `"HiHomie" <${process.env.EMAIL_USER}>`,
-          to: admin.email,
+          // to: admin.email ?? "admin@hihomie.es",
+          to: "bstteam106@gmail.com",
           subject: "Alerta de Cliente Potencial Duplicado",
           html: mailContent,
         };
@@ -135,11 +143,22 @@ export async function POST(req) {
       { new: true } // return the updated document
     );
 
+    if (!updatedColumn) {
+      return NextResponse.json({ error: t('tm15') }, { status: 404 });
+    }
+
     // these two lines are used to assign the card to the manager or staff or any user at the time of lead creation
     const newCardId = updatedColumn.cards[updatedColumn.cards.length - 1]._id;
-    if (!assigned || assigned.trim() === "") {
+    if (assignedExisting) {
+      await CardAssignUser.create({
+        userId: assignedExisting.userId,
+        cardId: newCardId,
+        colId: selectedColId
+      });
+    } else if (!assigned || assigned.trim() === "") {
       console.log("No user assigned, skipping assignment creation");
-    } else {
+    }
+    else {
       await CardAssignUser.create({
         userId: assigned,
         cardId: newCardId,
@@ -147,9 +166,6 @@ export async function POST(req) {
       });
     }
 
-    if (!updatedColumn) {
-      return NextResponse.json({ error: t('tm15') }, { status: 404 });
-    }
 
     return NextResponse.json({ message: t('tm16'), data: updatedColumn }, { status: 200 });
 

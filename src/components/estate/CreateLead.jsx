@@ -1,57 +1,58 @@
 "use client"
 
 import { useState } from 'react';
+import { t } from "@/components/translations";
 
-// Organized fields based on the new SEGUIMIENTO LEADS CSV
+// Organized fields based on the new LEAD TRACKING CSV
 const formCategories = [
   {
-    title: "Información Básica (Basic Info)",
+    title: "Basic Information",
     fields: [
-      { name: "id_lead", label: "ID Lead", type: "text" },
-      { name: "nombre", label: "Nombre", type: "text" },
-      { name: "telefono", label: "Teléfono", type: "text" },
-      { name: "direccion", label: "Dirección", type: "text" },
-      { name: "poblacion", label: "Población", type: "text" },
+      { name: "lead_id", label: "Lead ID", type: "text" },
+      { name: "name", label: "Name", type: "text" },
+      { name: "phone", label: "Phone", type: "text" },
+      { name: "address", label: "Address", type: "text" },
+      { name: "city", label: "City", type: "text" },
       { 
-        name: "alquiler_o_venta", 
-        label: "Alquiler o Venta", 
+        name: "rent_or_sale", 
+        label: "Rent or Sale", 
         type: "select",
-        options: ["", "Alquiler", "Venta", "Ambos"]
+        options: ["", "Rent", "Sale", "Both"]
       },
     ]
   },
   {
-    title: "Asignación y Origen (Assignment & Source)",
+    title: "Assignment & Source",
     fields: [
-      { name: "fecha_alta", label: "Fecha Alta", type: "date" },
-      { name: "captador", label: "Captador", type: "text" },
-      { name: "comercial_asignado", label: "Comercial (Asignado)", type: "text" },
-      { name: "fuente_canal", label: "Fuente / Canal", type: "text" },
+      { name: "registration_date", label: "Registration Date", type: "date" },
+      { name: "sourcer", label: "Sourcer", type: "text" },
+      { name: "assigned_agent", label: "Assigned Agent", type: "text" },
+      { name: "source_channel", label: "Source / Channel", type: "text" },
     ]
   },
   {
-    title: "Seguimiento y Estado (Tracking & Status)",
+    title: "Tracking & Status",
     fields: [
-      { name: "estado_lead", label: "Estado Lead", type: "text" },
-      { name: "ultimo_contacto", label: "Último Contacto", type: "date" },
-      { name: "resultado_ultimo_contacto", label: "Resultado Último Contacto", type: "text" },
-      { name: "siguiente_llamada", label: "Siguiente Llamada", type: "date" },
-      { name: "dias_desde_ultimo_contacto", label: "Días desde último contacto", type: "number" },
-      { name: "dias_hasta_siguiente_llamada", label: "Días hasta siguiente llamada", type: "number" },
-      { name: "seguimiento_vencido", label: "Seguimiento Vencido", type: "checkbox" },
+      { name: "lead_status", label: "Lead Status", type: "text" },
+      { name: "last_contact", label: "Last Contact", type: "date" },
+      { name: "last_contact_result", label: "Last Contact Result", type: "text" },
+      { name: "next_call", label: "Next Call", type: "date" },
+      { name: "days_since_last_contact", label: "Days since last contact", type: "number" },
+      { name: "days_until_next_call", label: "Days until next call", type: "number" },
+      { name: "follow_up_overdue", label: "Follow-up Overdue", type: "checkbox" },
     ]
   },
   {
-    title: "Datos Económicos (Financials)",
+    title: "Financials",
     fields: [
-      { name: "precio_venta", label: "Precio de Venta", type: "number" },
-      { name: "honorarios", label: "Honorarios", type: "number" },
+      { name: "sale_price", label: "Sale Price", type: "number" },
+      { name: "fees", label: "Fees", type: "number" },
     ]
   },
   {
-    title: "Notas (Notes)",
+    title: "Notes",
     fields: [
-      { name: "observaciones", label: "Observaciones", type: "textarea" },
+      { name: "observations", label: "Observations", type: "textarea" },
     ]
   }
 ];
@@ -84,7 +85,7 @@ const CreateLead = () => {
   return (
     <div className="w-full bg-white shadow-md">
       <div className="border-b px-6 py-4">
-        <h2 className="text-2xl font-bold text-gray-800">Crear Nuevo Lead</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Create New Lead</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full">
@@ -125,7 +126,7 @@ const CreateLead = () => {
                       className="border border-gray-300 rounded-md p-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       {field.options.map((opt, i) => (
-                        <option key={i} value={opt}>{opt || "Seleccione..."}</option>
+                        <option key={i} value={opt}>{opt || "Select..."}</option>
                       ))}
                     </select>
                   ) : field.type === 'checkbox' ? (
@@ -138,7 +139,7 @@ const CreateLead = () => {
                         onChange={handleChange}
                         className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
                       />
-                      <span className="ml-2 text-sm text-gray-600">Sí, vencido</span>
+                      <span className="ml-2 text-sm text-gray-600">Yes, overdue</span>
                     </div>
                   ) : (
                     <input
@@ -162,7 +163,7 @@ const CreateLead = () => {
             type="submit"
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150"
           >
-            Guardar Lead
+            Save Lead
           </button>
         </div>
       </form>
