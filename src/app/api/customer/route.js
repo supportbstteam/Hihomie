@@ -82,8 +82,8 @@ export async function POST(req) {
 
         const mailOptions = {
           from: `"HiHomie" <${process.env.EMAIL_USER}>`,
-          // to: admin.email ?? "admin@hihomie.es",
-          to: "bstteam106@gmail.com",
+          to: admin.email ?? "admin@hihomie.es",
+          // to: "bstteam106@gmail.com",
           subject: "Alerta de Cliente Potencial Duplicado",
           html: mailContent,
         };
