@@ -77,6 +77,70 @@ export const get_tags = createAsyncThunk(
     }
 );
 
+export const create_estate_lead = createAsyncThunk(
+    'create_estate_lead',
+    async (object, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.post(`/estate/leads`, object, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const get_estate_leads = createAsyncThunk(
+    'get_estate_leads',
+    async (_, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/leads`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const get_estate_lead = createAsyncThunk(
+    'get_estate_lead',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/leads/${id}`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const update_estate_lead = createAsyncThunk(
+    'update_estate_lead',
+    async ({ id, object }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.put(`/estate/leads/${id}`, object, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const delete_estate_lead = createAsyncThunk(
+    'delete_estate_lead',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            // Using params object in Axios
+            const { data } = await api.delete('/estate/leads', {
+                params: { id },
+                withCredentials: true
+            });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const upload_property_file = createAsyncThunk(
     "customer/upload_property_file",
     async (file, { rejectWithValue, fulfillWithValue }) => {
@@ -109,6 +173,8 @@ export const estateReducer = createSlice({
         properties: [],
         property: {},
         tags: [],
+        estate_leads: [],
+        estate_lead: {},
     },
     reducers: {
         messageClear: (state) => {
@@ -121,9 +187,6 @@ export const estateReducer = createSlice({
         builder
             .addCase(create_property.pending, (state) => {
                 state.loader = true;
-                state.errorMessage = "";
-                state.successMessage = ""; // Clear old success messages
-                state.successTag = "";      // Reset the tag
             })
             .addCase(create_property.fulfilled, (state, { payload }) => {
                 state.loader = false;
@@ -214,6 +277,70 @@ export const estateReducer = createSlice({
             .addCase(upload_property_file.rejected, (state, { payload }) => {
                 state.loader = false;
                 state.errorMessage = payload?.message || "Something went wrong";
+            })
+            .addCase(create_estate_lead.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(create_estate_lead.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload?.message || "Estate lead created successfully!";
+                state.successTag = "ESTATE_LEAD_CREATED";
+            })
+            .addCase(create_estate_lead.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to create estate lead";
+                state.successTag = "";
+            })
+            .addCase(get_estate_leads.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_estate_leads.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.estate_leads = payload.data;
+            })
+            .addCase(get_estate_leads.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch estate leads";
+            })
+
+            .addCase(get_estate_lead.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_estate_lead.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.estate_lead = payload.data;
+            })
+            .addCase(get_estate_lead.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch estate lead";
+            })
+
+            .addCase(update_estate_lead.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(update_estate_lead.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Estate lead updated successfully!";
+                state.successTag = "ESTATE_LEAD_UPDATED";
+            })
+            .addCase(update_estate_lead.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to update estate lead";
+                state.successTag = "";
+            })
+
+            .addCase(delete_estate_lead.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(delete_estate_lead.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Estate lead deleted successfully!";
+                state.successTag = "ESTATE_LEAD_DELETED";
+            })
+            .addCase(delete_estate_lead.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to delete estate lead";
+                state.successTag = "";
             });
     }
 });

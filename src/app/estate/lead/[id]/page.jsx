@@ -1,15 +1,15 @@
 import { redirect } from "next/navigation";
 import getUserFromServerSession from "@/lib/getUserFromServerSession";
-import ListLeads from "@/components/estate/ListLeads";
+import EditLead from "@/components/estate/EditLead";
 
-
-export default async function DashboardPage() {
+export default async function EditLeadPage({ params }) {
+  const { id } = await params;
   const user = await getUserFromServerSession();
   if (!user) redirect("/login");
 
   return (
     <>
-      <ListLeads />
+      <EditLead id={id} />
     </>
   );
 }

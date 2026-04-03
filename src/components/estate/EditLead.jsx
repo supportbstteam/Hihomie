@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { t } from "@/components/translations";
-import { create_estate_lead, messageClear } from "@/store/estate";
-import { useDispatch } from "react-redux";
-import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useState, useEffect, use } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import {
+  update_estate_lead,
+  get_estate_lead,
+  messageClear,
+} from "@/store/estate"; // Assuming you have/will create these actions
 
-// Organized fields based on the new LEAD TRACKING CSV
+// Reusing the exact same categories
 const formCategories = [
   {
     title: "Basic Information",
@@ -76,12 +78,26 @@ const formCategories = [
   },
 ];
 
-const CreateLead = () => {
+// Helper function to format MongoDB ISO dates to YYYY-MM-DD for HTML date inputs
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+  try {
+    return new Date(dateString).toISOString().split("T")[0];
+  } catch (e) {
+    return "";
+  }
+};
+
+const EditLead = ({ id }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const {loader, successMessage, errorMessage, successTag } = useSelector(
-    (state) => state.estate,
-  );
+
+  // Extract ID from URL params (Next.js App Router structure)
+  const leadId = id;
+
+  // Assuming your store has a "lead" object to hold the currently fetched lead
+  const { estate_lead, loader, successMessage, errorMessage, successTag } =
+    useSelector((state) => state.estate);
 
   // Initialize state dynamically
   const initialState = formCategories.reduce((acc, category) => {
@@ -93,6 +109,53 @@ const CreateLead = () => {
 
   const [formData, setFormData] = useState(initialState);
 
+  // 1. Fetch the lead data when the component mounts
+  useEffect(() => {
+      if (leadId) {
+      dispatch(get_estate_lead(leadId));
+    }
+  }, [leadId, dispatch]);
+
+
+  // 2. Populate the form when the fetched lead data changes
+  useEffect(() => {
+    if (estate_lead && Object.keys(estate_lead).length > 0) {
+      const populatedData = { ...initialState };
+
+      // Map database fields to form state
+      Object.keys(populatedData).forEach((key) => {
+        if (estate_lead[key] !== undefined && estate_lead[key] !== null) {
+          if (
+            ["registration_date", "last_contact", "next_call"].includes(key)
+          ) {
+            populatedData[key] = formatDateForInput(estate_lead[key]);
+          } else {
+            populatedData[key] = estate_lead[key];
+          }
+        }
+      });
+
+        setFormData(populatedData);
+        setFormData(estate_lead);
+    }
+  }, [estate_lead, dispatch]);
+
+  // 3. Handle success/error messages
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      if (successTag === "ESTATE_LEAD_UPDATED") {
+        // Optional: redirect back to list after successful update
+        // router.push("/estate/leads");
+      }
+      dispatch(messageClear());
+    }
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(messageClear());
+    }
+  }, [successMessage, errorMessage, dispatch, router, successTag]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -101,29 +164,24 @@ const CreateLead = () => {
     }));
   };
 
-    useEffect(() => {
-    if (successMessage) {
-      toast.success(successMessage);
-      if (successTag === "ESTATE_LEAD_CREATED") { 
-        // router.push("/estate");
-      }
-      dispatch(messageClear());
-    }
-    if (errorMessage) {
-      toast.error(errorMessage);
-      dispatch(messageClear());
-    }
-  }, [successMessage, errorMessage, dispatch]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(create_estate_lead(formData));
+    // Dispatch update action passing the ID and the modified data
+    dispatch(update_estate_lead({ id: leadId, data: formData }));
   };
+
+  if (loader && !estate_lead) {
+    return (
+      <div className="p-8 text-center bg-white shadow-md">
+        Loading lead data...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-white shadow-md">
-      <div className="border-b px-6 py-4">
-        <h2 className="text-2xl font-bold text-gray-800">Create New Lead</h2>
+      <div className="border-b px-6 py-4 flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Edit Lead</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full">
@@ -141,7 +199,6 @@ const CreateLead = () => {
               {category.fields.map((field) => (
                 <div
                   key={field.name}
-                  // Make textareas span full width if desired, or keep them in the grid
                   className={`flex flex-col ${field.type === "textarea" ? "md:col-span-2 lg:col-span-3" : ""}`}
                 >
                   <label
@@ -205,12 +262,13 @@ const CreateLead = () => {
         ))}
 
         {/* Submit Button */}
-        <div className="px-6 py-4 bg-gray-50 flex justify-end">
+        <div className="px-6 py-4 bg-gray-50 flex justify-end gap-4">
           <button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150"
+            disabled={loader}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150 disabled:opacity-50"
           >
-            Save Lead
+            {loader ? "Updating..." : "Update Lead"}
           </button>
         </div>
       </form>
@@ -218,4 +276,4 @@ const CreateLead = () => {
   );
 };
 
-export default CreateLead;
+export default EditLead;

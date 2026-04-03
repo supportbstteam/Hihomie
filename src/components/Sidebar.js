@@ -217,6 +217,7 @@ import {
   MdOutlineDashboard,
   MdOutlineDiversity3,
   MdOutlineContactPhone,
+  MdOutlineApartment,
 } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -270,14 +271,16 @@ const MENU = {
 const ESTATE_MENU = {
 
   admin: [
-    { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
-    { href: "/estate/property", label: "Add Property", icon: <MdOutlineDashboard /> },
-    { href: "/estate/lead", label: "Create Lead", icon: <MdOutlineDashboard /> },
+    { href: "/estate", label: "Property List", icon: <MdOutlineApartment /> },
+    { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
+    { href: "/estate/lead", label: "Lead List", icon: <MdOutlineContactPhone /> },
+    { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
   ],
   manager: [
-    { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
-    { href: "/estate/property", label: "Add Property", icon: <MdOutlineDashboard /> },
-    { href: "/estate/lead", label: "Create Lead", icon: <MdOutlineDashboard /> },
+    { href: "/estate", label: "Property List", icon: <MdOutlineApartment /> },
+    { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
+    { href: "/estate/lead", label: "Lead List", icon: <MdOutlineContactPhone /> },
+    { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
   ],
   user: [
     { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },
