@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -8,75 +8,10 @@ import {
   update_estate_lead,
   get_estate_lead,
   messageClear,
-} from "@/store/estate"; // Assuming you have/will create these actions
-
-// Reusing the exact same categories
-const formCategories = [
-  {
-    title: "Basic Information",
-    fields: [
-      { name: "lead_id", label: "Lead ID", type: "text" },
-      { name: "name", label: "Name", type: "text" },
-      { name: "phone", label: "Phone", type: "text" },
-      { name: "address", label: "Address", type: "text" },
-      { name: "city", label: "City", type: "text" },
-      {
-        name: "rent_or_sale",
-        label: "Rent or Sale",
-        type: "select",
-        options: ["", "Rent", "Sale", "Both"],
-      },
-    ],
-  },
-  {
-    title: "Assignment & Source",
-    fields: [
-      { name: "registration_date", label: "Registration Date", type: "date" },
-      { name: "capturer", label: "Capturer", type: "text" },
-      { name: "assigned_agent", label: "Assigned Agent", type: "text" },
-      { name: "source_channel", label: "Source / Channel", type: "text" },
-    ],
-  },
-  {
-    title: "Tracking & Status",
-    fields: [
-      { name: "lead_status", label: "Lead Status", type: "text" },
-      { name: "last_contact", label: "Last Contact", type: "date" },
-      {
-        name: "last_contact_result",
-        label: "Last Contact Result",
-        type: "text",
-      },
-      { name: "next_call", label: "Next Call", type: "date" },
-      {
-        name: "days_since_last_contact",
-        label: "Days since last contact",
-        type: "number",
-      },
-      {
-        name: "days_until_next_call",
-        label: "Days until next call",
-        type: "number",
-      },
-      {
-        name: "follow_up_overdue",
-        label: "Follow-up Overdue",
-        type: "checkbox",
-      },
-    ],
-  },
-  {
-    title: "Financials",
-    fields: [
-      { name: "sale_price", label: "Sale Price", type: "number" },
-      { name: "fees", label: "Fees", type: "number" },
-    ],
-  },
-  {
-    title: "Notes",
-    fields: [{ name: "observations", label: "Observations", type: "textarea" }],
-  },
-];
+} from "@/store/estate";
+import Input from "@/components/ui/Input";
+import Dropdown from "@/components/ui/DropDown";
+import Datepicker from "@/components/ui/Datepicker";
 
 // Helper function to format MongoDB ISO dates to YYYY-MM-DD for HTML date inputs
 const formatDateForInput = (dateString) => {
@@ -91,38 +26,46 @@ const formatDateForInput = (dateString) => {
 const EditLead = ({ id }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-
-  // Extract ID from URL params (Next.js App Router structure)
   const leadId = id;
 
-  // Assuming your store has a "lead" object to hold the currently fetched lead
   const { estate_lead, loader, successMessage, errorMessage, successTag } =
     useSelector((state) => state.estate);
 
-  // Initialize state dynamically
-  const initialState = formCategories.reduce((acc, category) => {
-    category.fields.forEach((field) => {
-      acc[field.name] = field.type === "checkbox" ? false : "";
-    });
-    return acc;
-  }, {});
+  const initialState = {
+    lead_id: "",
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    rent_or_sale: "",
+    registration_date: "",
+    capturer: "",
+    assigned_agent: "",
+    source_channel: "",
+    lead_status: "",
+    last_contact: "",
+    last_contact_result: "",
+    next_call: "",
+    days_since_last_contact: "",
+    days_until_next_call: "",
+    follow_up_overdue: false,
+    sale_price: "",
+    fees: "",
+    observations: "",
+  };
 
   const [formData, setFormData] = useState(initialState);
 
-  // 1. Fetch the lead data when the component mounts
   useEffect(() => {
-      if (leadId) {
+    if (leadId) {
       dispatch(get_estate_lead(leadId));
     }
   }, [leadId, dispatch]);
 
-
-  // 2. Populate the form when the fetched lead data changes
   useEffect(() => {
     if (estate_lead && Object.keys(estate_lead).length > 0) {
       const populatedData = { ...initialState };
 
-      // Map database fields to form state
       Object.keys(populatedData).forEach((key) => {
         if (estate_lead[key] !== undefined && estate_lead[key] !== null) {
           if (
@@ -135,18 +78,15 @@ const EditLead = ({ id }) => {
         }
       });
 
-        setFormData(populatedData);
-        setFormData(estate_lead);
+      setFormData(populatedData);
     }
   }, [estate_lead, dispatch]);
 
-  // 3. Handle success/error messages
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
       if (successTag === "ESTATE_LEAD_UPDATED") {
-        // Optional: redirect back to list after successful update
-        // router.push("/estate/leads");
+        router.push("/estate/lead");
       }
       dispatch(messageClear());
     }
@@ -166,8 +106,7 @@ const EditLead = ({ id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Dispatch update action passing the ID and the modified data
-    dispatch(update_estate_lead({ id: leadId, data: formData }));
+    dispatch(update_estate_lead({ id: leadId, object: formData }));
   };
 
   if (loader && !estate_lead) {
@@ -185,81 +124,294 @@ const EditLead = ({ id }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="w-full">
-        {formCategories.map((category, idx) => (
-          <div key={idx} className="border-b border-gray-200">
-            {/* Category Header */}
-            <div className="bg-gray-50 px-6 py-3">
-              <h3 className="text-lg font-semibold text-gray-700">
-                {category.title}
-              </h3>
+        {/* --- Category: Basic Information --- */}
+        <div className="border-b border-gray-200">
+          <div className="bg-gray-50 px-6 py-3">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Basic Information
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
+            <div className="flex flex-col">
+              <Input
+                id="lead_id"
+                label="Lead ID"
+                name="lead_id"
+                type="text"
+                value={formData.lead_id}
+                onChange={handleChange}
+              />
             </div>
 
-            {/* Category Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
-              {category.fields.map((field) => (
-                <div
-                  key={field.name}
-                  className={`flex flex-col ${field.type === "textarea" ? "md:col-span-2 lg:col-span-3" : ""}`}
-                >
-                  <label
-                    htmlFor={field.name}
-                    className="mb-2 text-sm font-medium text-gray-700"
-                  >
-                    {field.label}
-                  </label>
+            <div className="flex flex-col">
+              <Input
+                id="name"
+                label="Name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-                  {field.type === "textarea" ? (
-                    <textarea
-                      id={field.name}
-                      name={field.name}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      rows="3"
-                      className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  ) : field.type === "select" ? (
-                    <select
-                      id={field.name}
-                      name={field.name}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      className="border border-gray-300 rounded-md p-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                    >
-                      {field.options.map((opt, i) => (
-                        <option key={i} value={opt}>
-                          {opt || "Select..."}
-                        </option>
-                      ))}
-                    </select>
-                  ) : field.type === "checkbox" ? (
-                    <div className="flex items-center mt-2">
-                      <input
-                        id={field.name}
-                        name={field.name}
-                        type="checkbox"
-                        checked={formData[field.name]}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-600">
-                        Yes, overdue
-                      </span>
-                    </div>
-                  ) : (
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  )}
-                </div>
-              ))}
+            <div className="flex flex-col">
+              <Input
+                id="phone"
+                label="Phone"
+                name="phone"
+                type="text"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="address"
+                label="Address"
+                name="address"
+                type="text"
+                value={formData.address}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="city"
+                label="City"
+                name="city"
+                type="text"
+                value={formData.city}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Dropdown
+                id="rent_or_sale"
+                label="Rent or Sale"
+                name="rent_or_sale"
+                options={[
+                  { label: "----------", value: "" },
+                  { label: "Rent", value: "Rent" },
+                  { label: "Sale", value: "Sale" },
+                  { label: "Both", value: "Both" },
+                ]}
+                value={formData.rent_or_sale}
+                onChange={handleChange}
+              />
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* --- Category: Assignment & Source --- */}
+        <div className="border-b border-gray-200">
+          <div className="bg-gray-50 px-6 py-3">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Assignment & Source
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
+            <div className="flex flex-col">
+              <Datepicker
+                name="registration_date"
+                label="Registration Date"
+                value={formData.registration_date}
+                onChange={handleChange}
+                dateFormat="dd/MM/yyyy"
+                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="capturer"
+                label="Capturer"
+                name="capturer"
+                type="text"
+                value={formData.capturer}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="assigned_agent"
+                label="Assigned Agent"
+                name="assigned_agent"
+                type="text"
+                value={formData.assigned_agent}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="source_channel"
+                label="Source / Channel"
+                name="source_channel"
+                type="text"
+                value={formData.source_channel}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* --- Category: Tracking & Status --- */}
+        <div className="border-b border-gray-200">
+          <div className="bg-gray-50 px-6 py-3">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Tracking & Status
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
+            <div className="flex flex-col">
+              <Input
+                id="lead_status"
+                label="Lead Status"
+                name="lead_status"
+                type="text"
+                value={formData.lead_status}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Datepicker
+                name="last_contact"
+                label="Last Contact"
+                value={formData.last_contact}
+                onChange={handleChange}
+                dateFormat="dd/MM/yyyy"
+                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="last_contact_result"
+                label="Last Contact Result"
+                name="last_contact_result"
+                type="text"
+                value={formData.last_contact_result}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Datepicker
+                name="next_call"
+                label="Next Call"
+                value={formData.next_call}
+                onChange={handleChange}
+                dateFormat="dd/MM/yyyy"
+                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="days_since_last_contact"
+                label="Days since last contact"
+                name="days_since_last_contact"
+                type="number"
+                value={formData.days_since_last_contact}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="days_until_next_call"
+                label="Days until next call"
+                name="days_until_next_call"
+                type="number"
+                value={formData.days_until_next_call}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col justify-center">
+              <label
+                htmlFor="follow_up_overdue"
+                className="mb-2 text-sm font-medium text-gray-700"
+              >
+                Follow-up Overdue
+              </label>
+              <div className="flex items-center">
+                <input
+                  id="follow_up_overdue"
+                  name="follow_up_overdue"
+                  type="checkbox"
+                  checked={formData.follow_up_overdue}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  Follow-up Overdue
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* --- Category: Financials --- */}
+        <div className="border-b border-gray-200">
+          <div className="bg-gray-50 px-6 py-3">
+            <h3 className="text-lg font-semibold text-gray-700">Financials</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
+            <div className="flex flex-col">
+              <Input
+                id="sale_price"
+                label="Sale Price"
+                name="sale_price"
+                type="number"
+                value={formData.sale_price}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
+                id="fees"
+                label="Fees"
+                name="fees"
+                type="number"
+                value={formData.fees}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* --- Category: Notes --- */}
+        <div className="border-b border-gray-200">
+          <div className="bg-gray-50 px-6 py-3">
+            <h3 className="text-lg font-semibold text-gray-700">Notes</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
+            <div className="flex flex-col md:col-span-2 lg:col-span-3">
+              <label
+                htmlFor="observations"
+                className="mb-2 text-sm font-medium text-gray-700"
+              >
+                Observations
+              </label>
+              <textarea
+                id="observations"
+                name="observations"
+                value={formData.observations}
+                onChange={handleChange}
+                rows="3"
+                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Submit Button */}
         <div className="px-6 py-4 bg-gray-50 flex justify-end gap-4">
