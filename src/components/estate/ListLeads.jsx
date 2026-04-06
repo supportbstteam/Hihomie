@@ -21,8 +21,9 @@ const ListLeads = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { estate_leads, loader, successMessage, errorMessage } =
-    useSelector((state) => state.estate);
+  const { estate_leads, loader, successMessage, errorMessage } = useSelector(
+    (state) => state.estate,
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
@@ -97,6 +98,14 @@ const ListLeads = () => {
               color="#99A1B7"
               onClick={() => router.push("/estate/lead/create")}
             />
+            <Icon
+              variant="outline"
+              title="Upload"
+              icon={Upload}
+              size={16}
+              color="#99A1B7"
+              onClick={() => setImportOpen(true)}
+            />
           </div>
         </div>
       </aside>
@@ -141,7 +150,9 @@ const ListLeads = () => {
                 >
                   {/* Lead Info */}
                   <td className="py-3 px-4 text-sm text-gray-800">
-                    <div className="font-semibold">{lead.name || "Unknown"}</div>
+                    <div className="font-semibold">
+                      {lead.name || "Unknown"}
+                    </div>
                     <div className="text-gray-500 text-xs mt-0.5">
                       {lead.phone ? `📞 ${lead.phone}` : "No phone"}
                     </div>
@@ -163,21 +174,25 @@ const ListLeads = () => {
                           lead.rent_or_sale.toLowerCase() === "sale"
                             ? "bg-blue-100 text-blue-800"
                             : lead.rent_or_sale.toLowerCase() === "rent"
-                            ? "bg-purple-100 text-purple-800"
-                            : "bg-gray-200 text-gray-800"
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-gray-200 text-gray-800"
                         }`}
                       >
                         {lead.rent_or_sale}
                       </span>
                     ) : (
-                      <span className="text-gray-400 text-xs uppercase">N/A</span>
+                      <span className="text-gray-400 text-xs uppercase">
+                        N/A
+                      </span>
                     )}
                   </td>
 
                   {/* Status & Tracking */}
                   <td className="py-3 px-4 text-sm text-gray-700">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{lead.lead_status || "Unclassified"}</span>
+                      <span className="font-medium">
+                        {lead.lead_status || "Unclassified"}
+                      </span>
                       {lead.follow_up_overdue && (
                         <span className="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
                           OVERDUE
@@ -203,7 +218,10 @@ const ListLeads = () => {
                   <td className="py-3 px-4 text-center">
                     <div className="flex justify-center gap-3 text-lg">
                       <Link href={`/estate/lead/${lead._id}`}>
-                        <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition-transform" title="Edit Lead" />
+                        <FaRegEdit
+                          className="text-orange-500 cursor-pointer hover:scale-110 transition-transform"
+                          title="Edit Lead"
+                        />
                       </Link>
 
                       {user?.role === "admin" && (

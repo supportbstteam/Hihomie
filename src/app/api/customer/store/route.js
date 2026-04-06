@@ -62,7 +62,7 @@ export async function POST(req) {
           </tr>
           <tr>
             <td style="padding: 8px 0; font-weight: bold; color: #555;">Origen:</td>
-            <td style="padding: 8px 0;">${final_origin}</td>
+            <td style="padding: 8px 0;">"Online"</td>
           </tr>
         </table>
     
