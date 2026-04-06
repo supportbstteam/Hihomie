@@ -117,9 +117,7 @@ export async function GET(request) {
   </p>
 </div>
 `
-
       };
-
       try {
         console.log(due.due_date, due.due_time);
         await transporter.sendMail(mailOptions);

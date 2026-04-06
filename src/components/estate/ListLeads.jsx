@@ -12,9 +12,11 @@ import {
 } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import useUserFromSession from "@/lib/useUserFromSession";
+import PropertiesImportModal from "@/components/estate/ImportProperties";
+import EstateLeadImportModal from "@/components/estate/ImportEstateLead";
 
 const ListLeads = () => {
   const user = useUserFromSession();
@@ -27,6 +29,7 @@ const ListLeads = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     dispatch(get_estate_leads());
@@ -253,6 +256,12 @@ const ListLeads = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
       />
+      {importOpen && (
+        <EstateLeadImportModal
+          isOpen={importOpen}
+          setImportOpen={setImportOpen}
+        />
+      )}
     </div>
   );
 };

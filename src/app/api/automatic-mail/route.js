@@ -54,15 +54,15 @@ export async function GET() {
                 <!-- main content -->
 
                 <p>Hola ${lead.cards.first_name} ${lead.cards.last_name}, </p><br/>
-                <p>Thank you for your interest in our services. We are excited to hear from you and help you with your mortgage needs.</p><br/>
-                <p>Would You Like to know more? Let us help you take the next step</p><br/>
-                <p>Greetings,</p>
+                <p>Gracias por su interés en nuestros servicios. Nos entusiasma saber de usted y ayudarle con sus necesidades hipotecarias.</p><br/>
+                <p>¿Le gustaría saber más? Permítanos ayudarle a dar el siguiente paso.</p><br/>
+                <p>Saludos,</p>
                 <p>The HiHomie Team</p>
                 `;
             const mailOptions = {
                 from: `"HiHomie" <${process.env.EMAIL_USER}>`,
                 to: lead.cards.email,
-                subject: "100% Mortgage with the best interest rate",
+                subject: "Hipoteca al 100% con la mejor tasa de interés.",
                 html: mailContent,
             };
             if (days === 2 || days === 5) {
