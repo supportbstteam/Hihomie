@@ -27,12 +27,14 @@ export async function POST(req) {
     if (email) {
       // Searches all LeadStatus documents to see if any of their 'cards' array contains this email
       const existingLead = await LeadStatus.findOne({ "cards.email": email });
+      let assignedUser = null;
 
       if (existingLead) {
 
         const targetCard = existingLead.cards.find(c => c.email === email);
         if (targetCard) {
           assignedExisting = await CardAssignUser.findOne({ cardId: targetCard._id }).lean();
+          assignedUser = await User.findById(assignedExisting.userId).lean();
         }
 
         const mailContent = `
@@ -43,7 +45,7 @@ export async function POST(req) {
   </div>
 
   <div style="padding: 20px; color: #333333; line-height: 1.6;">
-    <p>Hola Admin,</p>
+    <p>Hola ${assignedUser.name || 'Admin'},</p>
     <p>Se acaba de recibir un nuevo formulario, pero la dirección de correo electrónico ya está asociada a una tarjeta existente en el sistema.</p>
 
     <h3 style="border-bottom: 2px solid #eeeeee; padding-bottom: 5px; color: #2c3e50; margin-top: 25px;">Detalles de la Nueva Solicitud:</h3>
@@ -79,10 +81,10 @@ export async function POST(req) {
 
 </div>
 `;
-
+        
         const mailOptions = {
           from: `"HiHomie" <${process.env.EMAIL_USER}>`,
-          to: admin.email ?? "admin@hihomie.es",
+          to: assignedUser.email ?? admin.email,
           // to: "bstteam106@gmail.com",
           subject: "Alerta de Cliente Potencial Duplicado",
           html: mailContent,

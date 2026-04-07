@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import dbConnect from "@/lib/db";
 import Status from "@/models/LeadStatus";
-import EstateLead from "@/models/EstateLead";
+import EstateLead from "@/models/EstateLead"; // Kept if you need it later
 import getUserFromServerSession from "@/lib/getUserFromServerSession";
 const Joi = require("joi");
 
@@ -14,38 +14,24 @@ const requiredString = (field) =>
     "string.empty": `${field} cannot be empty`,
   });
 
-// ROW SCHEMA
+// ROW SCHEMA (Updated for the new Excel format)
 const rowSchema = Joi.object({
-  status_name: Joi.string().trim().required().messages({
-    "any.required": "status_name is required",
-    "string.empty": "status_name cannot be empty",
-  }),
-  surname: requiredString("surname"),
   first_name: requiredString("first_name"),
-  last_name: requiredString("last_name"),
-  email: Joi.string().trim().email({ tlds: { allow: false } }).required().messages({
-    "any.required": "email is required",
-    "string.empty": "email cannot be empty",
-    "string.email": "email must be a valid email address",
-  }),
-  customer_situation: requiredString("customer_situation"),
-  purchase_status: requiredString("purchase_status"),
-  contacted: requiredString("contacted"),
-  notes: optString(),
-  source: optString(),
-  category: optString(),
-  tag: optString(),
-  last_connected: Joi.date().iso().allow("", null).messages({
-    "date.format": "last_connected must be ISO date",
-  }),
-  company_name: optString(),
+  phone: optString(),
   street: optString(),
   city: optString(),
-  state: optString(),
-  zip_code: Joi.string().trim().allow("", null).pattern(/^[0-9A-Za-z\- ]{0,20}$/).messages({
-    "string.pattern.base": "zip_code contains invalid characters",
-  }),
-  country: optString(),
+  operation: optString(),
+  captador: optString(),
+  comercial: optString(),
+  source: optString(),
+  last_connected: Joi.any().optional(),
+  next_call: Joi.any().optional(),
+  status_name: optString(),
+  price_property: Joi.any().optional(),
+  fees: Joi.any().optional(),
+  contact_result: optString(),
+  notes: optString(),
+  excel_lead_id: optString(),
 }).unknown(true);
 
 
@@ -69,7 +55,9 @@ export const POST = async (req) => {
     const buffer = Buffer.from(await file.arrayBuffer());
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
-    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    
+    // 🔥 Adding `defval: ""` prevents the JSON from dropping empty cells
+    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
 
     const errorData = [];
     const validSaves = [];
@@ -97,10 +85,30 @@ export const POST = async (req) => {
 
     // 🔥 PROCESS EACH ROW
     for (let i = 0; i < data.length; i++) {
-      const row = data[i];
+      const rawRow = data[i];
       const rowNum = i + 2;
 
-      const { error, value: validRow } = rowSchema.validate(row, {
+      // 🔥 MAP SPANISH EXCEL HEADERS TO INTERNAL FIELDS
+      const mappedRow = {
+        first_name: rawRow["Nombre"] ? String(rawRow["Nombre"]) : "",
+        phone: rawRow["Teléfono"] ? String(rawRow["Teléfono"]) : "",
+        street: rawRow["Dirección"] ? String(rawRow["Dirección"]) : "",
+        city: rawRow["Poblacion"] ? String(rawRow["Poblacion"]) : "",
+        operation: rawRow["alquiler o venta"] ? String(rawRow["alquiler o venta"]) : "",
+        captador: rawRow["Captador"] ? String(rawRow["Captador"]) : "",
+        comercial: rawRow["Comercial (asignado)"] ? String(rawRow["Comercial (asignado)"]) : "",
+        source: rawRow["Fuente/Canal"] ? String(rawRow["Fuente/Canal"]) : "",
+        last_connected: rawRow["Último contacto"] || null,
+        next_call: rawRow["Siguiente llamada"] || null,
+        status_name: rawRow["Estado lead"] ? String(rawRow["Estado lead"]) : "",
+        price_property: rawRow["Precio de venta"] || null,
+        fees: rawRow["Honorarios"] || null,
+        contact_result: rawRow["Resultado último contacto"] ? String(rawRow["Resultado último contacto"]) : "",
+        notes: rawRow["Observaciones"] ? String(rawRow["Observaciones"]) : "",
+        excel_lead_id: rawRow["ID lead"] ? String(rawRow["ID lead"]) : "",
+      };
+
+      const { error, value: validRow } = rowSchema.validate(mappedRow, {
         abortEarly: false,
         convert: true,
       });
@@ -113,38 +121,52 @@ export const POST = async (req) => {
         continue;
       }
 
+      // Destructure fields to organize details
       const {
         status_name,
-        notes,
         source,
-        category,
-        tag,
         last_connected,
-        company_name,
+        next_call,
+        notes,
         street,
         city,
-        state,
-        zip_code,
-        country,
-        website,
+        excel_lead_id,
+        captador,
+        comercial,
+        operation,
+        price_property,
+        fees,
+        contact_result,
         ...cardData
       } = validRow;
 
-      // 🔥 ADD DETAILS
-      cardData.detailsData = { source, category, tag, last_connected, notes };
+      // 🔥 ADD DETAILS (Organized logically)
+      cardData.detailsData = {
+        source,
+        last_connected,
+        next_call,
+        notes,
+        operation,
+        captador,
+        comercial,
+        price_property,
+        fees,
+        contact_result,
+        status_name // Saving the original text status from Excel just in case
+      };
+
       cardData.addressDetailsData = {
-        company_name,
         street,
         city,
-        state,
-        zip_code,
-        country,
-        website,
       };
+
       cardData.assigned = assigned;
       cardData.status = status._id;
+      
+      // Kept just in case you ever want to reference the original ID from the Excel sheet
+      cardData.excel_lead_id = excel_lead_id;
 
-      // 🔥 UNIQUE LEAD TITLE FOR EACH ROW
+      // 🔥 UNIQUE LEAD TITLE FOR EACH ROW (Auto-Increment)
       cardData.lead_title = nextLeadNumber.toString();
       nextLeadNumber++;
 
