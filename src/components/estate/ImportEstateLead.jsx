@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FaFileExcel } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
-import { get_properties, upload_property_file } from "@/store/estate";
+import { get_estate_leads, upload_estate_lead_file } from "@/store/estate";
 import toast from "react-hot-toast";
 import Icon from "../ui/Icon";
 import { X } from "lucide-react";
@@ -29,7 +29,7 @@ const ImportEstateLead = ({ isOpen, setImportOpen }) => {
     ];
 
     if (!validTypes.includes(selectedFile.type)) {
-      alert("Please upload a CSV or Excel file");
+      alert("Please upload a Excel file");
       setFile(null);
       return;
     }
@@ -61,7 +61,7 @@ const ImportEstateLead = ({ isOpen, setImportOpen }) => {
         setErrorRows(errors);
         setShowResults(true);
         toast.success("File uploaded successfully");
-        dispatch(get_properties());
+        dispatch(get_estate_leads());
         setFile(null);
       })
       .catch(() => {
