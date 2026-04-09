@@ -239,7 +239,7 @@ export const settingReducer = createSlice({
       leadStatus: [],
       leadStatusList: [],
       total_count: 0,
-      total_pages: 0,
+      total_pages: 1,
       page: 1,
    },
    reducers: {

@@ -12,11 +12,12 @@ import {
 } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Upload, ListFilter} from "lucide-react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import useUserFromSession from "@/lib/useUserFromSession";
-import PropertiesImportModal from "@/components/estate/ImportProperties";
 import EstateLeadImportModal from "@/components/estate/ImportEstateLead";
+import Filters from "@/components/estate/LeadFilters";
+import getThreePages from "@/lib/pagination";
 
 const ListLeads = () => {
   const user = useUserFromSession();
@@ -30,6 +31,8 @@ const ListLeads = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedFilterData, setSelectedFilterData] = useState();
 
   useEffect(() => {
     dispatch(get_estate_leads());
@@ -84,7 +87,7 @@ const ListLeads = () => {
   return (
     <div className="grid w-full">
       {/* Header aligned with reference layout */}
-      <aside className="w-full bg-white sticky top-0 z-50 border-b">
+      <aside className="w-full bg-white sticky top-0 z-30 border-b">
         <div className="flex items-center justify-between p-4">
           <div className="hidden sm:flex flex-col">
             <h2 className="text-xl font-bold text-gray-900">Leads</h2>
@@ -108,6 +111,13 @@ const ListLeads = () => {
               size={16}
               color="#99A1B7"
               onClick={() => setImportOpen(true)}
+            />
+            <Icon
+              icon={ListFilter}
+              variant="outline"
+              size={16}
+              color="#99A1B7"
+              onClick={() => setFilterOpen(true)}
             />
           </div>
         </div>
@@ -250,6 +260,12 @@ const ListLeads = () => {
           </table>
         )}
       </div>
+
+      <Filters
+        filterOpen={filterOpen}
+        setFilterOpen={setFilterOpen}
+        setSelectedFilterData={setSelectedFilterData}
+      />
 
       <ConfirmDeleteModal
         isOpen={isModalOpen}

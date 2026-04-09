@@ -272,13 +272,14 @@ export async function GET(req) {
       ]);
 
       const totalCount = cards[0].totalCount[0]?.count || 0;
+      const totalPages = Math.ceil(totalCount / limit) <= 0 ? 1 : Math.ceil(totalCount / limit);
 
       return NextResponse.json(
         {
           cards: cards[0].data,
           totalCount,
           page,
-          totalPages: Math.ceil(totalCount / limit)
+          totalPages: totalPages
         },
         { status: 200 }
       );

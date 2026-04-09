@@ -15,9 +15,24 @@ export const create_property = createAsyncThunk(
 
 export const get_properties = createAsyncThunk(
     'get_properties',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async (payload = {}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/estate/property`, { withCredentials: true });
+            const { page = 1, ...filters } = payload; // Destructure any filters or parameters if needed
+
+            // remove empty / undefined values
+            const cleanFilters = Object.fromEntries(
+                Object.entries(filters).filter(
+                    ([_, value]) => value !== "" && value !== null && value !== undefined
+                )
+            );
+
+            const { data } = await api.get(`/estate/property`, {
+                params: {
+                    page,
+                    ...cleanFilters,
+                },
+                withCredentials: true
+            });
             return fulfillWithValue(data);
         } catch (error) {
             rejectWithValue(error.response.data);
@@ -195,6 +210,9 @@ export const estateReducer = createSlice({
         tags: [],
         estate_leads: [],
         estate_lead: {},
+        total_count: 0,
+        total_pages: 1,
+        page: 1,
     },
     reducers: {
         messageClear: (state) => {
@@ -230,6 +248,9 @@ export const estateReducer = createSlice({
             .addCase(get_properties.fulfilled, (state, { payload }) => {
                 state.loader = false;
                 state.properties = payload.data;
+                state.total_count = payload.totalCount;
+                state.total_pages = payload.totalPages;
+                state.page = payload.page;
             })
             .addCase(get_properties.rejected, (state, { payload }) => {
                 state.loader = false;

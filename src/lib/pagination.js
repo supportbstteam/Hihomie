@@ -1,8 +1,8 @@
- export default function  getThreePages (currentPage, total_pages){
-  let pages = [];
+ export default function  getThreePages (currentPage, total_pages ){
+   let pages = [];
 
   // If only 1 page
-  if (total_pages <= 1) return [1];
+   if (total_pages <= 1) return [1];
 
   // If only 2 pages
   if (total_pages === 2) return [1, 2];
@@ -22,7 +22,7 @@
   pages = pages.map((p) => (p < 1 ? 1 : p));
 
   // Prevent going above total_pages
-  pages = pages.map((p) => (p > total_pages ? total_pages : p));
+   pages = pages.map((p) => (p > total_pages ? total_pages : p));
 
   return [...new Set(pages)];
 };

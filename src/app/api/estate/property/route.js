@@ -114,38 +114,84 @@ export async function POST(request) {
     }
 }
 
-export async function GET() {
+export async function GET(req) {
     try {
         // 1. Connect to the database
         await dbConnect();
 
-        // 2. Fetch all properties from the database
-        const properties = await Property.find({}).sort({ createdAt: -1 });
+        const { searchParams } = new URL(req.url);
 
-        // 3. Check if properties exist
-        if (!properties || properties.length === 0) {
-            return NextResponse.json(
-                { success: true, message: "No properties found", data: [] },
-                { status: 200 }
-            );
+        const page = parseInt(searchParams.get("page")) || 1;
+        const ref = searchParams.get("ref") || "";
+        const location = searchParams.get("location") || "";
+        const propertyFor = searchParams.get("propertyFor") || "";
+        const type = searchParams.get("type") || "";
+        const status = searchParams.get("status") || "";
+        // const price_min = parseFloat(searchParams.get("price_min")) || 0;
+        // const price_max = parseFloat(searchParams.get("price_max")) || Number.MAX_SAFE_INTEGER;
+
+        const matchConditions = {};
+
+        // ref (Reference) - usually a partial or exact text match
+        if (ref) {
+            matchConditions.reference = { $regex: ref, $options: "i" };
         }
 
-        // 4. Return the data
+        // location - text search, case-insensitive
+        if (location) {
+            matchConditions.full_address = { $regex: location, $options: "i" };
+        }
+
+        // propertyFor (e.g., "rent", "sale") - usually an exact match
+        if (propertyFor) {
+            matchConditions.transaction_type = propertyFor;
+        }
+
+        // type (e.g., "apartment", "house") - usually an exact match
+        if (type) {
+            matchConditions.type = type;
+        }
+
+        if (status) {
+            matchConditions.status = status;
+        }
+
+        const limit = 25;
+        const skip = (page - 1) * limit;
+
+        const result = await Property.aggregate([
+            ...(Object.keys(matchConditions).length ? [{ $match: matchConditions }] : []),
+            { $sort: { createdAt: -1 } },
+            {
+                $facet: {
+                    data: [{ $skip: skip }, { $limit: limit }],
+                    totalCount: [{ $count: "count" }]
+                }
+            }
+        ]);
+
+        const properties = result[0].data;
+        const totalCount = result[0].totalCount[0]?.count || 0;
+        const totalPages = Math.ceil(totalCount / limit) <= 0 ? 1 : Math.ceil(totalCount / limit);
+
         return NextResponse.json(
             {
                 success: true,
                 data: properties,
+                totalCount,
+                page,
+                totalPages: totalPages
             },
             { status: 200 }
         );
 
     } catch (error) {
-        
+
         return NextResponse.json(
-            { 
-                success: false, 
-                message: "Internal Server Error", 
-                error: error.message 
+            {
+                success: false,
+                message: "Internal Server Error",
+                error: error.message
             },
             { status: 500 }
         );
@@ -178,8 +224,8 @@ export async function DELETE(request) {
 
         // 3. Return success response to trigger the .fulfilled case in Redux
         return NextResponse.json(
-            { 
-                success: true, 
+            {
+                success: true,
                 message: "Property deleted successfully!",
             },
             { status: 200 }
