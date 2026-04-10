@@ -31,14 +31,13 @@ const ListProperty = () => {
   } = useSelector((state) => state.estate);
   // const { filters } = useSelector((state) => state.propertyFilter);
 
-  
   const [currentPage, setCurrentPage] = useState(page || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilterData, setSelectedFilterData] = useState();
-  
+
   useEffect(() => {
     dispatch(get_properties({ page: currentPage, ...selectedFilterData }));
   }, [dispatch, selectedFilterData]);
@@ -74,10 +73,7 @@ const ListProperty = () => {
   };
 
   // Fallback dummy data
-  const displayProperties =
-    properties?.length > 0
-      ? properties
-      : [];
+  const displayProperties = properties?.length > 0 ? properties : [];
 
   const handlePageChange = (pageNo) => {
     setCurrentPage(pageNo);

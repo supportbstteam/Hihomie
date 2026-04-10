@@ -81,8 +81,8 @@ const PropertyFilters = ({
             value={intent}
             onChange={(e) => setIntent(e.target.value)}
             options={[
-              { value: "sale", label: "Sale" },
-              { value: "rent", label: "Rent" },
+              { value: "Sale", label: "Sale" },
+              { value: "Rent", label: "Rent" },
             ]}
           />
           <Input

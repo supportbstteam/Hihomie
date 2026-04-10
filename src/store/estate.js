@@ -106,9 +106,23 @@ export const create_estate_lead = createAsyncThunk(
 
 export const get_estate_leads = createAsyncThunk(
     'get_estate_leads',
-    async (_, { rejectWithValue, fulfillWithValue }) => {
+    async (payload = {}, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/estate/leads`, { withCredentials: true });
+            const { page = 1, ...filters } = payload;
+
+            const cleanFilters = Object.fromEntries(
+                Object.entries(filters).filter(
+                    ([_, value]) => value !== "" && value !== null && value !== undefined
+                )
+            );
+
+            const { data } = await api.get(`/estate/leads`, {
+                params: {
+                    page,
+                    ...cleanFilters,
+                },
+                withCredentials: true
+            });
             return fulfillWithValue(data);
         } catch (error) {
             rejectWithValue(error.response.data);
@@ -213,6 +227,9 @@ export const estateReducer = createSlice({
         total_count: 0,
         total_pages: 1,
         page: 1,
+        lead_total_count: 0,
+        lead_total_pages: 1,
+        lead_page: 1
     },
     reducers: {
         messageClear: (state) => {
@@ -338,6 +355,9 @@ export const estateReducer = createSlice({
             .addCase(get_estate_leads.fulfilled, (state, { payload }) => {
                 state.loader = false;
                 state.estate_leads = payload.data;
+                state.lead_total_count = payload.totalCount;
+                state.lead_total_pages = payload.totalPages;
+                state.lead_page = payload.page;
             })
             .addCase(get_estate_leads.rejected, (state, { payload }) => {
                 state.loader = false;

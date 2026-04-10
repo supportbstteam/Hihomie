@@ -12,7 +12,7 @@ import {
 } from "@/store/estate";
 import ConfirmDeleteModal from "@/components/ConfirmAlert";
 import Icon from "@/components/ui/Icon";
-import { Plus, Upload, ListFilter} from "lucide-react";
+import { Plus, Upload, ListFilter } from "lucide-react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import useUserFromSession from "@/lib/useUserFromSession";
 import EstateLeadImportModal from "@/components/estate/ImportEstateLead";
@@ -24,10 +24,11 @@ const ListLeads = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { estate_leads, loader, successMessage, errorMessage } = useSelector(
+  const { estate_leads, loader, successMessage, errorMessage, lead_total_count: total_count, lead_total_pages: total_pages, lead_page: page } = useSelector(
     (state) => state.estate,
   );
 
+  const [currentPage, setCurrentPage] = useState(page || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
@@ -35,13 +36,13 @@ const ListLeads = () => {
   const [selectedFilterData, setSelectedFilterData] = useState();
 
   useEffect(() => {
-    dispatch(get_estate_leads());
-  }, [dispatch]);
+    dispatch(get_estate_leads({ page: currentPage, ...selectedFilterData }));
+  }, [dispatch, selectedFilterData]);
 
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      dispatch(get_estate_leads());
+      dispatch(get_estate_leads({ page: currentPage, ...selectedFilterData }));
       dispatch(messageClear());
       setIsModalOpen(false);
       setLeadToDelete(null);
@@ -65,24 +66,12 @@ const ListLeads = () => {
   };
 
   // Fallback dummy data mapped to the new schema
-  const displayLeads =
-    estate_leads?.length > 0
-      ? estate_leads
-      : [
-          {
-            _id: "69cf747f11b9759492899e0d",
-            lead_id: "LD-001",
-            name: "John Doe",
-            phone: "9988776655",
-            city: "New York",
-            address: "123 Broadway St",
-            rent_or_sale: "Sale",
-            lead_status: "New",
-            next_call: "2026-04-10T00:00:00.000Z",
-            assigned_agent: "Jane Smith",
-            follow_up_overdue: false,
-          },
-        ];
+  const displayLeads = estate_leads?.length > 0 ? estate_leads : [];
+
+  const handlePageChange = (pageNo) => {
+    setCurrentPage(pageNo);
+    dispatch(get_estate_leads({ page: pageNo, ...selectedFilterData }));
+  };
 
   return (
     <div className="grid w-full">
@@ -259,6 +248,55 @@ const ListLeads = () => {
             </tbody>
           </table>
         )}
+      </div>
+
+      <div className="flex justify-between items-center mt-4 w-full">
+        {/* PREV LEFT SIDE */}
+        <button
+          className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Prev
+        </button>
+
+        {/* CENTER THREE BUTTONS */}
+        <div className="flex items-center justify-center gap-2 w-full">
+          <button
+            className="cursor-pointer px-3 py-1 bg-gray-200 rounded"
+            onClick={() => handlePageChange(1)}
+          >
+            1
+          </button>
+          <div>...</div>
+          {getThreePages(currentPage, total_pages).map((page, i) => (
+            <button
+              key={i}
+              onClick={() => handlePageChange(page)}
+              className={`cursor-pointer px-3 py-1 rounded transition 
+                      ${currentPage === page ? "bg-green-600 text-white" : "bg-gray-200"}
+                    `}
+            >
+              {page}
+            </button>
+          ))}
+          <div>...</div>
+          <button
+            className="cursor-pointer px-3 py-1 bg-gray-200 rounded"
+            onClick={() => handlePageChange(total_pages)}
+          >
+            {total_pages}
+          </button>
+        </div>
+
+        {/* NEXT RIGHT SIDE */}
+        <button
+          disabled={currentPage === total_pages}
+          className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Next
+        </button>
       </div>
 
       <Filters

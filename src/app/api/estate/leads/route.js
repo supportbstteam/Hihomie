@@ -57,26 +57,66 @@ export async function POST(request) {
     }
 }
 
-export async function GET() {
+export async function GET(req) {
     try {
         // 1. Connect to the database
         await dbConnect();
 
-        // 2. Fetch all leads from MongoDB
-        const leads = await EstateLead.find();
+        const { searchParams } = new URL(req.url);
 
-        if (!leads || leads.length === 0) {
-            return NextResponse.json(
-                { success: true, message: "No leads found", data: [] },
-                { status: 200 }
-            );
+        const page = parseInt(searchParams.get("page")) || 1;
+        const name = searchParams.get("name") || "";
+        const phone = searchParams.get("phone") || "";
+        const location = searchParams.get("location") || "";
+        const intent = searchParams.get("intent") || "";
+
+        const matchConditions = {};
+
+        if (name) {
+            matchConditions.name = { $regex: name, $options: "i" };
         }
 
-        // 4. Return the data
+        if (location) {
+            matchConditions.address = { $regex: location, $options: "i" };
+        }
+
+        if (phone) {
+            matchConditions.phone = { $regex: phone };
+        }
+
+        if (intent) {
+            matchConditions.rent_or_sale = { $regex: `^${intent}$`, $options: "i" };
+        }
+
+        const limit = 25;
+        const skip = (page - 1) * limit;
+
+        // 2. Fetch all leads from MongoDB
+        // const leads = await EstateLead.find();
+
+        const result = await EstateLead.aggregate([
+            ...(Object.keys(matchConditions).length ? [{ $match: matchConditions }] : []),
+            { $sort: { createdAt: -1 } },
+            {
+                $facet: {
+                    data: [{ $skip: skip }, { $limit: limit }],
+                    totalCount: [{ $count: "count" }]
+                }
+            }
+        ]);
+
+        const leads = result[0].data;
+        const totalCount = result[0].totalCount[0]?.count || 0;
+        const totalPages = Math.ceil(totalCount / limit) <= 0 ? 1 : Math.ceil(totalCount / limit);
+
+
         return NextResponse.json(
             {
                 success: true,
                 data: leads,
+                totalCount,
+                page,
+                totalPages: totalPages
             },
             { status: 200 }
         );
