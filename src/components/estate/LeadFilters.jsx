@@ -12,45 +12,33 @@ const PropertyFilters = ({
   setFilterOpen,
   setSelectedFilterData,
 }) => {
-  const [ref, setRef] = useState("");
-  const [propertyFor, setPropertyFor] = useState("");
-  const [type, setType] = useState("");
-  const [status, setStatus] = useState("");
   const [location, setLocation] = useState("");
-  const [price_min, setPrice_min] = useState("");
-  const [price_max, setPrice_max] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [intent, setIntent] = useState("");
 
   const handleApply = () => {
     // ✅ Send all values to parent
     setSelectedFilterData({
-      ref: ref,
-      propertyFor: propertyFor,
-      type: type,
-      status: status,
       location: location,
-      // price_min: price_min,
-      // price_max: price_max,
+      name: name,
+      phone: phone,
+      intent: intent,
     });
     setFilterOpen(false);
   };
 
   const handleCancel = () => {
-    setRef("");
-    setPropertyFor("");
-    setType("");
-    setStatus("");
     setLocation("");
-    // setPrice_min("");
-    // setPrice_max("");
+    setName("");
+    setPhone("");
+    setIntent("");
 
     setSelectedFilterData({
-      ref: "",
-      propertyFor: "",
-      type: "",
-      status: "",
       location: "",
-      // price_min: "",
-      // price_max: "",
+      name: "",
+      phone: "",
+      intent: "",
     });
     setFilterOpen(false);
   };
@@ -86,66 +74,16 @@ const PropertyFilters = ({
         {/* Drawer Content */}
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-60px)] ">
           <Dropdown
-            label={t("property_for")}
+            label={t("intent")}
             type="text"
-            name="property_for"
-            title={t("select_property_for")}
-            value={propertyFor}
-            onChange={(e) => setPropertyFor(e.target.value)}
+            name="intent"
+            title={t("select_intent")}
+            value={intent}
+            onChange={(e) => setIntent(e.target.value)}
             options={[
               { value: "sale", label: "Sale" },
               { value: "rent", label: "Rent" },
             ]}
-          />
-          <Dropdown
-            label={t("type")}
-            type="text"
-            name="type"
-            title={t("select_type")}
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            options={[
-              { label: "Floor", value: "flat" },
-              { label: "House Chalet", value: "chalet" },
-              { label: "Rustic House", value: "country_house" },
-              { label: "Bungalow", value: "bungalow" },
-              { label: "Room", value: "room" },
-              { label: "Parking Space", value: "parking" },
-              { label: "Local", value: "shop" },
-              { label: "Industrial Warehouse", value: "industrial" },
-              { label: "Office", value: "office" },
-              { label: "Land", value: "land" },
-              { label: "Storage Room", value: "storage" },
-              { label: "Building", value: "building" },
-              { label: "Attic", value: "penthouse" },
-              { label: "Duplex", value: "duplex" },
-              { label: "Study", value: "studio" },
-            ]}
-          />
-          <Dropdown
-            label={t("status")}
-            type="text"
-            name="status"
-            title={t("select_status")}
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            options={[
-              { label: "Prospectus", value: "prospectus" },
-              { label: "Available", value: "available" },
-              { label: "Reserved", value: "reserved" },
-              { label: "Rented", value: "rented" },
-              { label: "Sold", value: "sold" },
-              { label: "Inactive", value: "inactive" },
-            ]}
-          />
-
-          <Input
-            label={t("reference")}
-            type="text"
-            name="ref"
-            value={ref}
-            onChange={(e) => setRef(e.target.value)}
-            placeholder="Referencia de la propiedad"
           />
           <Input
             label={t("location")}
@@ -154,6 +92,22 @@ const PropertyFilters = ({
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Ubicación de la propiedad"
+          />
+          <Input
+            label={t("name")}
+            type="text"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nombre del lead"
+          />
+          <Input
+            label={t("phone")}
+            type="text"
+            name="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Teléfono del lead"
           />
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
@@ -165,7 +119,11 @@ const PropertyFilters = ({
           >
             {t("cancel")}
           </Button>
-          <Button onClick={handleApply} className="py-2 px-4 cursor-pointer" size="full">
+          <Button
+            onClick={handleApply}
+            className="py-2 px-4 cursor-pointer"
+            size="full"
+          >
             {t("apply")}
           </Button>
         </div>
