@@ -2,7 +2,7 @@ import path from "path";
 import headers from "./headers.js"; // Use .js extension explicitly in ESM
 
 const nextConfig = {
-  output: "standalone",
+  // output: "standalone",
   images: {
     domains: ["localhost"], 
   },
