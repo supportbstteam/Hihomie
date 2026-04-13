@@ -55,7 +55,7 @@
 // }
 
 import { NextResponse } from 'next/server';
-import idapi from '@/lib/idapi'; // Adjust path as necessary
+import idapi from '@/lib/api/idapi'; // Adjust path as necessary
 import qs from 'qs'; // Recommended for x-www-form-urlencoded
 
 export async function GET() {
