@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
+import { createPropertyOnIdealista } from "@/lib/idealista"; // Adjust path as necessary
 
 export async function POST(request) {
     try {
@@ -87,6 +88,61 @@ export async function POST(request) {
 
         // 5. Save to MongoDB
         const newProperty = await Property.create(propertyData);
+
+        const idealistaPayload = {
+            // Top-level fields
+            type: propertyData.type || "flat", // Default to flat if empty
+            code: propertyData.reference,
+            reference: propertyData.reference,
+            contactId: 1, // Usually a static ID for the office or manager
+            scope: "idealista",
+
+            // Address Object
+            address: {
+                streetName: propertyData.street,
+                streetNumber: propertyData.street_number,
+                postalCode: propertyData.postal_code,
+                cityName: propertyData.city,
+                province: propertyData.province,
+                district: propertyData.district,
+                area: propertyData.area,
+                visibility: "full", // "all" shows exact address, "hide_street_number" hides number
+                CountryCodes: "Spain"
+            },
+
+            // Features Object
+            features: {
+                areaConstructed: propertyData.surface || 0,
+                areaUsable: propertyData.usable_surface || 0,
+                rooms: propertyData.rooms || 0,
+                bathroomNumber: propertyData.bathrooms || 0,
+                builtYear: propertyData.year_of_construction || null,
+                liftAvailable: propertyData.labels.includes('lift') || false, // Assuming 'lift' is a tag in labels
+                conservation: propertyData.status === 'available' ? 'good' : 'toRestore',
+                energyCertificateRating: propertyData.energy_certificate_type || 'A',
+                priceCommunity: propertyData.community_expenses || 0,
+                cadastralReference: propertyData.cadastral_reference || "",
+                terrace: propertyData.terrace_surface > 0,
+                liftAvailable: "true",
+            },
+
+            // Operation Object (Determines if it is for Sale or Rent)
+            operation: {
+                type: propertyData.is_for_sale ? "sale" : "rent",
+                price: propertyData.is_for_sale ? propertyData.sale_price : propertyData.rent_price
+            },
+
+            // Descriptions (Required array of objects)
+            descriptions: [
+                {
+                    language: "es",
+                    text: propertyData.description || "Nueva propiedad disponible"
+                }
+            ]
+        };
+
+        // Now you can call your sync function
+        await createPropertyOnIdealista(idealistaPayload);
 
         return NextResponse.json(
             {

@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # ✅ These are NEXT_PUBLIC_* — must be passed at BUILD time
+        NEXT_PUBLIC_BASE_URL: http://localhost:3000
+        MONGODB_URI: ***REMOVED***
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ***REMOVED***
+        NEXTAUTH_URL: http://localhost:3000
+        NEXTAUTH_SECRET: change_me_to_a_long_random_value
+    container_name: hihomie
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env   # ✅ Runtime secrets loaded from file
+
+    environment:
+      - NODE_ENV=production
+      # Add your runtime env vars here:
+      # - DATABASE_URL=your_db_url
+      # - NEXT_PUBLIC_API_URL=https://api.example.com
+    restart: unless-stopped
+
+  # Example: add a database service
+  # db:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: mydb
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:
