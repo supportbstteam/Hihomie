@@ -64,7 +64,7 @@ export async function GET() {
 
         const details = {
             'grant_type': 'client_credentials',
-            'scope': 'read'
+            'scope': 'write'
         };
 
         // Idealista requires x-www-form-urlencoded for the token endpoint

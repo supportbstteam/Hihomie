@@ -9,7 +9,7 @@ export async function getIdealistaToken() {
     const response = await idapi.post('/oauth/token', 
         qs.stringify({
             'grant_type': 'client_credentials',
-            'scope': 'read' // or 'write' depending on your API permissions
+            'scope': 'write' // or 'write' depending on your API permissions
         }), 
         {
             headers: {
