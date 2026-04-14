@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
 import { createPropertyOnIdealista } from "@/lib/idealista"; // Adjust path as necessary
+import { createPropertyOnFotocasa } from "@/lib/fotocasa"; // Adjust path as necessary
 
 export async function POST(request) {
     try {
@@ -141,8 +142,70 @@ export async function POST(request) {
             ]
         };
 
+        const fotocasaPayload = {
+            // 1. Basic Identifiers
+            ExternalId: propertyData.reference || String(Date.now()), // Unique ID
+            AgencyReference: propertyData.reference || "REF-001",
+
+            // 2. Type Mapping (Needs integer based on Fotocasa Dictionary)
+            // Example: 1 for Flat/Apartment, 2 for House, etc.
+            TypeId: parseInt(propertyData.type) || 1,
+            SubTypeId: 2, // Default subtype, adjust based on your logic
+            ContactTypeId: 1, // 1 for Agency, 3 for Owner (typical)
+
+            // 3. Address (Fotocasa expects an array)
+            PropertyAddress: [{
+                ZipCode: propertyData.postal_code,
+                Street: propertyData.street,
+                Number: propertyData.street_number,
+                // FloorId needs mapping to Fotocasa Enum (e.g., 1 for "Bajo", 4 for "1st")
+                FloorId: parseInt(propertyData.floor) || null,
+                x: 0, // Longitude (Required by API)
+                y: 0, // Latitude (Required by API)
+                VisibilityModeId: 1 // 1: Exact, 2: Street, 3: Hidden
+            }],
+
+            // 4. Documents (Videos/Photos)
+            PropertyDocument: propertyData.video_link ? [{
+                TypeId: 7, // 7 is usually Video
+                Url: propertyData.video_link,
+                SortingId: 1
+            }] : [],
+
+            // 5. Features (Rooms, Bathrooms, Surface, etc.)
+            // Fotocasa maps these as an array of objects
+            PropertyFeature: [
+                { FeatureId: 1, DecimalValue: propertyData.surface },         // Total Surface
+                { FeatureId: 2, DecimalValue: propertyData.rooms },           // Rooms
+                { FeatureId: 3, DecimalValue: propertyData.bathrooms },       // Bathrooms
+                { FeatureId: 11, DecimalValue: propertyData.terrace_surface },// Terrace
+                { FeatureId: 12, BoolValue: !!propertyData.garage_surface },  // Has Parking
+                { FeatureId: 231, TextValue: propertyData.description }       // Description
+            ].filter(f => f.DecimalValue || f.BoolValue || f.TextValue),
+
+            // 6. Contact Info
+            PropertyContactInfo: [
+                { TypeId: 1, Value: propertyData.commercial_manager || "Agency Contact" }
+            ],
+
+            // 7. Transactions (Sale vs Rent)
+            PropertyTransaction: [
+                ...(propertyData.is_for_sale ? [{
+                    TransactionTypeId: 1, // 1 for Sale
+                    Price: propertyData.sale_price,
+                    ShowPrice: propertyData.show_price
+                }] : []),
+                ...(propertyData.is_for_rent ? [{
+                    TransactionTypeId: 3, // 3 for Rent
+                    Price: propertyData.rent_price,
+                    ShowPrice: propertyData.show_price
+                }] : [])
+            ]
+        };
+
         // Now you can call your sync function
         await createPropertyOnIdealista(idealistaPayload);
+        await createPropertyOnFotocasa(fotocasaPayload);
 
         return NextResponse.json(
             {

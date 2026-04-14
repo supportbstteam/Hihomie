@@ -226,7 +226,7 @@ const ListProperty = () => {
         )}
       </div>
 
-      <div className="flex justify-between items-center mt-4 w-full">
+      <div className="flex justify-between items-center w-full p-4">
         {/* PREV LEFT SIDE */}
         <button
           className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"

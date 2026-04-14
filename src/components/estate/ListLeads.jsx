@@ -113,13 +113,13 @@ const ListLeads = () => {
       </aside>
 
       {/* Main Card Container (Padding and max-width removed per instructions) */}
-      <div className="w-full bg-background-secondary">
+      <div className="w-full bg-background-secondary p-4">
         {loader ? (
           <div className="p-8 text-center text-gray-500 font-medium bg-white border-b shadow-sm">
             Loading leads...
           </div>
         ) : (
-          <table className="min-w-full border-b border-gray-200 shadow-sm overflow-hidden bg-white">
+          <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white">
             <thead className="bg-gray-100 border-y border-gray-200">
               <tr>
                 <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
@@ -250,7 +250,7 @@ const ListLeads = () => {
         )}
       </div>
 
-      <div className="flex justify-between items-center mt-4 w-full">
+      <div className="flex justify-between items-center w-full p-4">
         {/* PREV LEFT SIDE */}
         <button
           className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"

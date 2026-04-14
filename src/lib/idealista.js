@@ -31,7 +31,7 @@ export async function createPropertyOnIdealista(propertyData) {
     // Apply token to this specific request
     const response = await idapi.post('/v1/properties', propertyData, {
         headers: {
-            // 'feedKey': process.env.IDEALISTA_FEED_KEY,
+            'feedKey': process.env.IDEALISTA_FEED_KEY,
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }

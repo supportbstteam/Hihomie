@@ -124,9 +124,8 @@ const PlaceAutocompleteInput = ({
 const CreateProperty = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { loader, successMessage, errorMessage, successTag, tags } = useSelector(
-    (state) => state.estate,
-  );
+  const { loader, successMessage, errorMessage, successTag, tags } =
+    useSelector((state) => state.estate);
 
   const [mapCoords, setMapCoords] = useState(null);
   const [formData, setFormData] = useState({
@@ -296,7 +295,7 @@ const CreateProperty = () => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      if (successTag === "PROPERTY_CREATED") { 
+      if (successTag === "PROPERTY_CREATED") {
         router.push("/estate");
       }
       dispatch(messageClear());
