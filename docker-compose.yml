@@ -6,8 +6,8 @@ services:
       args:
         # ✅ These are NEXT_PUBLIC_* — must be passed at BUILD time
         NEXT_PUBLIC_BASE_URL: http://localhost:3000
-        MONGODB_URI: ***REMOVED***
-        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ***REMOVED***
+        MONGODB_URI: mongodb+srv://support:C0EwVIgjgjghjg@cluster0.9d5oou4.mongodb.net/hihomie?retryWrites=true&w=majority&appName=Cluster0
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: AIzaSyBFPahm3U6Zy6vK8RW1KwfuRXhgfhfhc
         NEXTAUTH_URL: http://localhost:3000
         NEXTAUTH_SECRET: change_me_to_a_long_random_value
     container_name: hihomie
