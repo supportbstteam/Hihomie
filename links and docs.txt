@@ -1,0 +1,9 @@
+fotocsa api documentation
+https://www.fotocasa.pro/u/api-documentation/security-and-authentication
+
+google maps api key
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = AIzaSyDa3kjoZHuBYMF2tdwhS1xturKSXf648Iw
+NEXT_PUBLIC_IDEALISTA_API_URL = https://partners-sandbox.idealista.com
+IDEALISTA_CLIENT_ID = betasofttechnology
+IDEALISTA_CLIENT_SECRET = qsmxeQGKLSkQQikDUb63v4gBNat8xOne
+IDEALISTA_FEED_KEY = ilc53d1c1f42e0e05265af83fc7133f5f0dd25c29d7

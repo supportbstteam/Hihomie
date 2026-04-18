@@ -8,5 +8,7 @@ export async function createPropertyOnFotocasa(propertyData) {
         }
     });
 
+    console.log("response",response.data);
+
     return response.data;
 }

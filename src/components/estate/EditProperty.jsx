@@ -10,6 +10,7 @@ import {
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/DropDown";
 import Input from "@/components/ui/Input";
+import ImageUpload from "@/components/ui/ImageUpload";
 import AddressMiniMap from "@/components/Map";
 import Datepicker from "../ui/Datepicker";
 import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
@@ -128,6 +129,7 @@ const EditProperty = ({ id }) => {
 
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [mapCoords, setMapCoords] = useState(null);
+  const [propertyImages, setPropertyImages] = useState([]);
 
   const [formData, setFormData] = useState({
     full_address: "",
@@ -310,6 +312,14 @@ const EditProperty = ({ id }) => {
       setFormData(mappedData);
       setIsLoadingData(false);
     }
+    if (property?.images) {
+      // Map existing URLs to the format the component expects
+      const existing = property.images.map((url) => ({
+        file: null, // No file object for existing server images
+        preview: url,
+      }));
+      setPropertyImages(existing);
+    }
   }, [property, id]);
 
   useEffect(() => {
@@ -352,6 +362,17 @@ const EditProperty = ({ id }) => {
         } else {
           data.append(key, formData[key]);
         }
+      }
+    });
+
+    propertyImages.forEach((item) => {
+      if (item.file) {
+        data.append("images", item.file);
+      } else if (
+        typeof item.preview === "string" &&
+        !item.preview.startsWith("blob:")
+      ) {
+        data.append("images", item.preview);
       }
     });
 
@@ -1156,6 +1177,10 @@ const EditProperty = ({ id }) => {
                 </div>
               </div>
             </div>
+            <ImageUpload
+              images={propertyImages}
+              setImages={setPropertyImages}
+            />
           </section>
 
           {/* SUBMIT BUTTON */}

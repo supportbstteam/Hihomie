@@ -86,7 +86,8 @@ const PropertySchema = new mongoose.Schema({
     cadastral_reference: { type: String },
     keychain_reference: { type: String },
     supplier_reference: { type: String },
-    collaborator: { type: String }
+    collaborator: { type: String },
+    images: [{ type: String }],
 
 }, { timestamps: true });
 

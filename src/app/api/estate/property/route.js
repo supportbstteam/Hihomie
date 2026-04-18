@@ -108,7 +108,7 @@ export async function POST(request) {
                 district: propertyData.district,
                 area: propertyData.area,
                 visibility: "full", // "all" shows exact address, "hide_street_number" hides number
-                CountryCodes: "Spain"
+                Country: "Spain"
             },
 
             // Features Object
@@ -159,28 +159,24 @@ export async function POST(request) {
                 Street: propertyData.street,
                 Number: propertyData.street_number,
                 // FloorId needs mapping to Fotocasa Enum (e.g., 1 for "Bajo", 4 for "1st")
-                FloorId: parseInt(propertyData.floor) || null,
-                x: 0, // Longitude (Required by API)
-                y: 0, // Latitude (Required by API)
+                FloorId: parseInt(propertyData.floor) || 1,
+                x: -3.21288689804, // Longitude (Required by API)
+                y: 43.3397409074, // Latitude (Required by API)
                 VisibilityModeId: 1 // 1: Exact, 2: Street, 3: Hidden
             }],
 
             // 4. Documents (Videos/Photos)
             PropertyDocument: propertyData.video_link ? [{
-                TypeId: 7, // 7 is usually Video
+                TypeId: 7, 
                 Url: propertyData.video_link,
                 SortingId: 1
             }] : [],
 
-            // 5. Features (Rooms, Bathrooms, Surface, etc.)
-            // Fotocasa maps these as an array of objects
             PropertyFeature: [
-                { FeatureId: 1, DecimalValue: propertyData.surface },         // Total Surface
-                { FeatureId: 2, DecimalValue: propertyData.rooms },           // Rooms
-                { FeatureId: 3, DecimalValue: propertyData.bathrooms },       // Bathrooms
-                { FeatureId: 11, DecimalValue: propertyData.terrace_surface },// Terrace
-                { FeatureId: 12, BoolValue: !!propertyData.garage_surface },  // Has Parking
-                { FeatureId: 231, TextValue: propertyData.description }       // Description
+                { FeatureId: 1, DecimalValue: propertyData.surface }, 
+                { FeatureId: 11, DecimalValue: propertyData.rooms },         
+                { FeatureId: 12, DecimalValue: propertyData.bathrooms },     
+                { FeatureId: 3, TextValue: propertyData.description }      
             ].filter(f => f.DecimalValue || f.BoolValue || f.TextValue),
 
             // 6. Contact Info
@@ -204,7 +200,7 @@ export async function POST(request) {
         };
 
         // Now you can call your sync function
-        await createPropertyOnIdealista(idealistaPayload);
+        // await createPropertyOnIdealista(idealistaPayload);
         await createPropertyOnFotocasa(fotocasaPayload);
 
         return NextResponse.json(
