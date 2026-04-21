@@ -195,6 +195,7 @@ const EditProperty = ({ id }) => {
     portal: "",
     gate: "",
     collaborator: "",
+    portals: [],
   });
 
   const areaOptions = [
@@ -422,6 +423,26 @@ const EditProperty = ({ id }) => {
     }
   };
 
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    const currentPortals = formData.portals || []; // Ensure it's an array
+
+    let updatedPortals;
+    if (checked) {
+      // Add value if checked
+      updatedPortals = [...currentPortals, value];
+    } else {
+      // Remove value if unchecked
+      updatedPortals = currentPortals.filter((item) => item !== value);
+    }
+
+    // Use your existing setState logic
+    setFormData({
+      ...formData,
+      portals: updatedPortals,
+    });
+  };
+
   // Prevent rendering the form before data is loaded
   if (isLoadingData) {
     return (
@@ -429,7 +450,7 @@ const EditProperty = ({ id }) => {
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-12 w-12 bg-green-200 rounded-full mb-4"></div>
           <p className="text-gray-500 font-medium">
-            Loading property details...
+            Loading Property Details...
           </p>
         </div>
       </div>
@@ -595,6 +616,7 @@ const EditProperty = ({ id }) => {
                     ]}
                   />
                 </div>
+
                 <div className="col-span-2">
                   <Input
                     label="Reference"
@@ -604,6 +626,7 @@ const EditProperty = ({ id }) => {
                     required
                   />
                 </div>
+
                 <Dropdown
                   label="Type"
                   name="type"
@@ -612,6 +635,7 @@ const EditProperty = ({ id }) => {
                   onChange={handleChange}
                   options={typeOptions}
                 />
+
                 <Dropdown
                   label="Floor"
                   name="floor"
@@ -620,6 +644,7 @@ const EditProperty = ({ id }) => {
                   onChange={handleChange}
                   options={floorOptions}
                 />
+
                 <Dropdown
                   label="Rooms"
                   name="rooms"
@@ -631,6 +656,7 @@ const EditProperty = ({ id }) => {
                     value: i.toString(),
                   }))}
                 />
+
                 <Dropdown
                   label="Bathrooms"
                   name="bathrooms"
@@ -642,20 +668,33 @@ const EditProperty = ({ id }) => {
                     value: i.toString(),
                   }))}
                 />
-                <Input
-                  label="Surface m²"
-                  type="number"
-                  name="surface"
-                  value={formData.surface}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Usable Surface m²"
-                  type="number"
-                  name="usable_surface"
-                  value={formData.usable_surface}
-                  onChange={handleChange}
-                />
+
+                <div className="relative">
+                  <Input
+                    label="Surface"
+                    type="number"
+                    name="surface"
+                    value={formData.surface}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    m²
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <Input
+                    label="Usable Surface"
+                    type="number"
+                    name="usable_surface"
+                    value={formData.usable_surface}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    m²
+                  </div>
+                </div>
+
                 <Input
                   label="Year of Construction"
                   type="number"
@@ -663,13 +702,19 @@ const EditProperty = ({ id }) => {
                   value={formData.year_of_construction}
                   onChange={handleChange}
                 />
-                <Input
-                  label="Community Expenses"
-                  type="number"
-                  name="community_expenses"
-                  value={formData.community_expenses}
-                  onChange={handleChange}
-                />
+
+                <div className="relative">
+                  <Input
+                    label="Community Expenses"
+                    type="number"
+                    name="community_expenses"
+                    value={formData.community_expenses}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    €
+                  </div>
+                </div>
 
                 <div className="flex flex-col gap-6 pt-6 mt-2 border-t border-gray-200 col-span-2">
                   <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
@@ -704,13 +749,19 @@ const EditProperty = ({ id }) => {
                     </div>
                     {formData.is_for_rent && (
                       <div className="px-5 pb-6 border-t border-green-100 pt-5 grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5 animate-in fade-in slide-in-from-top-2">
-                        <Input
-                          label="Rental Price (€)"
-                          name="rent_price"
-                          type="number"
-                          value={formData.rent_price}
-                          onChange={handleChange}
-                        />
+                        <div className="relative">
+                          <Input
+                            label="Rental Price"
+                            name="rent_price"
+                            type="number"
+                            value={formData.rent_price}
+                            onChange={handleChange}
+                          />
+                          <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                            €
+                          </div>
+                        </div>
+
                         <Dropdown
                           label="Payment Frequency"
                           name="payment_frequency"
@@ -724,27 +775,46 @@ const EditProperty = ({ id }) => {
                             { label: "Month", value: "month" },
                           ]}
                         />
-                        <Input
-                          label="Bail (€)"
-                          name="bail"
-                          type="number"
-                          value={formData.bail}
-                          onChange={handleChange}
-                        />
-                        <Input
-                          label="Guarantee (€)"
-                          name="guarantee"
-                          type="number"
-                          value={formData.guarantee}
-                          onChange={handleChange}
-                        />
-                        <Input
-                          label="Real Estate Fee"
-                          name="real_estate_fee"
-                          type="number"
-                          value={formData.real_estate_fee}
-                          onChange={handleChange}
-                        />
+
+                        <div className="relative">
+                          <Input
+                            label="Bail"
+                            name="bail"
+                            type="number"
+                            value={formData.bail}
+                            onChange={handleChange}
+                          />
+                          <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                            €
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <Input
+                            label="Guarantee"
+                            name="guarantee"
+                            type="number"
+                            value={formData.guarantee}
+                            onChange={handleChange}
+                          />
+                          <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                            €
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <Input
+                            label="Real Estate Fee"
+                            name="real_estate_fee"
+                            type="number"
+                            value={formData.real_estate_fee}
+                            onChange={handleChange}
+                          />
+                          <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                            €
+                          </div>
+                        </div>
+
                         <Input
                           label="Price Reference Index"
                           name="rental_price_reference_index"
@@ -784,13 +854,18 @@ const EditProperty = ({ id }) => {
                     </div>
                     {formData.is_for_sale && (
                       <div className="px-5 pb-6 border-t border-green-100 pt-5 animate-in fade-in slide-in-from-top-2">
-                        <Input
-                          label="Total Sale Price (€)"
-                          name="sale_price"
-                          type="number"
-                          value={formData.sale_price}
-                          onChange={handleChange}
-                        />
+                        <div className="relative">
+                          <Input
+                            label="Total Sale Price"
+                            name="sale_price"
+                            type="number"
+                            value={formData.sale_price}
+                            onChange={handleChange}
+                          />
+                          <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                            €
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -821,7 +896,7 @@ const EditProperty = ({ id }) => {
                 <Dropdown
                   label="Energy Type"
                   name="energy_certificate_type"
-                  title="Select energy certificate type"
+                  title="Select Energy Certificate Type"
                   value={formData.energy_certificate_type}
                   onChange={handleChange}
                   options={[
@@ -840,7 +915,7 @@ const EditProperty = ({ id }) => {
                 <Dropdown
                   label="Emission Type"
                   name="emission_certificate_type"
-                  title="Select emission certificate type"
+                  title="Select Emission Certificate Type"
                   value={formData.emission_certificate_type}
                   onChange={handleChange}
                   options={[
@@ -856,20 +931,32 @@ const EditProperty = ({ id }) => {
                     { label: "Exempt", value: "exempt" },
                   ]}
                 />
-                <Input
-                  label="Consumption kWh/m²"
-                  type="number"
-                  name="energy_consumption"
-                  value={formData.energy_consumption}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="CO2 Emission kg/m²"
-                  type="number"
-                  name="co2_emissions"
-                  value={formData.co2_emissions}
-                  onChange={handleChange}
-                />
+
+                <div className="relative">
+                  <Input
+                    label="Consumption"
+                    type="number"
+                    name="energy_consumption"
+                    value={formData.energy_consumption}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    kWh/m²
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <Input
+                    label="CO2 Emission"
+                    type="number"
+                    name="co2_emissions"
+                    value={formData.co2_emissions}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    kg/m²
+                  </div>
+                </div>
               </div>
 
               {/* RIGHT COLUMN */}
@@ -949,7 +1036,7 @@ const EditProperty = ({ id }) => {
                 </div>
                 <div>
                   <Input
-                    label="Link to video"
+                    label="Link to Video"
                     name="video_link"
                     placeholder="e.g. https://example.com/video"
                     value={formData.video_link}
@@ -970,28 +1057,28 @@ const EditProperty = ({ id }) => {
                 <Input
                   label="Cadastral Reference"
                   name="cadastral_reference"
-                  placeholder="Enter cadastral reference"
+                  placeholder="Enter Cadastral Reference"
                   value={formData.cadastral_reference}
                   onChange={handleChange}
                 />
                 <Input
                   label="Owner 1"
                   name="owner_1"
-                  placeholder="Enter owner 1"
+                  placeholder="Enter Owner 1"
                   value={formData.owner_1}
                   onChange={handleChange}
                 />
                 <Input
                   label="Owner 2"
                   name="owner_2"
-                  placeholder="Enter owner 2"
+                  placeholder="Enter Owner 2"
                   value={formData.owner_2}
                   onChange={handleChange}
                 />
                 <Input
                   label="Owner 3"
                   name="owner_3"
-                  placeholder="Enter owner 3"
+                  placeholder="Enter Owner 3"
                   value={formData.owner_3}
                   onChange={handleChange}
                 />
@@ -1000,35 +1087,35 @@ const EditProperty = ({ id }) => {
                 <Input
                   label="Capturer"
                   name="capturer"
-                  placeholder="Enter capturer"
+                  placeholder="Enter Capturer"
                   value={formData.capturer}
                   onChange={handleChange}
                 />
                 <Input
                   label="Commercial Manager"
                   name="commercial_manager"
-                  placeholder="Enter commercial manager"
+                  placeholder="Enter Commercial Manager"
                   value={formData.commercial_manager}
                   onChange={handleChange}
                 />
                 <Input
                   label="Collaborator"
                   name="collaborator"
-                  placeholder="Enter collaborator"
+                  placeholder="Enter Collaborator"
                   value={formData.collaborator}
                   onChange={handleChange}
                 />
                 <Input
                   label="Keychain Reference"
                   name="keychain_reference"
-                  placeholder="Enter keychain reference"
+                  placeholder="Enter Keychain Reference"
                   value={formData.keychain_reference}
                   onChange={handleChange}
                 />
                 <Input
                   label="Supplier Reference"
                   name="supplier_reference"
-                  placeholder="Enter supplier reference"
+                  placeholder="Enter Supplier Reference"
                   value={formData.supplier_reference}
                   onChange={handleChange}
                 />
@@ -1044,9 +1131,9 @@ const EditProperty = ({ id }) => {
             <div className="flex flex-col lg:flex-row gap-10">
               <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-4">
                 <Dropdown
-                  label="Type of agreement"
+                  label="Type of Agreement"
                   name="agreement_type"
-                  title="Select agreement type"
+                  title="Select Agreement Type"
                   value={formData.agreement_type}
                   onChange={handleChange}
                   options={[
@@ -1060,7 +1147,7 @@ const EditProperty = ({ id }) => {
                   ]}
                 />
                 <Datepicker
-                  label="Agreement valid from"
+                  label="Agreement Valid From"
                   name="agreement_valid_from"
                   value={formData.agreement_valid_from}
                   onChange={handleChange}
@@ -1068,37 +1155,50 @@ const EditProperty = ({ id }) => {
                   className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <Datepicker
-                  label="Agreement valid until"
+                  label="Agreement Valid Until"
                   name="agreement_valid_until"
                   value={formData.agreement_valid_until}
                   onChange={handleChange}
                   dateFormat="dd/MM/yyyy"
                   className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
                 />
+
+                <div className="relative">
+                  <Input
+                    label="Commission Percentage"
+                    name="commission_percentage"
+                    type="number"
+                    placeholder="Enter Commission Percentage"
+                    value={formData.commission_percentage}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    %
+                  </div>
+                </div>
+
                 <Input
-                  label="Commission percentage(%)"
-                  name="commission_percentage"
-                  type="number"
-                  placeholder="Enter commission percentage"
-                  value={formData.commission_percentage}
-                  onChange={handleChange}
-                />
-                <Input
-                  label="Commission value"
+                  label="Commission Value"
                   name="commission_value"
                   type="number"
-                  placeholder="Enter commission value"
+                  placeholder="Enter Commission Value"
                   value={formData.commission_value}
                   onChange={handleChange}
                 />
-                <Input
-                  label="Shared Commission percentage(%)"
-                  name="shared_commission_percentage"
-                  type="number"
-                  placeholder="Enter shared commission percentage"
-                  value={formData.shared_commission_percentage}
-                  onChange={handleChange}
-                />
+
+                <div className="relative">
+                  <Input
+                    label="Shared Commission Percentage"
+                    name="shared_commission_percentage"
+                    type="number"
+                    placeholder="Enter Shared Commission Percentage"
+                    value={formData.shared_commission_percentage}
+                    onChange={handleChange}
+                  />
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
+                    %
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -1111,12 +1211,12 @@ const EditProperty = ({ id }) => {
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
               <div className="flex flex-col">
                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Short description
+                  Short Description
                 </label>
                 <textarea
                   name="short_description"
                   rows={8}
-                  placeholder="Enter a short description..."
+                  placeholder="Enter a Short Description..."
                   className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                   value={formData.short_description || ""}
                   onChange={handleChange}
@@ -1125,53 +1225,83 @@ const EditProperty = ({ id }) => {
                   This description will be used in the description of the
                   magazine. If left blank, the normal description will be used.
                 </p>
+
+                <div className="grid gap-4 mt-10 mb-4">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                    Property Listing Portals
+                  </label>
+                  {[
+                    { value: "idealista", label: "Idealista" },
+                    { value: "fotocasa", label: "Fotocasa" },
+                  ].map((option) => (
+                    <label
+                      key={option.value}
+                      className="relative inline-flex items-center cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        name="portals"
+                        value={option.value}
+                        checked={formData.portals.includes(option.value)}
+                        onChange={handleCheckboxChange}
+                        className="sr-only peer"
+                      />
+                      <div className="w-12 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                      <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"></div>
+                      <span className="text-sm text-gray-900 ml-2">
+                        {option.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
+
               <div className="flex flex-col space-y-5">
                 <div className="relative">
                   <Input
-                    label="Registration surface"
+                    label="Registration Surface"
                     name="registration_surface"
                     type="number"
                     value={formData.registration_surface || ""}
                     onChange={handleChange}
                   />
-                  <div className="pointer-events-none absolute right-4 top-[36px] flex items-center text-sm text-gray-500">
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     m²
                   </div>
                 </div>
                 <div className="relative">
                   <Input
-                    label="Terrace surface"
+                    label="Terrace Surface"
                     name="terrace_surface"
                     type="number"
                     value={formData.terrace_surface || ""}
                     onChange={handleChange}
                   />
-                  <div className="pointer-events-none absolute right-4 top-[36px] flex items-center text-sm text-gray-500">
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     m²
                   </div>
                 </div>
                 <div className="relative">
                   <Input
-                    label="Garage surface"
+                    label="Garage Surface"
                     name="garage_surface"
                     type="number"
                     value={formData.garage_surface || ""}
                     onChange={handleChange}
                   />
-                  <div className="pointer-events-none absolute right-4 top-[36px] flex items-center text-sm text-gray-500">
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     m²
                   </div>
                 </div>
                 <div className="relative">
                   <Input
-                    label="Garage space price"
+                    label="Garage Space Price"
                     name="garage_space_price"
                     type="number"
                     value={formData.garage_space_price || ""}
                     onChange={handleChange}
                   />
-                  <div className="pointer-events-none absolute right-4 top-[36px] flex items-center text-sm text-gray-500">
+                  <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     €
                   </div>
                 </div>

@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
 import path from "path";
 import { writeFile, mkdir, unlink, access } from "fs/promises";
+import sharp from 'sharp';
 
 export async function GET(req, context) {
     const { id } = await context.params;
@@ -46,6 +47,7 @@ export async function PUT(request, context) {
             // Skip labels in the loop so we can handle it as an array below
             if (key === 'labels') continue;
             if (key === 'images') continue;
+            if (key === 'portals') continue;
 
             // Convert stringified booleans back to real booleans
             if (value === 'true') {
@@ -98,16 +100,54 @@ export async function PUT(request, context) {
             const byteData = await file.arrayBuffer();
             const buffer = Buffer.from(byteData);
 
+            const metadata = await sharp(buffer).metadata();
+            const { width, height } = metadata;
+
+            const watermarkSvg = `
+                <svg width="${width}" height="${height}">
+                  <style>
+                    .watermark { 
+                        fill: rgba(0, 255, 0, 0.4); /* Pure Green with 40% opacity */
+                        font-size: 48px; 
+                        font-family: sans-serif; 
+                        font-weight: bold; 
+                    }
+                  </style>
+                  <text x="50%" 
+                        y="50%" 
+                        text-anchor="middle" 
+                        class="watermark"
+                        transform="rotate(-45, ${width / 2}, ${height / 2})">HIHOMIE
+                  </text>
+                </svg>
+            `;
+
+            const processedImage = await sharp(buffer)
+                .composite([
+                    {
+                        input: Buffer.from(watermarkSvg),
+                        gravity: 'center',
+                        // tile: true, // Repeat the watermark across the image
+                    },
+                ])
+                .jpeg({ quality: 90 }) // "Bakes" it into a flat JPEG
+                .toBuffer();
+
+            const filename = `watermarked_${Date.now()}.jpg`;
+            const pathname = path.join(uploadDir, filename);
+
+            await writeFile(pathname, processedImage);
+
             // Write to public folder
             await writeFile(filePath, buffer);
 
             // Save relative URL for DB
-            savedImageUrls.push(`/estate/uploads/images/${uniqueName}`);
+            savedImageUrls.push(`/estate/uploads/images/${filename}`);
         }
-
         updateData.images = savedImageUrls;
 
         updateData.labels = formData.has('labels') ? formData.getAll('labels') : [];
+        updateData.portals = formData.has('portals') ? formData.getAll('portals') : [];
 
         const currentProperty = await Property.findById(id);
         if (currentProperty && currentProperty.images) {

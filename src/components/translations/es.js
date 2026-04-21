@@ -292,6 +292,19 @@ const es = {
   tm23: "Credenciales inválidas",
   tm24: "login exitoso",
 
+  property_for: "Property For",
+  select_property_for: "Select Property For",
+  select_type: "Select Type",
+  reference: "Reference",
+  location: "Location",
+  pf1: "Property reference",
+  pf2: "Property location",
+  intent: "Intent",
+  select_intent: "Select Intent",
+  pf3: "Lead Location",
+  pf4: "Lead Name",
+  pf5: "Lead Phone Number",
+
 };
 
 export default es;

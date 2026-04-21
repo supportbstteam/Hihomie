@@ -88,6 +88,7 @@ const PropertySchema = new mongoose.Schema({
     supplier_reference: { type: String },
     collaborator: { type: String },
     images: [{ type: String }],
+    portals: [{ type: String }],
 
 }, { timestamps: true });
 

@@ -272,15 +272,17 @@ const ESTATE_MENU = {
 
   admin: [
     { href: "/estate", label: "Property List", icon: <MdOutlineApartment /> },
-    { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
+    // { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
     { href: "/estate/lead", label: "Lead List", icon: <MdOutlineContactPhone /> },
-    { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
+    { href: "/estate/contact", label: "Contacts", icon: <MdOutlineContactPhone /> },
+    // { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
   ],
   manager: [
     { href: "/estate", label: "Property List", icon: <MdOutlineApartment /> },
-    { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
+    // { href: "/estate/property", label: "Add Property", icon: <MdOutlineApartment /> },
     { href: "/estate/lead", label: "Lead List", icon: <MdOutlineContactPhone /> },
-    { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
+    { href: "/estate/contact", label: "Contacts", icon: <MdOutlineContactPhone /> },
+    // { href: "/estate/lead/create", label: "Create Lead", icon: <MdOutlineContactPhone /> },
   ],
   user: [
     { href: "/estate", label: "Property List", icon: <MdOutlineDashboard /> },

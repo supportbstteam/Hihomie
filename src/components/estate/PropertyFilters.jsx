@@ -145,7 +145,7 @@ const PropertyFilters = ({
             name="ref"
             value={ref}
             onChange={(e) => setRef(e.target.value)}
-            placeholder="Referencia de la propiedad"
+            placeholder={t("pf1")}
           />
           <Input
             label={t("location")}
@@ -153,7 +153,7 @@ const PropertyFilters = ({
             name="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="Ubicación de la propiedad"
+            placeholder={t("pf2")}
           />
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">

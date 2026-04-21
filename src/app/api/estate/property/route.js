@@ -76,7 +76,8 @@ export async function POST(request) {
             block: data.get('block'),
             portal: data.get('portal'),
             gate: data.get('gate'),
-            collaborator: data.get('collaborator')
+            collaborator: data.get('collaborator'),
+            portals: data.getAll('portals'),
         };
 
         // 4. Validation
@@ -167,16 +168,16 @@ export async function POST(request) {
 
             // 4. Documents (Videos/Photos)
             PropertyDocument: propertyData.video_link ? [{
-                TypeId: 7, 
+                TypeId: 7,
                 Url: propertyData.video_link,
                 SortingId: 1
             }] : [],
 
             PropertyFeature: [
-                { FeatureId: 1, DecimalValue: propertyData.surface }, 
-                { FeatureId: 11, DecimalValue: propertyData.rooms },         
-                { FeatureId: 12, DecimalValue: propertyData.bathrooms },     
-                { FeatureId: 3, TextValue: propertyData.description }      
+                { FeatureId: 1, DecimalValue: propertyData.surface },
+                { FeatureId: 11, DecimalValue: propertyData.rooms },
+                { FeatureId: 12, DecimalValue: propertyData.bathrooms },
+                { FeatureId: 3, TextValue: propertyData.description }
             ].filter(f => f.DecimalValue || f.BoolValue || f.TextValue),
 
             // 6. Contact Info
@@ -199,9 +200,14 @@ export async function POST(request) {
             ]
         };
 
-        // Now you can call your sync function
-        // await createPropertyOnIdealista(idealistaPayload);
-        await createPropertyOnFotocasa(fotocasaPayload);
+        if (propertyData.portals.includes("idealista")) {
+            console.log("Property will be listed on Idealista");
+            // await createPropertyOnIdealista(idealistaPayload);
+        };
+        if (propertyData.portals.includes("fotocasa")) {
+            console.log("Property will be listed on Fotocasa");
+            await createPropertyOnFotocasa(fotocasaPayload);
+        };
 
         return NextResponse.json(
             {

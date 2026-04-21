@@ -91,7 +91,7 @@ const PropertyFilters = ({
             name="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="Ubicación de la propiedad"
+            placeholder={t("pf3")}
           />
           <Input
             label={t("name")}
@@ -99,7 +99,7 @@ const PropertyFilters = ({
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Nombre del lead"
+            placeholder={t("pf4")}
           />
           <Input
             label={t("phone")}
@@ -107,7 +107,7 @@ const PropertyFilters = ({
             name="phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="Teléfono del lead"
+            placeholder={t("pf5")}
           />
         </div>
         <div className="flex h-fit justify-between p-4 gap-4  border-t border-stock">
