@@ -7,3 +7,28 @@ NEXT_PUBLIC_IDEALISTA_API_URL = https://partners-sandbox.idealista.com
 IDEALISTA_CLIENT_ID = betasofttechnology
 IDEALISTA_CLIENT_SECRET = qsmxeQGKLSkQQikDUb63v4gBNat8xOne
 IDEALISTA_FEED_KEY = ilc53d1c1f42e0e05265af83fc7133f5f0dd25c29d7
+
+idealista
+
+You can see the API Doc here: https://partners.idealista.com/api-reference/
+
+User: betasofttechnology
+Password: RfOx54gNq67ONqXxHkJwb6tXAdFMMb15
+
+Sandbox
+
+URL: https://partners-sandbox.idealista.XXX
+User (clientId): betasofttechnology
+Password (clientSecret): qsmxeQGKLSkQQikDUb63v4gBNat8xOne
+
+vps commands
+lsof -i
+
+lsof -i :<PORT>
+lsof -i :8080
+
+lsof -i <PROTOCOL>:8080
+lsof -i tcp:8080
+
+-t flag only returns pid
+kill -9 $(lsof -t -i :8080)

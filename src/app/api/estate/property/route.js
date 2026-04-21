@@ -96,7 +96,7 @@ export async function POST(request) {
             type: propertyData.type || "flat", // Default to flat if empty
             code: propertyData.reference,
             reference: propertyData.reference,
-            contactId: 1, // Usually a static ID for the office or manager
+            contactId: 105219381, 
             scope: "idealista",
 
             // Address Object
@@ -104,12 +104,10 @@ export async function POST(request) {
                 streetName: propertyData.street,
                 streetNumber: propertyData.street_number,
                 postalCode: propertyData.postal_code,
-                cityName: propertyData.city,
-                province: propertyData.province,
-                district: propertyData.district,
-                area: propertyData.area,
                 visibility: "full", // "all" shows exact address, "hide_street_number" hides number
-                Country: "Spain"
+                country: "Spain",
+                precision: "exact", // "exact" or "approximate"
+                town: propertyData.city,
             },
 
             // Features Object
@@ -119,13 +117,13 @@ export async function POST(request) {
                 rooms: propertyData.rooms || 0,
                 bathroomNumber: propertyData.bathrooms || 0,
                 builtYear: propertyData.year_of_construction || null,
-                liftAvailable: propertyData.labels.includes('lift') || false, // Assuming 'lift' is a tag in labels
                 conservation: propertyData.status === 'available' ? 'good' : 'toRestore',
                 energyCertificateRating: propertyData.energy_certificate_type || 'A',
                 priceCommunity: propertyData.community_expenses || 0,
                 cadastralReference: propertyData.cadastral_reference || "",
                 terrace: propertyData.terrace_surface > 0,
                 liftAvailable: "true",
+                windowsLocation: "internal"
             },
 
             // Operation Object (Determines if it is for Sale or Rent)
@@ -201,11 +199,9 @@ export async function POST(request) {
         };
 
         if (propertyData.portals.includes("idealista")) {
-            console.log("Property will be listed on Idealista");
-            // await createPropertyOnIdealista(idealistaPayload);
+            await createPropertyOnIdealista(idealistaPayload);
         };
         if (propertyData.portals.includes("fotocasa")) {
-            console.log("Property will be listed on Fotocasa");
             await createPropertyOnFotocasa(fotocasaPayload);
         };
 
