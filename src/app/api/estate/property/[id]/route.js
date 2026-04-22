@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
 import path from "path";
-import { writeFile, mkdir, unlink, access } from "fs/promises";
+import { writeFile, mkdir, unlink, access, readFile } from "fs/promises";
 import sharp from 'sharp';
 
 export async function GET(req, context) {
@@ -103,24 +103,44 @@ export async function PUT(request, context) {
             const metadata = await sharp(buffer).metadata();
             const { width, height } = metadata;
 
+            const watermarkImagePath = path.join(process.cwd(), 'public', 'watermark.png');
+            const watermarkImageBuffer = await readFile(watermarkImagePath);
+            const watermarkImageBase64 = watermarkImageBuffer.toString('base64');
+            const watermarkDataUri = `data:image/png;base64,${watermarkImageBase64}`;
+
+            const iconSize = Math.floor(width * 0.5);
+
             const watermarkSvg = `
-                <svg width="${width}" height="${height}">
-                  <style>
-                    .watermark { 
-                        fill: rgba(0, 255, 0, 0.4); /* Pure Green with 40% opacity */
-                        font-size: 48px; 
-                        font-family: sans-serif; 
-                        font-weight: bold; 
-                    }
-                  </style>
-                  <text x="50%" 
-                        y="50%" 
-                        text-anchor="middle" 
-                        class="watermark"
-                        transform="rotate(-45, ${width / 2}, ${height / 2})">HIHOMIE
-                  </text>
+                <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+                  <image 
+                    href="${watermarkDataUri}" 
+                    x="${(width - iconSize) / 2}" 
+                    y="${(height - iconSize) / 2}" 
+                    width="${iconSize}" 
+                    height="${iconSize}"
+                    style="opacity: 0.5;"
+                  />
                 </svg>
             `;
+
+            // const watermarkSvg = `
+            //     <svg width="${width}" height="${height}">
+            //       <style>
+            //         .watermark { 
+            //             fill: rgba(0, 255, 0, 0.4); /* Pure Green with 40% opacity */
+            //             font-size: 48px; 
+            //             font-family: sans-serif; 
+            //             font-weight: bold; 
+            //         }
+            //       </style>
+            //       <text x="50%" 
+            //             y="50%" 
+            //             text-anchor="middle" 
+            //             class="watermark"
+            //             transform="rotate(-45, ${width / 2}, ${height / 2})">HIHOMIE
+            //       </text>
+            //     </svg>
+            // `;
 
             const processedImage = await sharp(buffer)
                 .composite([
