@@ -104,7 +104,7 @@ export async function POST(request) {
                 streetName: propertyData.street,
                 streetNumber: propertyData.street_number,
                 postalCode: propertyData.postal_code,
-                visibility: "full", // "all" shows exact address, "hide_street_number" hides number
+                visibility: "full",
                 country: "Spain",
                 precision: "exact", // "exact" or "approximate"
                 town: propertyData.city,

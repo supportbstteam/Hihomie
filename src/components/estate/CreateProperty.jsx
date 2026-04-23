@@ -138,6 +138,7 @@ const CreateProperty = ({ users }) => {
     public_address: "",
     district: "",
     area: "",
+    country: "",
     status: "",
     reference: "",
     type: "",
@@ -319,11 +320,119 @@ const CreateProperty = ({ users }) => {
     }
   };
 
+  const [errors, setErrors] = useState({
+    full_address: "",
+    province: "",
+    postal_code: "",
+    city: "",
+    street: "",
+    public_address: "",
+    country: "",
+    reference: "",
+    type: "",
+    floor: "",
+    rooms: "",
+    bathrooms: "",
+    surface: "",
+    usable_surface: "",
+    year_of_construction: "",
+    community_expenses: "",
+    show_price_tags: "",
+    energy_consumption: "",
+    co2_emissions: "",
+    energy_certificate_type: "",
+    emission_certificate_type: "",
+    property_title: "",
+    description: "",
+    labels: "",
+    owner_1: "",
+    owner_2: "",
+    owner_3: "",
+    capturer: "",
+    commercial_manager: "",
+    video_link: "",
+    agreement_type: "",
+    agreement_valid_from: "",
+    agreement_valid_until: "",
+    commission_percentage: "",
+    commission_value: "",
+    shared_commission_percentage: "",
+    is_for_rent: "",
+    rent_price: "",
+    is_for_sale: "",
+    sale_price: "",
+    show_price: "",
+    cadastral_reference: "",
+    keychain_reference: "",
+    supplier_reference: "",
+    short_description: "",
+    registration_surface: "",
+    terrace_surface: "",
+    garage_surface: "",
+    garage_space_price: "",
+    rent_price: "",
+    payment_frequency: "",
+    bail: "",
+    guarantee: "",
+    real_estate_fee: "",
+  });
+
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+    if (!formData.full_address.trim()) {
+      newErrors.full_address = "Address is required";
+      valid = false;
+    }
+    if (!formData.reference.trim()) {
+      newErrors.reference = "Reference is required";
+      valid = false;
+    }
+    if (!formData.street.trim()) {
+      newErrors.street = "Street is required";
+      valid = false;
+    }
+    if (!formData.province.trim()) {
+      newErrors.province = "Province is required";
+      valid = false;
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+      valid = false;
+    }
+    if (!formData.type.trim()) {
+      newErrors.type = "Type is required";
+      valid = false;
+    }
+    if (!formData.public_address.trim()) {
+      newErrors.public_address = "Public Address is required";
+      valid = false;
+    }
+    if (!formData.postal_code.trim()) {
+      newErrors.postal_code = "Postal Code is required";
+      valid = false;
+    }
+    if (!formData.is_for_rent || !formData.is_for_sale) {
+      newErrors.operation_type = "At least one operation type (rent or sale) must be selected";
+      valid = false;
+    }
+    if (!formData.rent_price || !formData.sale_price) {
+      newErrors.price = "Price is required for selected operation type(s)";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.reference.trim() === "")
-      return toast.error("reference is required");
-    if (formData.street.trim() === "") return toast.error("street is required");
+
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      const errorMessages = Object.values(newErrors).join("\n");
+      return toast.error(errorMessages);
+    }
 
     const data = new FormData();
 
@@ -366,6 +475,7 @@ const CreateProperty = ({ users }) => {
     let city = "";
     let province = "";
     let postal_code = "";
+    let country = "";
 
     // Parse the Google Address Components
     place.addressComponents?.forEach((component) => {
@@ -376,6 +486,7 @@ const CreateProperty = ({ users }) => {
       if (types.includes("administrative_area_level_2"))
         province = component.longText;
       if (types.includes("postal_code")) postal_code = component.longText;
+      if (types.includes("country")) country = component.longText;
     });
 
     setFormData((prev) => ({
@@ -386,6 +497,7 @@ const CreateProperty = ({ users }) => {
       city: city || prev.city,
       province: province || prev.province,
       postal_code: postal_code || prev.postal_code,
+      country: country || prev.country,
     }));
 
     // Update map coordinates
