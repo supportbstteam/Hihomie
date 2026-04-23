@@ -11,7 +11,7 @@ const ImageUpload = ({ images, setImages }) => {
     const newFiles = Array.from(files).filter((file) =>
       file.type.startsWith("image/"),
     );
-    const remainingSlots = 10 - currentCount;
+    const remainingSlots = 40 - currentCount;
 
     if (remainingSlots <= 0) return;
 
@@ -40,7 +40,7 @@ const ImageUpload = ({ images, setImages }) => {
 
   return (
     <div className="w-full">
-      <label className="mb-2 block text-sm font-medium text-gray-700">
+      <label className="mb-2 block text-md font-medium text-gray-700">
         Property Photos
       </label>
       <div
@@ -62,7 +62,7 @@ const ImageUpload = ({ images, setImages }) => {
           accept="image/*"
           onChange={(e) => handleFiles(e.target.files)}
           className="absolute inset-0 z-10 cursor-pointer opacity-0"
-          disabled={images.length >= 10}
+          disabled={images.length >= 40}
         />
 
         {images.length === 0 ? (
@@ -71,7 +71,7 @@ const ImageUpload = ({ images, setImages }) => {
             <p className="text-sm text-gray-600">
               <span className="font-semibold text-blue-600">Click to upload</span> or drag and drop
             </p>
-            <p className="text-xs text-gray-400 mt-1">Up to 10 images</p>
+            <p className="text-xs text-gray-400 mt-1">Up to 40 images</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -91,7 +91,7 @@ const ImageUpload = ({ images, setImages }) => {
                 </button>
               </div>
             ))}
-            {images.length < 10 && (
+            {images.length < 40 && (
               <div className="flex min-h-[170px] items-center justify-center rounded-lg border-2 border-dotted border-gray-300 bg-white">
                 <Plus className="h-6 w-6 text-gray-400" />
               </div>
@@ -100,8 +100,8 @@ const ImageUpload = ({ images, setImages }) => {
         )}
       </div>
       <div className="mt-2 flex justify-between text-xs text-gray-500">
-        <span>{images.length} / 10 images</span>
-        {images.length === 10 && (
+        <span>{images.length} / 40 images</span>
+        {images.length === 40 && (
           <span className="text-amber-600 font-medium">Limit reached</span>
         )}
       </div>

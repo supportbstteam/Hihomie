@@ -121,7 +121,7 @@ const PlaceAutocompleteInput = ({
 };
 // --- END SUB-COMPONENT ---
 
-const CreateProperty = () => {
+const CreateProperty = ({ users }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { loader, successMessage, errorMessage, successTag, tags } =
@@ -1055,19 +1055,41 @@ const CreateProperty = () => {
                 />
               </div>
               <div className="w-full lg:w-1/2 grid grid-cols-1 md:grid-cols-1 gap-4">
-                <Input
+                {/* <Input
                   label="Capturer"
                   name="capturer"
                   placeholder="Enter Capturer"
                   value={formData.capturer}
                   onChange={handleChange}
+                /> */}
+                <Dropdown
+                  label="Capturer"
+                  name="capturer"
+                  title="Select Capturer"
+                  value={formData.capturer}
+                  onChange={handleChange}
+                  options={users.map((user) => ({
+                    label: user.name + (user.lname ? " " + user.lname : ""),
+                    value: user._id,
+                  }))}
                 />
-                <Input
+                {/* <Input
                   label="Commercial Manager"
                   name="commercial_manager"
                   placeholder="Enter Commercial Manager"
                   value={formData.commercial_manager}
                   onChange={handleChange}
+                /> */}
+                <Dropdown
+                  label="Commercial Manager"
+                  name="commercial_manager"
+                  title="Select Commercial Manager"
+                  value={formData.commercial_manager}
+                  onChange={handleChange}
+                  options={users.map((user) => ({
+                    label: user.name + (user.lname ? " " + user.lname : ""),
+                    value: user._id,
+                  }))}
                 />
                 <Input
                   label="Collaborator"
@@ -1199,13 +1221,16 @@ const CreateProperty = () => {
                   magazine. If left blank, the normal description will be used.
                 </p>
 
-                <div className="grid gap-4 mt-10">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Property Listing Portals
-                  </label>
+                <label className="mb-2 mt-10 block text-md font-medium text-gray-700">
+                  Property Listing Portals
+                </label>
+                <div className="grid grid-cols-3 gap-4 mt-4 mb-10">
                   {[
                     { value: "idealista", label: "Idealista" },
                     { value: "fotocasa", label: "Fotocasa" },
+                    { value: "trovimap", label: "Trovimap" },
+                    { value: "todopisos", label: "TodoPisos" },
+                    { value: "globaliza", label: "Globaliza" },
                   ].map((option) => (
                     <label
                       key={option.value}
