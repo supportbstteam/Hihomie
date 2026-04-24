@@ -10,6 +10,7 @@ const PropertySchema = new mongoose.Schema({
     public_address: { type: String }, 
     district: { type: String },
     area: { type: String },
+    country: { type: String },
 
     // Property Features
     status: { type: String },     // Maps to data.get('status')

@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Property from "@/models/Property";
 import { createPropertyOnIdealista } from "@/lib/idealista"; // Adjust path as necessary
 import { createPropertyOnFotocasa } from "@/lib/fotocasa"; // Adjust path as necessary
+import removeEmptyFields from "@/lib/removeEmptyFields";
 
 export async function POST(request) {
     try {
@@ -20,17 +21,21 @@ export async function POST(request) {
             street_number: data.get('street_number'),
             public_address: data.get('public_address'),
             district: data.get('district'),
+            country: data.get('country'),
             area: data.get('area'),
             status: data.get('status'),
             reference: data.get('reference'),
             type: data.get('type'),
             floor: data.get('floor'),
-            rooms: Number(data.get('rooms')),
-            bathrooms: Number(data.get('bathrooms')),
-            surface: Number(data.get('surface')),
-            usable_surface: Number(data.get('usable_surface')),
-            year_of_construction: Number(data.get('year_of_construction')),
-            community_expenses: Number(data.get('community_expenses')),
+
+            // Number conversions safely handled
+            rooms: data.get('rooms') ? Number(data.get('rooms')) : undefined,
+            bathrooms: data.get('bathrooms') ? Number(data.get('bathrooms')) : undefined,
+            surface: data.get('surface') ? Number(data.get('surface')) : undefined,
+            usable_surface: data.get('usable_surface') ? Number(data.get('usable_surface')) : undefined,
+            year_of_construction: data.get('year_of_construction') ? Number(data.get('year_of_construction')) : undefined,
+            community_expenses: data.get('community_expenses') ? Number(data.get('community_expenses')) : undefined,
+
             transaction_type: data.get('transaction_type'),
             show_price_tags: data.get('show_price_tags') === 'true',
             energy_certificate_type: data.get('energy_certificate_type'),
@@ -51,27 +56,37 @@ export async function POST(request) {
             agreement_type: data.get('agreement_type'),
             agreement_valid_from: data.get('agreement_valid_from'),
             agreement_valid_until: data.get('agreement_valid_until'),
-            commission_percentage: Number(data.get('commission_percentage')),
-            commission_value: Number(data.get('commission_value')),
-            shared_commission_percentage: Number(data.get('shared_commission_percentage')),
+
+            // Number conversions safely handled
+            commission_percentage: data.get('commission_percentage') ? Number(data.get('commission_percentage')) : undefined,
+            commission_value: data.get('commission_value') ? Number(data.get('commission_value')) : undefined,
+            shared_commission_percentage: data.get('shared_commission_percentage') ? Number(data.get('shared_commission_percentage')) : undefined,
+
             is_for_rent: data.get('is_for_rent') === 'true',
-            rent_price: Number(data.get('rent_price')),
+            rent_price: data.get('rent_price') ? Number(data.get('rent_price')) : undefined,
             is_for_sale: data.get('is_for_sale') === 'true',
-            sale_price: Number(data.get('sale_price')),
+            sale_price: data.get('sale_price') ? Number(data.get('sale_price')) : undefined,
             show_price: data.get('show_price') === 'true',
+
             cadastral_reference: data.get('cadastral_reference'),
             keychain_reference: data.get('keychain_reference'),
             supplier_reference: data.get('supplier_reference'),
             short_description: data.get('short_description'),
-            registration_surface: Number(data.get('registration_surface')),
-            terrace_surface: Number(data.get('terrace_surface')),
-            garage_surface: Number(data.get('garage_surface')),
-            garage_space_price: Number(data.get('garage_space_price')),
+
+            // Number conversions safely handled
+            registration_surface: data.get('registration_surface') ? Number(data.get('registration_surface')) : undefined,
+            terrace_surface: data.get('terrace_surface') ? Number(data.get('terrace_surface')) : undefined,
+            garage_surface: data.get('garage_surface') ? Number(data.get('garage_surface')) : undefined,
+            garage_space_price: data.get('garage_space_price') ? Number(data.get('garage_space_price')) : undefined,
+
             payment_frequency: data.get('payment_frequency'),
-            bail: Number(data.get('bail')),
-            guarantee: Number(data.get('guarantee')),
-            real_estate_fee: Number(data.get('real_estate_fee')),
-            rental_price_reference_index: Number(data.get('rental_price_reference_index')),
+
+            // Number conversions safely handled
+            bail: data.get('bail') ? Number(data.get('bail')) : undefined,
+            guarantee: data.get('guarantee') ? Number(data.get('guarantee')) : undefined,
+            real_estate_fee: data.get('real_estate_fee') ? Number(data.get('real_estate_fee')) : undefined,
+            rental_price_reference_index: data.get('rental_price_reference_index') ? Number(data.get('rental_price_reference_index')) : undefined,
+
             urbanization: data.get('urbanization'),
             block: data.get('block'),
             portal: data.get('portal'),
@@ -91,9 +106,9 @@ export async function POST(request) {
         // 5. Save to MongoDB
         const newProperty = await Property.create(propertyData);
 
-        const idealistaPayload = {
+        let idealistaPayload = {
             // Top-level fields
-            type: propertyData.type || "flat", // Default to flat if empty
+            type: propertyData.type, // Will be deleted if empty
             code: propertyData.reference,
             reference: propertyData.reference,
             contactId: 105219381,
@@ -105,41 +120,43 @@ export async function POST(request) {
                 streetNumber: propertyData.street_number,
                 postalCode: propertyData.postal_code,
                 visibility: "full",
-                country: "Spain",
+                country: propertyData.country || "Spain",
                 precision: "exact",
                 town: propertyData.city,
             },
 
             // Features Object
             features: {
-                areaConstructed: propertyData.surface || 0,
-                areaUsable: propertyData.usable_surface || 0,
-                rooms: propertyData.rooms || 0,
-                bathroomNumber: propertyData.bathrooms || 0,
-                builtYear: propertyData.year_of_construction || null,
+                areaConstructed: propertyData.surface || undefined,
+                areaUsable: propertyData.usable_surface || undefined,
+                rooms: propertyData.rooms || undefined,
+                bathroomNumber: propertyData.bathrooms || undefined,
+                builtYear: propertyData.year_of_construction || undefined,
                 conservation: propertyData.status === 'available' ? 'good' : 'toRestore',
-                energyCertificateRating: propertyData.energy_certificate_type || 'A',
-                priceCommunity: propertyData.community_expenses || 0,
-                cadastralReference: propertyData.cadastral_reference || "",
+                energyCertificateRating: propertyData.energy_certificate_type,
+                priceCommunity: propertyData.community_expenses,
+                cadastralReference: propertyData.cadastral_reference,
                 terrace: propertyData.terrace_surface > 0,
-                liftAvailable: "true",
+                liftAvailable: true,
                 windowsLocation: "internal"
             },
 
-            // Operation Object (Determines if it is for Sale or Rent)
+            // Operation Object 
             operation: {
-                type: propertyData.is_for_sale ? "sale" : "rent",
+                type: propertyData.is_for_sale ? "sale" : (propertyData.is_for_rent ? "rent" : undefined),
                 price: propertyData.is_for_sale ? propertyData.sale_price : propertyData.rent_price
             },
 
-            // Descriptions (Required array of objects)
-            descriptions: [
+            // Descriptions: If there's no description, make it undefined so the whole array is dropped
+            descriptions: propertyData.description ? [
                 {
                     language: "es",
-                    text: propertyData.description || "Nueva propiedad disponible"
+                    text: propertyData.description
                 }
-            ]
+            ] : undefined
         };
+
+        idealistaPayload = removeEmptyFields(idealistaPayload);
 
         const fotocasaPayload = {
             // 1. Basic Identifiers
@@ -205,10 +222,10 @@ export async function POST(request) {
                 console.log("Idealista sync successful");
             } catch (portalError) {
                 // Look for the detailed response data from Axios!
-                const errorDetails = portalError.response?.data 
-                    ? JSON.stringify(portalError.response.data) 
+                const errorDetails = portalError.response?.data
+                    ? JSON.stringify(portalError.response.data)
                     : portalError.message;
-                    
+
                 console.error("Failed to sync with Idealista. Details:", errorDetails);
             }
         }
@@ -218,10 +235,10 @@ export async function POST(request) {
                 const fotocasaResponse = await createPropertyOnFotocasa(fotocasaPayload);
                 console.log("Fotocasa sync successful");
             } catch (portalError) {
-                const errorDetails = portalError.response?.data 
-                    ? JSON.stringify(portalError.response.data, null, 2) 
+                const errorDetails = portalError.response?.data
+                    ? JSON.stringify(portalError.response.data, null, 2)
                     : portalError.message;
-                    
+
                 console.error("Failed to sync with Fotocasa. Details:", errorDetails);
             }
         }

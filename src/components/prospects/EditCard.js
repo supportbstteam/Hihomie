@@ -197,35 +197,9 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
         // router.push(`/dashboard/lead`);
         toast.success(successMessage);
         setSelectedUser(null);
-        // setFormData({
-        //   lead_title: "",
-        //   surname: "",
-        //   first_name: "",
-        //   last_name: "",
-        //   company: "",
-        //   designation: "",
-        //   phone: "",
-        //   email: "",
-        //   lead_value: "",
-        //   assigned: "",
-        //   status: "",
-        //   type_of_opration: "",
-        //   customer_situation: "",
-        //   purchase_status: "",
-        //   contacted: "",
-        //   commercial_notes: "",
-        //   manager_notes: "",
-        //   detailsData: {},
-        //   addressDetailsData: {},
-        //   id: "",
-        //   colId: "", // ✅ keep the current colId
-        // });
-
-
-
       }
     }
-  }, [successMessage, errorMessage]);
+  }, [successMessage, errorMessage, dispatch]);
 
   useEffect(() => {
     if (selectedUser) {
@@ -271,13 +245,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (selectedUser._id) {
       dispatch(get_customer_comments(selectedUser._id));
     }
-  }, [selectedUser._id]);
+  }, [selectedUser._id, dispatch]);
 
   useEffect(() => {
     if (successMessage === "Comment added successfully" || successMessage === "Comment deleted successfully") {
       dispatch(get_customer_comments(selectedUser._id));
     }
-  }, [selectedUser, successMessage]);
+  }, [selectedUser, successMessage, dispatch]);
 
   const handleCommentChange = (e) => {
     const { name, value } = e.target;
@@ -312,7 +286,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (selectedUser._id) {
       dispatch(get_due_date(selectedUser._id));
     }
-  }, [selectedUser._id]);
+  }, [selectedUser._id, dispatch]);
 
   useEffect(() => {
     if (dueDate) {
@@ -328,7 +302,7 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (successMessage === "Due date added successfully" || successMessage === "Due date deleted successfully") {
       dispatch(get_due_date(selectedUser._id));
     }
-  }, [selectedUser, successMessage]);
+  }, [selectedUser, successMessage, dispatch]);
 
   const handleDueDateFormChange = (e) => {
     const { name, value } = e.target;
@@ -382,13 +356,13 @@ const EditCard = ({ selectedUser, setSelectedUser, colId, leadStatus }) => {
     if (selectedUser._id) {
       dispatch(get_documents(selectedUser._id));
     }
-  }, [selectedUser._id]);
+  }, [selectedUser._id, dispatch]);
 
   useEffect(() => {
     if (successMessage === "Document added successfully" || successMessage === "Document deleted successfully") {
       dispatch(get_documents(selectedUser._id));
     }
-  }, [selectedUser, successMessage]);
+  }, [selectedUser, successMessage, dispatch]);
 
   async function handleDocumentSubmit(event) {
     event.preventDefault();
