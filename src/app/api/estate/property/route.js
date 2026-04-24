@@ -204,19 +204,25 @@ export async function POST(request) {
                 // Optional: log success or save response status to DB
                 console.log("Idealista sync successful");
             } catch (portalError) {
-                // Catch the error so it doesn't break the main flow
-                console.error("Failed to sync with Idealista:", portalError.message);
+                // Look for the detailed response data from Axios!
+                const errorDetails = portalError.response?.data 
+                    ? JSON.stringify(portalError.response.data) 
+                    : portalError.message;
+                    
+                console.error("Failed to sync with Idealista. Details:", errorDetails);
             }
         }
 
         if (propertyData.portals.includes("fotocasa")) {
             try {
                 const fotocasaResponse = await createPropertyOnFotocasa(fotocasaPayload);
-                // Optional: log success or save response status to DB
-                console.log("Fotocasa sync successful",);
+                console.log("Fotocasa sync successful");
             } catch (portalError) {
-                // Catch the error so it doesn't break the main flow
-                console.error("Failed to sync with Fotocasa:", portalError.message);
+                const errorDetails = portalError.response?.data 
+                    ? JSON.stringify(portalError.response.data, null, 2) 
+                    : portalError.message;
+                    
+                console.error("Failed to sync with Fotocasa. Details:", errorDetails);
             }
         }
 

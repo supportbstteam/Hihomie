@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import DropDown from "@/components/ui/DropDown";
 import { t } from "@/components/translations";
 import toast from "react-hot-toast";
-import { set } from "mongoose";
 
 const MailModel = ({ isOpen, setMailModelOpen, mailDetails }) => {
 
