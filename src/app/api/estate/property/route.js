@@ -213,7 +213,7 @@ export async function POST(request) {
             try {
                 const fotocasaResponse = await createPropertyOnFotocasa(fotocasaPayload);
                 // Optional: log success or save response status to DB
-                console.log("Fotocasa sync successful");
+                console.log("Fotocasa sync successful",);
             } catch (portalError) {
                 // Catch the error so it doesn't break the main flow
                 console.error("Failed to sync with Fotocasa:", portalError.message);

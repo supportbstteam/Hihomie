@@ -37,5 +37,7 @@ export async function createPropertyOnIdealista(propertyData) {
         }
     });
 
+    console.log("response",response.data);
+
     return response.data;
 }
