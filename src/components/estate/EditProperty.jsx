@@ -444,15 +444,15 @@ const EditProperty = ({ id, users }) => {
       newErrors.price = "Price is required for selected operation type(s)";
       valid = false;
     }
-    if (!formData.surface.trim()) {
+    if (!formData.surface) {
       newErrors.surface = "Surface is required";
       valid = false;
     }
-    if (!formData.bathrooms.trim()) {
+    if (!formData.bathrooms) {
       newErrors.bathrooms = "Bathrooms is required";
       valid = false;
     }
-    if (!formData.rooms.trim()) {
+    if (!formData.rooms) {
       newErrors.rooms = "Rooms is required";
       valid = false;
     }
