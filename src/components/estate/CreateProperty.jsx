@@ -259,9 +259,9 @@ const CreateProperty = ({ users }) => {
   ];
 
   const typeOptions = [
-    { label: "Floor", value: "flat" },
-    { label: "House Chalet", value: "chalet" },
-    { label: "Rustic House", value: "country_house" },
+    { label: "Flat", value: "flat" },
+    { label: "House", value: "house" },
+    { label: "Country House", value: "countryhouse" },
     { label: "Bungalow", value: "bungalow" },
     { label: "Room", value: "room" },
     { label: "Parking Space", value: "parking" },
@@ -269,11 +269,12 @@ const CreateProperty = ({ users }) => {
     { label: "Industrial Warehouse", value: "industrial" },
     { label: "Office", value: "office" },
     { label: "Land", value: "land" },
-    { label: "Storage Room", value: "storage" },
+    { label: "Storage", value: "storage" },
     { label: "Building", value: "building" },
     { label: "Attic", value: "penthouse" },
     { label: "Duplex", value: "duplex" },
     { label: "Study", value: "studio" },
+    { label: "Garage", value: "garage" },
   ];
 
   const floorOptions = [
@@ -408,11 +409,11 @@ const CreateProperty = ({ users }) => {
       newErrors.postal_code = "Postal Code is required";
       valid = false;
     }
-    if (!formData.is_for_rent || !formData.is_for_sale) {
+    if (!formData.is_for_rent && !formData.is_for_sale) {
       newErrors.operation_type = "At least one operation type (rent or sale) must be selected";
       valid = false;
     }
-    if (!formData.rent_price || !formData.sale_price) {
+    if (!formData.rent_price && !formData.sale_price) {
       newErrors.price = "Price is required for selected operation type(s)";
       valid = false;
     }

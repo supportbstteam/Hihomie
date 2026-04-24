@@ -106,7 +106,7 @@ export async function POST(request) {
                 postalCode: propertyData.postal_code,
                 visibility: "full",
                 country: "Spain",
-                precision: "exact", // "exact" or "approximate"
+                precision: "exact",
                 town: propertyData.city,
             },
 
