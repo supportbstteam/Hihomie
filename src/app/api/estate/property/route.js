@@ -111,7 +111,7 @@ export async function POST(request) {
             type: propertyData.type, // Will be deleted if empty
             code: propertyData.reference,
             reference: propertyData.reference,
-            contactId: 105219381,
+            contactId: 105274808,
             scope: "idealista",
 
             // Address Object
