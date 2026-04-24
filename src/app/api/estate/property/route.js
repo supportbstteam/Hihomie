@@ -156,7 +156,7 @@ export async function POST(request) {
             ] : undefined
         };
 
-        idealistaPayload = removeEmptyFields(idealistaPayload);
+        // idealistaPayload = removeEmptyFields(idealistaPayload);
 
         const fotocasaPayload = {
             // 1. Basic Identifiers
