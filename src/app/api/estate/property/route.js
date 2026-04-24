@@ -96,7 +96,7 @@ export async function POST(request) {
             type: propertyData.type || "flat", // Default to flat if empty
             code: propertyData.reference,
             reference: propertyData.reference,
-            contactId: 105219381, 
+            contactId: 105219381,
             scope: "idealista",
 
             // Address Object
@@ -199,11 +199,26 @@ export async function POST(request) {
         };
 
         if (propertyData.portals.includes("idealista")) {
-            await createPropertyOnIdealista(idealistaPayload);
-        };
+            try {
+                const idealistaResponse = await createPropertyOnIdealista(idealistaPayload);
+                // Optional: log success or save response status to DB
+                console.log("Idealista sync successful");
+            } catch (portalError) {
+                // Catch the error so it doesn't break the main flow
+                console.error("Failed to sync with Idealista:", portalError.message);
+            }
+        }
+
         if (propertyData.portals.includes("fotocasa")) {
-            await createPropertyOnFotocasa(fotocasaPayload);
-        };
+            try {
+                const fotocasaResponse = await createPropertyOnFotocasa(fotocasaPayload);
+                // Optional: log success or save response status to DB
+                console.log("Fotocasa sync successful");
+            } catch (portalError) {
+                // Catch the error so it doesn't break the main flow
+                console.error("Failed to sync with Fotocasa:", portalError.message);
+            }
+        }
 
         return NextResponse.json(
             {

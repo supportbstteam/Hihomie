@@ -437,7 +437,6 @@ const EditProperty = ({ id, users }) => {
       valid = false;
     }
     if (!formData.is_for_rent && !formData.is_for_sale) {
-      console.log("is_for_rent:", formData.is_for_rent, "is_for_sale:", formData.is_for_sale);
       newErrors.operation_type = "At least one operation type (rent or sale) must be selected";
       valid = false;
     }
