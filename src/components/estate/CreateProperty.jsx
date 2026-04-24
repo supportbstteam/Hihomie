@@ -392,10 +392,6 @@ const CreateProperty = ({ users }) => {
       newErrors.street = "Street is required";
       valid = false;
     }
-    if (!formData.province.trim()) {
-      newErrors.province = "Province is required";
-      valid = false;
-    }
     if (!formData.city.trim()) {
       newErrors.city = "City is required";
       valid = false;
@@ -418,6 +414,22 @@ const CreateProperty = ({ users }) => {
     }
     if (!formData.rent_price || !formData.sale_price) {
       newErrors.price = "Price is required for selected operation type(s)";
+      valid = false;
+    }
+    if (!formData.surface.trim()) {
+      newErrors.surface = "Surface is required";
+      valid = false;
+    }
+    if (!formData.bathrooms.trim()) {
+      newErrors.bathrooms = "Bathrooms is required";
+      valid = false;
+    }
+    if (!formData.rooms.trim()) {
+      newErrors.rooms = "Rooms is required";
+      valid = false;
+    }
+    if (!formData.energy_certificate_type.trim()) {
+      newErrors.energy_certificate_type = "Energy Certificate Type is required";
       valid = false;
     }
 
@@ -553,6 +565,7 @@ const CreateProperty = ({ users }) => {
                     value={formData.full_address}
                     onChange={handleChange}
                     onPlaceSelect={handlePlaceSelected}
+                    required
                   />
                 </div>
               </div>
@@ -571,6 +584,8 @@ const CreateProperty = ({ users }) => {
                   name="postal_code"
                   value={formData.postal_code}
                   onChange={handleChange}
+                  error={errors.postal_code}
+                  required
                 />
                 <div className="md:col-span-2">
                   <Input
@@ -578,6 +593,8 @@ const CreateProperty = ({ users }) => {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
+                    error={errors.city}
+                    required
                   />
                 </div>
                 <Input
@@ -585,6 +602,7 @@ const CreateProperty = ({ users }) => {
                   name="street"
                   value={formData.street}
                   onChange={handleChange}
+                  error={errors.street}
                   required
                 />
                 <Input
@@ -601,6 +619,8 @@ const CreateProperty = ({ users }) => {
                     title="Select Option"
                     value={formData.public_address}
                     onChange={handleChange}
+                    error={errors.public_address}
+                    required
                     options={[
                       { label: "See all", value: "See all" },
                       {
@@ -660,9 +680,9 @@ const CreateProperty = ({ users }) => {
                   address={formData.full_address}
                   manualLocation={mapCoords}
                 />
-                <p className="text-xs text-green-600 mt-2 text-right cursor-pointer">
+                {/* <p className="text-xs text-green-600 mt-2 text-right cursor-pointer">
                   Click here to manually adjust location
-                </p>
+                </p> */}
               </div>
             </div>
           </section>
@@ -699,6 +719,7 @@ const CreateProperty = ({ users }) => {
                     name="reference"
                     value={formData.reference}
                     onChange={handleChange}
+                    error={errors.reference}
                     required
                   />
                 </div>
@@ -710,6 +731,8 @@ const CreateProperty = ({ users }) => {
                   value={formData.type}
                   onChange={handleChange}
                   options={typeOptions}
+                  error={errors.type}
+                  required
                 />
                 <Dropdown
                   label="Floor"
@@ -726,6 +749,8 @@ const CreateProperty = ({ users }) => {
                   title="Select number of rooms"
                   value={formData.rooms}
                   onChange={handleChange}
+                  error={errors.rooms}
+                  required
                   options={Array.from({ length: 31 }, (_, i) => ({
                     label: i.toString(),
                     value: i.toString(),
@@ -737,6 +762,8 @@ const CreateProperty = ({ users }) => {
                   title="Select number of bathrooms"
                   value={formData.bathrooms}
                   onChange={handleChange}
+                  error={errors.bathrooms}
+                  required
                   options={Array.from({ length: 31 }, (_, i) => ({
                     label: i.toString(),
                     value: i.toString(),
@@ -750,6 +777,8 @@ const CreateProperty = ({ users }) => {
                     name="surface"
                     value={formData.surface}
                     onChange={handleChange}
+                    error={errors.surface}
+                    required
                   />
                   <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     m²
@@ -978,6 +1007,8 @@ const CreateProperty = ({ users }) => {
                   title="Select Energy Certificate Type"
                   value={formData.energy_certificate_type}
                   onChange={handleChange}
+                  error={errors.energy_certificate_type}
+                  required
                   options={[
                     { label: "A", value: "A" },
                     { label: "B", value: "B" },

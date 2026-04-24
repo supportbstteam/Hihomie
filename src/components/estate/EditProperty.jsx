@@ -141,6 +141,7 @@ const EditProperty = ({ id, users }) => {
     public_address: "",
     district: "",
     area: "",
+    country: "",
     status: "",
     reference: "",
     type: "",
@@ -346,11 +347,131 @@ const EditProperty = ({ id, users }) => {
     }
   };
 
+  const [errors, setErrors] = useState({
+    full_address: "",
+    province: "",
+    postal_code: "",
+    city: "",
+    street: "",
+    public_address: "",
+    country: "",
+    reference: "",
+    type: "",
+    floor: "",
+    rooms: "",
+    bathrooms: "",
+    surface: "",
+    usable_surface: "",
+    year_of_construction: "",
+    community_expenses: "",
+    show_price_tags: "",
+    energy_consumption: "",
+    co2_emissions: "",
+    energy_certificate_type: "",
+    emission_certificate_type: "",
+    property_title: "",
+    description: "",
+    labels: "",
+    owner_1: "",
+    owner_2: "",
+    owner_3: "",
+    capturer: "",
+    commercial_manager: "",
+    video_link: "",
+    agreement_type: "",
+    agreement_valid_from: "",
+    agreement_valid_until: "",
+    commission_percentage: "",
+    commission_value: "",
+    shared_commission_percentage: "",
+    is_for_rent: "",
+    rent_price: "",
+    is_for_sale: "",
+    sale_price: "",
+    show_price: "",
+    cadastral_reference: "",
+    keychain_reference: "",
+    supplier_reference: "",
+    short_description: "",
+    registration_surface: "",
+    terrace_surface: "",
+    garage_surface: "",
+    garage_space_price: "",
+    rent_price: "",
+    payment_frequency: "",
+    bail: "",
+    guarantee: "",
+    real_estate_fee: "",
+  });
+
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+    if (!formData.full_address.trim()) {
+      newErrors.full_address = "Address is required";
+      valid = false;
+    }
+    if (!formData.reference.trim()) {
+      newErrors.reference = "Reference is required";
+      valid = false;
+    }
+    if (!formData.street.trim()) {
+      newErrors.street = "Street is required";
+      valid = false;
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required";
+      valid = false;
+    }
+    if (!formData.type.trim()) {
+      newErrors.type = "Type is required";
+      valid = false;
+    }
+    if (!formData.public_address.trim()) {
+      newErrors.public_address = "Public Address is required";
+      valid = false;
+    }
+    if (!formData.postal_code.trim()) {
+      newErrors.postal_code = "Postal Code is required";
+      valid = false;
+    }
+    if (!formData.is_for_rent || !formData.is_for_sale) {
+      newErrors.operation_type =
+        "At least one operation type (rent or sale) must be selected";
+      valid = false;
+    }
+    if (!formData.rent_price || !formData.sale_price) {
+      newErrors.price = "Price is required for selected operation type(s)";
+      valid = false;
+    }
+    if (!formData.surface.trim()) {
+      newErrors.surface = "Surface is required";
+      valid = false;
+    }
+    if (!formData.bathrooms.trim()) {
+      newErrors.bathrooms = "Bathrooms is required";
+      valid = false;
+    }
+    if (!formData.rooms.trim()) {
+      newErrors.rooms = "Rooms is required";
+      valid = false;
+    }
+    if (!formData.energy_certificate_type.trim()) {
+      newErrors.energy_certificate_type = "Energy Certificate Type is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.reference.trim() === "")
-      return toast.error("reference is required");
-    if (formData.street.trim() === "") return toast.error("street is required");
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      const errorMessages = Object.values(newErrors).join("\n");
+      return toast.error(errorMessages);
+    }
 
     const data = new FormData();
 
@@ -397,6 +518,7 @@ const EditProperty = ({ id, users }) => {
     let city = "";
     let province = "";
     let postal_code = "";
+    let country = "";
 
     place.addressComponents?.forEach((component) => {
       const types = component.types;
@@ -406,6 +528,7 @@ const EditProperty = ({ id, users }) => {
       if (types.includes("administrative_area_level_2"))
         province = component.longText;
       if (types.includes("postal_code")) postal_code = component.longText;
+      if (types.includes("country")) country = component.longText;
     });
 
     setFormData((prev) => ({
@@ -416,6 +539,7 @@ const EditProperty = ({ id, users }) => {
       city: city || prev.city,
       province: province || prev.province,
       postal_code: postal_code || prev.postal_code,
+      country: country || prev.country,
     }));
 
     if (place.location) {
@@ -481,6 +605,7 @@ const EditProperty = ({ id, users }) => {
                     value={formData.full_address}
                     onChange={handleChange}
                     onPlaceSelect={handlePlaceSelected}
+                    required
                   />
                 </div>
               </div>
@@ -498,6 +623,8 @@ const EditProperty = ({ id, users }) => {
                   name="postal_code"
                   value={formData.postal_code}
                   onChange={handleChange}
+                  error={errors.postal_code}
+                  required
                 />
                 <div className="md:col-span-2">
                   <Input
@@ -505,6 +632,8 @@ const EditProperty = ({ id, users }) => {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
+                    error={errors.city}
+                    required
                   />
                 </div>
                 <Input
@@ -512,6 +641,7 @@ const EditProperty = ({ id, users }) => {
                   name="street"
                   value={formData.street}
                   onChange={handleChange}
+                  error={errors.street}
                   required
                 />
                 <Input
@@ -528,6 +658,8 @@ const EditProperty = ({ id, users }) => {
                     title="Select Option"
                     value={formData.public_address}
                     onChange={handleChange}
+                    error={errors.public_address}
+                    required
                     options={[
                       { label: "See all", value: "See all" },
                       {
@@ -585,9 +717,9 @@ const EditProperty = ({ id, users }) => {
                   address={formData.full_address}
                   manualLocation={mapCoords}
                 />
-                <p className="text-xs text-green-600 mt-2 text-right cursor-pointer">
+                {/* <p className="text-xs text-green-600 mt-2 text-right cursor-pointer">
                   Click here to manually adjust location
-                </p>
+                </p> */}
               </div>
             </div>
           </section>
@@ -623,6 +755,7 @@ const EditProperty = ({ id, users }) => {
                     name="reference"
                     value={formData.reference}
                     onChange={handleChange}
+                    error={errors.reference}
                     required
                   />
                 </div>
@@ -634,6 +767,8 @@ const EditProperty = ({ id, users }) => {
                   value={formData.type}
                   onChange={handleChange}
                   options={typeOptions}
+                  error={errors.type}
+                  required
                 />
 
                 <Dropdown
@@ -643,6 +778,7 @@ const EditProperty = ({ id, users }) => {
                   value={formData.floor}
                   onChange={handleChange}
                   options={floorOptions}
+                  error={errors.floor}
                 />
 
                 <Dropdown
@@ -651,6 +787,8 @@ const EditProperty = ({ id, users }) => {
                   title="Select number of rooms"
                   value={formData.rooms}
                   onChange={handleChange}
+                  error={errors.rooms}
+                  required
                   options={Array.from({ length: 31 }, (_, i) => ({
                     label: i.toString(),
                     value: i.toString(),
@@ -663,6 +801,8 @@ const EditProperty = ({ id, users }) => {
                   title="Select number of bathrooms"
                   value={formData.bathrooms}
                   onChange={handleChange}
+                  error={errors.bathrooms}
+                  required
                   options={Array.from({ length: 31 }, (_, i) => ({
                     label: i.toString(),
                     value: i.toString(),
@@ -676,6 +816,8 @@ const EditProperty = ({ id, users }) => {
                     name="surface"
                     value={formData.surface}
                     onChange={handleChange}
+                    error={errors.surface}
+                    required
                   />
                   <div className="pointer-events-none absolute right-6 top-[40px] flex items-center text-sm text-gray-500">
                     m²
@@ -899,6 +1041,8 @@ const EditProperty = ({ id, users }) => {
                   title="Select Energy Certificate Type"
                   value={formData.energy_certificate_type}
                   onChange={handleChange}
+                  error={errors.energy_certificate_type}
+                  required
                   options={[
                     { label: "A", value: "A" },
                     { label: "B", value: "B" },
