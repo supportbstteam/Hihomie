@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { get_properties, delete_property, messageClear } from "@/store/estate";
@@ -29,7 +30,6 @@ const ListProperty = () => {
     total_pages,
     page,
   } = useSelector((state) => state.estate);
-  // const { filters } = useSelector((state) => state.propertyFilter);
 
   const [currentPage, setCurrentPage] = useState(page || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,11 +40,7 @@ const ListProperty = () => {
 
   useEffect(() => {
     dispatch(get_properties({ page: currentPage, ...selectedFilterData }));
-  }, [dispatch, selectedFilterData]);
-
-  // useEffect(() => {
-  //   setSelectedFilterData(filters);
-  // }, [filters]);
+  }, [dispatch, selectedFilterData, currentPage]);
 
   useEffect(() => {
     if (successMessage) {
@@ -58,7 +54,7 @@ const ListProperty = () => {
       toast.error(errorMessage);
       dispatch(messageClear());
     }
-  }, [successMessage, errorMessage, dispatch]);
+  }, [successMessage, errorMessage, dispatch, currentPage, selectedFilterData]);
 
   // Modal Handlers
   const openDeleteModal = (id) => {
@@ -72,7 +68,6 @@ const ListProperty = () => {
     }
   };
 
-  // Fallback dummy data
   const displayProperties = properties?.length > 0 ? properties : [];
 
   const handlePageChange = (pageNo) => {
@@ -82,7 +77,7 @@ const ListProperty = () => {
 
   return (
     <div className="grid w-full">
-      {/* Header aligned with reference layout */}
+      {/* Header */}
       <aside className="w-full bg-white sticky top-0 z-30">
         <div className="flex items-center justify-between p-4">
           <div className="hidden sm:flex flex-col">
@@ -119,58 +114,74 @@ const ListProperty = () => {
         </div>
       </aside>
 
-      {/* Main Card Container wrapped in bg-background-secondary */}
-      <div className="p-4 bg-background-secondary">
+      {/* Main Container - padding and max-width removed */}
+      <div className="bg-background-secondary w-full">
         {loader ? (
-          <div className="p-8 text-center text-gray-500 font-medium bg-white rounded-lg shadow-md">
+          <div className="p-8 text-center text-gray-500 font-medium bg-white shadow-md">
             Loading Properties...
           </div>
         ) : (
-          <table className="min-w-full border border-gray-200 rounded-lg shadow-md overflow-hidden bg-white">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
-                  Reference
-                </th>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
-                  Location
-                </th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
-                  For
-                </th>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
-                  Details
-                </th>
-                <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">
-                  Type
-                </th>
-                <th className="py-3 px-4 text-center text-sm font-semibold text-gray-700">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {displayProperties.map((property, i) => (
-                <tr
-                  key={property._id}
-                  className={`hover:bg-gray-50 transition-colors duration-200 ${
-                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="py-3 px-4 text-sm font-medium text-gray-800">
-                    {property.reference}
-                  </td>
+          <div className="flex flex-col w-full gap-4 p-4">
+            {displayProperties.map((property) => (
+              <div
+                key={property._id}
+                className="flex flex-col sm:flex-row bg-white border-y sm:border border-gray-200 sm:rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
+              >
+                <div className="relative w-full sm:w-64 h-48 sm:h-44 flex-shrink-0 bg-gray-200">
+                  <Image
+                    src={property.images?.[0] || "/file.svg"}
+                    alt={property.title || property.reference || "Property"}
+                    fill
+                  />
 
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    <div className="font-medium">{property.city}</div>
-                    <div className="text-gray-500 text-xs">
-                      {property.street}
-                    </div>
-                  </td>
+                  {/* Status Overlay - Pinned to Bottom Left */}
+                  <div className="absolute bottom-1 left-1 bg-green-900/50 text-white text-sm font-semibold px-2 py-1 rounded backdrop-blur-sm shadow-sm">
+                    {property.status || "Available"}
+                  </div>
+                </div>
 
-                  <td className="py-3 px-4 text-sm text-center">
+                {/* Details Section - Right side close to image boundary */}
+                <div className="flex flex-col flex-grow p-4 relative justify-start">
+                  {/* Action Buttons Pinned to Top Right */}
+                  <div className="absolute top-4 right-4 flex gap-3 text-lg bg-white/80 p-1 rounded backdrop-blur-sm">
+                    <Link href={`/estate/property/edit/${property._id}`}>
+                      <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition-transform" />
+                    </Link>
+
+                    {user?.role === "admin" && (
+                      <FaRegTrashAlt
+                        onClick={() => openDeleteModal(property._id)}
+                        className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
+                      />
+                    )}
+                  </div>
+
+                  {/* Title & Price */}
+                  <div className="pr-20">
+                    {" "}
+                    {/* pr-20 prevents text overlapping with absolute buttons */}
+                    <h3 className="text-xl font-bold text-gray-900 line-clamp-1">
+                      {property.title ||
+                        property.reference ||
+                        "Untitled Property"}
+                    </h3>
+                    <p className="text-lg font-bold text-green-600 mt-1">
+                      {property.sale_price
+                        ? `$${property.sale_price.toLocaleString()}`
+                        : "Price upon request"}
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-600 mt-2 text-sm line-clamp-2">
+                    {property.description ||
+                      "No description provided for this property."}
+                  </p>
+
+                  {/* Additional Previous Info (Rooms, Location, Type) */}
+                  <div className="mt-auto pt-4 flex flex-wrap items-center gap-4 text-xs text-gray-500">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                      className={`px-2 py-1 rounded-full font-bold uppercase ${
                         property.transaction_type === "sale"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-purple-100 text-purple-800"
@@ -178,56 +189,36 @@ const ListProperty = () => {
                     >
                       {property.transaction_type}
                     </span>
-                  </td>
+                    <span className="font-medium">
+                      📍 {property.city}{" "}
+                      {property.street ? `, ${property.street}` : ""}
+                    </span>
+                    <span title="Rooms">🛏️ {property.rooms || "-"}</span>
+                    <span title="Bathrooms">
+                      🚿 {property.bathrooms || "-"}
+                    </span>
+                    <span title="Surface Area">
+                      📐 {property.surface ? `${property.surface}m²` : "-"}
+                    </span>
+                    <span className="border-l border-gray-300 pl-4">
+                      {property.type || "Not Defined"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
 
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    <div className="flex items-center gap-3 text-gray-600">
-                      <span title="Rooms">🛏️ {property.rooms || "-"}</span>
-                      <span title="Bathrooms">
-                        🚿 {property.bathrooms || "-"}
-                      </span>
-                      <span title="Surface Area">
-                        📐 {property.surface ? `${property.surface}m²` : "-"}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    {property.type || "Not Defined"}
-                  </td>
-
-                  {/* Actions matching reference style */}
-                  <td className="py-3 px-4 text-center">
-                    <div className="flex justify-center gap-3 text-lg">
-                      <Link href={`/estate/property/edit/${property._id}`}>
-                        <FaRegEdit className="text-orange-500 cursor-pointer hover:scale-110 transition-transform" />
-                      </Link>
-
-                      {user?.role === "admin" && (
-                        <FaRegTrashAlt
-                          onClick={() => openDeleteModal(property._id)}
-                          className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                        />
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {displayProperties.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="py-8 text-center text-gray-500">
-                    No properties found. Click the + icon to create one.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            {displayProperties.length === 0 && (
+              <div className="p-8 text-center text-gray-500 bg-white border-y sm:border border-gray-200 sm:rounded-lg">
+                No properties found. Click the + icon to create one.
+              </div>
+            )}
+          </div>
         )}
       </div>
 
+      {/* Pagination Controls */}
       <div className="flex justify-between items-center w-full p-4">
-        {/* PREV LEFT SIDE */}
         <button
           className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
           disabled={currentPage === 1}
@@ -236,7 +227,6 @@ const ListProperty = () => {
           Prev
         </button>
 
-        {/* CENTER THREE BUTTONS */}
         <div className="flex items-center justify-center gap-2 w-full">
           <button
             className="cursor-pointer px-3 py-1 bg-gray-200 rounded"
@@ -265,7 +255,6 @@ const ListProperty = () => {
           </button>
         </div>
 
-        {/* NEXT RIGHT SIDE */}
         <button
           disabled={currentPage === total_pages}
           className="cursor-pointer px-3 py-1 bg-green-500 rounded disabled:bg-gray-200"
@@ -281,7 +270,7 @@ const ListProperty = () => {
         setSelectedFilterData={setSelectedFilterData}
       />
 
-      {/* Modals placed at the bottom */}
+      {/* Modals */}
       <ConfirmDeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
