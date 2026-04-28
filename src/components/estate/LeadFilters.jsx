@@ -7,7 +7,7 @@ import Icon from "../ui/Icon";
 import { X } from "lucide-react";
 import { Button } from "../ui/Button";
 
-const PropertyFilters = ({
+const LeadFilters = ({
   filterOpen,
   setFilterOpen,
   setSelectedFilterData,
@@ -132,4 +132,4 @@ const PropertyFilters = ({
   );
 };
 
-export default PropertyFilters;
+export default LeadFilters;

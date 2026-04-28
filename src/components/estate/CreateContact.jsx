@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { create_estate_lead, messageClear } from "@/store/estate";
+import { create_estate_contact, messageClear } from "@/store/estate";
 import Input from "@/components/ui/Input";
 import Dropdown from "@/components/ui/DropDown";
 import Datepicker from "@/components/ui/Datepicker";
@@ -18,25 +18,15 @@ const CreateContact = () => {
   );
 
   const initialState = {
-    lead_id: "",
+    contact_id: "",
     name: "",
     phone: "",
+    email: "",
     address: "",
     city: "",
-    rent_or_sale: "",
-    registration_date: "",
-    capturer: "",
     assigned_agent: "",
     source_channel: "",
-    lead_status: "",
-    last_contact: "",
-    last_contact_result: "",
-    next_call: "",
-    days_since_last_contact: "",
-    days_until_next_call: "",
-    follow_up_overdue: false,
-    sale_price: "",
-    fees: "",
+    contact_status: "",
     observations: "",
   };
 
@@ -45,7 +35,7 @@ const CreateContact = () => {
   useEffect(() => {
     const runOnLoad = async () => {
       try {
-        const response = await fetch("/api/estate/leads/increment", {
+        const response = await fetch("/api/estate/contacts/increment", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -59,7 +49,7 @@ const CreateContact = () => {
         const data = await response.json();
         setFormData((prev) => ({
           ...prev,
-          lead_id: data,
+          contact_id: data,
         }));
 
         console.log("API Response inside useEffect:", data); // ✅ works here
@@ -82,8 +72,8 @@ const CreateContact = () => {
   useEffect(() => {
     if (successMessage) {
       toast.success(successMessage);
-      if (successTag === "ESTATE_LEAD_CREATED") {
-        router.push("/estate/lead");
+      if (successTag === "ESTATE_CONTACT_CREATED") {
+        router.push("/estate/contact");
       }
       dispatch(messageClear());
     }
@@ -95,7 +85,7 @@ const CreateContact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(create_estate_lead(formData));
+    dispatch(create_estate_contact(formData));
   };
 
   return (
@@ -115,11 +105,11 @@ const CreateContact = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
             <div className="flex flex-col">
               <Input
-                id="lead_id"
-                label="Lead ID"
-                name="lead_id"
+                id="contact_id"
+                label="Contact ID"
+                name="contact_id"
                 type="text"
-                value={formData.lead_id}
+                value={formData.contact_id}
                 onChange={handleChange}
               />
             </div>
@@ -150,6 +140,18 @@ const CreateContact = () => {
 
             <div className="flex flex-col">
               <Input
+                id="email"
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <Input
                 id="address"
                 label="Address"
                 name="address"
@@ -169,22 +171,6 @@ const CreateContact = () => {
                 onChange={handleChange}
               />
             </div>
-
-            <div className="flex flex-col">
-              <Dropdown
-                id="rent_or_sale"
-                label="Rent or Sale"
-                name="rent_or_sale"
-                options={[
-                  { label: "----------", value: "" },
-                  { label: "Rent", value: "Rent" },
-                  { label: "Sale", value: "Sale" },
-                  { label: "Both", value: "Both" },
-                ]}
-                value={formData.rent_or_sale}
-                onChange={handleChange}
-              />
-            </div>
           </div>
         </div>
 
@@ -196,28 +182,6 @@ const CreateContact = () => {
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
-            <div className="flex flex-col">
-              <Datepicker
-                name="registration_date"
-                label="Registration Date"
-                value={formData.registration_date}
-                onChange={handleChange}
-                dateFormat="dd/MM/yyyy"
-                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Input
-                id="capturer"
-                label="Capturer"
-                name="capturer"
-                type="text"
-                value={formData.capturer}
-                onChange={handleChange}
-              />
-            </div>
-
             <div className="flex flex-col">
               <Input
                 id="assigned_agent"
@@ -239,129 +203,14 @@ const CreateContact = () => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-        </div>
 
-        {/* --- Category: Tracking & Status --- */}
-        <div className="border-b border-gray-200">
-          <div className="bg-gray-50 px-6 py-3">
-            <h3 className="text-lg font-semibold text-gray-700">
-              Tracking & Status
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
             <div className="flex flex-col">
               <Input
-                id="lead_status"
-                label="Lead Status"
-                name="lead_status"
+                id="contact_status"
+                label="Contact Status"
+                name="contact_status"
                 type="text"
-                value={formData.lead_status}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Datepicker
-                name="last_contact"
-                label="Last Contact"
-                value={formData.last_contact}
-                onChange={handleChange}
-                dateFormat="dd/MM/yyyy"
-                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Input
-                id="last_contact_result"
-                label="Last Contact Result"
-                name="last_contact_result"
-                type="text"
-                value={formData.last_contact_result}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Datepicker
-                name="next_call"
-                label="Next Call"
-                value={formData.next_call}
-                onChange={handleChange}
-                dateFormat="dd/MM/yyyy"
-                className="text-light text-sm appearance-none font-normal w-full px-2 py-3 border border-gray-400 rounded-md pr-10 rounded-radius focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Input
-                id="days_since_last_contact"
-                label="Days since last contact"
-                name="days_since_last_contact"
-                type="number"
-                value={formData.days_since_last_contact}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Input
-                id="days_until_next_call"
-                label="Days until next call"
-                name="days_until_next_call"
-                type="number"
-                value={formData.days_until_next_call}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label
-                htmlFor="follow_up_overdue"
-                className="mb-2 text-sm font-medium text-gray-700"
-              >
-                Follow-up Overdue
-              </label>
-              <div className="flex items-center mt-2">
-                <input
-                  id="follow_up_overdue"
-                  name="follow_up_overdue"
-                  type="checkbox"
-                  checked={formData.follow_up_overdue}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-                />
-                <span className="ml-2 text-sm text-gray-600">Yes, overdue</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* --- Category: Financials --- */}
-        <div className="border-b border-gray-200">
-          <div className="bg-gray-50 px-6 py-3">
-            <h3 className="text-lg font-semibold text-gray-700">Financials</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-6">
-            <div className="flex flex-col">
-              <Input
-                id="sale_price"
-                label="Sale Price"
-                name="sale_price"
-                type="number"
-                value={formData.sale_price}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Input
-                id="fees"
-                label="Fees"
-                name="fees"
-                type="number"
-                value={formData.fees}
+                value={formData.contact_status}
                 onChange={handleChange}
               />
             </div>

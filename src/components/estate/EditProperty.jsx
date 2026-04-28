@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/DropDown";
 import Input from "@/components/ui/Input";
 import ImageUpload from "@/components/ui/ImageUpload";
+import VideoUpload from "@/components/ui/VideoUpload";
 import AddressMiniMap from "@/components/Map";
 import Datepicker from "../ui/Datepicker";
 import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
@@ -130,6 +131,7 @@ const EditProperty = ({ id, users }) => {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [mapCoords, setMapCoords] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
+  const [propertyVideo, setPropertyVideo] = useState();
 
   const [formData, setFormData] = useState({
     full_address: "",
@@ -437,7 +439,8 @@ const EditProperty = ({ id, users }) => {
       valid = false;
     }
     if (!formData.is_for_rent && !formData.is_for_sale) {
-      newErrors.operation_type = "At least one operation type (rent or sale) must be selected";
+      newErrors.operation_type =
+        "At least one operation type (rent or sale) must be selected";
       valid = false;
     }
     if (!formData.rent_price && !formData.sale_price) {
@@ -497,6 +500,10 @@ const EditProperty = ({ id, users }) => {
         data.append("images", item.preview);
       }
     });
+
+    if (propertyVideo && propertyVideo.file) {
+      data.append("videos", propertyVideo.file);
+    }
 
     dispatch(update_property({ id: id, object: data }));
   };
@@ -1472,6 +1479,10 @@ const EditProperty = ({ id, users }) => {
             <ImageUpload
               images={propertyImages}
               setImages={setPropertyImages}
+            />
+            <VideoUpload
+              video={propertyVideo}
+              setVideo={setPropertyVideo}
             />
           </section>
 

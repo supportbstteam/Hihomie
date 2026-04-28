@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import getUserFromServerSession from "@/lib/getUserFromServerSession";
-import EditLead from "@/components/estate/EditLead";
+import EditContact from "@/components/estate/EditContact";
 
 export default async function EditLeadPage({ params }) {
   const { id } = await params;
@@ -9,7 +9,7 @@ export default async function EditLeadPage({ params }) {
 
   return (
     <>
-      <EditLead id={id} />
+      <EditContact id={id} />
     </>
   );
 }

@@ -169,6 +169,83 @@ export const delete_estate_lead = createAsyncThunk(
         }
     }
 );
+export const create_estate_contact = createAsyncThunk(
+    'create_estate_contact',
+    async (object, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.post(`/estate/contacts`, object, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const get_estate_contacts = createAsyncThunk(
+    'get_estate_contacts',
+    async (payload = {}, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { page = 1, ...filters } = payload;
+
+            const cleanFilters = Object.fromEntries(
+                Object.entries(filters).filter(
+                    ([_, value]) => value !== "" && value !== null && value !== undefined
+                )
+            );
+
+            const { data } = await api.get(`/estate/contacts`, {
+                params: {
+                    page,
+                    ...cleanFilters,
+                },
+                withCredentials: true
+            });
+            return fulfillWithValue(data);
+        } catch (error) {
+            rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const get_estate_contact = createAsyncThunk(
+    'get_estate_contact',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/estate/contacts/${id}`, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const update_estate_contact = createAsyncThunk(
+    'update_estate_contact',
+    async ({ id, object }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.put(`/estate/contacts/${id}`, object, { withCredentials: true });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const delete_estate_contact = createAsyncThunk(
+    'delete_estate_contact',
+    async (id, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            // Using params object in Axios
+            const { data } = await api.delete('/estate/contacts', {
+                params: { id },
+                withCredentials: true
+            });
+            return fulfillWithValue(data);
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
 
 export const upload_property_file = createAsyncThunk(
     "customer/upload_property_file",
@@ -229,7 +306,12 @@ export const estateReducer = createSlice({
         page: 1,
         lead_total_count: 0,
         lead_total_pages: 1,
-        lead_page: 1
+        lead_page: 1,
+        estate_contacts: [],
+        estate_contact: {},
+        contact_total_count: 0,
+        contact_total_pages: 1,
+        contact_page: 1,
     },
     reducers: {
         messageClear: (state) => {
@@ -401,6 +483,73 @@ export const estateReducer = createSlice({
             .addCase(delete_estate_lead.rejected, (state, { payload }) => {
                 state.loader = false;
                 state.errorMessage = payload?.message || "Failed to delete estate lead";
+                state.successTag = "";
+            })
+            .addCase(create_estate_contact.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(create_estate_contact.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload?.message || "Estate Contact created successfully!";
+                state.successTag = "ESTATE_CONTACT_CREATED";
+            })
+            .addCase(create_estate_contact.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to create estate contact ";
+                state.successTag = "";
+            })
+            .addCase(get_estate_contacts.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_estate_contacts.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.estate_contacts = payload.data;
+                state.contact_total_count = payload.totalCount;
+                state.contact_total_pages = payload.totalPages;
+                state.contact_page = payload.page;
+            })
+            .addCase(get_estate_contacts.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch estate contacts";
+            })
+
+            .addCase(get_estate_contact.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_estate_contact.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.estate_contact = payload.data;
+            })
+            .addCase(get_estate_contact.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to fetch estate contact";
+            })
+
+            .addCase(update_estate_contact.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(update_estate_contact.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Estate contact updated successfully!";
+                state.successTag = "ESTATE_CONTACT_UPDATED";
+            })
+            .addCase(update_estate_contact.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to update estate contact";
+                state.successTag = "";
+            })
+
+            .addCase(delete_estate_contact.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(delete_estate_contact.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message || "Estate contact deleted successfully!";
+                state.successTag = "ESTATE_CONTACT_DELETED";
+            })
+            .addCase(delete_estate_contact.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload?.message || "Failed to delete estate contact";
                 state.successTag = "";
             });
     }

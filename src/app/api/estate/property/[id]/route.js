@@ -48,6 +48,7 @@ export async function PUT(request, context) {
             if (key === 'labels') continue;
             if (key === 'images') continue;
             if (key === 'portals') continue;
+            if (key === 'videos') continue;
 
             // Convert stringified booleans back to real booleans
             if (value === 'true') {
@@ -165,6 +166,48 @@ export async function PUT(request, context) {
             savedImageUrls.push(`/estate/uploads/images/${filename}`);
         }
         updateData.images = savedImageUrls;
+
+        const videos = formData.getAll("videos");
+
+        if (!videos || videos.length === 0) {
+            console.log("No videos provided in the form data.");
+        }
+
+        const savedVideoUrls = [];
+
+        // Define the upload path (public/uploads/properties)
+        const uploadVideoDir = path.join(process.cwd(), "public", "estate", "uploads", "videos");
+
+        // Ensure directory exists
+        await mkdir(uploadVideoDir, { recursive: true });
+
+        for (const video of videos) {
+
+            if (typeof video === "string") {
+                savedVideoUrls.push(video);
+                continue;
+            }
+
+            if (!video || !video.name) {
+                console.log("Skipping invalid file entry", video);
+                continue;
+            }
+
+            // Create a unique videoname
+            const uniqueName = `${Date.now()}_${video.name.replaceAll(" ", "_")}`;
+            const videoPath = path.join(uploadVideoDir, uniqueName);
+
+            // Convert video to Buffer
+            const byteData = await video.arrayBuffer();
+            const buffer = Buffer.from(byteData);
+
+            // Write to public folder
+            await writeFile(videoPath, buffer);
+
+            // Save relative URL for DB
+            savedVideoUrls.push(`/estate/uploads/videos/${uniqueName}`);
+        }
+        updateData.videos = savedVideoUrls;
 
         updateData.labels = formData.has('labels') ? formData.getAll('labels') : [];
         updateData.portals = formData.has('portals') ? formData.getAll('portals') : [];
