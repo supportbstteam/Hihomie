@@ -3,7 +3,7 @@ import { Video, X, film } from "lucide-react";
 
 const VideoUpload = ({ video, setVideo }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState(video ? video[0].preview : null);
+  const [preview, setPreview] = useState(video ? video[0]?.preview : null);
   
   const handleFiles = (files) => {
     const file = files[0];
