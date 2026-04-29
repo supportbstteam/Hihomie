@@ -90,6 +90,7 @@ const PropertySchema = new mongoose.Schema({
     collaborator: { type: String },
     images: [{ type: String }],
     portals: [{ type: String }],
+    videos: [{ type: String }],
 
 }, { timestamps: true });
 

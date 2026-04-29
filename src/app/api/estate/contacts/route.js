@@ -66,8 +66,6 @@ export async function GET(req) {
         const assigned_agent = searchParams.get("assigned_agent") || "";
         const status = searchParams.get("status") || "";
 
-        console.log(page);
-
         const matchConditions = {};
 
         if (name) {

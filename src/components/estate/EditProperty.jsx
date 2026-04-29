@@ -325,6 +325,14 @@ const EditProperty = ({ id, users }) => {
       }));
       setPropertyImages(existing);
     }
+    if (property?.videos) {
+      // Map existing URLs to the format the component expects
+      const existing = property.videos.map((url) => ({
+        file: null, // No file object for existing server video
+        preview: url,
+      }));
+      setPropertyVideo(existing);
+    }
   }, [property, id]);
 
   useEffect(() => {

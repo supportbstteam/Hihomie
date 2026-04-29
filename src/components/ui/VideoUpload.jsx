@@ -3,16 +3,16 @@ import { Video, X, film } from "lucide-react";
 
 const VideoUpload = ({ video, setVideo }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState(video ? video.preview : null);
-
+  const [preview, setPreview] = useState(video ? video[0].preview : null);
+  
   const handleFiles = (files) => {
     const file = files[0];
     if (!file || !file.type.startsWith("video/")) return;
-
+    
     // Create a local preview URL
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
-
+    
     // Pass the file back to the parent state
     setVideo({
       file,
@@ -68,7 +68,7 @@ const VideoUpload = ({ video, setVideo }) => {
             <p className="text-sm text-gray-600">
               <span className="font-semibold text-blue-600">Click to upload video</span> or drag and drop
             </p>
-            <p className="text-xs text-gray-400 mt-1">MP4, WebM or Ogg (Max 50MB suggested)</p>
+            <p className="text-xs text-gray-400 mt-1">MP4, WebM (Max 50MB suggested)</p>
           </div>
         ) : (
           <div className="relative w-full h-full flex flex-col items-center">
