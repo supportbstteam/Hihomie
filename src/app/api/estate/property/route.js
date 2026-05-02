@@ -43,7 +43,7 @@ export async function POST(request) {
             energy_consumption: data.get('energy_consumption'),
             co2_emissions: data.get('co2_emissions'),
             labels: data.getAll('labels'),
-            description: data.get('description'),
+            description: JSON.parse(data.get('description')),
             owner_1: data.get('owner_1'),
             owner_2: data.get('owner_2'),
             owner_3: data.get('owner_3'),
@@ -151,7 +151,7 @@ export async function POST(request) {
             descriptions: propertyData.description ? [
                 {
                     language: "es",
-                    text: propertyData.description
+                    text: propertyData.description.es
                 }
             ] : undefined
         };
@@ -192,7 +192,7 @@ export async function POST(request) {
                 { FeatureId: 1, DecimalValue: propertyData.surface },
                 { FeatureId: 11, DecimalValue: propertyData.rooms },
                 { FeatureId: 12, DecimalValue: propertyData.bathrooms },
-                { FeatureId: 3, TextValue: propertyData.description }
+                { FeatureId: 3, TextValue: propertyData.description.es }
             ].filter(f => f.DecimalValue || f.BoolValue || f.TextValue),
 
             // 6. Contact Info

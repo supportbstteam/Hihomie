@@ -136,7 +136,7 @@ const ListProperty = () => {
 
                   {/* Status Overlay - Pinned to Bottom Left */}
                   <div className="absolute bottom-1 left-1 bg-green-900/50 text-white text-sm font-semibold px-2 py-1 rounded backdrop-blur-sm shadow-sm">
-                    {property.status || "Available"}
+                    {(property.status || "Available").replace(/^\w/, c => c.toUpperCase())}
                   </div>
                 </div>
 
@@ -174,7 +174,7 @@ const ListProperty = () => {
 
                   {/* Description */}
                   <p className="text-gray-600 mt-2 text-sm line-clamp-2">
-                    {property.description ||
+                    {property.description.es ||
                       "No description provided for this property."}
                   </p>
 
@@ -201,7 +201,7 @@ const ListProperty = () => {
                       📐 {property.surface ? `${property.surface}m²` : "-"}
                     </span>
                     <span className="border-l border-gray-300 pl-4">
-                      {property.type || "Not Defined"}
+                      {(property.type || "Not Defined").replace(/^\w/, c => c.toUpperCase())}
                     </span>
                   </div>
                 </div>

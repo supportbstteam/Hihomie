@@ -132,6 +132,11 @@ const EditProperty = ({ id, users }) => {
   const [mapCoords, setMapCoords] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyVideo, setPropertyVideo] = useState();
+  const [activeTab, setActiveTab] = useState("en");
+  const languages = [
+    { code: "en", label: "English" },
+    { code: "es", label: "Spanish" },
+  ];
 
   const [formData, setFormData] = useState({
     full_address: "",
@@ -161,7 +166,7 @@ const EditProperty = ({ id, users }) => {
     energy_certificate_type: "",
     emission_certificate_type: "",
     property_title: "",
-    description: "",
+    description: { en: "", es: "" },
     labels: [],
     owner_1: "",
     owner_2: "",
@@ -314,8 +319,13 @@ const EditProperty = ({ id, users }) => {
               ? []
               : "";
       });
+      // In your useEffect where you map property data
+      mappedData.description =
+        typeof property.description === "object" &&
+        property.description !== null
+          ? property.description
+          : {};
       setFormData(mappedData);
-      setIsLoadingData(false);
     }
     if (property?.images) {
       // Map existing URLs to the format the component expects
@@ -333,6 +343,7 @@ const EditProperty = ({ id, users }) => {
       }));
       setPropertyVideo(existing);
     }
+    setIsLoadingData(false);
   }, [property, id]);
 
   useEffect(() => {
@@ -488,7 +499,10 @@ const EditProperty = ({ id, users }) => {
 
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
-        if (Array.isArray(formData[key])) {
+        if (key === "description") {
+          // Convert object to string so it can be sent via FormData
+          data.append(key, JSON.stringify(formData[key]));
+        } else if (Array.isArray(formData[key])) {
           formData[key].forEach((item) => {
             data.append(key, item);
           });
@@ -580,6 +594,17 @@ const EditProperty = ({ id, users }) => {
       ...formData,
       portals: updatedPortals,
     });
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      description: {
+        ...prev.description,
+        [activeTab]: value,
+      },
+    }));
   };
 
   // Prevent rendering the form before data is loaded
@@ -1181,7 +1206,7 @@ const EditProperty = ({ id, users }) => {
                     onChange={handleChange}
                   />
                 </div>
-                <div className="flex-1 mt-4">
+                {/* <div className="flex-1 mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Description
                   </label>
@@ -1192,7 +1217,44 @@ const EditProperty = ({ id, users }) => {
                     rows="10"
                     className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
                   />
+                </div> */}
+
+                <div className="flex-1 mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Description (
+                      {languages.find((l) => l.code === activeTab).label})
+                    </label>
+
+                    {/* Language Switcher */}
+                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => setActiveTab(lang.code)}
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                            activeTab === lang.code
+                              ? "bg-white text-green-600 shadow-sm"
+                              : "text-gray-500 hover:text-gray-700"
+                          }`}
+                        >
+                          {lang.code.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <textarea
+                    name="description"
+                    value={formData.description[activeTab] || ""}
+                    onChange={handleDescriptionChange}
+                    rows="10"
+                    placeholder={`Write the ${activeTab.toUpperCase()} description here...`}
+                    className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                  />
                 </div>
+
                 <div>
                   <Input
                     label="Link to Video"
@@ -1488,10 +1550,7 @@ const EditProperty = ({ id, users }) => {
               images={propertyImages}
               setImages={setPropertyImages}
             />
-            <VideoUpload
-              video={propertyVideo}
-              setVideo={setPropertyVideo}
-            />
+            <VideoUpload video={propertyVideo} setVideo={setPropertyVideo} />
           </section>
 
           {/* SUBMIT BUTTON */}
@@ -1501,13 +1560,10 @@ const EditProperty = ({ id, users }) => {
               className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-30 py-2 rounded-lg font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loader} // Prevent multi-clicks if the Redux loader is active
             >
-              {loader ? "Updating..." : "Update Property"}
+              {loader ? "Updating..." : "Update"}
             </button>
           </div>
         </form>
-        <div>
-          hello
-        </div>
       </div>
     </APIProvider>
   );

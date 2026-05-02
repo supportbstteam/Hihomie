@@ -128,6 +128,12 @@ const CreateProperty = ({ users }) => {
     useSelector((state) => state.estate);
 
   const [mapCoords, setMapCoords] = useState(null);
+  const [activeTab, setActiveTab] = useState("en");
+  const languages = [
+    { code: "en", label: "English" },
+    { code: "es", label: "Spanish" },
+  ];
+
   const [formData, setFormData] = useState({
     full_address: "",
     province: "",
@@ -156,7 +162,7 @@ const CreateProperty = ({ users }) => {
     energy_certificate_type: "",
     emission_certificate_type: "",
     property_title: "",
-    description: "",
+    description: { en: "", es: "" },
     labels: [],
     owner_1: "",
     owner_2: "",
@@ -410,7 +416,8 @@ const CreateProperty = ({ users }) => {
       valid = false;
     }
     if (!formData.is_for_rent && !formData.is_for_sale) {
-      newErrors.operation_type = "At least one operation type (rent or sale) must be selected";
+      newErrors.operation_type =
+        "At least one operation type (rent or sale) must be selected";
       valid = false;
     }
     if (!formData.rent_price && !formData.sale_price) {
@@ -451,9 +458,10 @@ const CreateProperty = ({ users }) => {
 
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== null) {
-        // 1. Check if the value is an array (like your labels)
-        if (Array.isArray(formData[key])) {
-          // 2. Loop through the array and append each item using the same key
+        if (key === "description") {
+          // Convert object to string so it can be sent via FormData
+          data.append(key, JSON.stringify(formData[key]));
+        } else if (Array.isArray(formData[key])) {
           formData[key].forEach((item) => {
             data.append(key, item);
           });
@@ -537,6 +545,17 @@ const CreateProperty = ({ users }) => {
       ...formData,
       portals: updatedPortals,
     });
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      description: {
+        ...prev.description,
+        [activeTab]: value,
+      },
+    }));
   };
 
   return (
@@ -1137,7 +1156,7 @@ const CreateProperty = ({ users }) => {
                   />
                 </div>
 
-                <div className="flex-1 mt-4">
+                {/* <div className="flex-1 mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Description
                   </label>
@@ -1148,7 +1167,44 @@ const CreateProperty = ({ users }) => {
                     rows="10"
                     className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none"
                   />
+                </div> */}
+
+                <div className="flex-1 mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Description (
+                      {languages.find((l) => l.code === activeTab).label})
+                    </label>
+
+                    {/* Language Switcher */}
+                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => setActiveTab(lang.code)}
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                            activeTab === lang.code
+                              ? "bg-white text-green-600 shadow-sm"
+                              : "text-gray-500 hover:text-gray-700"
+                          }`}
+                        >
+                          {lang.code.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <textarea
+                    name="description"
+                    value={formData.description[activeTab] || ""}
+                    onChange={handleDescriptionChange}
+                    rows="10"
+                    placeholder={`Write the ${activeTab.toUpperCase()} description here...`}
+                    className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-green-500 outline-none transition-all"
+                  />
                 </div>
+
                 <div>
                   <Input
                     label="Link to Video"
@@ -1461,11 +1517,18 @@ const CreateProperty = ({ users }) => {
           </section>
 
           <div className="sticky bottom-0 z-50 flex flex-col items-center justify-center bg-white/95 py-3 border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] w-full mt-10">
-            <button
+            {/* <button
               type="submit"
               className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-30 py-2 rounded-lg font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
             >
               Save
+            </button> */}
+            <button
+              type="submit"
+              className="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-30 py-2 rounded-lg font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loader} // Prevent multi-clicks if the Redux loader is active
+            >
+              {loader ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

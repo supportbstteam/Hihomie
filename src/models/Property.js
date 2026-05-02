@@ -7,7 +7,7 @@ const PropertySchema = new mongoose.Schema({
     city: { type: String },
     street: { type: String },
     street_number: { type: String },
-    public_address: { type: String }, 
+    public_address: { type: String },
     district: { type: String },
     area: { type: String },
     country: { type: String },
@@ -16,29 +16,34 @@ const PropertySchema = new mongoose.Schema({
     status: { type: String },     // Maps to data.get('status')
     reference: { type: String },
     type: { type: String },
-    floor: { type: String },      
-    rooms: { type: Number }, 
-    bathrooms: { type: Number }, 
-    surface: { type: Number }, 
+    floor: { type: String },
+    rooms: { type: Number },
+    bathrooms: { type: Number },
+    surface: { type: Number },
     usable_surface: { type: Number },
     year_of_construction: { type: Number },
     community_expenses: { type: Number },
 
     // Options & Energy
-    transaction_type: { 
-        type: String, 
-        enum: ['rent', 'sale'], 
-        default: 'sale' 
+    transaction_type: {
+        type: String,
+        enum: ['rent', 'sale'],
+        default: 'sale'
     },
     show_price_tags: { type: Boolean, default: false },
-    energy_certificate_type: { type: String },  
-    emission_certificate_type: { type: String }, 
+    energy_certificate_type: { type: String },
+    emission_certificate_type: { type: String },
     energy_consumption: { type: String },
     co2_emissions: { type: String },
 
     // Private Data / Management (Added these fields)
     labels: [{ type: String }],
-    description: { type: String },
+    // description: { type: String },
+    description: {
+        type: Map,
+        of: String,
+        default: { es: "" }
+    },
     owner_1: { type: String },
     owner_2: { type: String },
     owner_3: { type: String },
@@ -55,7 +60,7 @@ const PropertySchema = new mongoose.Schema({
     property_title: { type: String },
     video_link: { type: String },
     short_description: { type: String },
-    
+
     // Pricing & Listing Options
     is_for_rent: { type: Boolean, default: false },
     rent_price: { type: Number },
@@ -64,11 +69,11 @@ const PropertySchema = new mongoose.Schema({
     guarantee: { type: Number },
     real_estate_fee: { type: Number },
     rental_price_reference_index: { type: Number },
-    
+
     is_for_sale: { type: Boolean, default: false },
     sale_price: { type: Number },
     show_price: { type: Boolean, default: true },
-    
+
     // Agreements & Commissions
     agreement_type: { type: String },
     agreement_valid_from: { type: String },
@@ -76,13 +81,13 @@ const PropertySchema = new mongoose.Schema({
     commission_percentage: { type: Number },
     commission_value: { type: Number },
     shared_commission_percentage: { type: Number },
-    
+
     // Additional Surfaces
     registration_surface: { type: Number },
     terrace_surface: { type: Number },
     garage_surface: { type: Number },
     garage_space_price: { type: Number },
-    
+
     // Additional References
     cadastral_reference: { type: String },
     keychain_reference: { type: String },

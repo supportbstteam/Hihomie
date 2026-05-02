@@ -49,6 +49,7 @@ export async function PUT(request, context) {
             if (key === 'images') continue;
             if (key === 'portals') continue;
             if (key === 'videos') continue;
+            if (key === 'description') continue;
 
             // Convert stringified booleans back to real booleans
             if (value === 'true') {
@@ -66,6 +67,9 @@ export async function PUT(request, context) {
                 updateData[key] = value;
             }
         }
+
+        const description = JSON.parse(formData.get('description'));
+        updateData.description = description;
 
         const files = formData.getAll("images");
 
