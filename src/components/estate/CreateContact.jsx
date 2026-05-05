@@ -52,7 +52,6 @@ const CreateContact = () => {
           contact_id: data,
         }));
 
-        console.log("API Response inside useEffect:", data); // ✅ works here
       } catch (error) {
         console.error("API GET Error:", error);
       }

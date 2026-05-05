@@ -189,8 +189,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
         const data = await response.json();
         setIncrementVal(data); // ✅ set state
 
-        console.log("API Response inside useEffect:", data); // ✅ works here
-
       } catch (error) {
         console.error("API GET Error:", error);
       }
@@ -200,14 +198,6 @@ const CustomerAdd = ({ open, setOpen, selectedColId, handleCardAdded, leadStatus
       runOnLoad();
     }
   }, [open]);
-
-  // If you want to log whenever incrementVal changes
-  useEffect(() => {
-    console.log("incrementVal state updated:", incrementVal);
-  }, [incrementVal]);
-
-
-
 
   return (
     <AnimatePresence>

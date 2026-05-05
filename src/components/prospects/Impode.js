@@ -60,7 +60,6 @@ const ImportModal = ({ isOpen, setImpodeOpen }) => {
             success.push(item?.message);
           }
         }
-        console.log(success, errors);
         setSuccessRows(success);
         setErrorRows(errors);
         setShowResults(true);
